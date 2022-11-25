@@ -9,6 +9,5 @@ use log::{debug, error, info, trace, warn};
 
 fn main() {
     logger::set_logger_config();
-    info!("tyrust");
-    sh::ts_node()
+    sh::ts_node("./test");
 }
