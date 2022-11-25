@@ -10,16 +10,24 @@ use log4rs::{
 };
 
 pub fn set_logger_config() -> Result<(), SetLoggerError> {
-    let level = log::LevelFilter::Info;
+    let level = log::LevelFilter::Trace;
     let file_path = "./logs";
 
     // Build a stderr logger.
-    let stderr = ConsoleAppender::builder().target(Target::Stderr).build();
+    let stderr = ConsoleAppender::builder()
+        .encoder(Box::new(PatternEncoder::new(
+            "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}\n",
+        )))
+        .target(Target::Stderr)
+        .build();
 
     // Logging to log file.
     let logfile = FileAppender::builder()
         // Pattern: https://docs.rs/log4rs/*/log4rs/encode/pattern/index.html
-        .encoder(Box::new(PatternEncoder::new("{l} - {m}\n")))
+        // .encoder(Box::new(PatternEncoder::new("{l} - {m}\n")))
+        .encoder(Box::new(PatternEncoder::new(
+            "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}\n",
+        )))
         .build(file_path)
         .unwrap();
 
@@ -45,12 +53,6 @@ pub fn set_logger_config() -> Result<(), SetLoggerError> {
     // if you are trying to debug an issue and need more logs on then turn it off
     // once you are done.
     let _handle = log4rs::init_config(config)?;
-
-    error!("Goes to stderr and file");
-    warn!("Goes to stderr and file");
-    info!("Goes to stderr and file");
-    debug!("Goes to file only");
-    trace!("Goes to file only");
 
     Ok(())
 }
