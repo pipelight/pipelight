@@ -4,6 +4,7 @@
 #[allow(dead_code)]
 mod logger;
 mod sh;
+mod types;
 
 use log::{debug, error, info, trace, warn};
 
