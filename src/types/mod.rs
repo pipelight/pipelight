@@ -4,40 +4,20 @@ use serde_json::json;
 use serde_json::{Result, Value};
 use std::fmt;
 
-// #[derive(Debug)]
-// // #[serde(rename_all = “camelCase”)]
-// pub struct Config<'a> {
-//     pipelines: [&'a Pipeline<'a>],
-// }
-// #[derive(Debug)]
-// pub struct Pipeline<'a> {
-//     steps: [&'a Step<'a>],
-// }
-// #[derive(Debug)]
-// pub struct Step<'a> {
-//     name: &'a str,
-//     commands: [&'a str],
-// }
-
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
-    pipelines: [Pipeline; 1],
+    pipelines: Vec<Pipeline>,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Pipeline {
     name: Option<String>,
-    steps: [Step; 1],
+    steps: Vec<Step>,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Step {
     name: String,
-    commands: Option<[String; 10]>,
+    commands: Option<Vec<String>>,
 }
-// impl fmt::Display for Step {
-//     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-//         write!(f, "({}, {})", self.x, self.y)
-//     }
-// }
 
 #[cfg(test)]
 mod tests {
@@ -57,7 +37,8 @@ mod tests {
             "pipelines" : [
             {
                 "steps" : [
-                    { "name": "test" }
+                    { "name": "test" },
+                    { "name": "test2" }
                 ]
             }
             ]        
