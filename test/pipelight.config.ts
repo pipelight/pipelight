@@ -6,6 +6,6 @@ const config = {
   ],
 };
 
-console.log(config);
+// console.log(JSON.stringify(config));
 export { config };
 export default config;
