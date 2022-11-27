@@ -1,4 +1,4 @@
-//Load the config file and transform object to JSON
+// Load the config file and transform object to JSON
 const cwd = process.cwd();
 const promess = import(`${cwd}/pipelight.config`);
 promess

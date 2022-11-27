@@ -11,7 +11,7 @@ use subprocess::{Exec, Popen, PopenConfig, PopenError};
 pub fn load_config() -> Result<Config, Box<dyn Error>> {
     let root = get_project_root()?;
     let command = "ts-node";
-    let entrypoint = "public/load_config.ts";
+    let entrypoint = "typescript/main.ts";
     let data = { Exec::shell(format!("{} {:#?}/{}", command, root, entrypoint)) }
         .capture()?
         .stdout_str();

@@ -5,7 +5,7 @@ use clap::{Args, Parser, Subcommand, ValueEnum};
 #[command(author, version, about, long_about = None)]
 struct Cli {
     #[command(subcommand)]
-    commands: Commands,
+    command: Commands,
 
     ///Display a menu to easily select your pips
     #[arg(short, long)]
@@ -15,19 +15,19 @@ struct Cli {
 #[derive(Debug, Subcommand)]
 enum Commands {
     /// Manualy trigger a pipeline
-    Pipe,
+    Pipe(Pipe),
     /// Display logs
-    Logs,
+    Logs(Logs),
 }
 
 #[derive(Debug, Parser)]
-pub struct Pipe {
-    /// Name of the pipeline to trigger
+struct Pipe {
     #[arg(short, long)]
+    /// Name of the pipeline to trigger
     trigger: String,
 
-    /// Run in the backgroud (detach mode)
     #[arg(short, long)]
+    /// Run in the backgroud (detach mode)
     detach: bool,
 
     #[clap(flatten)]
@@ -35,13 +35,13 @@ pub struct Pipe {
 }
 
 #[derive(Parser, Debug)]
-pub struct Logs {
-    /// Filter logs with name of the git branch
+struct Logs {
     #[arg(short, long, action)]
+    /// Filter logs with name of the git branch
     branch: bool,
 
-    /// Filter logs with the name of the pipe
     #[arg(short, long, action)]
+    /// Filter logs with the name of the pipe
     pipe: bool,
 
     #[clap(flatten)]
