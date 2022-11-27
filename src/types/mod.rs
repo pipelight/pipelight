@@ -18,6 +18,10 @@ pub struct Step {
     name: String,
     commands: Option<Vec<String>>,
 }
+pub fn type_of<T>(_: &T) -> String {
+    let res = format!("{}", std::any::type_name::<T>());
+    return res;
+}
 
 #[cfg(test)]
 mod tests {

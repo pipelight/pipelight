@@ -1,0 +1,10 @@
+{
+  "name": "pipeight",
+  "version": "1.0.0",
+  "description": "CICD in typescript",
+  "author": "areskul",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.11.9"
+  }
+}

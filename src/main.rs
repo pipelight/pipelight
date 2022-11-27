@@ -10,5 +10,5 @@ use log::{debug, error, info, trace, warn};
 
 fn main() {
     logger::set_logger_config();
-    sh::ts_node("./test");
+    sh::load_config();
 }
