@@ -8,42 +8,49 @@ pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
 
-    ///Display a menu to easily select your pips
-    #[arg(short, long)]
-    interactiv: bool,
+    #[clap(flatten)]
+    /// Set verbosity level
+    verbose: clap_verbosity_flag::Verbosity,
 }
 
 #[derive(Debug, Subcommand)]
 pub enum Commands {
-    /// Manualy trigger a pipeline
-    Pipe(Pipe),
+    /// Run a pipeline
+    Run(Pipeline),
+    /// Stop the pipeline execution (kill subprocess)
+    Stop(Pipeline),
     /// Display logs
     Logs(Logs),
+    /// List pipelines
+    Ls(List),
 }
 
 #[derive(Debug, Parser)]
-pub struct Pipe {
-    #[arg(short, long)]
-    /// Name of the pipeline to trigger
-    trigger: String,
+pub struct List;
 
-    #[arg(short, long)]
-    /// Run in the backgroud (detach mode)
-    detach: bool,
-
-    #[clap(flatten)]
-    verbose: clap_verbosity_flag::Verbosity,
+#[derive(Debug, Parser)]
+pub struct Pipeline {
+    /// The pipeline name
+    pub name: String,
 }
 
 #[derive(Parser, Debug)]
 pub struct Logs {
     #[arg(short, long, action)]
-    /// Filter logs with name of the git branch
-    branch: bool,
+    /// Display pretty logs
+    prettier: Option<bool>,
 
-    #[arg(short, long, action)]
+    #[arg(long, action, value_name = "BRANCH_NAME")]
+    /// Filter logs on git branch (master,...)
+    branch: Option<String>,
+
+    #[arg(long, action, value_name = "GIT_ACTION")]
+    /// Filter logs on git action (pre-push,...)
+    action: Option<String>,
+
+    #[arg(long, action, value_name = "PIPELINE_NAME")]
     /// Filter logs with the name of the pipe
-    pipe: bool,
+    pipeline: Option<String>,
 
     #[clap(flatten)]
     verbose: clap_verbosity_flag::Verbosity,
