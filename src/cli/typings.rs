@@ -38,7 +38,7 @@ pub struct Pipeline {
 pub struct Logs {
     #[arg(short, long, action)]
     /// Display pretty logs
-    prettier: Option<bool>,
+    pretty: Option<bool>,
 
     #[arg(long, action, value_name = "BRANCH_NAME")]
     /// Filter logs on git branch (master,...)

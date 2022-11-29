@@ -30,7 +30,7 @@ const config = {
     },
     {
       name: "find a file",
-      commands: ["find . -name zyzz"],
+      commands: ["find . -name myfile"],
     },
   ],
 };
@@ -66,7 +66,7 @@ As you know some javascript, you're ready to go.
 
 Beware: You could end up using it for every repeted tasks be it a simple local routine, or an entreprise grade application deployement.
 
-### The power of Typescript
+### The power of Typescript (Code as configuration)
 
 This tool is written in Rust and Typescript.
 It combines the speed and security of Rust with the easy scripting of Javascript.
