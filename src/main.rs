@@ -1,13 +1,12 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
-mod actions;
-mod cli;
-mod logger;
-mod shell;
 #[allow(dead_code)]
-mod types;
-
+use lib::actions;
+use lib::cli;
+use lib::logger;
+use lib::shell;
+use lib::types;
 use log::{debug, error, info, trace, warn};
 
 fn main() {

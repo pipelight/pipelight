@@ -10,7 +10,6 @@ pub fn get_args() {
     match args.command {
         typings::Commands::Run(pipeline) => {
             debug!("Triggering pipline {:#?}", pipeline.name);
-            run()
         }
         typings::Commands::Stop(remote) => {
             debug!("Stopping pipeline {:#?}", remote);
