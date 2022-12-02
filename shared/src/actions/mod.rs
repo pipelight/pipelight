@@ -1,1 +1,1 @@
-pub mod core;
+mod core;

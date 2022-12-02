@@ -257,6 +257,7 @@ dependencies = [
  "project-root",
  "serde",
  "serde_json",
+ "shared",
  "subprocess",
  "terminal-menu",
 ]
@@ -537,6 +538,7 @@ dependencies = [
  "project-root",
  "serde",
  "serde_json",
+ "shared",
  "subprocess",
  "terminal-menu",
 ]
@@ -681,6 +683,22 @@ dependencies = [
  "ryu",
  "serde",
  "yaml-rust",
+]
+
+[[package]]
+name = "shared"
+version = "0.1.1"
+dependencies = [
+ "clap",
+ "clap-verbosity-flag",
+ "json",
+ "log",
+ "log4rs",
+ "project-root",
+ "serde",
+ "serde_json",
+ "subprocess",
+ "terminal-menu",
 ]
 
 [[package]]

@@ -1,9 +1,10 @@
 [package]
-name = "shared"
+name = "pipelight"
 version = "0.1.1"
 edition = "2021"
 
 [dependencies]
+shared = {path = "../shared" }
 clap = { version = "4.0.27", features = ["derive","wrap_help"] }
 clap-verbosity-flag = "2.0.0"
 json = "0.12.4"

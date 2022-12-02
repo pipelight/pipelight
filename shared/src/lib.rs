@@ -2,8 +2,8 @@
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
 #[allow(dead_code)]
-mod actions;
-mod cli;
-mod logger;
-mod shell;
-mod types;
+pub mod actions;
+pub mod cli;
+pub mod logger;
+pub mod shell;
+pub mod types;
