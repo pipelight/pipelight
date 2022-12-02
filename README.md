@@ -37,16 +37,24 @@ const config = {
 export default config;
 ```
 
-Open a terminal in the same directory
-
 ```sh
-# This will open the menu
-pipelight
+# This lists your pipelines
+pipelight ls
 
 ```
 
+Want more informations
+
 ```sh
-# This will trigger the pipeline
+# List your pipelines
+pipelight ls -v
+
+```
+
+Verbosity tag can be combined with every command
+
+```sh
+# Trigger the pipeline
 pipelight my_first_pipeline
 
 ```
