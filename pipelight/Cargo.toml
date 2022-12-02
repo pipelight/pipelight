@@ -2,6 +2,7 @@
 name = "pipelight"
 version = "0.1.1"
 edition = "2021"
+default-run = "pipelight"
 authors = ["areskul"]
 description = "Pipeline written in Javascript! Deploy faster!!"
 homepage = "pipelight.areskul.com"
