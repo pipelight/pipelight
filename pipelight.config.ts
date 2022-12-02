@@ -2,6 +2,7 @@ const config = {
   pipelines: [
     {
       name: "test",
+      fr: "caca",
     },
   ],
 };

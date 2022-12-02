@@ -1,7 +1,7 @@
 // Cli core
 
 mod typings;
-use crate::actions::{list, logs, run, stop};
+use crate::actions::*;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use log::{debug, error, info, trace, warn};
 
@@ -18,6 +18,7 @@ pub fn get_args() {
             println!("Display logs");
         }
         typings::Commands::Ls(list) => {
+            // actions::list();
             println!("List pipelines");
         }
     }
