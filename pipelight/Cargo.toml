@@ -2,6 +2,11 @@
 name = "pipelight"
 version = "0.1.1"
 edition = "2021"
+authors = ["areskul"]
+description = "Pipeline written in Javascript! Deploy faster!!"
+homepage = "pipelight.areskul.com"
+repository="git@gitea.com:areska/pipelight.git"
+license="gpl-2.0"
 
 [dependencies]
 shared = {path = "../shared" }
