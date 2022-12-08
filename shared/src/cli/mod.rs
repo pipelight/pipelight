@@ -1,25 +1,24 @@
 // Cli core
 
-mod typings;
-use crate::actions::*;
+mod types;
+use crate::actions;
+use crate::shell;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use log::{debug, error, info, trace, warn};
 
 pub fn get_args() {
-    let args = typings::Cli::parse();
+    let args = types::Cli::parse();
     match args.command {
-        typings::Commands::Run(pipeline) => {
+        types::Commands::Run(pipeline) => {
+            // actions::run();
             debug!("Triggering pipline {:#?}", pipeline.name);
         }
-        typings::Commands::Stop(remote) => {
-            debug!("Stopping pipeline {:#?}", remote);
+        types::Commands::Stop(remote) => actions::stop(),
+        types::Commands::Logs(logs) => {
+            actions::logs();
         }
-        typings::Commands::Logs(logs) => {
-            println!("Display logs");
-        }
-        typings::Commands::Ls(list) => {
-            // actions::list();
-            println!("List pipelines");
+        types::Commands::Ls(list) => {
+            actions::list();
         }
     }
 }

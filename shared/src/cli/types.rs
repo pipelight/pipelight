@@ -26,7 +26,7 @@ pub enum Commands {
 }
 
 #[derive(Debug, Parser)]
-pub struct List;
+pub struct List {}
 
 #[derive(Debug, Parser)]
 pub struct Pipeline {

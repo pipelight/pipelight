@@ -55,7 +55,7 @@ Verbosity tag can be combined with every command
 
 ```sh
 # Trigger the pipeline
-pipelight my_first_pipeline
+pipelight run my_first_pipeline
 
 ```
 

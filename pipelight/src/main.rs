@@ -10,7 +10,7 @@ use shared::shell;
 use shared::types;
 
 fn main() {
-    shell::load_config();
-    logger::set_logger_config();
+    // logger::set_logger_config();
+    let config = shell::load_config();
     cli::get_args();
 }

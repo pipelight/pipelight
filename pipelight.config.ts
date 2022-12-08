@@ -6,4 +6,4 @@ const config = {
     },
   ],
 };
-export { config };
+export default config;

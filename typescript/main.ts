@@ -4,8 +4,9 @@ const cwd = process.cwd();
 const promess = import(`${cwd}/pipelight.config`);
 promess
   .then((res) => {
-    const config: Config = res;
-    const json = JSON.stringify(res);
+    const config: Config = res.default;
+    const json = JSON.stringify(config);
+    console.log(json);
   })
   .catch((err) => {
     console.log("Couldn't load the config file");
