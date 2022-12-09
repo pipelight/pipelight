@@ -13,6 +13,5 @@ use std::error::Error;
 fn main() -> Result<(), Box<dyn Error>> {
     logger::set_logger_config()?;
     cli::get_args();
-    error!("testttt");
     Ok(())
 }

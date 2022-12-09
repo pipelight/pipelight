@@ -6,7 +6,6 @@ use log::{debug, error, info, trace, warn};
 use std::error::Error;
 
 pub fn run(pipeline_name: String) {
-    println!("Running pipeline {} in the background", pipeline_name);
     trace!("Running pipeline {} in the background", pipeline_name);
 }
 pub fn stop() {

@@ -9,8 +9,6 @@ pub fn set_logger_config() -> Result<(), Box<dyn Error>> {
         file: "shared/src/logger/log4rs.yml".into(),
     };
     let full_path = format!("{}/{}", path.folder, path.file);
-    debug!("Logger config file load from {}", full_path);
     let _handle = log4rs::init_file(full_path, Default::default())?;
-    println!("{:#?}", _handle);
     Ok(())
 }
