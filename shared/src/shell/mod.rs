@@ -13,16 +13,16 @@ struct Path {
     folder: String,
     file: String,
 }
-/// Execute in an attached subprocess
+/// Execute in same subprocess
 pub fn exec_attach(command: String) -> Result<String, Box<dyn Error>> {
-    println!("{}", command);
+    debug!("{}", command);
     let stdout = { Exec::shell(format!("{}", command)) }
         .stdout(Redirection::Pipe)
         .stderr(Redirection::Merge)
         .capture()?
         .stdout_str();
 
-    println!("{}", stdout);
+    trace!("{}", stdout);
     Ok(stdout)
 }
 /// Execute in a detached subprocess
@@ -36,18 +36,20 @@ pub fn load_config() -> Result<Config, Box<dyn Error>> {
         file: "typescript/main.ts".into(),
     };
     let command = format!("{} {}/{}", executable, path.folder, path.file);
-
-    exec_attach("ls".to_owned())?;
-
     let data = exec_attach(command)?;
-    let config_result = serde_json::from_str(&data);
+
+    // Typecast Json output
+    let config_result = serde_json::from_str::<Config>(&data);
+
     let config = match config_result {
         Ok(res) => {
-            println!("{:#?}", res);
+            debug!("{:#?}", res);
             return Ok(res);
         }
         Err(e) => {
-            println!("{:#?}", e);
+            error!("{}", data);
+            println!("{}", e);
+            println!("{}", data);
             return Err(Box::from(e));
         }
     };

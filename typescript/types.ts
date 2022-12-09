@@ -1,5 +1,3 @@
-import { log } from "@composables/logger";
-
 /**
  * @typedef {object} Config
  * @property {Pipeline[]} pipelines
@@ -63,7 +61,7 @@ const GitHooks = [
   "pre-push",
   "pre-receive",
   "update",
-  "post-receive"
+  "post-receive",
 ];
 /**
  * @typedef {string} Action - Define a trigger event

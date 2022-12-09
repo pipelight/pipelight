@@ -3,10 +3,11 @@
 mod types;
 use crate::actions;
 use crate::shell;
+use crate::types::Config;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use log::{debug, error, info, trace, warn};
 
-pub fn get_args() {
+pub fn get_args(config: Config) {
     let args = types::Cli::parse();
     match args.command {
         types::Commands::Run(pipeline) => {
@@ -18,7 +19,7 @@ pub fn get_args() {
             actions::logs();
         }
         types::Commands::Ls(list) => {
-            actions::list();
+            actions::list(config);
         }
     }
 }

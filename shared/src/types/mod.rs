@@ -6,17 +6,17 @@ use std::fmt;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
-    pipelines: Vec<Pipeline>,
+    pub pipelines: Vec<Pipeline>,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Pipeline {
-    name: Option<String>,
-    steps: Vec<Step>,
+    pub name: String,
+    pub steps: Vec<Step>,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Step {
-    name: String,
-    commands: Option<Vec<String>>,
+    pub name: String,
+    pub commands: Option<Vec<String>>,
 }
 pub fn type_of<T>(_: &T) -> String {
     let res = format!("{}", std::any::type_name::<T>());

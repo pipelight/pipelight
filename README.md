@@ -40,7 +40,12 @@ export default config;
 ```sh
 # This lists your pipelines
 pipelight ls
+```
 
+Output:
+
+```sh
+status, last_run date, hook, name
 ```
 
 Want more informations

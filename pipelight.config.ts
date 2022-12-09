@@ -3,6 +3,11 @@ const config = {
     {
       name: "test",
       fr: "caca",
+      steps: [
+        {
+          name: "mystep",
+        },
+      ],
     },
   ],
 };
