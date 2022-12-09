@@ -5,7 +5,7 @@ const promess = import(`${cwd}/pipelight.config`);
 promess
   .then((res) => {
     const config: Config = res.default;
-    const json = JSON.stringify(config);
+    const json = JSON.stringify(res, null, 2);
     console.log(json);
   })
   .catch((err) => {
