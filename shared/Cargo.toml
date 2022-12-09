@@ -4,11 +4,11 @@ version = "0.1.1"
 edition = "2021"
 
 [dependencies]
-clap = { version = "4.0.27", features = ["derive","wrap_help"] }
+clap = { version = "4.0.27", features = ["derive","wrap_help"]}
 clap-verbosity-flag = "2.0.0"
 json = "0.12.4"
 log = "0.4.17"
-log4rs = "1.2.0"
+log4rs = { version = "1.2.0", features = ["json_encoder","pattern_encoder","size_trigger","console_appender", "file_appender"]}
 project-root = "0.2.2"
 serde = "1.0.147"
 serde_json = "1.0.89"

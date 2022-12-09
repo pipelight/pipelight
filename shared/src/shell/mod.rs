@@ -1,6 +1,6 @@
 // Call ts-node on mjs/ts files
 
-use crate::types::Config;
+use crate::types::{Config, Path};
 use log::{debug, error, info, trace, warn};
 use project_root::get_project_root;
 use std::any::Any;
@@ -9,10 +9,6 @@ use std::default::Default;
 use std::error::Error;
 use subprocess::{Exec, Popen, PopenConfig, PopenError, Redirection};
 
-struct Path {
-    folder: String,
-    file: String,
-}
 /// Execute in same subprocess
 pub fn exec_attach(command: String) -> Result<String, Box<dyn Error>> {
     debug!("{}", command);
@@ -26,7 +22,17 @@ pub fn exec_attach(command: String) -> Result<String, Box<dyn Error>> {
     Ok(stdout)
 }
 /// Execute in a detached subprocess
-// pub fn exec_detach(command: String) -> Result<String, Box<dyn Error>> {}
+pub fn exec_detach(command: String) -> Result<String, Box<dyn Error>> {
+    debug!("{}", command);
+    let stdout = { Exec::shell(format!("{}", command)) }
+        .stdout(Redirection::Pipe)
+        .stderr(Redirection::Merge)
+        .capture()?
+        .stdout_str();
+
+    trace!("{}", stdout);
+    Ok(stdout)
+}
 
 /// Return the config from .ts file inside the working dir.
 pub fn load_config() -> Result<Config, Box<dyn Error>> {

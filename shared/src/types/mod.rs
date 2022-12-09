@@ -23,6 +23,11 @@ pub fn type_of<T>(_: &T) -> String {
     return res;
 }
 
+pub struct Path {
+    pub folder: String,
+    pub file: String,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
