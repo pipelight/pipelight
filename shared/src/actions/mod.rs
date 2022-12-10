@@ -1,15 +1,12 @@
 // Actions: Functions called by cli
 mod types;
-use crate::shell::{exec_attach, exec_detach, load_config};
+use crate::config::load_config;
+use crate::exec::{exec_attach, exec_detach};
 use crate::types::Config;
 use log::{debug, error, info, trace, warn};
 use std::error::Error;
 
-pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
-    let config = load_config()?;
-    trace!("Running pipeline {} in the background", pipeline_name);
-
-    // Check duplicate
+pub fn check_config(config: Config) -> Result<(), Box<dyn Error>> {
     let names = config
         .pipelines
         .iter()
@@ -34,6 +31,14 @@ pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
     } else {
         Ok(())
     }
+}
+
+pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
+    let config = load_config()?;
+    trace!("Running pipeline {} in the background", pipeline_name);
+
+    Ok(())
+    // Check duplicate
 
     // for command in pipeline.
     // exec_attah(pi)

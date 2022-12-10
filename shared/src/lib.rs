@@ -4,6 +4,7 @@
 #[allow(dead_code)]
 pub mod actions;
 pub mod cli;
+pub mod config;
+pub mod exec;
 pub mod logger;
-pub mod shell;
 pub mod types;

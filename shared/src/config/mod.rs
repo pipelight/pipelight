@@ -1,38 +1,8 @@
-// Call ts-node on mjs/ts files
-
+use crate::exec::{exec_attach, exec_detach};
 use crate::types::{Config, Path};
 use log::{debug, error, info, trace, warn};
 use project_root::get_project_root;
-use std::any::Any;
-use std::collections::HashMap;
-use std::default::Default;
 use std::error::Error;
-use subprocess::{Exec, Popen, PopenConfig, PopenError, Redirection};
-
-/// Execute in same subprocess
-pub fn exec_attach(command: String) -> Result<String, Box<dyn Error>> {
-    debug!("{}", command);
-    let stdout = { Exec::shell(format!("{}", command)) }
-        .stdout(Redirection::Pipe)
-        .stderr(Redirection::Merge)
-        .capture()?
-        .stdout_str();
-
-    trace!("{}", stdout);
-    Ok(stdout)
-}
-/// Execute in a detached subprocess
-pub fn exec_detach(command: String) -> Result<String, Box<dyn Error>> {
-    debug!("{}", command);
-    let stdout = { Exec::shell(format!("{}", command)) }
-        .stdout(Redirection::Pipe)
-        .stderr(Redirection::Merge)
-        .capture()?
-        .stdout_str();
-
-    trace!("{}", stdout);
-    Ok(stdout)
-}
 
 /// Return the config from .ts file inside the working dir.
 pub fn load_config() -> Result<Config, Box<dyn Error>> {
@@ -59,6 +29,39 @@ pub fn load_config() -> Result<Config, Box<dyn Error>> {
             return Err(Box::from(e));
         }
     };
+}
+
+/// Apply constraints to the Config struct
+pub fn check_config(config: Config) -> Result<Config, Box<dyn Error>> {
+    let names = config
+        .pipelines
+        .iter()
+        .map(|p| &p.name)
+        .cloned()
+        .collect::<Vec<String>>();
+
+    //Vlone vector and emove duplicates
+    let mut dedup = names.clone();
+    dedup.dedup();
+
+    //Compare bath vecors
+    let has_duplicate = dedup.len() != names.len();
+
+    trace!("{}", has_duplicate);
+    debug!("{:?}", names);
+
+    if has_duplicate {
+        let message = "Duplicate pipeline names in config";
+        error!("{}", message);
+        Err(Box::from(message))
+    } else {
+        Ok(config)
+    }
+}
+pub fn get_config() -> Result<Config, Box<dyn Error>> {
+    let mut config = load_config()?;
+    config = check_config(config)?;
+    Ok(config)
 }
 
 #[cfg(test)]

@@ -4,14 +4,14 @@
 use log::{debug, error, info, trace, warn};
 use shared::actions;
 use shared::cli;
+use shared::exec;
 #[allow(dead_code)]
 use shared::logger;
-use shared::shell;
 use shared::types::Config;
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    logger::set_logger_config()?;
+    logger::set_logger()?;
     cli::get_args();
     Ok(())
 }
