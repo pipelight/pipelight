@@ -1,3 +1,7 @@
+# Exec
+
+Create run binary (cli + trigger pipeline execution in child process)
+
 # Typescript
 
 ## Type check

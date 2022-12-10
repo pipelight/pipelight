@@ -1,40 +1,13 @@
 // Actions: Functions called by cli
 mod types;
-use crate::config::load_config;
+use crate::config::get_config;
 use crate::exec::{exec_attach, exec_detach};
 use crate::types::Config;
 use log::{debug, error, info, trace, warn};
 use std::error::Error;
 
-pub fn check_config(config: Config) -> Result<(), Box<dyn Error>> {
-    let names = config
-        .pipelines
-        .iter()
-        .map(|p| &p.name)
-        .cloned()
-        .collect::<Vec<String>>();
-
-    //Vlone vector and emove duplicates
-    let mut dedup = names.clone();
-    dedup.dedup();
-
-    //Compare bath vecors
-    let has_duplicate = dedup.len() != names.len();
-
-    trace!("{}", has_duplicate);
-    debug!("{:?}", names);
-
-    if has_duplicate {
-        let message = "Duplicate pipeline names in config";
-        error!("{}", message);
-        Err(Box::from(message))
-    } else {
-        Ok(())
-    }
-}
-
 pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
-    let config = load_config()?;
+    let config = get_config()?;
     trace!("Running pipeline {} in the background", pipeline_name);
 
     Ok(())
@@ -49,7 +22,7 @@ pub fn stop() {
 }
 
 pub fn list() -> Result<(), Box<dyn Error>> {
-    let config = load_config()?;
+    let config = get_config()?;
     // Print headers
     // String litteral might not be a variable (c injections issues)
     // let col = "{0: <10} {1: <20} {2: <10} {3}";
