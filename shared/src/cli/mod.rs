@@ -11,6 +11,7 @@ pub fn get_args() {
     match args.command {
         types::Commands::Run(pipeline) => {
             debug!("Triggering pipline {:#?}", pipeline.name);
+            actions::run(pipeline.name);
         }
         types::Commands::Stop(pipeline) => {
             debug!("Stopping pipline {:#?}", pipeline.name);

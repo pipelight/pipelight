@@ -17,3 +17,4 @@ Set log4rs verbosity levels via the cli
 ## Logger
 
 Set file appender encoder to json
+print back json to colorful pretty log

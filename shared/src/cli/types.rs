@@ -29,8 +29,8 @@ pub enum Commands {
 pub struct List {}
 
 #[derive(Debug, Parser)]
+/// The pipeline name
 pub struct Pipeline {
-    /// The pipeline name
     pub name: String,
 }
 

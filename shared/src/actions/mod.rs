@@ -5,12 +5,44 @@ use crate::types::Config;
 use log::{debug, error, info, trace, warn};
 use std::error::Error;
 
-pub fn run(pipeline_name: String) {
+pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
+    let config = load_config()?;
     trace!("Running pipeline {} in the background", pipeline_name);
+
+    // Check duplicate
+    let names = config
+        .pipelines
+        .iter()
+        .map(|p| &p.name)
+        .cloned()
+        .collect::<Vec<String>>();
+
+    //Vlone vector and emove duplicates
+    let mut dedup = names.clone();
+    dedup.dedup();
+
+    //Compare bath vecors
+    let has_duplicate = dedup.len() != names.len();
+
+    trace!("{}", has_duplicate);
+    debug!("{:?}", names);
+
+    if has_duplicate {
+        let message = "Duplicate pipeline names in config";
+        error!("{}", message);
+        Err(Box::from(message))
+    } else {
+        Ok(())
+    }
+
+    // for command in pipeline.
+    // exec_attah(pi)
 }
+
 pub fn stop() {
     println!("config");
 }
+
 pub fn list() -> Result<(), Box<dyn Error>> {
     let config = load_config()?;
     // Print headers
@@ -28,6 +60,7 @@ pub fn list() -> Result<(), Box<dyn Error>> {
     }
     Ok(())
 }
+
 pub fn logs() {
-    println!("config");
+    println!("logs");
 }
