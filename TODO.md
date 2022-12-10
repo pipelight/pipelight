@@ -16,9 +16,14 @@ Print **wrapped lines** after error
 
 ## Verbosity
 
+Set normal level to none.
 Set log4rs verbosity levels via the cli
 
 ## Logger
 
 Set file appender encoder to json
 print back json to colorful pretty log
+
+# Cli
+
+Set autocompletion and autocorrection (for bash and zsh)

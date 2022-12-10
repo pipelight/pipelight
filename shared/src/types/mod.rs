@@ -8,12 +8,12 @@ use std::fmt;
 pub struct Config {
     pub pipelines: Vec<Pipeline>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Pipeline {
     pub name: String,
     pub steps: Vec<Step>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Step {
     pub name: String,
     pub commands: Option<Vec<String>>,
