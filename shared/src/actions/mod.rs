@@ -39,13 +39,6 @@ pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
         error!("{}", message);
         Err(Box::from(message))
     }
-
-    // Check duplicate
-
-    // for step in pipeline.steps {
-    // exec_attah(pi)
-    // println!("{}", step)
-    // }
 }
 
 pub fn stop() {

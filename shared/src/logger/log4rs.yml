@@ -30,6 +30,7 @@ loggers:
     level: trace
     appenders:
       - stdout
+      - internal
   pipelines:
     level: trace
     appenders:

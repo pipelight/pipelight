@@ -1,3 +1,9 @@
+# Order
+
+1. Verbosity
+2. Child process communication
+3. Unit Tests
+
 # Exec
 
 Create run binary (cli + trigger pipeline execution in child process)

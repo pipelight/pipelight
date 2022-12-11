@@ -11,7 +11,7 @@ pub struct Cli {
 
     #[clap(flatten)]
     /// Set verbosity level
-    verbose: Verbosity<InfoLevel>,
+    pub verbose: Verbosity,
 }
 
 #[derive(Debug, Subcommand)]

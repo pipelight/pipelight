@@ -11,7 +11,6 @@ use shared::types::Config;
 use std::error::Error;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    logger::set_logger()?;
     cli::get_args();
     Ok(())
 }
