@@ -10,7 +10,7 @@ const config = {
       ],
     },
     {
-      name: "test",
+      name: "test_duplicate",
       fr: "caca",
       steps: [
         {

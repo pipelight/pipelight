@@ -1,6 +1,7 @@
 // Cli commands structure
 
 use clap::{Args, Parser, Subcommand, ValueEnum};
+use clap_verbosity_flag::{InfoLevel, Verbosity};
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
@@ -10,7 +11,7 @@ pub struct Cli {
 
     #[clap(flatten)]
     /// Set verbosity level
-    verbose: clap_verbosity_flag::Verbosity,
+    verbose: Verbosity<InfoLevel>,
 }
 
 #[derive(Debug, Subcommand)]

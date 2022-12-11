@@ -5,8 +5,12 @@ use crate::exec::{exec_attach, exec_detach};
 use crate::types::{Config, Pipeline};
 use log::{debug, error, info, trace, warn};
 use std::error::Error;
+use std::io::{Read, Write};
+use std::process::{Command, Stdio};
 
 pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
+    let bin = "pipelight_run";
+
     let config = get_config()?;
     let pipeline_result = config
         .pipelines
@@ -18,6 +22,17 @@ pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
     if pipeline_result.is_some() {
         let pipeline = pipeline_result.unwrap();
         trace!("Running pipeline {} in the background", pipeline.name);
+        let child = Command::new("cargo")
+            .arg(format!("run"))
+            .arg(format!("--bin"))
+            .arg(format!("{}", bin))
+            .arg(format!("{}", pipeline_name))
+            .stdout(Stdio::piped())
+            .spawn()
+            .expect("failed to execute child");
+
+        let output = child.wait_with_output().expect("failed to wait on child");
+        println!("{:?}", output);
         Ok(())
     } else {
         let message = "Pipeline doesn't exist";
@@ -34,7 +49,7 @@ pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn stop() {
-    println!("config");
+    println!("stop");
 }
 
 pub fn list() -> Result<(), Box<dyn Error>> {

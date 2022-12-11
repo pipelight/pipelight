@@ -1,5 +1,4 @@
 // Cli core
-
 mod types;
 use crate::actions;
 use crate::types::Config;

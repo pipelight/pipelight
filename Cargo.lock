@@ -246,23 +246,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 
 [[package]]
-name = "fork"
-version = "0.1.1"
-dependencies = [
- "clap",
- "clap-verbosity-flag",
- "json",
- "log",
- "log4rs",
- "project-root",
- "serde",
- "serde_json",
- "shared",
- "subprocess",
- "terminal-menu",
-]
-
-[[package]]
 name = "hashbrown"
 version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"

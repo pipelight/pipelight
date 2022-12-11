@@ -1,6 +1,7 @@
 # Exec
 
 Create run binary (cli + trigger pipeline execution in child process)
+Use "process" crate instead of subprocess for mac and windows compatibility
 
 # Typescript
 
