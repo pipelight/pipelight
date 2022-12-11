@@ -9,18 +9,7 @@ use log4rs::Handle;
 use project_root::get_project_root;
 use std::error::Error;
 
-// Deprecated
-// pub fn set_logger() -> Result<(), Box<dyn Error>> {
-//     let path = Path {
-//         folder: get_project_root()?.to_str().unwrap().to_owned(),
-//         file: "shared/src/logger/log4rs.yml".into(),
-//     };
-//     let full_path = format!("{}/{}", path.folder, path.file);
-//     let handle = log4rs::init_file(full_path, Default::default()).unwrap();
-//     Ok(handle)
-// }
-//
-/// Set loggers and return handler to change logLevels at runtime
+/// Return logger config with chosen verbosity level
 pub fn set_logger_config(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
     let pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}\n";
 
@@ -58,6 +47,7 @@ pub fn set_logger_config(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
     Ok(config)
 }
 
+/// Set loggers and return handler to change logLevels at runtime
 pub fn set_logger(level: LevelFilter) -> Result<Handle, Box<dyn Error>> {
     let config = set_logger_config(level)?;
     // use handle to change logger configuration at runtime
