@@ -3,7 +3,9 @@
 1. Better login
 2. Child process communication
 3. Unit Tests
-   expect instead of unwrap
+   expect() instead of unwrap()
+4. Macro to compute funtion execution time
+5. Hooks creation (ln -s) file! macro usage to know wich event triggered pipe
 
 # Exec
 

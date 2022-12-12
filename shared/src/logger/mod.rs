@@ -1,5 +1,5 @@
 use crate::types::Path;
-use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
+pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 use log4rs;
 use log4rs::append::console::ConsoleAppender;
 use log4rs::append::file::FileAppender;
