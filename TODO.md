@@ -1,7 +1,9 @@
 # Order
 
+1. Better login
 2. Child process communication
 3. Unit Tests
+   expect instead of unwrap
 
 # Exec
 

@@ -1,7 +1,6 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
-use log::{debug, error, info, trace, warn};
 use shared::actions;
 use shared::cli;
 use shared::exec;

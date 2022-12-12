@@ -1,7 +1,7 @@
 // Actions: Functions called by cli
 mod types;
 use crate::config::get_config;
-use crate::exec::{exec_attach, exec_detach};
+use crate::exec::exec_attach;
 use crate::types::{Config, Pipeline};
 use log::{debug, error, info, trace, warn};
 use std::error::Error;

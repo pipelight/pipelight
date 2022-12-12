@@ -1,4 +1,4 @@
-use crate::exec::{exec_attach, exec_detach};
+use crate::exec::exec_attach;
 use crate::types::{Config, Path};
 use log::{debug, error, info, trace, warn};
 use project_root::get_project_root;
@@ -42,6 +42,7 @@ pub fn check_config(config: Config) -> Result<Config, Box<dyn Error>> {
 
     //Vlone vector and emove duplicates
     let mut dedup = names.clone();
+    dedup.sort();
     dedup.dedup();
 
     //Compare bath vecors
