@@ -1,6 +1,7 @@
 [workspace]
 
 members=[
+  # "performance",
   "shared",
   "pipelight",
 ]

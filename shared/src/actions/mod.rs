@@ -1,7 +1,7 @@
 // Actions: Functions called by cli
 mod types;
 use crate::config::get_config;
-use crate::exec::exec_attach;
+use crate::exec::shell;
 use crate::types::{Config, Pipeline};
 use log::{debug, error, info, trace, warn};
 use std::error::Error;
@@ -10,8 +10,9 @@ use std::process::{Command, Stdio};
 
 pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
     let bin = "pipelight_run";
-
     let config = get_config()?;
+
+    // Check if pipeline exist
     let pipeline_result = config
         .pipelines
         .iter()
@@ -21,17 +22,8 @@ pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
 
     if pipeline_result.is_some() {
         let pipeline = pipeline_result.unwrap();
-        trace!("Running pipeline {} in the background", pipeline.name);
-        let child = Command::new("cargo")
-            .arg(format!("run"))
-            .arg(format!("--bin"))
-            .arg(format!("{}", bin))
-            .arg(format!("{}", pipeline_name))
-            .stdout(Stdio::piped())
-            .spawn()
-            .expect("failed to execute child");
-
-        let output = child.wait_with_output().expect("failed to wait on child");
+        trace!("Running pipeline \"{}\" in the background", pipeline.name);
+        let output = shell(format!("cargo run --bin {} {}", bin, pipeline_name));
         println!("{:?}", output);
         Ok(())
     } else {
