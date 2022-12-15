@@ -13,7 +13,7 @@ use std::error::Error;
 /// Return logger config with chosen verbosity level
 pub fn set_logger_config(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
     let pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — \n{m}{n}\n";
-
+    let body = "{m}{n}";
     let stdout = ConsoleAppender::builder()
         .encoder(Box::new(PatternEncoder::new(pattern)))
         .build();
@@ -22,6 +22,7 @@ pub fn set_logger_config(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
         .build(".pipelight/logs/internal.log")
         .unwrap();
     let pipeline_appender = FileAppender::builder()
+        .encoder(Box::new(PatternEncoder::new(body)))
         .build(".pipelight/logs/pipelines.log")
         .unwrap();
 
@@ -39,7 +40,6 @@ pub fn set_logger_config(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
         .logger(
             Logger::builder()
                 .appender("pipeline")
-                .additive(false)
                 .build("pipeline", LevelFilter::Trace),
         )
         .build(

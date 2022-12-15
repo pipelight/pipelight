@@ -37,22 +37,22 @@ pub struct Pipeline {
 
 #[derive(Parser, Debug)]
 pub struct Logs {
-    #[arg(short, long, action)]
+    #[arg(short, long)]
     /// Display pretty logs
-    pretty: Option<bool>,
+    pub pretty: bool,
 
     #[arg(long, action, value_name = "BRANCH_NAME")]
     /// Filter logs on git branch (master,...)
-    branch: Option<String>,
+    pub branch: Option<String>,
 
     #[arg(long, action, value_name = "GIT_ACTION")]
     /// Filter logs on git action (pre-push,...)
-    action: Option<String>,
+    pub action: Option<String>,
 
     #[arg(long, action, value_name = "PIPELINE_NAME")]
     /// Filter logs with the name of the pipe
-    pipeline: Option<String>,
+    pub pipeline: Option<String>,
 
     #[clap(flatten)]
-    verbose: clap_verbosity_flag::Verbosity,
+    pub verbose: Verbosity,
 }

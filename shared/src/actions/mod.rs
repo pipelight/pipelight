@@ -1,10 +1,14 @@
 // Actions: Functions called by cli
 use crate::config::{get_config, get_pipeline};
 use crate::exec::exec;
+use crate::types::logs::PipelineLog;
 use crate::types::{Config, Pipeline};
 use log::{debug, error, info, trace, warn};
 use std::error::Error;
-use std::io::{Read, Write};
+use std::fs;
+use std::fs::File;
+use std::io::{self, BufRead, Read, Write};
+use std::path::Path;
 use std::process::{Command, Stdio};
 
 pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
@@ -38,5 +42,28 @@ pub fn list() -> Result<(), Box<dyn Error>> {
 }
 
 pub fn logs() {
-    println!("logs");
+    let file_path = ".pipelight/logs/pipelines.log";
+    let contents = fs::read_to_string(file_path).expect("Should have been able to read the file");
+    println!("{}", contents);
+}
+pub fn pretty_logs() -> Result<(), Box<dyn Error>> {
+    let file_path = ".pipelight/logs/pipelines.log";
+    // File hosts must exist in current path before this produces output
+    if let Ok(lines) = read_lines(file_path) {
+        // Consumes the iterator, returns an (Optional) String
+        for line in lines {
+            if let Ok(json) = line {
+                let log = serde_json::from_str::<PipelineLog>(&json)?;
+                println!("{:?}", log);
+            }
+        }
+    }
+    Ok(())
+}
+fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
+where
+    P: AsRef<Path>,
+{
+    let file = File::open(filename)?;
+    Ok(io::BufReader::new(file).lines())
 }

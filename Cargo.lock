@@ -340,6 +340,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "io"
+version = "0.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "85c839d30624bc6b3dced6a4652823d1967fb7939d4848ad002d509b1fc916b2"
+
+[[package]]
 name = "io-lifetimes"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -729,8 +735,10 @@ dependencies = [
 name = "shared"
 version = "0.1.2"
 dependencies = [
+ "chrono",
  "clap",
  "clap-verbosity-flag",
+ "io",
  "json",
  "log",
  "log4rs",

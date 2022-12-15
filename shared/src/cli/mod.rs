@@ -22,11 +22,14 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             actions::stop();
         }
         types::Commands::Logs(logs) => {
-            trace!("Display logs");
-            actions::logs();
+            debug!("Display logs");
+            match logs.pretty {
+                true => actions::pretty_logs()?,
+                false => actions::logs(),
+            }
         }
         types::Commands::Ls(list) => {
-            trace!("Listing piplines");
+            debug!("Listing piplines");
             actions::list();
         }
     }

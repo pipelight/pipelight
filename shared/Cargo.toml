@@ -4,8 +4,10 @@ version = "0.1.2"
 edition = "2021"
 
 [dependencies]
+chrono = "0.4.23"
 clap = { version = "4.0.27", features = ["derive","wrap_help"]}
 clap-verbosity-flag = "2.0.0"
+io = "0.0.2"
 json = "0.12.4"
 log = "0.4.17"
 log4rs = { version = "1.2.0", features = ["json_encoder","pattern_encoder","size_trigger","console_appender", "file_appender"]}
