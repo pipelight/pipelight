@@ -33,12 +33,14 @@ pub struct Path {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum State {
+    Started,
     Succeeded,
     Failed,
     Running,
     Aborted,
     Never,
 }
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PipelineLog<'a> {
     pub state: State,
@@ -53,7 +55,12 @@ impl<'a> PipelineLog<'a> {
             state: State::Running,
         }
     }
+    pub fn state(&mut self, state: &'a State) -> &Self {
+        self.state = state;
+        self
+    }
 }
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StepLog<'a> {
     pub name: &'a str,

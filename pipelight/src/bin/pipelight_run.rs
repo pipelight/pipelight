@@ -22,7 +22,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             let res = shell(command.clone())?;
             let log = PipelineLog::new(&pipeline.name, &step.name, &command);
             let json = serde_json::to_string(&log).unwrap();
-            info!("{}", json);
+            info!(target:"pipeline", "{}", json);
         }
     }
     Ok(())

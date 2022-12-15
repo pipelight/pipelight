@@ -1,15 +1,7 @@
-[package]
-name = "pipelight"
-version = "0.1.2"
-edition = "2021"
-default-run = "pipelight"
-authors = ["areskul"]
-description = "Pipeline written in Javascript! Deploy faster!!"
-homepage = "pipelight.areskul.com"
-repository="git@gitea.com:areska/pipelight.git"
-license="gpl-2.0"
+[workspace]
 
-[dependencies]
-shared = {path = "../shared" }
-log = "0.4.17"
-serde_json = "1.0.89"
+members=[
+  # "performance",
+  "shared",
+  "pipelight",
+]
