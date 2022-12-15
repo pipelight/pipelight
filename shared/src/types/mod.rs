@@ -31,8 +31,8 @@ pub struct Path {
     pub file: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub enum State {
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum PipelineState {
     Started,
     Succeeded,
     Failed,
@@ -41,23 +41,33 @@ pub enum State {
     Never,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PipelineLog<'a> {
-    pub state: State,
+    pub state: PipelineState,
     pub name: &'a str,
-    pub step: StepLog<'a>,
+    pub step: Option<StepLog<'a>>,
 }
 impl<'a> PipelineLog<'a> {
-    pub fn new(name: &'a str, step: &'a str, command: &'a str) -> Self {
+    pub fn new(name: &'a str) -> Self {
         PipelineLog {
             name,
-            step: StepLog::new(step, command),
-            state: State::Running,
+            step: Default::default(),
+            state: PipelineState::Started,
         }
     }
-    pub fn state(&mut self, state: &'a State) -> &Self {
+    pub fn state(&mut self, state: PipelineState) -> &Self {
         self.state = state;
-        self
+        return self;
+    }
+    pub fn step(&mut self, step: &'a str) -> &Self {
+        self.step = Some(StepLog::new(step).to_owned());
+        return self;
+    }
+    pub fn command(&mut self, cmd: &'a str, stdout: &'a str) -> &Self {
+        self.step.as_mut().unwrap().command = CommandLog::new().to_owned();
+        self.step.as_mut().unwrap().command.stdin = cmd;
+        self.step.as_mut().unwrap().command.stdout = stdout;
+        return self;
     }
 }
 
@@ -67,11 +77,19 @@ pub struct StepLog<'a> {
     pub command: CommandLog<'a>,
 }
 impl<'a> StepLog<'a> {
-    fn new(name: &'a str, command: &'a str) -> Self {
+    pub fn new(name: &'a str) -> Self {
         StepLog {
             name,
-            command: CommandLog::new(command),
+            command: CommandLog::new(),
         }
+    }
+    pub fn name(&mut self, name: &'a str) -> &Self {
+        self.name = name;
+        return self;
+    }
+    pub fn command(&mut self, command: &'a str) -> &mut Self {
+        self.command = CommandLog::new();
+        return self;
     }
 }
 
@@ -82,11 +100,15 @@ pub struct CommandLog<'a> {
     pub stderr: &'a str,
 }
 impl<'a> CommandLog<'a> {
-    fn new(stdin: &'a str) -> Self {
+    fn new() -> Self {
         CommandLog {
-            stdin,
+            stdin: "",
             stdout: "",
             stderr: "",
         }
+    }
+    pub fn stdin(&mut self, cmd: &'a str) -> &mut Self {
+        self.stdin = cmd;
+        return self;
     }
 }

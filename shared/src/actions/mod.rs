@@ -9,12 +9,9 @@ use std::process::{Command, Stdio};
 
 pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
     let bin = "pipelight_run";
-    let config = get_config()?;
-
     let pipeline = get_pipeline(pipeline_name.clone());
-    trace!("Running pipeline \"{}\" in the background", pipeline.name);
-    let output = exec(format!("cargo run --bin {} {}", bin, pipeline_name))?;
-    println!("{}", output);
+    trace!("Create subprocess");
+    exec(format!("cargo run --bin {} {}", bin, pipeline_name))?;
     Ok(())
 }
 

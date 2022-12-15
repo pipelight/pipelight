@@ -6,7 +6,7 @@ use log::LevelFilter::{Debug, Trace};
 use shared::config::get_pipeline;
 use shared::exec::shell;
 use shared::logger::{debug, error, info, set_logger, trace, warn};
-use shared::types::PipelineLog;
+use shared::types::{PipelineLog, PipelineState, StepLog};
 use std::env;
 use std::error::Error;
 
@@ -17,13 +17,31 @@ fn main() -> Result<(), Box<dyn Error>> {
     let pipeline_name: String = args[1].to_owned();
     let pipeline = get_pipeline(pipeline_name).clone();
 
+    //Logging to file
+    let log = PipelineLog::new(&pipeline.name).to_owned();
+    let json = serde_json::to_string(&log).unwrap();
+    info!(target:"pipeline", "{}",json );
+
     for step in pipeline.steps {
         for command in step.commands {
             let res = shell(command.clone())?;
-            let log = PipelineLog::new(&pipeline.name, &step.name, &command);
+
+            //Logging to file
+            let mut log = PipelineLog::new(&pipeline.name).to_owned();
+            log.state(PipelineState::Running);
+            log.step(&step.name);
+            log.command(&command, &res);
+
             let json = serde_json::to_string(&log).unwrap();
-            info!(target:"pipeline", "{}", json);
+            info!(target:"pipeline", "{}",json );
         }
     }
+
+    //Logging to file
+    let mut log = PipelineLog::new(&pipeline.name).to_owned();
+    log.state(PipelineState::Succeeded);
+    let json = serde_json::to_string(&log).unwrap();
+    info!(target:"pipeline", "{}",json );
+
     Ok(())
 }
