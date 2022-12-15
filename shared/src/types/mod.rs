@@ -16,7 +16,8 @@ pub struct Pipeline {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Step {
     pub name: String,
-    pub commands: Option<Vec<String>>,
+    pub commands: Vec<String>,
+    pub on_failure: Option<Vec<String>>,
 }
 pub fn type_of<T>(_: &T) -> String {
     let res = format!("{}", std::any::type_name::<T>());

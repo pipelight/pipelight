@@ -1,4 +1,5 @@
 use crate::types::Path;
+pub use log::Level::{Debug, Trace};
 pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 use log4rs;
 use log4rs::append::console::ConsoleAppender;
@@ -21,7 +22,7 @@ pub fn set_logger_config(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
         .build(".pipelight/logs/internal.log")
         .unwrap();
     let pipeline_appender = FileAppender::builder()
-        .encoder(Box::new(PatternEncoder::new(pattern)))
+        // .encoder(Box::new(PatternEncoder::new(pattern)))
         .build(".pipelight/logs/pipelines.log")
         .unwrap();
 
@@ -42,7 +43,12 @@ pub fn set_logger_config(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
                 .additive(true)
                 .build("pipeline", LevelFilter::Trace),
         )
-        .build(Root::builder().appender("stdout").build(level))
+        .build(
+            Root::builder()
+                .appender("stdout")
+                .appender("internal")
+                .build(level),
+        )
         .unwrap();
     Ok(config)
 }

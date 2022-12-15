@@ -11,3 +11,4 @@ license="gpl-2.0"
 
 [dependencies]
 shared = {path = "../shared" }
+log = "0.4.17"

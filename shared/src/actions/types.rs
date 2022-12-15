@@ -3,10 +3,11 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Status {
-    Stopped,
-    Running,
-    Failed,
     Succeeded,
+    Failed,
+    Running,
+    Aborted,
+    Never,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

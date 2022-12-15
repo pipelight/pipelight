@@ -6,6 +6,7 @@ const config = {
       steps: [
         {
           name: "mystep",
+          commands: ["ls"],
         },
       ],
     },
@@ -15,6 +16,7 @@ const config = {
       steps: [
         {
           name: "mystep",
+          commands: ["ls"],
         },
       ],
     },
