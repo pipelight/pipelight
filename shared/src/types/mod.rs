@@ -2,7 +2,9 @@
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use serde_json::{Result, Value};
+use std::clone::Clone;
 use std::fmt;
+use std::marker::Copy;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Config {
@@ -29,33 +31,55 @@ pub struct Path {
     pub file: String,
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use log::{debug, trace};
-    use serde_json::json;
-    use serde_json::{Result, Value};
-    #[test]
-    fn internal() -> Result<()> {
-        //test single step assertion json -> struct
-        let s = r#"{ "name": "test" }"#;
-        let step: Step = serde_json::from_str(s).unwrap();
-        println!("{:#?}", step);
+#[derive(Debug, Serialize, Deserialize)]
+pub enum State {
+    Succeeded,
+    Failed,
+    Running,
+    Aborted,
+    Never,
+}
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PipelineLog<'a> {
+    pub state: State,
+    pub name: &'a str,
+    pub step: StepLog<'a>,
+}
+impl<'a> PipelineLog<'a> {
+    pub fn new(name: &'a str, step: &'a str, command: &'a str) -> Self {
+        PipelineLog {
+            name,
+            step: StepLog::new(step, command),
+            state: State::Running,
+        }
+    }
+}
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct StepLog<'a> {
+    pub name: &'a str,
+    pub command: CommandLog<'a>,
+}
+impl<'a> StepLog<'a> {
+    fn new(name: &'a str, command: &'a str) -> Self {
+        StepLog {
+            name,
+            command: CommandLog::new(command),
+        }
+    }
+}
 
-        //test config assertion
-        let c = r#"{
-            "pipelines" : [
-            {
-                "steps" : [
-                    { "name": "test" },
-                    { "name": "test2" }
-                ]
-            }
-            ]        
-        }"#;
-        let config: Config = serde_json::from_str(c).unwrap();
-        println!("{:#?}", config);
-
-        Ok(())
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CommandLog<'a> {
+    pub stdin: &'a str,
+    pub stdout: &'a str,
+    pub stderr: &'a str,
+}
+impl<'a> CommandLog<'a> {
+    fn new(stdin: &'a str) -> Self {
+        CommandLog {
+            stdin,
+            stdout: "",
+            stderr: "",
+        }
     }
 }

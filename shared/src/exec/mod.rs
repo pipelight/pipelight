@@ -1,5 +1,5 @@
 // Exec subprocess
-use crate::types::{Config, Path};
+use crate::types::{Config, Path, PipelineLog};
 use log::{debug, error, info, trace, warn};
 use std::env;
 use std::error::Error;
@@ -55,12 +55,9 @@ pub fn exec(command: String) -> Result<String, Box<dyn Error>> {
 }
 pub fn shell(command: String) -> Result<String, String> {
     let user_shell = get_shell();
-    // trace!("command: {}", command);
     let output = exec_attach(user_shell, command.clone());
-
-    let res = match output {
+    match output {
         Ok(output) => {
-            info!(target:"pipeline", "command: {}", command);
             return Ok(output);
         }
         Err(e) => {

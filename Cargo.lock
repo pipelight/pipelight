@@ -557,6 +557,7 @@ name = "pipelight"
 version = "0.1.2"
 dependencies = [
  "log",
+ "serde_json",
  "shared",
 ]
 

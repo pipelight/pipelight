@@ -1,5 +1,4 @@
 // Actions: Functions called by cli
-mod types;
 use crate::config::{get_config, get_pipeline};
 use crate::exec::exec;
 use crate::types::{Config, Pipeline};
