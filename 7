@@ -17,17 +17,16 @@ pub struct Cli {
 #[derive(Debug, Subcommand)]
 pub enum Commands {
     /// Run a pipeline
-    #[command(arg_required_else_help = true)]
     Run(Pipeline),
     /// Stop the pipeline execution (kill subprocess)
-    #[command(arg_required_else_help = true)]
     Stop(Pipeline),
     /// Display logs
     Logs(Logs),
     /// List pipelines
     Ls(Empty),
-    /// Enable hook functionnalities and
-    /// Add some template config files if no config file detected
+    /// Create template config file
+    Init(Empty),
+    /// List pipelines
     Init(Empty),
 }
 

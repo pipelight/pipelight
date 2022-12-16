@@ -25,14 +25,17 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             debug!("Display logs");
             if logs.pretty {
                 actions::pretty_logs()?
-            }
-            if logs.json {
+            } else if logs.json {
                 actions::json_logs()
             } else {
                 actions::raw_logs()
             }
         }
         types::Commands::Ls(list) => {
+            debug!("Listing piplines");
+            actions::list();
+        }
+        types::Commands::Init(init) => {
             debug!("Listing piplines");
             actions::list();
         }
