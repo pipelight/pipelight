@@ -1,6 +1,6 @@
 // Cli core
+pub mod actions;
 pub mod types;
-use crate::actions;
 use crate::logger;
 use crate::types::Config;
 use clap::{Args, Parser, Subcommand, ValueEnum};

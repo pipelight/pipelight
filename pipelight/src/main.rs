@@ -2,7 +2,6 @@
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
 // use performance::*;
-use shared::actions;
 use shared::cli;
 use shared::exec;
 #[allow(dead_code)]

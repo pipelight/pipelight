@@ -9,7 +9,7 @@ use serde_json::{Result, Value};
 use std::clone::Clone;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub enum PipelineState {
+pub enum PipelineStatus {
     Started,
     Succeeded,
     Failed,
@@ -20,7 +20,7 @@ pub enum PipelineState {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PipelineLog<'a> {
-    pub state: PipelineState,
+    pub status: PipelineStatus,
     pub date: String,
     pub uuid: &'a str,
     pub name: &'a str,
@@ -33,11 +33,11 @@ impl<'a> PipelineLog<'a> {
             uuid: "",
             date: Utc::now().to_string(),
             step: Default::default(),
-            state: PipelineState::Started,
+            status: PipelineStatus::Started,
         }
     }
-    pub fn state(&mut self, state: PipelineState) -> &Self {
-        self.state = state;
+    pub fn status(&mut self, status: PipelineStatus) -> &Self {
+        self.status = status;
         return self;
     }
     pub fn uuid(&mut self, uuid: &'a str) -> &Self {

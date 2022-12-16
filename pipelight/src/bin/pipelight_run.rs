@@ -6,7 +6,7 @@ use log::LevelFilter::{Debug, Trace};
 use shared::config::get_pipeline;
 use shared::exec::shell;
 use shared::logger::{debug, error, info, set_logger, trace, warn};
-use shared::types::logs::{PipelineLog, PipelineState, StepLog};
+use shared::types::logs::{PipelineLog, PipelineStatus, StepLog};
 use shared::types::Pipeline;
 use std::env;
 use std::error::Error;
@@ -26,25 +26,25 @@ fn handler() -> Result<(), Box<dyn Error>> {
     //Logging to file
     let log = PipelineLog::new(&pipeline.name).to_owned();
     let json = serde_json::to_string(&log).unwrap();
-    info!(target:"pipeline", "{}",json );
+    info!(target:"pipeline_json", "{}",json );
 
     let run_result = run(pipeline.clone());
     let res = match run_result {
         Ok(res) => {
             //Logging to file
             let mut log = PipelineLog::new(&pipeline.name).to_owned();
-            log.state(PipelineState::Succeeded);
+            log.status(PipelineStatus::Succeeded);
             let json = serde_json::to_string(&log).unwrap();
-            info!(target:"pipeline", "{}",json );
+            info!(target:"pipeline_json", "{}",json );
 
             return Ok(res);
         }
         Err(e) => {
             //Logging to file
             let mut log = PipelineLog::new(&pipeline.name).to_owned();
-            log.state(PipelineState::Failed);
+            log.status(PipelineStatus::Failed);
             let json = serde_json::to_string(&log).unwrap();
-            info!(target:"pipeline", "{}",json );
+            info!(target:"pipeline_json", "{}",json );
 
             return Err(Box::from(e));
         }
@@ -55,14 +55,18 @@ fn run(pipeline: Pipeline) -> Result<(), Box<dyn Error>> {
         for command in step.commands {
             let res = shell(command.clone())?;
 
-            //Logging to file
+            // Raw logging to file
+            info!(target:"pipeline_raw", "{}",&command);
+            info!(target:"pipeline_raw", "{}",&res);
+
+            // Format to json and logging to file
             let mut log = PipelineLog::new(&pipeline.name).to_owned();
-            log.state(PipelineState::Running);
+            log.status(PipelineStatus::Running);
             log.step(&step.name);
             log.command(&command, &res);
 
             let json = serde_json::to_string(&log).unwrap();
-            info!(target:"pipeline", "{}",json );
+            info!(target:"pipeline_json", "{}",json );
         }
     }
     Ok(())

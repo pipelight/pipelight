@@ -2,7 +2,6 @@
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
 #[allow(dead_code)]
-pub mod actions;
 pub mod cli;
 pub mod config;
 pub mod exec;
