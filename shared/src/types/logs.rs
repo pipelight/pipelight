@@ -1,3 +1,6 @@
+// Struct for pipeline execution loggin.
+// PipelineLog is parsed as json into a log file
+
 #![allow(dead_code)]
 use chrono::{DateTime, Local, NaiveDateTime, Offset, TimeZone, Utc};
 use serde::{Deserialize, Serialize};
@@ -19,6 +22,7 @@ pub enum PipelineState {
 pub struct PipelineLog<'a> {
     pub state: PipelineState,
     pub date: String,
+    pub uuid: &'a str,
     pub name: &'a str,
     pub step: Option<StepLog<'a>>,
 }
@@ -26,6 +30,7 @@ impl<'a> PipelineLog<'a> {
     pub fn new(name: &'a str) -> Self {
         PipelineLog {
             name,
+            uuid: "",
             date: Utc::now().to_string(),
             step: Default::default(),
             state: PipelineState::Started,
@@ -33,6 +38,10 @@ impl<'a> PipelineLog<'a> {
     }
     pub fn state(&mut self, state: PipelineState) -> &Self {
         self.state = state;
+        return self;
+    }
+    pub fn uuid(&mut self, uuid: &'a str) -> &Self {
+        self.uuid = uuid;
         return self;
     }
     pub fn step(&mut self, step: &'a str) -> &Self {

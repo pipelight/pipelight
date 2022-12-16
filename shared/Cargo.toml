@@ -7,6 +7,7 @@ edition = "2021"
 chrono = "0.4.23"
 clap = { version = "4.0.27", features = ["derive","wrap_help"]}
 clap-verbosity-flag = "2.0.0"
+colored = "2.0.0"
 io = "0.0.2"
 json = "0.12.4"
 log = "0.4.17"

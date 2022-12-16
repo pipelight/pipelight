@@ -21,15 +21,20 @@ pub fn set_logger_config(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
         .encoder(Box::new(PatternEncoder::new(pattern)))
         .build(".pipelight/logs/internal.log")
         .unwrap();
-    let pipeline_appender = FileAppender::builder()
+    let pipeline_raw_appender = FileAppender::builder()
+        .encoder(Box::new(PatternEncoder::new(pattern)))
+        .build(".pipelight/logs/pipelines.raw.log")
+        .unwrap();
+    let pipeline_json_appender = FileAppender::builder()
         .encoder(Box::new(PatternEncoder::new(body)))
-        .build(".pipelight/logs/pipelines.log")
+        .build(".pipelight/logs/pipelines.json.log")
         .unwrap();
 
     let config = Config::builder()
         .appender(Appender::builder().build("stdout", Box::new(stdout)))
         .appender(Appender::builder().build("internal", Box::new(internal_appender)))
-        .appender(Appender::builder().build("pipeline", Box::new(pipeline_appender)))
+        .appender(Appender::builder().build("pipeline_raw", Box::new(pipeline_raw_appender)))
+        .appender(Appender::builder().build("pipeline_json", Box::new(pipeline_json_appender)))
         .logger(Logger::builder().build("stdout", level))
         .logger(
             Logger::builder()
@@ -39,7 +44,8 @@ pub fn set_logger_config(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
         )
         .logger(
             Logger::builder()
-                .appender("pipeline")
+                .appender("pipeline_raw_appender")
+                .appender("pipeline_json_appender")
                 .build("pipeline", LevelFilter::Trace),
         )
         .build(
