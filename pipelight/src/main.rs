@@ -9,8 +9,12 @@ use shared::exec;
 use shared::logger;
 use shared::types::Config;
 use std::error::Error;
+use std::process::exit;
 
-fn main() -> Result<(), Box<dyn Error>> {
-    cli::get_args();
+fn main() {
+    handler().unwrap_or_else(|a| exit(1))
+}
+fn handler() -> Result<(), Box<dyn Error>> {
+    cli::get_args()?;
     Ok(())
 }

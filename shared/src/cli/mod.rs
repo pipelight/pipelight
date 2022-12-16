@@ -23,9 +23,13 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
         }
         types::Commands::Logs(logs) => {
             debug!("Display logs");
-            match logs.pretty {
-                true => actions::pretty_logs()?,
-                false => actions::logs(),
+            if logs.pretty {
+                actions::pretty_logs()?
+            }
+            if logs.json {
+                actions::json_logs()
+            } else {
+                actions::raw_logs()
             }
         }
         types::Commands::Ls(list) => {

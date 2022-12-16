@@ -14,7 +14,7 @@ use std::process::{Command, Stdio};
 
 pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
     let bin = "pipelight_run";
-    let pipeline = get_pipeline(pipeline_name.clone());
+    let pipeline = get_pipeline(pipeline_name.clone())?;
     trace!("Create subprocess");
     exec(format!("cargo run --bin {} {}", bin, pipeline_name))?;
     Ok(())

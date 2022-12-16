@@ -12,7 +12,8 @@ use std::error::Error;
 
 /// Return logger config with chosen verbosity level
 pub fn set_logger_config(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
-    let pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — \n{m}{n}\n";
+    let shell_pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — \n{m}{n}\n";
+    let pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}";
     let body = "{m}{n}";
     let stdout = ConsoleAppender::builder()
         .encoder(Box::new(PatternEncoder::new(pattern)))
@@ -22,7 +23,7 @@ pub fn set_logger_config(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
         .build(".pipelight/logs/internal.log")
         .unwrap();
     let pipeline_raw_appender = FileAppender::builder()
-        .encoder(Box::new(PatternEncoder::new(pattern)))
+        .encoder(Box::new(PatternEncoder::new(shell_pattern)))
         .build(".pipelight/logs/pipelines.raw.log")
         .unwrap();
     let pipeline_json_appender = FileAppender::builder()
@@ -44,8 +45,8 @@ pub fn set_logger_config(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
         )
         .logger(
             Logger::builder()
-                .appender("pipeline_raw_appender")
-                .appender("pipeline_json_appender")
+                .appender("pipeline_raw")
+                .appender("pipeline_json")
                 .build("pipeline", LevelFilter::Trace),
         )
         .build(

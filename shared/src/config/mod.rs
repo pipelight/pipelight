@@ -22,7 +22,7 @@ pub fn load_config() -> Result<Config, Box<dyn Error>> {
             return Ok(res);
         }
         Err(e) => {
-            error!("typo in config file {}", e);
+            error!("Typo in config file {}", e);
             debug!("{}", data);
             return Err(Box::from(e));
         }
@@ -58,7 +58,7 @@ pub fn get_config() -> Result<Config, Box<dyn Error>> {
     config = check_config(config)?;
     Ok(config)
 }
-pub fn get_pipeline(name: String) -> Pipeline {
+pub fn get_pipeline(name: String) -> Result<Pipeline, Box<dyn Error>> {
     let config = get_config().unwrap();
     let pipeline_result = config
         .pipelines
@@ -66,8 +66,14 @@ pub fn get_pipeline(name: String) -> Pipeline {
         .filter(|p| p.name == name)
         .cloned()
         .next();
-    let pipeline = pipeline_result.expect("Failed to retriev pipeline");
-    return pipeline;
+    let pipeline = match pipeline_result {
+        Some(res) => return Ok(res),
+        None => {
+            let message = format!("Couldn't find pipeline {:?}", name);
+            error!("{}", message);
+            return Err(Box::from(message));
+        }
+    };
 }
 
 #[cfg(test)]
