@@ -9,7 +9,7 @@ pub fn load_config() -> Result<Config, Box<dyn Error>> {
     let executable = "ts-node --transpile-only";
     let path = Path {
         folder: get_project_root()?.to_str().unwrap().to_owned(),
-        file: "typescript/scripts/main.ts".into(),
+        file: "typescript/scripts/main.ts".to_owned(),
     };
     let command = format!("{} {}/{}", executable, path.folder, path.file);
     let data = exec(command)?;

@@ -12,6 +12,7 @@ where
     let file = File::open(filename)?;
     Ok(io::BufReader::new(file).lines())
 }
+
 pub fn json_logs() {
     let file_path = ".pipelight/logs/pipelines.json.log";
     let contents = read_to_string(file_path).expect("Should have been able to read the file");

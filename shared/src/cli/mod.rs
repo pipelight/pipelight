@@ -37,7 +37,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
         }
         types::Commands::Init(init) => {
             info!("Listing piplines");
-            actions::list();
+            actions::init();
         }
     }
     Ok(())

@@ -1,3 +1,6 @@
+// This is a template config file
+// Feel free to test the cli NOOOOW,
+// as non of this commands will arm your computer!
 const config = {
   pipelines: [
     {

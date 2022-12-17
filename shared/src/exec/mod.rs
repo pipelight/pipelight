@@ -1,6 +1,5 @@
 // Exec subprocess
 use crate::types::logs::PipelineLog;
-use crate::types::{Config, Path};
 use log::{debug, error, info, trace, warn};
 use std::env;
 use std::error::Error;
