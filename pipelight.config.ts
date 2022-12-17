@@ -5,7 +5,7 @@ const config = {
       steps: [
         {
           name: "mystep",
-          commands: ["ls", "echo $0"],
+          commands: ["sleep 6", "ls"],
         },
       ],
     },

@@ -8,7 +8,7 @@ use std::io::Write;
 use std::process::{Command, Stdio};
 
 /// Execute in same subprocess
-pub fn subprocess(shell: String, command: String) -> Result<String, String> {
+pub fn subprocess_attached(shell: String, command: String) -> Result<String, String> {
     let child = Command::new(shell)
         // Intercative session, loads user variables like alias and profile
         // .arg("-i")
@@ -31,6 +31,14 @@ pub fn subprocess(shell: String, command: String) -> Result<String, String> {
         Err(stderr)
     }
 }
+pub fn subprocess_detached(shell: String, command: String) -> Result<(), Box<dyn Error>> {
+    let child = Command::new(shell)
+        .arg("-c")
+        .arg(command)
+        .spawn()
+        .expect("Failed to spawn subprocess");
+    Ok(())
+}
 
 /// Return user session shell
 pub fn get_shell() -> Result<String, String> {
@@ -48,7 +56,7 @@ pub fn get_shell() -> Result<String, String> {
 }
 pub fn exec(command: String) -> Result<String, Box<dyn Error>> {
     let user_shell = get_shell()?;
-    let output = subprocess(user_shell, command.clone());
+    let output = subprocess_attached(user_shell, command.clone());
     let res = match output {
         Ok(output) => {
             return Ok(output);
@@ -59,9 +67,14 @@ pub fn exec(command: String) -> Result<String, Box<dyn Error>> {
         }
     };
 }
+pub fn exec_detached(command: String) -> Result<(), Box<dyn Error>> {
+    let user_shell = get_shell()?;
+    subprocess_detached(user_shell, command.clone())?;
+    Ok(())
+}
 pub fn shell(command: String) -> Result<String, String> {
     let user_shell = get_shell()?;
-    let output = subprocess(user_shell, command.clone());
+    let output = subprocess_attached(user_shell, command.clone());
     match output {
         Ok(output) => {
             return Ok(output);

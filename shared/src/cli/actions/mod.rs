@@ -1,6 +1,6 @@
 // Actions: Functions called by cli
 use crate::config::{get_config, get_pipeline};
-use crate::exec::exec;
+use crate::exec::exec_detached;
 pub use crate::logger::read::{json_logs, pretty_logs, raw_logs};
 use crate::types::{Config, Pipeline};
 use colored::Colorize;
@@ -15,8 +15,8 @@ use std::process::{Command, Stdio};
 pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
     let bin = "pipelight_run";
     let pipeline = get_pipeline(pipeline_name.clone())?;
-    trace!("Create subprocess");
-    exec(format!("cargo run --bin {} {}", bin, pipeline_name))?;
+    trace!("Create detached subprocess");
+    exec_detached(format!("cargo run --bin {} {}", bin, pipeline_name))?;
     Ok(())
 }
 
