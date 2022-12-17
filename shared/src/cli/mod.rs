@@ -4,7 +4,7 @@ pub mod types;
 use crate::logger;
 use crate::types::Config;
 use clap::{Args, Parser, Subcommand, ValueEnum};
-use log::{debug, error, info, trace, warn};
+use log::info;
 use std::error::Error;
 
 pub fn get_args() -> Result<(), Box<dyn Error>> {
@@ -14,15 +14,15 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
 
     match args.command {
         types::Commands::Run(pipeline) => {
-            debug!("Triggering pipline {:#?}", pipeline.name);
+            info!("Triggering pipline {:#?}", pipeline.name);
             actions::run(pipeline.name);
         }
         types::Commands::Stop(pipeline) => {
-            debug!("Stopping pipline {:#?}", pipeline.name);
+            info!("Stopping pipline {:#?}", pipeline.name);
             actions::stop();
         }
         types::Commands::Logs(logs) => {
-            debug!("Display logs");
+            info!("Display logs");
             if logs.pretty {
                 actions::pretty_logs()?
             } else if logs.json {
@@ -32,11 +32,11 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             }
         }
         types::Commands::Ls(list) => {
-            debug!("Listing piplines");
+            info!("Listing piplines");
             actions::list();
         }
         types::Commands::Init(init) => {
-            debug!("Listing piplines");
+            info!("Listing piplines");
             actions::list();
         }
     }

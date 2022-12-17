@@ -1,4 +1,5 @@
-const config = {
+import { Config } from "./typescript/types";
+const config: Config = {
   pipelines: [
     {
       name: "test",
@@ -21,7 +22,7 @@ const config = {
       ],
     },
     {
-      name: "test_two",
+      name: "test2",
       fr: "caca",
       steps: [
         {

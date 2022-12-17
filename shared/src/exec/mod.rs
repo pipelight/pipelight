@@ -8,9 +8,8 @@ use std::io::Write;
 use std::process::{Command, Stdio};
 
 /// Execute in same subprocess
-pub fn exec_attach(shell: String, command: String) -> Result<String, String> {
+pub fn subprocess(shell: String, command: String) -> Result<String, String> {
     let child = Command::new(shell)
-        // .arg("-n")
         // Intercative session, loads user variables like alias and profile
         // .arg("-i")
         .arg("-c")
@@ -26,24 +25,30 @@ pub fn exec_attach(shell: String, command: String) -> Result<String, String> {
 
     if output.status.success() {
         let stdout = String::from_utf8(output.stdout).unwrap().to_owned();
-        trace!("{}", stdout);
         Ok(stdout)
     } else {
         let stderr = String::from_utf8(output.stderr).unwrap().to_owned();
-        error!("{}", stderr);
         Err(stderr)
     }
 }
 
 /// Return user session shell
-pub fn get_shell() -> String {
-    let shell = env::var("SHELL").expect("Could'nt retrieve user session shell");
-    trace!("shell set to {}", shell);
-    return shell;
+pub fn get_shell() -> Result<String, String> {
+    let default_shell = "sh".to_owned();
+
+    let shell_result = env::var("SHELL");
+    let shell = match shell_result {
+        Ok(res) => {
+            return Ok(res);
+        }
+        Err(e) => {
+            return Err(default_shell);
+        }
+    };
 }
 pub fn exec(command: String) -> Result<String, Box<dyn Error>> {
-    let user_shell = get_shell();
-    let output = exec_attach(user_shell, command);
+    let user_shell = get_shell()?;
+    let output = subprocess(user_shell, command);
     let res = match output {
         Ok(output) => {
             return Ok(output);
@@ -55,14 +60,13 @@ pub fn exec(command: String) -> Result<String, Box<dyn Error>> {
     };
 }
 pub fn shell(command: String) -> Result<String, String> {
-    let user_shell = get_shell();
-    let output = exec_attach(user_shell, command.clone());
+    let user_shell = get_shell()?;
+    let output = subprocess(user_shell, command.clone());
     match output {
         Ok(output) => {
             return Ok(output);
         }
         Err(e) => {
-            error!("{}", e);
             return Err(e);
         }
     };

@@ -6,7 +6,7 @@ use std::error::Error;
 
 /// Return the config from .ts file inside the working dir.
 pub fn load_config() -> Result<Config, Box<dyn Error>> {
-    let executable = "ts-node";
+    let executable = "ts-node --transpile-only";
     let path = Path {
         folder: get_project_root()?.to_str().unwrap().to_owned(),
         file: "typescript/main.ts".into(),
