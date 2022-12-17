@@ -9,7 +9,7 @@ pub fn load_config() -> Result<Config, Box<dyn Error>> {
     let executable = "ts-node --transpile-only";
     let path = Path {
         folder: get_project_root()?.to_str().unwrap().to_owned(),
-        file: "typescript/main.ts".into(),
+        file: "typescript/scripts/main.ts".into(),
     };
     let command = format!("{} {}/{}", executable, path.folder, path.file);
     let data = exec(command)?;
@@ -22,8 +22,8 @@ pub fn load_config() -> Result<Config, Box<dyn Error>> {
             return Ok(res);
         }
         Err(e) => {
-            error!("Typo in config file {}", e);
-            debug!("{}", data);
+            error!("From config file: {}", e);
+            debug!("Json output:\n{}", data);
             return Err(Box::from(e));
         }
     };

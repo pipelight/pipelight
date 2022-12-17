@@ -7,7 +7,7 @@ import type {
   ExecOptions,
   ExecContext,
   Action
-} from "./types";
+} from "../types/main.ts";
 
 const cwd = process.cwd();
 const promess = import(`${cwd}/pipelight.config`);

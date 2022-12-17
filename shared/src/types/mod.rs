@@ -7,22 +7,42 @@ use serde_json::{Result, Value};
 use std::clone::Clone;
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Config {
     pub pipelines: Vec<Pipeline>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct Pipeline {
     pub name: String,
     pub steps: Vec<Step>,
+    pub trigger: Option<Vec<Trigger>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Trigger {
+    pub hook: VecOrString,
+    pub branch: VecOrString,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub enum VecOrString {
+    Vec,
+    String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
 pub struct Step {
     pub name: String,
     pub commands: Vec<String>,
+    pub non_blocking: Option<bool>,
     pub on_failure: Option<Vec<String>>,
 }
+
 pub const GIT_HOOKS: [&str; 17] = [
     "applypatch-msg",
     "pre-applypatch",

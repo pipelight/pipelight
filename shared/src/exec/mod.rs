@@ -48,13 +48,13 @@ pub fn get_shell() -> Result<String, String> {
 }
 pub fn exec(command: String) -> Result<String, Box<dyn Error>> {
     let user_shell = get_shell()?;
-    let output = subprocess(user_shell, command);
+    let output = subprocess(user_shell, command.clone());
     let res = match output {
         Ok(output) => {
             return Ok(output);
         }
         Err(e) => {
-            error!("{}", e);
+            error!("command: {}\n output: {}", command, e);
             return Err(Box::from(e));
         }
     };

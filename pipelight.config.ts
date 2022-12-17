@@ -2,7 +2,6 @@ const config = {
   pipelines: [
     {
       name: "test",
-      fr: "caca",
       steps: [
         {
           name: "mystep",
@@ -12,7 +11,6 @@ const config = {
     },
     {
       name: "test_duplicate",
-      fr: "caca",
       steps: [
         {
           name: "mystep",
@@ -22,7 +20,6 @@ const config = {
     },
     {
       name: "test2",
-      fr: "caca",
       steps: [
         {
           name: "mystep",

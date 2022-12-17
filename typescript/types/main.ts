@@ -1,3 +1,5 @@
+// Config, every types definition
+
 /**
  * @typedef {object} defaultImport
  * @property {Config} config
@@ -21,9 +23,8 @@ type Config = {
  */
 type Pipeline = {
   name: string;
-  commands?: string[];
   steps: Step[];
-  trigger?: Trigger;
+  trigger?: Trigger | Trigger[];
 };
 
 /**
@@ -33,18 +34,20 @@ type Pipeline = {
  * @property {string[]} commands
  */
 type Step = {
-  "non-blocking"?: boolean;
   name: string;
   commands: string[];
+  non_blocking?: boolean;
+  on_failure: string[];
 };
+
 /**
  * @typedef {object} Trigger
  * @property {Branch[]} branches - the branch that will trigger the pipe
  * @property {string[]} actions - the action that will trigger the pipe
  */
 type Trigger = {
-  branches?: string[];
-  actions?: Action[];
+  branch?: string | string[];
+  hook?: Action | Action[];
 };
 
 /**
@@ -68,7 +71,7 @@ const GitHooks = [
   "pre-push",
   "pre-receive",
   "update",
-  "post-receive"
+  "post-receive",
 ];
 /**
  * @typedef {string} Action - Define a trigger event
@@ -87,5 +90,5 @@ export {
   Step,
   ExecOptions,
   ExecContext,
-  Action
+  Action,
 };
