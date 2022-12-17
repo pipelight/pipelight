@@ -1,5 +1,4 @@
-import { Config } from "./typescript/types";
-const config: Config = {
+const config = {
   pipelines: [
     {
       name: "test",

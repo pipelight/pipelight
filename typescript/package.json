@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "CICD in typescript",
   "author": "Areskul <areskul@areskul.com>",
-  "license": "ISC",
+  "license": "GPLv2",
   "types": "./types.ts",
   "devDependencies": {
+    "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "^5.46.1",
     "@typescript-eslint/parser": "^5.46.1",
@@ -15,6 +16,7 @@
     "typescript": "^4.9.4"
   },
   "dependencies": {
+    "lodash": "^4.17.21",
     "process": "^0.11.10"
   },
   "homepage": "https://simp.areskul.com",
@@ -29,6 +31,5 @@
     "easy",
     "deployment",
     "typescript"
-  ],
-  "license": "GPLv2"
+  ]
 }

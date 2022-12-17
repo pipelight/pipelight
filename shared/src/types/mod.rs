@@ -23,6 +23,25 @@ pub struct Step {
     pub commands: Vec<String>,
     pub on_failure: Option<Vec<String>>,
 }
+pub const GIT_HOOKS: [&str; 17] = [
+    "applypatch-msg",
+    "pre-applypatch",
+    "post-applypatch",
+    "pre-commit",
+    "prepare-commit-msg",
+    "commit-msg",
+    "post-commit",
+    "pre-rebase",
+    "post-checkout",
+    "post-merge",
+    "pre-receive",
+    "update",
+    "post-receive",
+    "post-update",
+    "pre-auto-gc",
+    "post-rewrite",
+    "pre-push",
+];
 
 pub fn type_of<T>(_: &T) -> String {
     let res = format!("{}", std::any::type_name::<T>());

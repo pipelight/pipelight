@@ -1,4 +1,11 @@
 /**
+ * @typedef {object} defaultImport
+ * @property {Config} config
+ */
+type defaultImport = {
+  default: Config;
+};
+/**
  * @typedef {object} Config
  * @property {Pipeline[]} pipelines
  */
@@ -73,4 +80,12 @@ type Action =
   | "update"
   | "post-receive";
 
-export { Config, Pipeline, Step, ExecOptions, ExecContext, Action };
+export {
+  defaultImport,
+  Config,
+  Pipeline,
+  Step,
+  ExecOptions,
+  ExecContext,
+  Action
+};
