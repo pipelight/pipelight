@@ -9,12 +9,12 @@ pub fn is_hook() -> Result<bool, Box<dyn Error>> {
 
 ///Create directories
 pub fn ensure_folders() -> Result<(), Box<dyn Error>> {
-    let folder = ".git/hooks".to_owned();
+    let folder = ".git/hooks";
     let extension = ".d";
 
     let path = Path {
-        folder: folder.clone(),
-        file: "typescript/scripts/main.ts".to_owned(),
+        folder: folder,
+        file: "typescript/scripts/main.ts",
     };
     for hook in GIT_HOOKS {
         fs::create_dir(format!("{}/{}{}", path.folder, hook, extension))?;

@@ -7,38 +7,31 @@ use std::error::Error;
 
 pub fn run_pipeline(pipeline: Pipeline) -> Result<(), Box<dyn Error>> {
     // Logging to file "Pipeline Started"
-    let log = PipelineLog::new(&pipeline.name).to_owned();
+    let mut log = PipelineLog::new(&pipeline.name).to_owned();
     let json = serde_json::to_string(&log).unwrap();
     info!(target:"pipeline_json", "{}",json );
     // Loop through steps
-    for step in pipeline.clone().steps {
-        for command in step.clone().commands {
-            run_command(&pipeline, &step, &command);
+    for step in pipeline.steps {
+        for command in step.commands {
+            info!(target:"pipeline_raw", "{}", command);
+            let res = shell(&command)?;
+            debug!(target:"pipeline_raw", "{}",&res);
+
+            // Format to json and logging to file
+            log.status(PipelineStatus::Running);
+            log.step(&step.name);
+            log.command(&command, &res);
+
+            let json = serde_json::to_string(&log).unwrap();
+            info!(target:"pipeline_json", "{}",json );
         }
     }
     Ok(())
 }
 
-fn run_command(pipeline: &Pipeline, step: &Step, command: &str) -> Result<(), Box<dyn Error>> {
-    let res = shell(command.to_owned())?;
-    // Raw logging to file
-    info!(target:"pipeline_raw", "{}",&command);
-    debug!(target:"pipeline_raw", "{}",&res);
-
-    // Format to json and logging to file
-    let mut log = PipelineLog::new(&pipeline.name).to_owned();
-    log.status(PipelineStatus::Running);
-    log.step(&step.name);
-    log.command(&command, &res);
-
-    let json = serde_json::to_string(&log).unwrap();
-    info!(target:"pipeline_json", "{}",json );
-    Ok(())
-}
-
-pub fn shell(command: String) -> Result<String, String> {
-    let user_shell = subprocess::get_shell()?;
-    let output = subprocess::subprocess_attached(user_shell, command.clone());
+pub fn shell<'a>(command: &str) -> Result<String, String> {
+    let user_shell = subprocess::get_shell();
+    let output = subprocess::subprocess_attached(&user_shell, command);
     match output {
         Ok(output) => {
             return Ok(output);

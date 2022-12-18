@@ -19,6 +19,14 @@ pub struct Pipeline {
     pub steps: Vec<Step>,
     pub trigger: Option<Vec<Trigger>>,
 }
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(deny_unknown_fields)]
+pub struct Step {
+    pub name: String,
+    pub commands: Vec<String>,
+    pub non_blocking: Option<bool>,
+    pub on_failure: Option<Vec<String>>,
+}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
@@ -32,15 +40,6 @@ pub struct Trigger {
 pub enum VecOrString {
     Vec,
     String,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(deny_unknown_fields)]
-pub struct Step {
-    pub name: String,
-    pub commands: Vec<String>,
-    pub non_blocking: Option<bool>,
-    pub on_failure: Option<Vec<String>>,
 }
 
 pub const GIT_HOOKS: [&str; 17] = [
@@ -68,7 +67,7 @@ pub fn type_of<T>(_: &T) -> String {
     return res;
 }
 
-pub struct Path {
-    pub folder: String,
-    pub file: String,
+pub struct Path<'a> {
+    pub folder: &'a str,
+    pub file: &'a str,
 }

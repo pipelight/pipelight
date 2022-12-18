@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use serde_json::{Result, Value};
 use std::clone::Clone;
+use uuid::{uuid, Uuid};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum PipelineStatus {
@@ -19,18 +20,18 @@ pub enum PipelineStatus {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct PipelineLog<'a> {
+pub struct PipelineLog {
     pub status: PipelineStatus,
     pub date: String,
-    pub uuid: &'a str,
-    pub name: &'a str,
-    pub step: Option<StepLog<'a>>,
+    pub uuid: Uuid,
+    pub name: String,
+    pub step: Option<StepLog>,
 }
-impl<'a> PipelineLog<'a> {
-    pub fn new(name: &'a str) -> Self {
+impl PipelineLog {
+    pub fn new<'a>(name: &'a str) -> Self {
         PipelineLog {
-            name,
-            uuid: "",
+            name: name.to_owned(),
+            uuid: Uuid::new_v4(),
             date: Utc::now().to_string(),
             step: Default::default(),
             status: PipelineStatus::Started,
@@ -40,15 +41,15 @@ impl<'a> PipelineLog<'a> {
         self.status = status;
         return self;
     }
-    pub fn uuid(&mut self, uuid: &'a str) -> &Self {
+    pub fn uuid(&mut self, uuid: Uuid) -> &Self {
         self.uuid = uuid;
         return self;
     }
-    pub fn step(&mut self, step: &'a str) -> &Self {
+    pub fn step<'a>(&mut self, step: &'a str) -> &Self {
         self.step = Some(StepLog::new(step).to_owned());
         return self;
     }
-    pub fn command(&mut self, cmd: &'a str, stdout: &'a str) -> &Self {
+    pub fn command<'a>(&mut self, cmd: &'a str, stdout: &'a str) -> &Self {
         self.step.as_mut().unwrap().command = CommandLog::new().to_owned();
         self.step.as_mut().unwrap().command.stdin = cmd.to_owned();
         self.step.as_mut().unwrap().command.stdout = stdout.to_owned();
@@ -57,22 +58,22 @@ impl<'a> PipelineLog<'a> {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct StepLog<'a> {
-    pub name: &'a str,
+pub struct StepLog {
+    pub name: String,
     pub command: CommandLog,
 }
-impl<'a> StepLog<'a> {
-    pub fn new(name: &'a str) -> Self {
+impl StepLog {
+    pub fn new<'a>(name: &'a str) -> Self {
         StepLog {
-            name,
+            name: name.to_owned(),
             command: CommandLog::new(),
         }
     }
-    pub fn name(&mut self, name: &'a str) -> &Self {
-        self.name = name;
+    pub fn name<'a>(&mut self, name: &'a str) -> &Self {
+        self.name = name.to_owned();
         return self;
     }
-    pub fn command(&mut self, command: &'a str) -> &mut Self {
+    pub fn command<'a>(&mut self, command: &'a str) -> &mut Self {
         self.command = CommandLog::new();
         return self;
     }

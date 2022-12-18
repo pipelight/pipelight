@@ -3,12 +3,12 @@ use std::env;
 use std::error::Error;
 use std::process::{Command, Stdio};
 
-pub fn exec_attached(command: String) -> Result<String, Box<dyn Error>> {
-    let user_shell = get_shell()?;
-    let output = subprocess_attached(user_shell, command.clone());
+pub fn exec_attached<'a>(command: &str) -> Result<String, Box<dyn Error>> {
+    let user_shell = get_shell();
+    let output = subprocess_attached(&user_shell, command);
     let res = match output {
         Ok(output) => {
-            return Ok(output);
+            return Ok(output.to_owned());
         }
         Err(e) => {
             error!("command: {}\n output: {}", command, e);
@@ -16,14 +16,14 @@ pub fn exec_attached(command: String) -> Result<String, Box<dyn Error>> {
         }
     };
 }
-pub fn exec_detached(command: String) -> Result<(), Box<dyn Error>> {
-    let user_shell = get_shell()?;
-    let output = subprocess_detached(user_shell, command.clone());
+pub fn exec_detached(command: &str) -> Result<(), Box<dyn Error>> {
+    let user_shell = get_shell();
+    let output = subprocess_detached(&user_shell, command);
     Ok(())
 }
 
 /// Execute in same subprocess
-pub fn subprocess_attached(shell: String, command: String) -> Result<String, String> {
+pub fn subprocess_attached<'a>(shell: &str, command: &str) -> Result<String, String> {
     let child = Command::new(shell)
         // Intercative session, loads user variables like alias and profile
         // .arg("-i")
@@ -46,7 +46,7 @@ pub fn subprocess_attached(shell: String, command: String) -> Result<String, Str
         Err(stderr)
     }
 }
-fn subprocess_detached(shell: String, command: String) -> Result<(), Box<dyn Error>> {
+fn subprocess_detached(shell: &str, command: &str) -> Result<(), Box<dyn Error>> {
     let child = Command::new(shell)
         .arg("-c")
         .arg(command)
@@ -55,15 +55,15 @@ fn subprocess_detached(shell: String, command: String) -> Result<(), Box<dyn Err
     Ok(())
 }
 /// Return user session shell
-pub fn get_shell() -> Result<String, String> {
+pub fn get_shell<'a>() -> String {
     let default_shell = "sh".to_owned();
     let shell_result = env::var("SHELL");
     let shell = match shell_result {
         Ok(res) => {
-            return Ok(res);
+            return res.to_owned();
         }
         Err(e) => {
-            return Err(default_shell);
+            return default_shell.to_owned();
         }
     };
 }

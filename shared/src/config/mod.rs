@@ -7,12 +7,13 @@ use std::error::Error;
 /// Return the config from .ts file inside the working dir.
 pub fn load_config() -> Result<Config, Box<dyn Error>> {
     let executable = "ts-node --transpile-only";
+    let root = get_project_root()?;
     let path = Path {
-        folder: get_project_root()?.to_str().unwrap().to_owned(),
-        file: "typescript/scripts/main.ts".to_owned(),
+        folder: root.to_str().unwrap(),
+        file: "typescript/scripts/main.ts",
     };
     let command = format!("{} {}/{}", executable, path.folder, path.file);
-    let data = exec_attached(command)?;
+    let data = exec_attached(&command)?;
 
     // Typecast Json output
     let config_result = serde_json::from_str::<Config>(&data);
