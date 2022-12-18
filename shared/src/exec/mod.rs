@@ -1,4 +1,5 @@
 // Exec subprocess
+pub mod pipeline;
 use crate::types::logs::PipelineLog;
 use log::{debug, error, info, trace, warn};
 use std::env;
