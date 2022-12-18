@@ -1,6 +1,6 @@
 // Actions: Functions called by cli
 use crate::config::{get_config, get_pipeline};
-use crate::exec::exec_detached;
+use crate::exec::subprocess::exec_detached;
 use crate::hook::ensure_folders;
 pub use crate::logger::read::{json_logs, pretty_logs, raw_logs};
 use colored::Colorize;

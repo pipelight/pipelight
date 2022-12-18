@@ -1,80 +1,44 @@
-// Exec subprocess
-pub mod pipeline;
-use crate::types::logs::PipelineLog;
-use log::{debug, error, info, trace, warn};
-use std::env;
+// mod subprocess;
+pub mod subprocess;
+use crate::logger::{debug, error, info, set_logger, trace, warn};
+use crate::types::logs::{PipelineLog, PipelineStatus, StepLog};
+use crate::types::{Pipeline, Step};
 use std::error::Error;
-use std::io::Write;
-use std::process::{Command, Stdio};
 
-/// Execute in same subprocess
-pub fn subprocess_attached(shell: String, command: String) -> Result<String, String> {
-    let child = Command::new(shell)
-        // Intercative session, loads user variables like alias and profile
-        // .arg("-i")
-        .arg("-c")
-        .arg(command)
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .expect("Failed to spawn subprocess");
-
-    let output = child
-        .wait_with_output()
-        .expect("Failed to wait on child process");
-
-    if output.status.success() {
-        let stdout = String::from_utf8(output.stdout).unwrap().to_owned();
-        Ok(stdout)
-    } else {
-        let stderr = String::from_utf8(output.stderr).unwrap().to_owned();
-        Err(stderr)
+pub fn run_pipeline(pipeline: Pipeline) -> Result<(), Box<dyn Error>> {
+    // Logging to file "Pipeline Started"
+    let log = PipelineLog::new(&pipeline.name).to_owned();
+    let json = serde_json::to_string(&log).unwrap();
+    info!(target:"pipeline_json", "{}",json );
+    // Loop through steps
+    for step in pipeline.clone().steps {
+        for command in step.clone().commands {
+            run_command(&pipeline, &step, &command);
+        }
     }
-}
-pub fn subprocess_detached(shell: String, command: String) -> Result<(), Box<dyn Error>> {
-    let child = Command::new(shell)
-        .arg("-c")
-        .arg(command)
-        .spawn()
-        .expect("Failed to spawn subprocess");
     Ok(())
 }
 
-/// Return user session shell
-pub fn get_shell() -> Result<String, String> {
-    let default_shell = "sh".to_owned();
+fn run_command(pipeline: &Pipeline, step: &Step, command: &str) -> Result<(), Box<dyn Error>> {
+    let res = shell(command.to_owned())?;
+    // Raw logging to file
+    info!(target:"pipeline_raw", "{}",&command);
+    debug!(target:"pipeline_raw", "{}",&res);
 
-    let shell_result = env::var("SHELL");
-    let shell = match shell_result {
-        Ok(res) => {
-            return Ok(res);
-        }
-        Err(e) => {
-            return Err(default_shell);
-        }
-    };
-}
-pub fn exec(command: String) -> Result<String, Box<dyn Error>> {
-    let user_shell = get_shell()?;
-    let output = subprocess_attached(user_shell, command.clone());
-    let res = match output {
-        Ok(output) => {
-            return Ok(output);
-        }
-        Err(e) => {
-            error!("command: {}\n output: {}", command, e);
-            return Err(Box::from(e));
-        }
-    };
-}
-pub fn exec_detached(command: String) -> Result<(), Box<dyn Error>> {
-    let user_shell = get_shell()?;
-    subprocess_detached(user_shell, command.clone())?;
+    // Format to json and logging to file
+    let mut log = PipelineLog::new(&pipeline.name).to_owned();
+    log.status(PipelineStatus::Running);
+    log.step(&step.name);
+    log.command(&command, &res);
+
+    let json = serde_json::to_string(&log).unwrap();
+    info!(target:"pipeline_json", "{}",json );
     Ok(())
 }
+
 pub fn shell(command: String) -> Result<String, String> {
-    let user_shell = get_shell()?;
-    let output = subprocess_attached(user_shell, command.clone());
+    let user_shell = subprocess::get_shell()?;
+    let output = subprocess::subprocess_attached(user_shell, command.clone());
     match output {
         Ok(output) => {
             return Ok(output);

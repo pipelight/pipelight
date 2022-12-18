@@ -1,4 +1,4 @@
-use crate::exec::exec;
+use crate::exec::subprocess::exec_attached;
 use crate::types::{Config, Path, Pipeline};
 use log::{debug, error, info, trace, warn};
 use project_root::get_project_root;
@@ -12,7 +12,7 @@ pub fn load_config() -> Result<Config, Box<dyn Error>> {
         file: "typescript/scripts/main.ts".to_owned(),
     };
     let command = format!("{} {}/{}", executable, path.folder, path.file);
-    let data = exec(command)?;
+    let data = exec_attached(command)?;
 
     // Typecast Json output
     let config_result = serde_json::from_str::<Config>(&data);
