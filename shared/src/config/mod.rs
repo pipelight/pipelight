@@ -6,10 +6,30 @@ use std::error::Error;
 
 /// Return the config from .ts file inside the working dir.
 pub fn load_config() -> Result<Config, Box<dyn Error>> {
+    //Ensure config file exist
+    let config_path = "./pipelight.config.ts";
+    let is_exist = std::path::Path::new(config_path).exists();
+    if !is_exist {
+        let message = "Config file not found.";
+        let hint = "Use \"pipelight init\" to generate config file or create pipelight.config.ts";
+        error!("{}", message);
+        debug!("{}", hint);
+        return Err(Box::from(message));
+    }
+
     let executable = "ts-node --transpile-only";
     let root = get_project_root()?;
+    let to_str_result = root.to_str();
+    let folder = match to_str_result {
+        Some(res) => res,
+        None => {
+            let message = "Internal error: Couldn't find project root";
+            error!("{}", message);
+            return Err(Box::from(message));
+        }
+    };
     let path = Path {
-        folder: root.to_str().unwrap(),
+        folder: folder,
         file: "typescript/scripts/main.ts",
     };
     let command = format!("{} {}/{}", executable, path.folder, path.file);
@@ -60,7 +80,7 @@ pub fn get_config() -> Result<Config, Box<dyn Error>> {
     Ok(config)
 }
 pub fn get_pipeline(name: String) -> Result<Pipeline, Box<dyn Error>> {
-    let config = get_config().unwrap();
+    let config = get_config()?;
     let pipeline_result = config
         .pipelines
         .iter()

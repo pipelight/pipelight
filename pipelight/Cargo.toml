@@ -4,10 +4,10 @@ version = "0.1.2"
 edition = "2021"
 default-run = "pipelight"
 authors = ["areskul"]
-description = "Pipeline written in Javascript! Deploy faster!!"
+description = "A Rust/Typescript based absurd automation tool"
 homepage = "pipelight.areskul.com"
 repository="git@gitea.com:areska/pipelight.git"
-license="gpl-2.0"
+license="GPL2"
 
 [dependencies]
 shared = {path = "../shared" }
