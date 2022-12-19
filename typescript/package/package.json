@@ -4,7 +4,8 @@
   "description": "CICD in typescript",
   "author": "Areskul <areskul@areskul.com>",
   "license": "GPLv2",
-  "types": "./main.ts",
+  "main": "helpers.ts",
+  "types": "./types.ts",
   "homepage": "https://pipelight.areskul.com",
   "keywords": [
     "cicd",

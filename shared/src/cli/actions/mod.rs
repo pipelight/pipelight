@@ -1,5 +1,5 @@
 // Actions: Functions called by cli
-use crate::config::{get_config, get_pipeline};
+use crate::config::{get_config, get_pipeline, lint_config};
 use crate::exec::subprocess::exec_detached;
 use crate::hook::ensure_folders;
 pub use crate::logger::read::{json_logs, pretty_logs, raw_logs};
@@ -8,22 +8,27 @@ use log::{debug, error, info, trace, warn};
 use std::error::Error;
 
 pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
+    trace!("Create detached subprocess");
     let bin = "pipelight-run";
     let pipeline = get_pipeline(pipeline_name.clone())?;
-    trace!("Create detached subprocess");
     let command = format!("cargo run --bin {} {}", bin, pipeline_name);
     exec_detached(&command)?;
     Ok(())
 }
 
 pub fn init() -> Result<(), Box<dyn Error>> {
-    trace!("Ensure working tree");
     ensure_folders()?;
     Ok(())
 }
 
-pub fn stop() {
+pub fn lint() -> Result<(), Box<dyn Error>> {
+    lint_config()?;
+    Ok(())
+}
+
+pub fn stop() -> Result<(), Box<dyn Error>> {
     println!("stop");
+    Ok(())
 }
 
 pub fn list() -> Result<(), Box<dyn Error>> {

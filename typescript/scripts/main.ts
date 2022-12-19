@@ -7,13 +7,17 @@ import type {
   ExecOptions,
   ExecContext,
   Action
-} from "../types/main.ts";
+} from "../package/types";
 
 const cwd = process.cwd();
+
+const stock = console;
+console = {} as any;
 const promess = import(`${cwd}/pipelight.config`);
 
 promess
   .then((res: defaultImport) => {
+    console = stock;
     const config: Config = res.default as Config;
     const json = JSON.stringify(config, null, 2);
     console.log(json);

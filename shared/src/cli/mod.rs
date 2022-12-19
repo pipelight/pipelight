@@ -35,8 +35,13 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             info!("Listing piplines");
             actions::list();
         }
+        types::Commands::Lint(lint) => {
+            info!("Linting config file");
+            actions::lint();
+            info!("Config file linted");
+        }
         types::Commands::Init(init) => {
-            info!("Listing piplines");
+            info!("Ensure working tree");
             actions::init();
         }
     }

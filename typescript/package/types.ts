@@ -1,5 +1,4 @@
 // Config, every types definition
-
 /**
  * @typedef {object} defaultImport
  * @property {Config} config
