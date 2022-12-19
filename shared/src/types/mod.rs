@@ -6,7 +6,7 @@ use serde_json::json;
 use serde_json::{Result, Value};
 use std::clone::Clone;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
     pub pipelines: Vec<Pipeline>,

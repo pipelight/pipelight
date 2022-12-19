@@ -4,7 +4,7 @@
 use log::LevelFilter::{Debug, Trace};
 #[allow(dead_code)]
 use shared::config::get_pipeline;
-use shared::exec::run_pipeline;
+use shared::exec::run;
 use shared::logger::{debug, error, info, set_logger, trace, warn};
 use shared::types::logs::{PipelineLog, PipelineStatus, StepLog};
 use shared::types::{Pipeline, Step};
@@ -21,27 +21,8 @@ fn handler() -> Result<(), Box<dyn Error>> {
 
     let args = env::args().collect::<Vec<String>>();
     let pipeline_name: String = args[1].to_owned();
-    let pipeline = get_pipeline(pipeline_name)?.clone();
+    let pipeline = get_pipeline(&pipeline_name)?;
+    run(&pipeline)?;
 
-    let run_result = run_pipeline(pipeline.clone());
-    let res = match run_result {
-        Ok(res) => {
-            //Logging to file
-            let mut log = PipelineLog::new(&pipeline.name).to_owned();
-            log.status(PipelineStatus::Succeeded);
-            let json = serde_json::to_string(&log).unwrap();
-            info!(target:"pipeline_json", "{}",json );
-
-            return Ok(res);
-        }
-        Err(e) => {
-            //Logging to file
-            let mut log = PipelineLog::new(&pipeline.name).to_owned();
-            log.status(PipelineStatus::Failed);
-            let json = serde_json::to_string(&log).unwrap();
-            info!(target:"pipeline_json", "{}",json );
-
-            return Err(Box::from(e));
-        }
-    };
+    Ok(())
 }

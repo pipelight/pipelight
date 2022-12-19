@@ -97,7 +97,7 @@ pub fn get_config() -> Result<Config, Box<dyn Error>> {
     config = check_config(config)?;
     Ok(config)
 }
-pub fn get_pipeline(name: String) -> Result<Pipeline, Box<dyn Error>> {
+pub fn get_pipeline(name: &str) -> Result<Pipeline, Box<dyn Error>> {
     let config = get_config()?;
     let pipeline_result = config
         .pipelines

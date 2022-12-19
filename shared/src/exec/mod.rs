@@ -5,16 +5,37 @@ use crate::types::logs::{PipelineLog, PipelineStatus, StepLog};
 use crate::types::{Pipeline, Step};
 use std::error::Error;
 
-pub fn run_pipeline(pipeline: Pipeline) -> Result<(), Box<dyn Error>> {
-    // Logging to file "Pipeline Started"
+pub fn run(pipeline: &Pipeline) -> Result<(), Box<dyn Error>> {
     let mut log = PipelineLog::new(&pipeline.name).to_owned();
+    let run_result = run_pipeline(&pipeline, &mut log);
+    match run_result {
+        Ok(res) => {
+            //Logging to file
+            log.status(PipelineStatus::Succeeded);
+            let json = serde_json::to_string(&log).unwrap();
+            info!(target:"pipeline_json", "{}",json );
+            return Ok(());
+        }
+        Err(e) => {
+            //Logging to file
+            log.status(PipelineStatus::Failed);
+            let json = serde_json::to_string(&log).unwrap();
+            info!(target:"pipeline_json", "{}",json );
+            return Err(Box::from(e));
+        }
+    };
+}
+
+pub fn run_pipeline(pipeline: &Pipeline, log: &mut PipelineLog) -> Result<(), Box<dyn Error>> {
+    // Logging to file "Pipeline Started"
     let json = serde_json::to_string(&log).unwrap();
     info!(target:"pipeline_json", "{}",json );
     // Loop through steps
-    for step in pipeline.steps {
-        for command in step.commands {
-            info!(target:"pipeline_raw", "{}", command);
+    for step in &pipeline.steps {
+        for command in &step.commands {
             let res = shell(&command)?;
+            info!(target:"pipeline_raw", "{}", command);
+            let shell_result = shell(&command);
             debug!(target:"pipeline_raw", "{}",&res);
 
             // Format to json and logging to file
