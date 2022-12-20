@@ -52,6 +52,10 @@ pub struct Logs {
     /// Display json logs
     pub json: bool,
 
+    #[arg(short, long)]
+    /// Display json logs
+    pub clear: bool,
+
     #[arg(long, action, value_name = "BRANCH_NAME")]
     /// Filter logs on git branch (master,...)
     pub branch: Option<String>,

@@ -11,7 +11,7 @@ pub fn exec_attached<'a>(command: &str) -> Result<String, Box<dyn Error>> {
             return Ok(output.to_owned());
         }
         Err(e) => {
-            error!("command: {}\n output: {}", command, e);
+            warn!("command: {}\n output: {}", command, e);
             return Err(Box::from(e));
         }
     };

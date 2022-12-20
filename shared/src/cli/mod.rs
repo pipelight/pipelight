@@ -27,8 +27,10 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
                 actions::pretty_logs()?
             } else if logs.json {
                 actions::json_logs()
+            } else if logs.clear {
+                actions::clear_logs()?
             } else {
-                actions::raw_logs()
+                actions::pretty_logs()?
             }
         }
         types::Commands::Ls(list) => {

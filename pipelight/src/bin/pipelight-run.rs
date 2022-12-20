@@ -23,6 +23,5 @@ fn handler() -> Result<(), Box<dyn Error>> {
     let pipeline_name: String = args[1].to_owned();
     let pipeline = get_pipeline(&pipeline_name)?;
     run(&pipeline)?;
-
     Ok(())
 }

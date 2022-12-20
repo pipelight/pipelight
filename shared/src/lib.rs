@@ -7,4 +7,5 @@ pub mod config;
 pub mod exec;
 pub mod hook;
 pub mod logger;
+pub mod reader;
 pub mod types;

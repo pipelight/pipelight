@@ -14,7 +14,7 @@ fn config_exist() -> Result<(), Box<dyn Error>> {
         let message = "Config file not found.";
         let hint =
             "Use \"pipelight init\" to generate config file\n or move to the right directory";
-        error!("{}", message);
+        warn!("{}", message);
         debug!("{}", hint);
         return Err(Box::from(message));
     }
@@ -28,7 +28,7 @@ fn get_root() -> Result<String, Box<dyn Error>> {
         Some(res) => return Ok(res.to_owned()),
         None => {
             let message = "Internal error: Couldn't find project root";
-            error!("{}", message);
+            warn!("{}", message);
             return Err(Box::from(message));
         }
     };
@@ -45,7 +45,7 @@ pub fn lint_config() -> Result<(), Box<dyn Error>> {
     if res.is_empty() {
         info!("Config file ok");
     } else {
-        error!("Config file contains errors");
+        warn!("Config file contains errors");
         println!("{}", res);
     }
     Ok(())
@@ -70,7 +70,7 @@ fn load_config() -> Result<Config, Box<dyn Error>> {
             return Ok(res);
         }
         Err(e) => {
-            error!("From config file: {}", e);
+            warn!("From config file: {}", e);
             debug!("Json output:\n{}", data);
             return Err(Box::from(e));
         }
@@ -95,7 +95,7 @@ fn check_config(config: Config) -> Result<Config, Box<dyn Error>> {
 
     if has_duplicate {
         let message = "Duplicate pipeline names in config";
-        error!("{}", message);
+        warn!("{}", message);
         Err(Box::from(message))
     } else {
         Ok(config)
@@ -119,7 +119,7 @@ pub fn get_pipeline(name: &str) -> Result<Pipeline, Box<dyn Error>> {
         Some(res) => return Ok(res),
         None => {
             let message = format!("Couldn't find pipeline {:?}", name);
-            error!("{}", message);
+            warn!("{}", message);
             return Err(Box::from(message));
         }
     };

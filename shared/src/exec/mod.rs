@@ -3,6 +3,7 @@ pub mod subprocess;
 use crate::logger::{debug, error, info, set_logger, trace, warn};
 use crate::types::logs::{PipelineLog, PipelineStatus, StepLog};
 use crate::types::{Pipeline, Step};
+use std::env::current_dir;
 use std::error::Error;
 
 pub fn run(pipeline: &Pipeline) -> Result<(), Box<dyn Error>> {
@@ -61,4 +62,11 @@ pub fn shell<'a>(command: &str) -> Result<String, String> {
             return Err(e);
         }
     };
+}
+
+/// Return the wqay the pipeline has been triggered
+/// (manually or via git hook)
+pub fn get_origin() -> Result<(), Box<dyn Error>> {
+    let res = current_dir()?;
+    Ok(())
 }

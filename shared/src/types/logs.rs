@@ -7,9 +7,11 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use serde_json::{Result, Value};
 use std::clone::Clone;
+use std::cmp::PartialEq;
+use std::marker::Copy;
 use uuid::{uuid, Uuid};
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq)]
 pub enum PipelineStatus {
     Started,
     Succeeded,
@@ -19,7 +21,7 @@ pub enum PipelineStatus {
     Never,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct PipelineLog {
     pub status: PipelineStatus,
     pub date: String,
@@ -57,7 +59,7 @@ impl PipelineLog {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct StepLog {
     pub name: String,
     pub command: CommandLog,
@@ -79,7 +81,7 @@ impl StepLog {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct CommandLog {
     pub stdin: String,
     pub stdout: String,
