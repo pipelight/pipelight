@@ -1,4 +1,5 @@
 // Load the config file and transform object to JSON
+"use strict";
 import type {
   defaultImport,
   Config,

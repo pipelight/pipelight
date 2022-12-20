@@ -5,21 +5,22 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 use serde_json::{Result, Value};
 use std::clone::Clone;
+use std::cmp::PartialEq;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
     pub pipelines: Vec<Pipeline>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Pipeline {
     pub name: String,
     pub steps: Vec<Step>,
     pub trigger: Option<Vec<Trigger>>,
 }
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Step {
     pub name: String,
@@ -28,14 +29,14 @@ pub struct Step {
     pub on_failure: Option<Vec<String>>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Trigger {
     pub hook: VecOrString,
     pub branch: VecOrString,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub enum VecOrString {
     Vec,

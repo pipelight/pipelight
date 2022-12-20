@@ -3,7 +3,6 @@ use crate::types::{Config, Path, Pipeline};
 use log::{debug, error, info, trace, warn};
 use project_root::get_project_root;
 use std::error::Error;
-
 /// Ensure file exist
 fn config_exist() -> Result<(), Box<dyn Error>> {
     let config_path = "./pipelight.config.ts";
@@ -19,8 +18,6 @@ fn config_exist() -> Result<(), Box<dyn Error>> {
         return Err(Box::from(message));
     }
 }
-
-/// Return project root path as string
 fn get_root() -> Result<String, Box<dyn Error>> {
     let root = get_project_root()?;
     let to_str_result = root.to_str();
@@ -33,21 +30,15 @@ fn get_root() -> Result<String, Box<dyn Error>> {
         }
     };
 }
-
-/// Lint ts files.
+/// Return the config from .ts file inside the working dir.
 pub fn lint_config() -> Result<(), Box<dyn Error>> {
     config_exist()?;
+    //Ensure config file exist
     let executable = "tsc --noEmit";
     let file = "pipelight.config.ts";
     let command = format!("{} {}", executable, file);
-    info!("Linting config file");
     let res = exec(&command)?;
-    if res.is_empty() {
-        info!("Config file ok");
-    } else {
-        error!("Config file contains errors");
-        println!("{}", res);
-    }
+    println!("{}", res);
     Ok(())
 }
 
