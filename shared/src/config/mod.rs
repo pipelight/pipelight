@@ -15,9 +15,9 @@ fn config_exist() -> Result<(), Box<dyn Error>> {
         let message = "Config file not found.";
         let hint =
             "Use \"pipelight init\" to generate config file\n or move to the right directory";
-        warn!("{}", message);
+        error!("{}", message);
         debug!("{}", hint);
-        return Err(Box::from(message));
+        Err(Box::from(message))
     }
 }
 
