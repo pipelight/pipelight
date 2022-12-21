@@ -1,5 +1,6 @@
 use crate::exec::subprocess::{exec, exec_attached, exec_detached};
-use crate::types::{Config, Path, Pipeline};
+use crate::types::config::{Config, Pipeline};
+use crate::types::Path;
 use log::{debug, error, info, trace, warn};
 use project_root::get_project_root;
 use std::error::Error;
@@ -42,11 +43,13 @@ pub fn lint_config() -> Result<(), Box<dyn Error>> {
     let command = format!("{} {}", executable, file);
     info!("Linting config file");
     let res = exec(&command)?;
-    if res.is_empty() {
+
+    if res.status.success() {
         info!("Config file ok");
     } else {
         warn!("Config file contains errors");
-        println!("{}", res);
+        println!("{}", res.stdout);
+        println!("{}", res.stderr);
     }
     Ok(())
 }

@@ -7,7 +7,7 @@ use shared::cli;
 use shared::exec;
 #[allow(dead_code)]
 use shared::logger;
-use shared::types::Config;
+use shared::types::config::Config;
 use std::error::Error;
 use std::process::exit;
 

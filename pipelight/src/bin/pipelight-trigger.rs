@@ -5,8 +5,8 @@ use log::LevelFilter::{Debug, Trace};
 #[allow(dead_code)]
 use shared::config::get_pipeline;
 use shared::logger::{debug, error, info, set_logger, trace, warn};
+use shared::types::config::Pipeline;
 use shared::types::logs::{PipelineLog, PipelineStatus, StepLog};
-use shared::types::Pipeline;
 use std::env;
 use std::error::Error;
 use std::process::exit;

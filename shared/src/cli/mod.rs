@@ -2,7 +2,7 @@
 pub mod actions;
 pub mod types;
 use crate::logger;
-use crate::types::Config;
+use crate::types::config::Config;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use log::info;
 use std::error::Error;
@@ -30,7 +30,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             } else if logs.clear {
                 actions::clear_logs()?
             } else {
-                actions::pretty_logs()?
+                actions::raw_logs()
             }
         }
         types::Commands::Ls(list) => {

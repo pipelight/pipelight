@@ -23,6 +23,7 @@ const config = {
     },
     {
       name: "test2",
+      name: "test2",
       steps: [
         {
           name: "mystep",

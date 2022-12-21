@@ -1,4 +1,5 @@
-use crate::types::{Path, GIT_HOOKS};
+use crate::types::config::GIT_HOOKS;
+use crate::types::Path;
 use std::error::Error;
 use std::fs;
 
