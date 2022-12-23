@@ -1,7 +1,7 @@
 // Struct for pipeline execution loggin.
 // PipelineLog is parsed as json into a log file
 #![allow(dead_code)]
-use crate::exec::shell;
+use crate::exec::subprocess::exec;
 use chrono::{DateTime, Local, NaiveDateTime, Offset, TimeZone, Utc};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -11,6 +11,7 @@ use std::cmp::PartialEq;
 use std::convert::From;
 use std::error::Error;
 use std::marker::Copy;
+use std::ops::{Deref, DerefMut};
 use std::process::{ExitStatus, Output};
 use uuid::{uuid, Uuid};
 
@@ -26,7 +27,7 @@ pub enum PipelineStatus {
     Never,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct PipelineLog {
     pub uuid: Uuid,
     pub name: String,
@@ -36,11 +37,14 @@ pub struct PipelineLog {
     pub steps: Vec<StepLog>,
 }
 impl PipelineLog {
-    pub fn run(&self) -> Result<()> {
-        for mut step in self.steps.clone() {
-            step.run()?;
+    pub fn run(&mut self) {
+        let mut x = DerefMutPipeline {
+            value: self.clone(),
+        };
+        for step in &mut self.steps {
+            step.run();
         }
-        Ok(())
+        *x = self.clone();
     }
 }
 
@@ -53,7 +57,7 @@ impl From<Pipeline> for PipelineLog {
             .collect::<Vec<StepLog>>();
         return PipelineLog {
             uuid: Uuid::new_v4(),
-            date: None,
+            date: Some(Utc::now().to_string()),
             name: e.name,
             steps: steps,
             status: PipelineStatus::Started,
@@ -61,8 +65,23 @@ impl From<Pipeline> for PipelineLog {
         };
     }
 }
+struct DerefMutPipeline<T> {
+    value: T,
+}
+impl<T> Deref for DerefMutPipeline<T> {
+    type Target = T;
+    fn deref(&self) -> &Self::Target {
+        &self.value
+    }
+}
+impl<T: std::fmt::Debug> DerefMut for DerefMutPipeline<T> {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        println!("{:?}", self.value);
+        return &mut self.value;
+    }
+}
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct StepLog {
     pub name: String,
     pub commands: Vec<CommandLog>,
@@ -70,11 +89,11 @@ pub struct StepLog {
     pub on_failure: Option<Vec<String>>,
 }
 impl StepLog {
-    fn run(&mut self) -> Result<Self> {
-        for mut command in self.commands.clone() {
+    fn run(&mut self) {
+        for command in &mut self.commands {
             command.run();
         }
-        Ok(self.to_owned())
+        // println!("{:?}", self.commands);
     }
 }
 impl From<&Step> for StepLog {
@@ -93,31 +112,30 @@ impl From<&Step> for StepLog {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct CommandLog {
     pub stdin: String,
-    pub stdout: Option<String>,
-    pub stderr: Option<String>,
+    output: Option<StrOutput>,
 }
 impl CommandLog {
     fn new() -> Self {
         return CommandLog {
             stdin: "".to_owned(),
-            stdout: Some("".to_owned()),
-            stderr: Some("".to_owned()),
+            output: None,
         };
     }
-    fn run(&mut self) -> Result<Self> {
-        let output = shell(&self.stdin);
-        Ok(self.to_owned())
+    fn run(&mut self) {
+        let mut output = exec(&self.stdin).ok();
+        output = Some(StrOutput::from(output.unwrap()));
+        self.output = output;
+        // println!("{:?}", self.output);
     }
 }
 impl From<&String> for CommandLog {
     fn from(s: &String) -> Self {
         CommandLog {
             stdin: s.to_owned(),
-            stdout: None,
-            stderr: None,
+            output: None,
         }
     }
 }
@@ -125,8 +143,8 @@ impl From<&String> for CommandLog {
 #[derive(Debug, Clone, PartialEq)]
 pub struct StrOutput {
     pub status: ExitStatus,
-    pub stdout: String,
-    pub stderr: String,
+    pub stdout: Option<String>,
+    pub stderr: Option<String>,
 }
 impl From<&Output> for StrOutput {
     fn from(s: &Output) -> Self {
@@ -134,8 +152,8 @@ impl From<&Output> for StrOutput {
         let stderr = String::from_utf8(s.clone().stderr).unwrap().to_owned();
         return StrOutput {
             status: s.status,
-            stdout: stdout,
-            stderr: stderr,
+            stdout: Some(stdout),
+            stderr: Some(stderr),
         };
     }
 }

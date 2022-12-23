@@ -48,8 +48,8 @@ pub fn lint_config() -> Result<(), Box<dyn Error>> {
         info!("Config file ok");
     } else {
         warn!("Config file contains errors");
-        println!("{}", res.stdout);
-        println!("{}", res.stderr);
+        println!("{}", res.stdout.unwrap());
+        println!("{}", res.stderr.unwrap());
     }
     Ok(())
 }
