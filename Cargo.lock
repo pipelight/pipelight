@@ -818,6 +818,7 @@ dependencies = [
  "json",
  "log",
  "log4rs",
+ "once_cell",
  "project-root",
  "serde",
  "serde_json",

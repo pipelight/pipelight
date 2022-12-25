@@ -3,6 +3,7 @@
 #![allow(dead_code)]
 use crate::exec::subprocess::exec;
 use chrono::{DateTime, Local, NaiveDateTime, Offset, TimeZone, Utc};
+use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use serde_json::{Result, Value};
@@ -11,11 +12,15 @@ use std::cmp::PartialEq;
 use std::convert::From;
 use std::error::Error;
 use std::marker::Copy;
-use std::ops::{Deref, DerefMut};
 use std::process::{ExitStatus, Output};
 use uuid::{uuid, Uuid};
 
 use crate::types::config::{Pipeline, Step, Trigger};
+
+#[derive(Debug, PartialEq)]
+struct Observer {
+    pipeline: Option<PipelineLog>,
+}
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq)]
 pub enum PipelineStatus {
@@ -38,13 +43,14 @@ pub struct PipelineLog {
 }
 impl PipelineLog {
     pub fn run(&mut self) {
-        let mut x = DerefMutPipeline {
-            value: self.clone(),
-        };
+        let pipeline: &mut PipelineLog = self;
+        let pipeline_ptr: *mut PipelineLog = pipeline;
         for step in &mut self.steps {
-            step.run();
+            step.run(pipeline_ptr);
         }
-        *x = self.clone();
+    }
+    pub fn log(&self) {
+        println!("{:?}", &self)
     }
 }
 
@@ -55,7 +61,7 @@ impl From<Pipeline> for PipelineLog {
             .iter()
             .map(|e| StepLog::from(e))
             .collect::<Vec<StepLog>>();
-        return PipelineLog {
+        let p = PipelineLog {
             uuid: Uuid::new_v4(),
             date: Some(Utc::now().to_string()),
             name: e.name,
@@ -63,21 +69,7 @@ impl From<Pipeline> for PipelineLog {
             status: PipelineStatus::Started,
             trigger: None,
         };
-    }
-}
-struct DerefMutPipeline<T> {
-    value: T,
-}
-impl<T> Deref for DerefMutPipeline<T> {
-    type Target = T;
-    fn deref(&self) -> &Self::Target {
-        &self.value
-    }
-}
-impl<T: std::fmt::Debug> DerefMut for DerefMutPipeline<T> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        println!("{:?}", self.value);
-        return &mut self.value;
+        return p;
     }
 }
 
@@ -89,11 +81,10 @@ pub struct StepLog {
     pub on_failure: Option<Vec<String>>,
 }
 impl StepLog {
-    fn run(&mut self) {
+    fn run(&mut self, pipeline: *mut PipelineLog) {
         for command in &mut self.commands {
-            command.run();
+            command.run(pipeline);
         }
-        // println!("{:?}", self.commands);
     }
 }
 impl From<&Step> for StepLog {
@@ -124,11 +115,12 @@ impl CommandLog {
             output: None,
         };
     }
-    fn run(&mut self) {
-        let mut output = exec(&self.stdin).ok();
-        output = Some(StrOutput::from(output.unwrap()));
+    fn run(&mut self, pipeline: *mut PipelineLog) {
+        let output = exec(&self.stdin.clone()).ok();
         self.output = output;
-        // println!("{:?}", self.output);
+        unsafe {
+            println!("{:?}", *pipeline);
+        }
     }
 }
 impl From<&String> for CommandLog {
