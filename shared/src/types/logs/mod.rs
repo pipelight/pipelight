@@ -2,7 +2,11 @@
 // PipelineLog is parsed as json into a log file
 #![allow(dead_code)]
 use crate::exec::subprocess::exec;
+use crate::logger::set_logger_config_pipeline;
 use chrono::{DateTime, Local, NaiveDateTime, Offset, TimeZone, Utc};
+pub use log::Level::{Debug, Trace};
+pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
+use log4rs::Handle;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -32,7 +36,7 @@ pub enum PipelineStatus {
     Never,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize Clone, PartialEq)]
 pub struct PipelineLog {
     pub uuid: Uuid,
     pub name: String,
@@ -42,15 +46,17 @@ pub struct PipelineLog {
     pub steps: Vec<StepLog>,
 }
 impl PipelineLog {
-    pub fn run(&mut self) {
+    pub fn run(&mut self, handle: Handle) {
         let pipeline: &mut PipelineLog = self;
         let pipeline_ptr: *mut PipelineLog = pipeline;
+        handle.set_config(set_logger_config_pipeline(LevelFilter::Trace, pipeline.uuid).unwrap());
         for step in &mut self.steps {
             step.run(pipeline_ptr);
         }
     }
     pub fn log(&self) {
-        println!("{:?}", &self)
+        let json = serde_json::to_string(&self).unwrap();
+        info!(target: "pipeline_json","{:?}", json);
     }
 }
 
@@ -73,7 +79,7 @@ impl From<Pipeline> for PipelineLog {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize Clone, PartialEq)]
 pub struct StepLog {
     pub name: String,
     pub commands: Vec<CommandLog>,
@@ -103,7 +109,7 @@ impl From<&Step> for StepLog {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize Clone, PartialEq)]
 pub struct CommandLog {
     pub stdin: String,
     output: Option<StrOutput>,
@@ -119,7 +125,7 @@ impl CommandLog {
         let output = exec(&self.stdin.clone()).ok();
         self.output = output;
         unsafe {
-            println!("{:?}", *pipeline);
+            pipeline.as_ref().unwrap().log();
         }
     }
 }
@@ -132,7 +138,7 @@ impl From<&String> for CommandLog {
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize Clone, PartialEq)]
 pub struct StrOutput {
     pub status: ExitStatus,
     pub stdout: Option<String>,
