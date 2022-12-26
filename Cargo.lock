@@ -507,6 +507,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "memchr"
+version = "2.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
+
+[[package]]
 name = "memoffset"
 version = "0.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -722,6 +728,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "rev_buf_reader"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8c0f2e47e00e29920959826e2e1784728a3780d1a784247be5257258cc75f910"
+dependencies = [
+ "memchr",
+]
+
+[[package]]
 name = "rustix"
 version = "0.36.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -820,6 +835,7 @@ dependencies = [
  "log4rs",
  "once_cell",
  "project-root",
+ "rev_buf_reader",
  "serde",
  "serde_json",
  "subprocess",

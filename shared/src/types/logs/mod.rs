@@ -2,7 +2,7 @@
 // PipelineLog is parsed as json into a log file
 #![allow(dead_code)]
 use crate::exec::subprocess::exec;
-use crate::logger::set_logger_config_pipeline;
+use crate::logger;
 use chrono::{DateTime, Local, NaiveDateTime, Offset, TimeZone, Utc};
 pub use log::Level::{Debug, Trace};
 pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
@@ -49,14 +49,15 @@ impl PipelineLog {
     pub fn run(&mut self, handle: Handle) {
         let pipeline: &mut PipelineLog = self;
         let pipeline_ptr: *mut PipelineLog = pipeline;
-        handle.set_config(set_logger_config_pipeline(LevelFilter::Trace, pipeline.uuid).unwrap());
+        handle
+            .set_config(logger::config::set_with_file(LevelFilter::Trace, pipeline.uuid).unwrap());
         for step in &mut self.steps {
             step.run(pipeline_ptr);
         }
     }
     pub fn log(&self) {
         let json = serde_json::to_string(&self).unwrap();
-        info!(target: "pipeline_json","{:?}", json);
+        info!(target: "pipeline_json","{}", json);
     }
 }
 

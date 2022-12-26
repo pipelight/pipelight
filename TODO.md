@@ -1,8 +1,8 @@
 # Rust
 
-PipelineLog uuid
-
-Use &str instead of String when possible
+Ranger les fonctions dans les bons dossiers,... menage.
+Deprecate raw pipeline logging
+Finish logging because last features are (process termiation/ list pipelines/ hooks)
 
 Unit Tests
 

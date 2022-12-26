@@ -2,7 +2,8 @@
 use crate::config::{get_config, get_pipeline, lint_config};
 use crate::exec::subprocess::exec_detached;
 use crate::hook::ensure_folders;
-pub use crate::reader::{clear_logs, json_logs, pretty_logs, raw_logs};
+pub use crate::logger::clear_logs;
+pub use crate::reader::{json_logs, pretty_logs, raw_logs};
 use colored::Colorize;
 use log::{debug, error, info, trace, warn};
 use std::error::Error;

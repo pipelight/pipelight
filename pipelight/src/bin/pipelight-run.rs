@@ -4,7 +4,6 @@
 use log::LevelFilter::{Debug, Trace};
 #[allow(dead_code)]
 use shared::config::get_pipeline;
-// use shared::exec::run;
 use shared::logger::{debug, error, info, set_logger, trace, warn};
 use shared::types::config::{Pipeline, Step};
 use shared::types::logs::{PipelineLog, PipelineStatus, StepLog};
