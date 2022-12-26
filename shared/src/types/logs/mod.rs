@@ -36,7 +36,7 @@ pub enum PipelineStatus {
     Never,
 }
 
-#[derive(Debug, Serialize, Deserialize Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct PipelineLog {
     pub uuid: Uuid,
     pub name: String,
@@ -79,7 +79,7 @@ impl From<Pipeline> for PipelineLog {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct StepLog {
     pub name: String,
     pub commands: Vec<CommandLog>,
@@ -109,7 +109,7 @@ impl From<&Step> for StepLog {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct CommandLog {
     pub stdin: String,
     output: Option<StrOutput>,
@@ -138,9 +138,9 @@ impl From<&String> for CommandLog {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct StrOutput {
-    pub status: ExitStatus,
+    pub status: bool,
     pub stdout: Option<String>,
     pub stderr: Option<String>,
 }
@@ -149,7 +149,7 @@ impl From<&Output> for StrOutput {
         let stdout = String::from_utf8(s.clone().stdout).unwrap().to_owned();
         let stderr = String::from_utf8(s.clone().stderr).unwrap().to_owned();
         return StrOutput {
-            status: s.status,
+            status: s.status.success(),
             stdout: Some(stdout),
             stderr: Some(stderr),
         };

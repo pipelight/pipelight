@@ -44,7 +44,7 @@ pub fn lint_config() -> Result<(), Box<dyn Error>> {
     info!("Linting config file");
     let res = exec(&command)?;
 
-    if res.status.success() {
+    if res.status {
         info!("Config file ok");
     } else {
         warn!("Config file contains errors");
