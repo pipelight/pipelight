@@ -18,6 +18,7 @@ use std::convert::From;
 use std::error::Error;
 use std::fmt;
 use std::marker::Copy;
+use std::process;
 use std::process::{ExitStatus, Output};
 use uuid::{uuid, Uuid};
 
@@ -55,6 +56,7 @@ impl fmt::Display for PipelineStatus {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct PipelineLog {
     pub uuid: Uuid,
+    pub pid: Option<u32>,
     pub name: String,
     pub date: Option<String>,
     pub status: PipelineStatus,
@@ -63,6 +65,8 @@ pub struct PipelineLog {
 }
 impl PipelineLog {
     pub fn run(&mut self, handle: Handle) {
+        let pid = process::id();
+        self.pid = Some(pid);
         let pipeline: &mut PipelineLog = self;
         let pipeline_ptr: *mut PipelineLog = pipeline;
         handle
@@ -76,6 +80,7 @@ impl PipelineLog {
             }
             step.run(pipeline_ptr);
         }
+        self.pid = None;
         unsafe {
             pipeline_ptr
                 .as_mut()
@@ -117,6 +122,7 @@ impl From<Pipeline> for PipelineLog {
             .map(|e| StepLog::from(e))
             .collect::<Vec<StepLog>>();
         let p = PipelineLog {
+            pid: None,
             uuid: Uuid::new_v4(),
             date: Some(Utc::now().to_string()),
             name: e.name,
