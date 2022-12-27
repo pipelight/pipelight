@@ -44,15 +44,19 @@ pub struct Pipeline {
 
 #[derive(Parser, Debug)]
 pub struct Logs {
-    #[arg(short, long)]
+    #[arg(long)]
     /// Display pretty logs
     pub pretty: bool,
 
-    #[arg(short, long)]
+    #[arg(long)]
+    /// Display pretty logs
+    pub raw: bool,
+
+    #[arg(long)]
     /// Display json logs
     pub json: bool,
 
-    #[arg(short, long)]
+    #[arg(long)]
     /// Display json logs
     pub clear: bool,
 

@@ -3,7 +3,8 @@
 #![allow(dead_code)]
 use crate::exec::subprocess::exec;
 use crate::logger;
-use chrono::{DateTime, Local, NaiveDateTime, Offset, TimeZone, Utc};
+use chrono;
+use chrono::{format, DateTime, Local, NaiveDateTime, Offset, TimeZone, Utc};
 use colored::Colorize;
 pub use log::Level::{Debug, Trace};
 pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
@@ -41,12 +42,12 @@ impl fmt::Display for PipelineStatus {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let icon = "●";
         match *self {
-            PipelineStatus::Started => write!(f, "{} started", icon),
-            PipelineStatus::Succeeded => write!(f, "{} succeded", icon.blue()),
-            PipelineStatus::Failed => write!(f, "{} failed", icon.red()),
-            PipelineStatus::Running => write!(f, "{} running", icon.green()),
-            PipelineStatus::Aborted => write!(f, "{} aborted", icon.yellow()),
-            PipelineStatus::Never => write!(f, "{} never", icon),
+            PipelineStatus::Started => write!(f, "{} Started", icon),
+            PipelineStatus::Succeeded => write!(f, "{} Succeeded", icon.blue()),
+            PipelineStatus::Failed => write!(f, "{} Failed", icon.red()),
+            PipelineStatus::Running => write!(f, "{} Running", icon.green()),
+            PipelineStatus::Aborted => write!(f, "{} Aborted", icon.yellow()),
+            PipelineStatus::Never => write!(f, "{} Never", icon),
         };
         Ok(())
     }
@@ -93,8 +94,12 @@ impl PipelineLog {
 }
 impl fmt::Display for PipelineLog {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}\n", self.status);
-        write!(f, "pipeline: {}\n", self.name);
+        write!(f, "{} - ", &self.status);
+        let str_date = &self.date.as_ref().unwrap();
+        let date = str_date.parse::<DateTime<Local>>().unwrap();
+        // let date: &str = &binding.as_ref();
+        write!(f, "{}\n", date.to_rfc2822());
+        write!(f, " pipeline: {}\n", self.name);
         for step in &self.steps {
             write!(f, "\tstep: {}\n", step.name);
             for command in &step.commands {
