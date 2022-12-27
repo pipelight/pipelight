@@ -9,7 +9,6 @@ use colored::Colorize;
 pub use log::Level::{Debug, Trace};
 pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 use log4rs::Handle;
-use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use serde_json::{Result, Value};

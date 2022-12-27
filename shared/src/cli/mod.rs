@@ -40,11 +40,11 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             actions::list();
         }
         types::Commands::Lint(lint) => {
-            actions::lint();
+            actions::lint()?;
         }
         types::Commands::Init(init) => {
             info!("Ensure working tree");
-            actions::init();
+            actions::init()?;
         }
     }
     Ok(())

@@ -1,7 +1,7 @@
 // Actions: Functions called by cli
 use crate::config::{get_config, get_pipeline, lint_config};
 use crate::exec::subprocess::{exec_detached, subprocess_detached};
-use crate::hook::ensure_folders;
+use crate::hook::ensure_hooks;
 pub use crate::logger::clear_logs;
 pub use crate::reader::{json_logs, pretty_logs, raw_logs};
 use colored::Colorize;
@@ -20,7 +20,7 @@ pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn init() -> Result<(), Box<dyn Error>> {
-    ensure_folders()?;
+    ensure_hooks()?;
     Ok(())
 }
 
