@@ -4,6 +4,7 @@
 use crate::exec::subprocess::exec;
 use crate::logger;
 use chrono::{DateTime, Local, NaiveDateTime, Offset, TimeZone, Utc};
+use colored::Colorize;
 pub use log::Level::{Debug, Trace};
 pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 use log4rs::Handle;
@@ -15,6 +16,7 @@ use std::clone::Clone;
 use std::cmp::PartialEq;
 use std::convert::From;
 use std::error::Error;
+use std::fmt;
 use std::marker::Copy;
 use std::process::{ExitStatus, Output};
 use uuid::{uuid, Uuid};
@@ -35,6 +37,20 @@ pub enum PipelineStatus {
     Aborted,
     Never,
 }
+impl fmt::Display for PipelineStatus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let icon = "●";
+        match *self {
+            PipelineStatus::Started => write!(f, "{} started", icon),
+            PipelineStatus::Succeeded => write!(f, "{} succeded", icon.blue()),
+            PipelineStatus::Failed => write!(f, "{} failed", icon.red()),
+            PipelineStatus::Running => write!(f, "{} running", icon.green()),
+            PipelineStatus::Aborted => write!(f, "{} aborted", icon.yellow()),
+            PipelineStatus::Never => write!(f, "{} never", icon),
+        };
+        Ok(())
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct PipelineLog {
@@ -52,12 +68,40 @@ impl PipelineLog {
         handle
             .set_config(logger::config::set_with_file(LevelFilter::Trace, pipeline.uuid).unwrap());
         for step in &mut self.steps {
+            unsafe {
+                pipeline_ptr
+                    .as_mut()
+                    .unwrap()
+                    .status(&PipelineStatus::Running);
+            }
             step.run(pipeline_ptr);
+        }
+        unsafe {
+            pipeline_ptr
+                .as_mut()
+                .unwrap()
+                .status(&PipelineStatus::Succeeded);
         }
     }
     pub fn log(&self) {
         let json = serde_json::to_string(&self).unwrap();
         info!(target: "pipeline_json","{}", json);
+    }
+    pub fn status(&mut self, status: &PipelineStatus) {
+        self.status = status.to_owned();
+    }
+}
+impl fmt::Display for PipelineLog {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}\n", self.status);
+        write!(f, "pipeline: {}\n", self.name);
+        for step in &self.steps {
+            write!(f, "\tstep: {}\n", step.name);
+            for command in &step.commands {
+                write!(f, "\t\t{}\n", command.stdin);
+            }
+        }
+        Ok(())
     }
 }
 
@@ -123,8 +167,19 @@ impl CommandLog {
         };
     }
     fn run(&mut self, pipeline: *mut PipelineLog) {
-        let output = exec(&self.stdin.clone()).ok();
-        self.output = output;
+        let output_res = exec(&self.stdin.clone());
+        match output_res {
+            Ok(output) => {
+                self.output = Some(output);
+                Ok(())
+            }
+            Err(e) => {
+                unsafe {
+                    pipeline.as_mut().unwrap().status(&PipelineStatus::Failed);
+                }
+                Err(e)
+            }
+        };
         unsafe {
             pipeline.as_ref().unwrap().log();
         }

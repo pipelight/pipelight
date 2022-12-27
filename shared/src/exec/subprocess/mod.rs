@@ -3,6 +3,7 @@ use log::{debug, error, info, trace, warn};
 use std::env;
 use std::error::Error;
 use std::process::{Command, Output, Stdio};
+use std::thread;
 
 /// Use for pipeline exewcution only
 pub fn exec<'a>(command: &str) -> Result<StrOutput, Box<dyn Error>> {

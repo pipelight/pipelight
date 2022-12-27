@@ -12,7 +12,8 @@ pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
     trace!("Create detached subprocess");
     let bin = "pipelight-run";
     let pipeline = get_pipeline(&pipeline_name)?;
-    let command = format!("cargo run --bin {} {}", bin, pipeline_name);
+    // let command = format!("cargo run --bin {} {}", bin, pipeline_name);
+    let command = format!("{} {}", bin, pipeline_name);
     exec_detached(&command)?;
     Ok(())
 }

@@ -15,7 +15,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
     match args.command {
         types::Commands::Run(pipeline) => {
             info!("Triggering pipline {:#?}", pipeline.name);
-            actions::run(pipeline.name);
+            actions::run(pipeline.name)?;
         }
         types::Commands::Stop(pipeline) => {
             info!("Stopping pipline {:#?}", pipeline.name);
