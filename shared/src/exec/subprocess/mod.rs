@@ -66,10 +66,13 @@ pub fn exec_detached(command: &str) -> Result<(), Box<dyn Error>> {
     let output = subprocess_detached(&user_shell, command);
     Ok(())
 }
-fn subprocess_detached(shell: &str, command: &str) -> Result<(), Box<dyn Error>> {
-    let child = Command::new(shell)
+pub fn subprocess_detached(shell: &str, command: &str) -> Result<(), Box<dyn Error>> {
+    Command::new(shell)
         .arg("-c")
         .arg(command)
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .stderr(Stdio::null())
         .spawn()
         .expect("Failed to spawn subprocess");
     Ok(())
