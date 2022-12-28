@@ -1,4 +1,4 @@
-use crate::types::config::GIT_HOOKS;
+use crate::types::GIT_HOOKS;
 use log::{debug, error, info, trace, warn};
 use std::error::Error;
 use std::fs;

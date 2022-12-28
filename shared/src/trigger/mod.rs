@@ -1,10 +1,9 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
-use crate::config::{get_config, get_pipeline};
 use crate::logger::{debug, error, info, set_logger, trace, warn};
-use crate::types::config::Pipeline;
 use crate::types::logs::{PipelineLog, PipelineStatus, StepLog};
+use crate::types::{Config, Pipeline};
 use git2;
 use log::LevelFilter::{Debug, Trace};
 #[allow(dead_code)]
@@ -27,7 +26,7 @@ pub fn trigger() -> Result<(), Box<dyn Error>> {
     set_logger(Trace);
     get_event();
 
-    let config = get_config()?;
+    let config = Config::get()?;
 
     for pipeline in &config.pipelines {
         if pipeline.triggers.is_none() {

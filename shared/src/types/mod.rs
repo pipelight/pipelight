@@ -5,8 +5,6 @@ use chrono::{DateTime, Local, NaiveDateTime, Offset, TimeZone, Utc};
 use project_root::get_project_root;
 use serde::{Deserialize, Serialize};
 use serde_json;
-use serde_json::json;
-use std::clone::Clone;
 use std::cmp::PartialEq;
 use std::error::Error;
 use std::path::Path;
@@ -29,7 +27,7 @@ fn get_root() -> Result<String, Box<dyn Error>> {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
-    pub pipelines: Pipelines,
+    pub pipelines: Vec<Pipeline>,
 }
 impl Config {
     pub fn new() -> Result<Config, Box<dyn Error>> {
@@ -116,23 +114,7 @@ impl Config {
             Ok(config.to_owned())
         }
     }
-}
-
-type Pipelines = Vec<Pipeline>;
-
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[serde(deny_unknown_fields)]
-pub struct Pipeline {
-    pub name: String,
-    pub steps: Vec<Step>,
-    pub triggers: Option<Vec<Trigger>>,
-}
-
-trait Get {
-    fn get(name: &str) -> Result<Pipeline, Box<dyn Error>>;
-}
-impl Get for Pipelines {
-    fn get(name: &str) -> Result<Pipeline, Box<dyn Error>> {
+    pub fn pipeline(&self, name: &str) -> Result<Pipeline, Box<dyn Error>> {
         let config = Config::get()?;
         let pipeline_result = config
             .pipelines
@@ -149,6 +131,13 @@ impl Get for Pipelines {
             }
         };
     }
+}
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct Pipeline {
+    pub name: String,
+    pub steps: Vec<Step>,
+    pub triggers: Option<Vec<Trigger>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
