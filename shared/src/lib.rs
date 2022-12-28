@@ -8,4 +8,5 @@ pub mod exec;
 pub mod hook;
 pub mod logger;
 pub mod reader;
+pub mod trigger;
 pub mod types;

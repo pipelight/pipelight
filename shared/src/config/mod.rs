@@ -1,16 +1,10 @@
 use crate::exec::subprocess::{exec, exec_attached, exec_detached};
 use crate::types::config::{Config, Pipeline};
 use crate::types::Path;
-use git2;
 use log::{debug, error, info, trace, warn};
 use project_root::get_project_root;
 use std::error::Error;
 
-pub fn is_git() -> Result<bool, Box<dyn Error>> {
-    let root = get_project_root()?;
-    git2::Repository::discover(root)?;
-    Ok(true)
-}
 /// Ensure file exist
 fn config_exist() -> Result<(), Box<dyn Error>> {
     let config_path = "./pipelight.config.ts";
