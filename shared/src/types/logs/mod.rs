@@ -1,11 +1,11 @@
 // Struct for pipeline execution loggin.
 // PipelineLog is parsed as json into a log file
 #![allow(dead_code)]
-use crate::exec::subprocess::exec;
+use crate::exec::Exec;
 use crate::logger;
 use chrono;
 use chrono::{format, DateTime, Local, NaiveDateTime, Offset, TimeZone, Utc};
-use colored::Colorize;
+mod display;
 pub use log::Level::{Debug, Trace};
 pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 use log4rs::Handle;
@@ -22,7 +22,7 @@ use std::process;
 use std::process::{ExitStatus, Output};
 use uuid::{uuid, Uuid};
 
-use crate::types::config::{Pipeline, Step, Trigger};
+use crate::types::{Pipeline, Step, Trigger};
 
 #[derive(Debug, PartialEq)]
 struct Observer {
@@ -37,20 +37,6 @@ pub enum PipelineStatus {
     Running,
     Aborted,
     Never,
-}
-impl fmt::Display for PipelineStatus {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let icon = "●";
-        match *self {
-            PipelineStatus::Started => write!(f, "{} Started", icon),
-            PipelineStatus::Succeeded => write!(f, "{} Succeeded", icon.blue()),
-            PipelineStatus::Failed => write!(f, "{} Failed", icon.red()),
-            PipelineStatus::Running => write!(f, "{} Running", icon.green()),
-            PipelineStatus::Aborted => write!(f, "{} Aborted", icon.yellow()),
-            PipelineStatus::Never => write!(f, "{} Never", icon),
-        };
-        Ok(())
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -99,36 +85,6 @@ impl PipelineLog {
         self.status = status.to_owned();
     }
 }
-impl fmt::Display for PipelineLog {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} - ", &self.status);
-        let str_date = &self.date.as_ref().unwrap();
-        let date = str_date.parse::<DateTime<Local>>().unwrap();
-        // let date: &str = &binding.as_ref();
-        write!(f, "{}\n", date.to_rfc2822());
-        write!(f, "   pipeline: {}\n", self.name);
-        if self.pid.is_some() {
-            write!(f, "   pid: {}\n", &self.pid.unwrap());
-        }
-        for step in &self.steps {
-            info!(target :"nude","\tstep: {}\n", step.name);
-            for command in &step.commands {
-                let stdout = command.output.as_ref().unwrap().stdout.as_ref().unwrap();
-                let stderr = command.output.as_ref().unwrap().stderr.as_ref().unwrap();
-                let status = command.output.as_ref().unwrap().status;
-                if status {
-                    info!(target: "nude", "\t\t{}\n", &command.stdin.green());
-                    debug!(target: "nude", "{}\n", stdout)
-                } else {
-                    info!(target: "nude", "\t\t{}\n", &command.stdin.red());
-                    debug!(target: "nude", "\r{}\n", stderr);
-                }
-            }
-        }
-        Ok(())
-    }
-}
-
 impl From<Pipeline> for PipelineLog {
     fn from(e: Pipeline) -> Self {
         let steps = e
@@ -192,7 +148,7 @@ impl CommandLog {
         };
     }
     fn run(&mut self, pipeline_ptr: *mut PipelineLog) {
-        let output_res = exec(&self.stdin.clone());
+        let output_res = Exec::new().simple(&self.stdin.clone());
         match output_res {
             Ok(output) => {
                 self.output = Some(output);

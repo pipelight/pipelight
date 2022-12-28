@@ -2,7 +2,6 @@
 pub mod actions;
 pub mod types;
 use crate::logger;
-use crate::types::config::Config;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use log::info;
 use std::error::Error;

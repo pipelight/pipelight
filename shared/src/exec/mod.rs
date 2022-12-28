@@ -1,71 +1,55 @@
 pub mod subprocess;
-use crate::logger::{debug, error, info, set_logger, trace, warn};
-use crate::types::config::{Pipeline, Step};
-use crate::types::logs::{PipelineLog, PipelineStatus, StepLog};
-use std::env::current_dir;
+use crate::logger::{debug, error, info, trace, warn};
+use crate::types::logs::{PipelineLog, PipelineStatus, StepLog, StrOutput};
+use crate::types::{Pipeline, Step};
+use std::env;
 use std::error::Error;
 
-// pub fn run(pipeline: &Pipeline) -> Result<(), Box<dyn Error>> {
-//     let mut log = PipelineLog::new(&pipeline.name).to_owned();
-//     let run_result = run_pipeline(&pipeline, &mut log);
-//     match run_result {
-//         Ok(res) => {
-//             //Logging to file
-//             log.status(PipelineStatus::Succeeded);
-//             let json = serde_json::to_string(&log).unwrap();
-//             info!(target:"pipeline_json", "{}",json );
-//             return Ok(());
-//         }
-//         Err(e) => {
-//             //Logging to file
-//             log.status(PipelineStatus::Failed);
-//             let json = serde_json::to_string(&log).unwrap();
-//             info!(target:"pipeline_json", "{}",json );
-//             return Err(Box::from(e));
-//         }
-//     };
-// }
-//
-// pub fn run_pipeline(pipeline: &Pipeline, log: &mut PipelineLog) -> Result<(), Box<dyn Error>> {
-//     // Logging to file "Pipeline Started"
-//     let json = serde_json::to_string(&log).unwrap();
-//     info!(target:"pipeline_json", "{}",json );
-//     // Loop through steps
-//     for step in &pipeline.steps {
-//         for command in &step.commands {
-//             let res = shell(&command)?;
-//             info!(target:"pipeline_raw", "{}", command);
-//             let shell_result = shell(&command);
-//             debug!(target:"pipeline_raw", "{}",&res);
-//
-//             // Format to json and logging to file
-//             log.status(PipelineStatus::Running);
-//             log.step(&step.name);
-//             log.command(&command, &res);
-//
-//             let json = serde_json::to_string(&log).unwrap();
-//             info!(target:"pipeline_json", "{}",json );
-//         }
-//     }
-//     Ok(())
-// }
-
-pub fn shell<'a>(command: &str) -> Result<String, String> {
-    let user_shell = subprocess::get_shell();
-    let output = subprocess::subprocess_attached(&user_shell, command);
-    match output {
-        Ok(output) => {
-            return Ok(output);
-        }
-        Err(e) => {
-            return Err(e);
-        }
-    };
+pub struct Exec {
+    shell: String,
 }
-
-/// Return the wqay the pipeline has been triggered
-/// (manually or via git hook)
-pub fn get_origin() -> Result<(), Box<dyn Error>> {
-    let res = current_dir()?;
-    Ok(())
+impl Exec {
+    pub fn new() -> Self {
+        return Self {
+            shell: "sh".to_owned(),
+        };
+    }
+    /// Return user session shell if possible
+    fn shell(self) -> Self {
+        let default_shell = "sh".to_owned();
+        let shell_result = env::var("SHELL");
+        let shell = match shell_result {
+            Ok(res) => {
+                self.shell = res;
+                return self;
+            }
+            Err(e) => {
+                return self;
+            }
+        };
+    }
+    /// Use for pipeline exewcution only
+    pub fn simple(&self, command: &str) -> Result<StrOutput, Box<dyn Error>> {
+        let shell = &self.shell();
+        let output = subprocess::simple(&self.shell, command)?;
+        Ok(output)
+    }
+    pub fn attached(&self, command: &str) -> Result<String, Box<dyn Error>> {
+        let shell = &self.shell();
+        let output = subprocess::attached(&self.shell, command);
+        let res = match output {
+            Ok(output) => {
+                return Ok(output.to_owned());
+            }
+            Err(e) => {
+                warn!("command: {}\n output: {}", command, e);
+                return Err(Box::from(e));
+            }
+        };
+    }
+    pub fn detached(&self, command: &str) -> Result<(), Box<dyn Error>> {
+        let shell = &self.shell();
+        let output = subprocess::detached(&self.shell, command);
+        Ok(())
+    }
 }

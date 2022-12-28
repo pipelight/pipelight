@@ -1,21 +1,18 @@
 // Actions: Functions called by cli
-use crate::config::{get_config, get_pipeline, lint_config};
-use crate::exec::subprocess::{exec_detached, subprocess_detached};
-use crate::hook::ensure_hooks;
+use crate::exec::Exec;
+use crate::hooks::ensure_hooks;
 pub use crate::logger::clear_logs;
-pub use crate::reader::{json_logs, pretty_logs, raw_logs};
-use colored::Colorize;
+use crate::types::Config;
 use log::{debug, error, info, trace, warn};
 use std::error::Error;
-use std::process::{Command, Output, Stdio};
 
 pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
     trace!("Create detached subprocess");
     let bin = "pipelight-run";
-    let pipeline = get_pipeline(&pipeline_name)?;
+    let pipeline = Config::new().get().pipelines.get(&pipeline_name)?;
     let command = format!("cargo run --bin {} {}", bin, pipeline_name);
     // let command = format!("{} {}", bin, pipeline_name);
-    exec_detached(&command)?;
+    Exec::new().detached(&command)?;
     Ok(())
 }
 
@@ -25,7 +22,7 @@ pub fn init() -> Result<(), Box<dyn Error>> {
 }
 
 pub fn lint() -> Result<(), Box<dyn Error>> {
-    lint_config()?;
+    Config::new().lint()?;
     Ok(())
 }
 
@@ -35,7 +32,7 @@ pub fn stop() -> Result<(), Box<dyn Error>> {
 }
 
 pub fn list() -> Result<(), Box<dyn Error>> {
-    let config = get_config()?;
+    let config = Config::new().get()?;
     println!(
         "{0: <10} {1: <20} {2: <10} {3}",
         "status", "last_run_date", "hook", "name"
