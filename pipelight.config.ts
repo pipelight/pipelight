@@ -8,30 +8,13 @@ const config = {
       steps: [
         {
           name: "mystep",
-          commands: ["ls", "sleep 8", "ls"],
-        },
-        {
-          name: "mystep2",
-          commands: ["ls", "sleep 1", "ls"],
+          commands: ["ls", "sleep 8", "pwd"],
         },
       ],
-    },
-    {
-      name: "test_duplicate",
-      steps: [
+      triggers: [
         {
-          name: "mystep",
-          commands: ["ls", "echo $0"],
-        },
-      ],
-    },
-    {
-      name: "test2",
-      name: "test2",
-      steps: [
-        {
-          name: "mystep",
-          commands: ["ls"],
+          branches: ["master"],
+          actions: ["pre-push"],
         },
       ],
     },

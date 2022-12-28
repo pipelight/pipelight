@@ -8,6 +8,7 @@ chrono = "0.4.23"
 clap = { version = "4.0.27", features = ["derive","wrap_help"]}
 clap-verbosity-flag = "2.0.0"
 colored = "2.0.0"
+git2 = "0.15.0"
 io = "0.0.2"
 json = "0.12.4"
 log = "0.4.17"

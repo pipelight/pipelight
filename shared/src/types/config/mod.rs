@@ -17,7 +17,7 @@ pub struct Config {
 pub struct Pipeline {
     pub name: String,
     pub steps: Vec<Step>,
-    pub trigger: Option<Vec<Trigger>>,
+    pub triggers: Option<Vec<Trigger>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -32,15 +32,8 @@ pub struct Step {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Trigger {
-    pub hook: VecOrString,
-    pub branch: VecOrString,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[serde(deny_unknown_fields)]
-pub enum VecOrString {
-    Vec,
-    String,
+    pub actions: Vec<String>,
+    pub branches: Vec<String>,
 }
 
 pub const GIT_HOOKS: [&str; 17] = [

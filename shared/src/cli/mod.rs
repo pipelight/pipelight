@@ -22,7 +22,6 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             actions::stop();
         }
         types::Commands::Logs(logs) => {
-            info!("Display logs");
             if logs.pretty {
                 actions::pretty_logs()?
             } else if logs.json {
@@ -37,7 +36,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
         }
         types::Commands::Ls(list) => {
             info!("Listing piplines");
-            actions::list();
+            actions::list()?;
         }
         types::Commands::Lint(lint) => {
             actions::lint()?;
