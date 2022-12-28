@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 use crate::exec::Exec;
-use crate::logger::{debug, error, info, set_logger, trace, warn};
-use chrono::{DateTime, Local, NaiveDateTime, Offset, TimeZone, Utc};
+use log::{debug, error, info, trace, warn};
 use project_root::get_project_root;
 use serde::{Deserialize, Serialize};
 use serde_json;
@@ -36,7 +35,7 @@ impl Config {
     /// Ensure file exist
     pub fn get() -> Result<Config, Box<dyn Error>> {
         Config::exists()?;
-        let config = Config::load()?;
+        let mut config = Config::load()?;
         config = Config::check(&config)?;
         Ok(config)
     }
@@ -57,6 +56,22 @@ impl Config {
             println!("{}", res.stderr.unwrap());
         }
         Ok(())
+    }
+    pub fn pipeline(&self, name: &str) -> Result<Pipeline, Box<dyn Error>> {
+        let pipeline_result = &self
+            .pipelines
+            .iter()
+            .filter(|p| p.name == name)
+            .cloned()
+            .next();
+        let pipeline = match pipeline_result {
+            Some(res) => return Ok(res.to_owned()),
+            None => {
+                let message = format!("Couldn't find pipeline {:?}", name);
+                warn!("{}", message);
+                return Err(Box::from(message));
+            }
+        };
     }
     fn exists() -> Result<(), Box<dyn Error>> {
         let path = Path::new("./pipelight.config.ts");
@@ -114,24 +129,8 @@ impl Config {
             Ok(config.to_owned())
         }
     }
-    pub fn pipeline(&self, name: &str) -> Result<Pipeline, Box<dyn Error>> {
-        let config = Config::get()?;
-        let pipeline_result = config
-            .pipelines
-            .iter()
-            .filter(|p| p.name == name)
-            .cloned()
-            .next();
-        let pipeline = match pipeline_result {
-            Some(res) => return Ok(res),
-            None => {
-                let message = format!("Couldn't find pipeline {:?}", name);
-                warn!("{}", message);
-                return Err(Box::from(message));
-            }
-        };
-    }
 }
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Pipeline {

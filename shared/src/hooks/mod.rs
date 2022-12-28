@@ -4,7 +4,6 @@ use std::error::Error;
 use std::fs;
 use std::os::unix::fs::symlink;
 use std::path::Path;
-use std::process::{Command, Output, Stdio};
 
 /// Create/Ensure git hooks file trees
 pub fn is_hook() -> Result<bool, Box<dyn Error>> {

@@ -1,11 +1,11 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
-use crate::logger::{debug, error, info, set_logger, trace, warn};
 use crate::types::logs::{PipelineLog, PipelineStatus, StepLog};
 use crate::types::{Config, Pipeline};
 use git2;
 use log::LevelFilter::{Debug, Trace};
+use log::{debug, error, info, trace, warn};
 #[allow(dead_code)]
 use project_root::get_project_root;
 use std::env;
@@ -23,7 +23,6 @@ pub fn is_git() -> Result<bool, Box<dyn Error>> {
 
 /// Launch attached subprocess
 pub fn trigger() -> Result<(), Box<dyn Error>> {
-    set_logger(Trace);
     get_event();
 
     let config = Config::get()?;

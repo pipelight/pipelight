@@ -1,7 +1,7 @@
 // Cli core
 pub mod actions;
 pub mod types;
-use crate::logger;
+use crate::logger::Logs;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use log::info;
 use std::error::Error;
@@ -9,7 +9,7 @@ use std::error::Error;
 pub fn get_args() -> Result<(), Box<dyn Error>> {
     let args = types::Cli::parse();
     let verbosity = args.verbose.log_level_filter();
-    logger::set_logger(verbosity)?;
+    Logs::new().set()?;
 
     match args.command {
         types::Commands::Run(pipeline) => {
@@ -21,16 +21,12 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             actions::stop();
         }
         types::Commands::Logs(logs) => {
-            if logs.pretty {
-                actions::pretty_logs()?
-            } else if logs.json {
-                actions::json_logs()
+            if logs.json {
+                Logs::json()?
             } else if logs.clear {
-                actions::clear_logs()?
-            } else if logs.raw {
-                actions::raw_logs()
+                Logs::clear()?
             } else {
-                actions::pretty_logs()?
+                Logs::pretty()?
             }
         }
         types::Commands::Ls(list) => {

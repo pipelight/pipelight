@@ -5,6 +5,7 @@ use crate::types::{Pipeline, Step};
 use std::env;
 use std::error::Error;
 
+#[derive(Debug, Clone, PartialEq)]
 pub struct Exec {
     shell: String,
 }
@@ -15,26 +16,26 @@ impl Exec {
         };
     }
     /// Return user session shell if possible
-    fn shell(self) -> Self {
+    fn shell(&mut self) -> Self {
         let default_shell = "sh".to_owned();
         let shell_result = env::var("SHELL");
         let shell = match shell_result {
             Ok(res) => {
                 self.shell = res;
-                return self;
+                return self.to_owned();
             }
             Err(e) => {
-                return self;
+                return self.to_owned();
             }
         };
     }
     /// Use for pipeline exewcution only
-    pub fn simple(&self, command: &str) -> Result<StrOutput, Box<dyn Error>> {
+    pub fn simple(&mut self, command: &str) -> Result<StrOutput, Box<dyn Error>> {
         let shell = &self.shell();
         let output = subprocess::simple(&self.shell, command)?;
         Ok(output)
     }
-    pub fn attached(&self, command: &str) -> Result<String, Box<dyn Error>> {
+    pub fn attached(&mut self, command: &str) -> Result<String, Box<dyn Error>> {
         let shell = &self.shell();
         let output = subprocess::attached(&self.shell, command);
         let res = match output {
@@ -47,7 +48,7 @@ impl Exec {
             }
         };
     }
-    pub fn detached(&self, command: &str) -> Result<(), Box<dyn Error>> {
+    pub fn detached(&mut self, command: &str) -> Result<(), Box<dyn Error>> {
         let shell = &self.shell();
         let output = subprocess::detached(&self.shell, command);
         Ok(())
