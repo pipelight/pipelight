@@ -8,7 +8,7 @@ const config = {
       steps: [
         {
           name: "mystep",
-          commands: ["ls", "sleep 1", "ls"],
+          commands: ["ls", "sleep 8", "ls"],
         },
         {
           name: "mystep2",

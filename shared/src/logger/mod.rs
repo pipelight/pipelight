@@ -21,9 +21,7 @@ pub fn ensure_log_directory() -> Result<(), Box<dyn Error>> {
 }
 /// Delete logs directory
 pub fn clear_logs() -> Result<(), Box<dyn Error>> {
-    println!("hello");
     let path = Path::new(".pipelight/logs");
-    println!("{:?}", path);
     fs::remove_dir_all(path)?;
     Ok(())
 }

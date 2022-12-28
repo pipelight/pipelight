@@ -13,11 +13,11 @@ use uuid::{uuid, Uuid};
 pub fn set_with_file(level: LevelFilter, uuid: Uuid) -> Result<Config, Box<dyn Error>> {
     let shell_pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — \n{m}{n}\n";
     let pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}";
-    let body = "{m}{n}";
+    let body = "{m}";
     let stdout = ConsoleAppender::builder()
         .encoder(Box::new(PatternEncoder::new(pattern)))
         .build();
-    let pretty = ConsoleAppender::builder()
+    let nude = ConsoleAppender::builder()
         .encoder(Box::new(PatternEncoder::new(body)))
         .build();
     // let pipeline_raw_appender = FileAppender::builder()
@@ -30,15 +30,15 @@ pub fn set_with_file(level: LevelFilter, uuid: Uuid) -> Result<Config, Box<dyn E
         .unwrap();
     let config = Config::builder()
         .appender(Appender::builder().build("stdout", Box::new(stdout)))
-        .appender(Appender::builder().build("pretty", Box::new(pretty)))
+        .appender(Appender::builder().build("nude", Box::new(nude)))
         // .appender(Appender::builder().build("pipeline_raw", Box::new(pipeline_raw_appender)))
         .appender(Appender::builder().build("pipeline_json", Box::new(pipeline_json_appender)))
         .logger(Logger::builder().additive(false).build("stdout", level))
         .logger(
             Logger::builder()
                 .additive(false)
-                .appender("pretty")
-                .build("pretty", level),
+                .appender("nude")
+                .build("nude", level),
         )
         // .logger(
         //     Logger::builder()
@@ -61,22 +61,22 @@ pub fn set_with_file(level: LevelFilter, uuid: Uuid) -> Result<Config, Box<dyn E
 pub fn set(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
     let shell_pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — \n{m}{n}\n";
     let pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}";
-    let body = "{m}{n}";
+    let body = "{m}";
     let stdout = ConsoleAppender::builder()
         .encoder(Box::new(PatternEncoder::new(pattern)))
         .build();
-    let pretty = ConsoleAppender::builder()
+    let nude = ConsoleAppender::builder()
         .encoder(Box::new(PatternEncoder::new(body)))
         .build();
     let config = Config::builder()
         .appender(Appender::builder().build("stdout", Box::new(stdout)))
-        .appender(Appender::builder().build("pretty", Box::new(pretty)))
+        .appender(Appender::builder().build("nude", Box::new(nude)))
         .logger(Logger::builder().additive(false).build("stdout", level))
         .logger(
             Logger::builder()
                 .additive(false)
-                .appender("pretty")
-                .build("pretty", level),
+                .appender("nude")
+                .build("nude", level),
         )
         .build(Root::builder().appender("stdout").build(level))
         .unwrap();

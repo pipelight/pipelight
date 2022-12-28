@@ -71,21 +71,24 @@ impl PipelineLog {
         let pipeline_ptr: *mut PipelineLog = pipeline;
         handle
             .set_config(logger::config::set_with_file(LevelFilter::Trace, pipeline.uuid).unwrap());
+
+        unsafe {
+            pipeline_ptr.as_mut().unwrap().log();
+            pipeline_ptr
+                .as_mut()
+                .unwrap()
+                .status(&PipelineStatus::Running);
+        }
         for step in &mut self.steps {
-            unsafe {
-                pipeline_ptr
-                    .as_mut()
-                    .unwrap()
-                    .status(&PipelineStatus::Running);
-            }
             step.run(pipeline_ptr);
         }
-        self.pid = None;
         unsafe {
+            pipeline_ptr.as_mut().unwrap().pid = None;
             pipeline_ptr
                 .as_mut()
                 .unwrap()
                 .status(&PipelineStatus::Succeeded);
+            pipeline_ptr.as_mut().unwrap().log();
         }
     }
     pub fn log(&self) {
@@ -103,11 +106,23 @@ impl fmt::Display for PipelineLog {
         let date = str_date.parse::<DateTime<Local>>().unwrap();
         // let date: &str = &binding.as_ref();
         write!(f, "{}\n", date.to_rfc2822());
-        write!(f, " pipeline: {}\n", self.name);
+        write!(f, "   pipeline: {}\n", self.name);
+        if self.pid.is_some() {
+            write!(f, "   pid: {}\n", &self.pid.unwrap());
+        }
         for step in &self.steps {
-            write!(f, "\tstep: {}\n", step.name);
+            info!(target :"nude","\tstep: {}\n", step.name);
             for command in &step.commands {
-                write!(f, "\t\t{}\n", command.stdin);
+                let stdout = command.output.as_ref().unwrap().stdout.as_ref().unwrap();
+                let stderr = command.output.as_ref().unwrap().stderr.as_ref().unwrap();
+                let status = command.output.as_ref().unwrap().status;
+                if status {
+                    info!(target: "nude", "\t\t{}\n", &command.stdin.green());
+                    debug!(target: "nude", "{}\n", stdout)
+                } else {
+                    info!(target: "nude", "\t\t{}\n", &command.stdin.red());
+                    debug!(target: "nude", "\r{}\n", stderr);
+                }
             }
         }
         Ok(())
@@ -142,9 +157,9 @@ pub struct StepLog {
     pub on_failure: Option<Vec<String>>,
 }
 impl StepLog {
-    fn run(&mut self, pipeline: *mut PipelineLog) {
+    fn run(&mut self, pipeline_ptr: *mut PipelineLog) {
         for command in &mut self.commands {
-            command.run(pipeline);
+            command.run(pipeline_ptr);
         }
     }
 }
@@ -176,7 +191,7 @@ impl CommandLog {
             output: None,
         };
     }
-    fn run(&mut self, pipeline: *mut PipelineLog) {
+    fn run(&mut self, pipeline_ptr: *mut PipelineLog) {
         let output_res = exec(&self.stdin.clone());
         match output_res {
             Ok(output) => {
@@ -185,13 +200,16 @@ impl CommandLog {
             }
             Err(e) => {
                 unsafe {
-                    pipeline.as_mut().unwrap().status(&PipelineStatus::Failed);
+                    pipeline_ptr
+                        .as_mut()
+                        .unwrap()
+                        .status(&PipelineStatus::Failed);
                 }
                 Err(e)
             }
         };
         unsafe {
-            pipeline.as_ref().unwrap().log();
+            pipeline_ptr.as_mut().unwrap().log();
         }
     }
 }

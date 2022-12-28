@@ -12,17 +12,29 @@ use std::error::Error;
 use std::process::exit;
 
 fn main() {
-    handler().unwrap_or_else(|a| exit(1))
+    handler().unwrap_or_else(|e| {
+        // println!("{}", e);
+        exit(1)
+    })
 }
+
 /// Launch attached subprocess
 fn handler() -> Result<(), Box<dyn Error>> {
     let handle = set_logger(Trace)?;
-
     let args = env::args().collect::<Vec<String>>();
     let pipeline_name: String = args[1].to_owned();
     let p: Pipeline = get_pipeline(&pipeline_name)?;
     let mut pipeline = PipelineLog::from(p);
     pipeline.run(handle);
-
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::types::type_of;
+    #[test]
+    fn internal() {
+        let res = load_config();
+    }
 }
