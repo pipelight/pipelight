@@ -25,7 +25,7 @@ pub fn is_git() -> Result<bool, Box<dyn Error>> {
 /// Launch attached subprocess
 pub fn trigger() -> Result<(), Box<dyn Error>> {
     set_logger(Trace);
-    get_triggering_event();
+    get_event();
 
     let config = get_config()?;
 
