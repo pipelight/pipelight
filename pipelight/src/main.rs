@@ -2,9 +2,8 @@
 // #![allow(unused_imports)]
 #![allow(unused_must_use)]
 // use performance::*;
-use log::{debug, error, info, trace, warn};
+use log::error;
 use shared::cli;
-use shared::exec;
 #[allow(dead_code)]
 use std::error::Error;
 use std::process::exit;

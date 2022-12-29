@@ -1,17 +1,30 @@
 use crate::types::GIT_HOOKS;
+pub mod git;
 use log::{debug, error, info, trace, warn};
+use std::env;
 use std::error::Error;
 use std::fs;
 use std::os::unix::fs::symlink;
 use std::path::Path;
 
-pub struct Hooks {}
+pub struct Hooks {
+    name: String,
+}
 impl Hooks {
-    /// Create/Ensure git hooks file trees
     pub fn is() -> Result<bool, Box<dyn Error>> {
-        Ok(true)
+        let root = env::current_dir()?;
+        let path_string = root.display().to_string();
+        let my_bool = path_string.contains("/.git/hooks/");
+        let hook = root
+            .parent()
+            .unwrap()
+            .file_stem()
+            .unwrap()
+            .to_str()
+            .unwrap();
+        Ok(my_bool)
     }
-    ///Create directories
+    /// Create/Ensure git hooks file trees
     pub fn ensure() -> Result<(), Box<dyn Error>> {
         let root = ".git/hooks";
         let extension = ".d";
@@ -26,12 +39,13 @@ impl Hooks {
             let link = format!("{}/{}", dir.display(), bin);
             let link = Path::new(&link);
 
-            Hooks::ensure_dir(dir)?;
+            Hooks::ensure_directory(dir)?;
             Hooks::ensure_symlink(bin_path, link)?;
         }
         Ok(())
     }
-    fn ensure_dir(path: &Path) -> Result<(), Box<dyn Error>> {
+    ///Create directories
+    fn ensure_directory(path: &Path) -> Result<(), Box<dyn Error>> {
         let dir_exists = path.exists();
         if dir_exists {
             fs::remove_dir_all(path)?;

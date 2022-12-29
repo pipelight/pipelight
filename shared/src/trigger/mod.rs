@@ -14,11 +14,14 @@ use std::error::Error;
 use std::path::Path;
 use std::process::exit;
 
-///  Detect git repo
+///  Detect if there is a git repo in pwd
 pub fn is_git() -> Result<bool, Box<dyn Error>> {
     let root = current_dir()?;
-    git2::Repository::discover(root)?;
-    Ok(true)
+    let repo = git2::Repository::discover(root);
+    match repo {
+        Ok(res) => return Ok(true),
+        Err(e) => return Ok(false),
+    }
 }
 
 /// Launch attached subprocess
@@ -33,6 +36,7 @@ pub fn trigger() -> Result<(), Box<dyn Error>> {
         }
         for trigger in &pipeline.triggers {
             println!("{:?}", trigger);
+            // if (branch == trigger.branch)
         }
     }
 

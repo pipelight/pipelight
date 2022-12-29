@@ -3,22 +3,19 @@
 #![allow(dead_code)]
 use crate::exec::Exec;
 use crate::logger;
-use chrono;
-use chrono::{format, DateTime, Local, NaiveDateTime, Offset, TimeZone, Utc};
+use chrono::Utc;
 mod display;
 pub use log::Level::{Debug, Trace};
 pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 use log4rs::Handle;
 use serde::{Deserialize, Serialize};
-use serde_json::{Result, Value};
 use std::clone::Clone;
 use std::cmp::PartialEq;
 use std::convert::From;
-use std::error::Error;
 use std::marker::Copy;
 use std::process;
-use std::process::{ExitStatus, Output};
-use uuid::{uuid, Uuid};
+use std::process::Output;
+use uuid::Uuid;
 
 use crate::types::{Pipeline, Step, Trigger};
 
