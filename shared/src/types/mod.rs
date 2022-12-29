@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 use crate::exec::Exec;
+use crate::git::Git;
 use log::{debug, error, info, trace, warn};
 use project_root::get_project_root;
 use serde::{Deserialize, Serialize};
@@ -27,9 +28,12 @@ fn get_root() -> Result<String, Box<dyn Error>> {
 #[serde(deny_unknown_fields)]
 pub struct Config {
     pub pipelines: Vec<Pipeline>,
+    #[serde(skip)]
+    path: String,
 }
 impl Config {
     pub fn new() -> Result<Config, Box<dyn Error>> {
+        Git::new();
         Ok(Config::get()?)
     }
     /// Ensure file exist

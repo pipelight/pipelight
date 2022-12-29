@@ -19,11 +19,6 @@ use uuid::Uuid;
 
 use crate::types::{Pipeline, Step, Trigger};
 
-#[derive(Debug, PartialEq)]
-struct Observer {
-    pipeline: Option<PipelineLog>,
-}
-
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq)]
 pub enum PipelineStatus {
     Started,

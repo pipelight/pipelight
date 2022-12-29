@@ -22,7 +22,7 @@ fn handler() -> Result<(), Box<dyn Error>> {
     let handle = Logs::new().set()?;
     let args = env::args().collect::<Vec<String>>();
     let pipeline_name: String = args[1].to_owned();
-    let p: Pipeline = Config::get()?.pipeline(&pipeline_name)?;
+    let p: Pipeline = Config::new()?.pipeline(&pipeline_name)?;
     let mut pipeline = PipelineLog::from(p);
     pipeline.run(handle);
     Ok(())

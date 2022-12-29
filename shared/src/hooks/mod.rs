@@ -1,5 +1,4 @@
 use crate::types::GIT_HOOKS;
-pub mod git;
 use log::{debug, error, info, trace, warn};
 use std::env;
 use std::error::Error;
