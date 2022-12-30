@@ -9,8 +9,7 @@ use std::error::Error;
 pub fn get_args() -> Result<(), Box<dyn Error>> {
     let args = types::Cli::parse();
     let verbosity = args.verbose.log_level_filter();
-    Logs::new().set()?;
-
+    Logs::new().set(&verbosity)?;
     match args.command {
         types::Commands::Run(pipeline) => {
             info!("Triggering pipline {:#?}", pipeline.name);

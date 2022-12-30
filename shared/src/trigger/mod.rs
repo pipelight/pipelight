@@ -5,7 +5,6 @@ use crate::git::Git;
 use crate::logger::Logs;
 use crate::types::logs::PipelineLog;
 use crate::types::{Config, Pipeline, TriggerTuple};
-use log::LevelFilter::{Debug, Trace};
 use log::{debug, error, info, trace, warn};
 #[allow(dead_code)]
 use project_root::get_project_root;
@@ -19,7 +18,7 @@ use std::process::exit;
 pub fn trigger(env: &TriggerTuple) -> Result<(), Box<dyn Error>> {
     get_event();
 
-    let handle = Logs::new().set()?;
+    let handle = Logs::new().get()?;
     let config = Config::new()?;
 
     for pipeline in &config.pipelines {

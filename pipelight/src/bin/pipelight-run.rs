@@ -26,7 +26,7 @@ fn handler() -> Result<(), Box<dyn Error>> {
     let p: Pipeline = Config::new()?.pipeline(&pipeline_name)?;
     let mut pipeline = PipelineLog::from(&p);
 
-    let handle = Logs::new().set()?;
+    let handle = Logs::new().get()?;
     pipeline.run(&handle);
     Ok(())
 }

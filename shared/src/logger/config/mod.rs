@@ -13,8 +13,8 @@ use uuid::{uuid, Uuid};
 pub fn set_with_file(level: LevelFilter, uuid: Uuid) -> Result<Config, Box<dyn Error>> {
     let shell_pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — \n{m}{n}\n";
     let pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}";
-    let body = "{m}";
     let json = "{m}{n}";
+    let body = "{m}";
     let stdout = ConsoleAppender::builder()
         .encoder(Box::new(PatternEncoder::new(pattern)))
         .build();

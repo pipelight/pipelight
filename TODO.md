@@ -1,6 +1,6 @@
 # Rust
 
-process termiation/ list pipelines/ hooks
+process termiation/ list pipelines/
 
 Unit Tests
 

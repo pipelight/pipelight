@@ -33,17 +33,17 @@ impl Logs {
             level: LevelFilter::Trace,
         };
     }
-    /// Ensure log directory
-    pub fn ensure(&self) -> Result<(), Box<dyn Error>> {
-        let path = Path::new(&self.path);
-        fs::create_dir_all(path)?;
-        Ok(())
-    }
     /// Set loggers and return handler to change logLevels at runtime
-    pub fn set(&self) -> Result<Handle, Box<dyn Error>> {
+    pub fn set(&mut self, level: &LevelFilter) -> Result<Handle, Box<dyn Error>> {
+        self.ensure()?;
+        self.level = level.to_owned();
+        let config = config::set(self.level)?;
+        let handle = log4rs::init_config(config).unwrap();
+        Ok(handle)
+    }
+    pub fn get(&self) -> Result<Handle, Box<dyn Error>> {
         self.ensure()?;
         let config = config::set(self.level)?;
-        // use handle to change logger configuration at runtime
         let handle = log4rs::init_config(config).unwrap();
         Ok(handle)
     }
@@ -72,6 +72,12 @@ impl Logs {
             let pipeline = serde_json::from_str::<PipelineLog>(&json)?;
             println!("{:?}", pipeline);
         }
+        Ok(())
+    }
+    /// Ensure log directory
+    fn ensure(&self) -> Result<(), Box<dyn Error>> {
+        let path = Path::new(&self.path);
+        fs::create_dir_all(path)?;
         Ok(())
     }
 }
