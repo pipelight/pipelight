@@ -5,6 +5,7 @@ use std::error::Error;
 use std::fs;
 use std::io::Write;
 use std::os::unix::fs::symlink;
+use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
 
 pub struct Hooks {
@@ -77,6 +78,11 @@ impl Hooks {
         let res = match res_create {
             Ok(res) => {
                 debug!("Hook file created");
+
+                // Set permissions
+                let mut perms = res.metadata()?.permissions();
+                perms.set_mode(0o755);
+
                 Hooks::write(path, hook)?;
                 return Ok(());
             }
