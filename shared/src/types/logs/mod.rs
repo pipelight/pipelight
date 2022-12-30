@@ -40,7 +40,7 @@ pub struct PipelineLog {
     pub steps: Vec<StepLog>,
 }
 impl PipelineLog {
-    pub fn run(&mut self, handle: Handle) {
+    pub fn run(&mut self, handle: &Handle) {
         let pid = process::id();
         self.pid = Some(pid);
         let pipeline: &mut PipelineLog = self;
@@ -75,8 +75,8 @@ impl PipelineLog {
         self.status = status.to_owned();
     }
 }
-impl From<Pipeline> for PipelineLog {
-    fn from(e: Pipeline) -> Self {
+impl From<&Pipeline> for PipelineLog {
+    fn from(e: &Pipeline) -> Self {
         let steps = e
             .steps
             .iter()
@@ -86,7 +86,7 @@ impl From<Pipeline> for PipelineLog {
             pid: None,
             uuid: Uuid::new_v4(),
             date: Some(Utc::now().to_string()),
-            name: e.name,
+            name: e.name.to_owned(),
             steps: steps,
             status: PipelineStatus::Started,
             trigger: None,

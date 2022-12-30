@@ -12,19 +12,22 @@ use std::process::exit;
 
 fn main() {
     handler().unwrap_or_else(|e| {
-        // println!("{}", e);
+        // error!("{}", e);
         exit(1)
     })
 }
 
 /// Launch attached subprocess
 fn handler() -> Result<(), Box<dyn Error>> {
-    let handle = Logs::new().set()?;
+    // Collect Args
     let args = env::args().collect::<Vec<String>>();
     let pipeline_name: String = args[1].to_owned();
+
     let p: Pipeline = Config::new()?.pipeline(&pipeline_name)?;
-    let mut pipeline = PipelineLog::from(p);
-    pipeline.run(handle);
+    let mut pipeline = PipelineLog::from(&p);
+
+    let handle = Logs::new().set()?;
+    pipeline.run(&handle);
     Ok(())
 }
 

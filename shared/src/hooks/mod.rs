@@ -80,11 +80,12 @@ impl Hooks {
         let mut file = fs::File::create(path)?;
         let s = format!(
             "#!/bin/sh \n\
-                dir=\"{}hooks/{}.d\" \n\
+                dir=\"{root}hooks/{hook}.d\" \n\
                 for f in \"$dir\"/*; do \n\
-                  exec \"$f\" \n\
+                  \"$f\" {hook}\n\
                 done",
-            root, hook
+            root = root,
+            hook = hook
         );
         let b = s.as_bytes();
         file.write_all(b)?;

@@ -14,6 +14,7 @@ pub fn set_with_file(level: LevelFilter, uuid: Uuid) -> Result<Config, Box<dyn E
     let shell_pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — \n{m}{n}\n";
     let pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}";
     let body = "{m}";
+    let json = "{m}{n}";
     let stdout = ConsoleAppender::builder()
         .encoder(Box::new(PatternEncoder::new(pattern)))
         .build();
@@ -25,7 +26,7 @@ pub fn set_with_file(level: LevelFilter, uuid: Uuid) -> Result<Config, Box<dyn E
     //     .build(format!(".pipelight/logs/{}.raw", uuid))
     //     .unwrap();
     let pipeline_json_appender = FileAppender::builder()
-        .encoder(Box::new(PatternEncoder::new(body)))
+        .encoder(Box::new(PatternEncoder::new(json)))
         .build(format!(".pipelight/logs/{}.json", uuid))
         .unwrap();
     let config = Config::builder()
