@@ -14,40 +14,30 @@ use std::error::Error;
 use std::path::Path;
 use std::process::exit;
 
-///  Detect if there is a git repo in pwd
-pub fn is_git() -> Result<bool, Box<dyn Error>> {
-    let root = current_dir()?;
-    let repo = git2::Repository::discover(root);
-    match repo {
-        Ok(res) => return Ok(true),
-        Err(e) => return Ok(false),
-    }
-}
-
 /// Launch attached subprocess
 pub fn trigger() -> Result<(), Box<dyn Error>> {
     get_event();
 
     let config = Config::new()?;
+    let git = Git::new();
 
-    for pipeline in &config.pipelines {
+    // Retrieve env
+    // branch and triggering action
+    let branch = git.branch();
+
+    for pipeline in config.pipelines {
         if pipeline.triggers.is_none() {
             let message = format!("No triggers defined for pipeline: {:?}", &pipeline.name);
         }
-        for trigger in &pipeline.triggers {
-            println!("{:?}", trigger);
+        for trigger in pipeline.triggers.unwrap() {
+            println!("{:?}", trigger.to_tuples()?);
+            println!("{:?}", branch);
+            println!("{:?}", hook);
+
             // if (branch == trigger.branch)
         }
     }
 
-    // Check there is a git folder
-    if !is_git()? {
-        let message = "Couldn't detect git repository";
-        debug!("{}", message);
-    }
-
-    // Retrieve env branch and triggering file (manual or git_hook)
-    // get_branch()
     // get_triggering_event()
 
     // Retrieve triggers

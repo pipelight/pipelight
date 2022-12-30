@@ -158,6 +158,25 @@ pub struct Trigger {
     pub actions: Vec<String>,
     pub branches: Vec<String>,
 }
+impl Trigger {
+    pub fn to_tuples(&self) -> Result<Vec<TriggerTuple>, Box<dyn Error>> {
+        let mut list: Vec<TriggerTuple> = vec![];
+        for branch in &self.branches {
+            for action in &self.actions {
+                list.push(TriggerTuple {
+                    branch: branch.to_owned(),
+                    action: action.to_owned(),
+                })
+            }
+        }
+        Ok(list)
+    }
+}
+#[derive(Debug, Clone, PartialEq)]
+pub struct TriggerTuple {
+    pub action: String,
+    pub branch: String,
+}
 
 pub const GIT_HOOKS: [&str; 17] = [
     "applypatch-msg",

@@ -727,7 +727,7 @@ checksum = "478c572c3d73181ff3c2539045f6eb99e5491218eae919370993b890cdbdd98e"
 
 [[package]]
 name = "pipelight"
-version = "0.1.5"
+version = "0.1.6"
 dependencies = [
  "log",
  "serde_json",
@@ -951,7 +951,7 @@ dependencies = [
 
 [[package]]
 name = "shared"
-version = "0.1.5"
+version = "0.1.6"
 dependencies = [
  "chrono",
  "clap",

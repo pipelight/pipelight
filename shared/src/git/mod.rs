@@ -1,25 +1,34 @@
-use git2::Repository;
+use git2::{Reference, Repository};
 use std::env;
 use std::error::Error;
 
 pub struct Git {
-    pub path: String,
+    pub repo: Option<Repository>,
 }
 impl Git {
     pub fn new() -> Self {
-        let mut e = Git {
-            path: "./".to_owned(),
-        };
-        e.get().ok();
+        let mut e = Git { repo: None };
+        &e.get();
         return e;
     }
     ///  Detect if there is a git repo in pwd
-    fn get(&mut self) -> Result<Repository, Box<dyn Error>> {
+    fn get(&mut self) -> Result<(), Box<dyn Error>> {
         // Seek git repo in current directory
         let root = env::current_dir()?;
         let repo = Repository::discover(root)?;
-        self.path = repo.path().parent().unwrap().display().to_string();
-        env::set_current_dir(&self.path)?;
-        Ok(repo)
+        // Set working dir
+        let wd = repo.workdir().unwrap().display().to_string();
+        env::set_current_dir(wd)?;
+
+        self.repo = Some(repo);
+        Ok(())
+    }
+    pub fn branch(self) -> Result<String, Box<dyn Error>> {
+        // Only tested on attached HEAD
+        // No edge case when head is a commit or else...
+        let repo = self.repo.unwrap();
+        let head = repo.head()?;
+        let name = head.shorthand().unwrap().to_owned();
+        Ok(name)
     }
 }
