@@ -55,42 +55,23 @@ impl Hooks {
         if dir_exists {
             fs::remove_dir_all(path)?;
         }
-        let res_create = fs::create_dir(path);
-        let res = match res_create {
-            Ok(res) => {
-                debug!("Hook folder created");
-                return Ok(());
-            }
-            Err(e) => {
-                warn!("Couldn't create {}", &path.display());
-                return Err(Box::from(e));
-            }
-        };
+        fs::create_dir(path);
+        Ok(())
     }
     /// Create a hook that will call subfolder script
     fn ensure_hook(path: &Path, hook: &str) -> Result<(), Box<dyn Error>> {
-        let dir_exists = path.exists();
-        if dir_exists {
+        let exists = path.exists();
+        if exists {
             fs::remove_file(path)?;
         }
-        let res_create = fs::File::create(path);
+        let file = fs::File::create(path)?;
+        let metadata = file.metadata()?;
+        let mut perms = metadata.permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(path, perms)?;
 
-        let res = match res_create {
-            Ok(res) => {
-                debug!("Hook file created");
-
-                // Set permissions
-                let mut perms = res.metadata()?.permissions();
-                perms.set_mode(0o755);
-
-                Hooks::write(path, hook)?;
-                return Ok(());
-            }
-            Err(e) => {
-                warn!("Couldn't create {}", &path.display());
-                return Err(Box::from(e));
-            }
-        };
+        Hooks::write(path, hook)?;
+        Ok(())
     }
     fn write(path: &Path, hook: &str) -> Result<(), Box<dyn Error>> {
         let mut file = fs::File::open(path)?;
@@ -105,17 +86,8 @@ impl Hooks {
         if link_exists {
             fs::remove_file(dest)?;
         }
-        let res_symlink = symlink(src, dest);
-        let res = match res_symlink {
-            Ok(res) => {
-                debug!("Symlink created");
-                return Ok(());
-            }
-            Err(e) => {
-                warn!("Couldn't create {}", dest.display());
-                return Err(Box::from(e));
-            }
-        };
+        symlink(src, dest)?;
+        Ok(())
     }
 }
 
