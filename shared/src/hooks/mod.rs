@@ -1,3 +1,4 @@
+use crate::git::Git;
 use crate::types::GIT_HOOKS;
 use log::{debug, error, info, trace, warn};
 use std::env;
@@ -74,10 +75,19 @@ impl Hooks {
         Ok(())
     }
     fn write(path: &Path, hook: &str) -> Result<(), Box<dyn Error>> {
-        let mut file = fs::File::open(path)?;
-        let s = format!("#!/bin/sh\n$GIT_DIR/hooks/{} \"$@\"", hook);
-        let buf = s.as_bytes();
-        file.write(buf);
+        let git = Git::new();
+        let root = git.repo.unwrap().path().display().to_string();
+        let mut file = fs::File::create(path)?;
+        let s = format!(
+            "#!/bin/sh \n\
+                dir=\"{}/hooks/{}.d\" \n\
+                for f in \"$dir\"/*; do \n\
+                  cat \"$f\" \n\
+                done",
+            root, hook
+        );
+        let b = s.as_bytes();
+        file.write_all(b)?;
         Ok(())
     }
 
