@@ -82,7 +82,7 @@ impl Hooks {
             "#!/bin/sh \n\
                 dir=\"{}hooks/{}.d\" \n\
                 for f in \"$dir\"/*; do \n\
-                  echo \"$f\" \n\
+                  exec \"$f\" \n\
                 done",
             root, hook
         );
