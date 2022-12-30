@@ -32,7 +32,7 @@ pub fn trigger() -> Result<(), Box<dyn Error>> {
         for trigger in pipeline.triggers.unwrap() {
             println!("{:?}", trigger.to_tuples()?);
             println!("{:?}", branch);
-            println!("{:?}", hook);
+            // println!("{:?}", hook);
 
             // if (branch == trigger.branch)
         }
