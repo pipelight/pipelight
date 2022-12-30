@@ -86,7 +86,7 @@ impl Config {
             let message = "Config file not found.";
             let hint =
                 "Use \"pipelight init\" to generate config file\n or move to the right directory";
-            error!("{}", message);
+            warn!("{}", message);
             debug!("{}", hint);
             Err(Box::from(message))
         }

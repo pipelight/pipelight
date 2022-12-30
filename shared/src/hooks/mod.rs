@@ -3,6 +3,7 @@ use log::{debug, error, info, trace, warn};
 use std::env;
 use std::error::Error;
 use std::fs;
+use std::io::Write;
 use std::os::unix::fs::symlink;
 use std::path::Path;
 
@@ -32,18 +33,22 @@ impl Hooks {
         let bin_path = format!("/usr/bin/{}", bin);
         let bin_path = Path::new(&bin_path);
         for hook in &GIT_HOOKS {
+            let file = format!("{}/{}", root, hook);
+            let file = Path::new(&file);
+
             let dir = format!("{}/{}{}", root, hook, extension);
             let dir = Path::new(&dir);
 
             let link = format!("{}/{}", dir.display(), bin);
             let link = Path::new(&link);
 
+            Hooks::ensure_hook(file, hook)?;
             Hooks::ensure_directory(dir)?;
             Hooks::ensure_symlink(bin_path, link)?;
         }
         Ok(())
     }
-    ///Create directories
+    /// Create directories
     fn ensure_directory(path: &Path) -> Result<(), Box<dyn Error>> {
         let dir_exists = path.exists();
         if dir_exists {
@@ -60,6 +65,33 @@ impl Hooks {
                 return Err(Box::from(e));
             }
         };
+    }
+    /// Create a hook that will call subfolder script
+    fn ensure_hook(path: &Path, hook: &str) -> Result<(), Box<dyn Error>> {
+        let dir_exists = path.exists();
+        if dir_exists {
+            fs::remove_file(path)?;
+        }
+        let res_create = fs::File::create(path);
+
+        let res = match res_create {
+            Ok(res) => {
+                debug!("Hook file created");
+                Hooks::write(path, hook)?;
+                return Ok(());
+            }
+            Err(e) => {
+                warn!("Couldn't create {}", &path.display());
+                return Err(Box::from(e));
+            }
+        };
+    }
+    fn write(path: &Path, hook: &str) -> Result<(), Box<dyn Error>> {
+        let mut file = fs::File::open(path)?;
+        let s = format!("#!/bin/sh\n$GIT_DIR/hooks/{} \"$@\"", hook);
+        let buf = s.as_bytes();
+        file.write(buf);
+        Ok(())
     }
 
     fn ensure_symlink(src: &Path, dest: &Path) -> Result<(), Box<dyn Error>> {
