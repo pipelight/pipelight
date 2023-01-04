@@ -4,21 +4,26 @@
 #![allow(dead_code)]
 
 mod display;
+mod from;
+
+use exec::types::StrOutput;
 use exec::Exec;
 use log::{debug, error, info, trace, warn, LevelFilter};
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
 use std::cmp::PartialEq;
 use std::error::Error;
+use std::fs;
 use std::marker::Copy;
 use std::process;
+use utils;
 use utils::logger::Logs;
 use uuid::Uuid;
 
 // use json::{Pipeline, Step, Trigger};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq)]
-enum Status {
+pub enum Status {
     Started,
     Succeeded,
     Failed,
@@ -27,19 +32,35 @@ enum Status {
     Never,
 }
 
+pub struct Pipelines {}
+impl Pipelines {
+    pub fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
+        let dir = Logs::new().path;
+        let paths = fs::read_dir(dir).unwrap();
+        let mut pipelines = vec![];
+        for res in paths {
+            let dir_entry = res?;
+            let json = utils::read_last_line(&dir_entry.path())?;
+            let pipeline = serde_json::from_str::<Pipeline>(&json)?;
+            pipelines.push(pipeline);
+        }
+        Ok(pipelines)
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-struct Pipeline {
+pub struct Pipeline {
     pub uuid: Uuid,
     pub pid: Option<u32>,
     pub name: String,
     pub date: Option<String>,
-    pub status: Status,
+    pub status: Option<Status>,
     pub triggers: Option<Trigger>,
     pub steps: Vec<Step>,
 }
 impl Pipeline {
     pub fn is_running(&mut self) -> Result<bool, Box<dyn Error>> {
-        let pipelines = logger::Logs::get_pipelines()?;
+        let pipelines = Pipelines::get()?;
         let pid = pipelines
             .iter()
             .filter(|p| p.name == self.name)
@@ -56,7 +77,7 @@ impl Pipeline {
         self.pid = Some(pid);
         let pipeline: &mut Pipeline = self;
         let pipeline_ptr: *mut Pipeline = pipeline;
-        Logger::set_file(LevelFilter::Trace, pipeline.uuid);
+        Logs::new().set_file(&LevelFilter::Trace, pipeline.uuid);
 
         unsafe {
             pipeline_ptr.as_mut().unwrap().log();
@@ -80,7 +101,7 @@ impl Pipeline {
     }
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-struct Step {
+pub struct Step {
     pub name: String,
     pub commands: Vec<Command>,
     pub non_blocking: Option<bool>,
@@ -95,7 +116,7 @@ impl Step {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-struct Command {
+pub struct Command {
     pub stdin: String,
     output: Option<StrOutput>,
 }
@@ -128,6 +149,6 @@ impl Command {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Trigger {
-    pub action: String,
-    pub branch: String,
+    pub action: Option<String>,
+    pub branch: Option<String>,
 }

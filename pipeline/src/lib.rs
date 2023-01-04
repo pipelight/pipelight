@@ -3,4 +3,4 @@ pub mod types;
 
 // Then json extracted struct are converted into prtactical structs
 // for further usage
-mod cast;
+pub mod cast;

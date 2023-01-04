@@ -1,8 +1,10 @@
 // Types that exist just to so json_serde can translate json into usable... things
-
 #![allow(dead_code)]
+
 use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;
+
+mod config;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]

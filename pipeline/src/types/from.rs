@@ -1,5 +1,7 @@
-use super;
-use cast;
+use super::*;
+use crate::cast;
+use chrono::Utc;
+use exec::types::Output;
 use std::convert::From;
 
 impl From<&cast::Pipeline> for Pipeline {
@@ -8,8 +10,10 @@ impl From<&cast::Pipeline> for Pipeline {
         let triggers = e
             .triggers
             .iter()
-            .map(|e| Triggers::from(e))
-            .collect::<Vec<Triggers>>()
+            .map(|e| Trigger::from(e))
+            .collect::<Vec<Trigger>>()
+            .iter()
+            .collect()
             .flatten()
             .collect();
         let p = Pipeline {
@@ -50,6 +54,7 @@ impl From<&String> for Command {
     }
 }
 
+trait TypeConvertion {
 impl From<&Output> for StrOutput {
     fn from(s: &Output) -> Self {
         let stdout = String::from_utf8(s.clone().stdout).unwrap().to_owned();
@@ -60,6 +65,7 @@ impl From<&Output> for StrOutput {
             stderr: Some(stderr),
         };
     }
+}
 }
 
 impl From<&cast::Trigger> for Trigger {

@@ -1,8 +1,8 @@
 // Actions: Functions called by cli
-// use crate::exec::Exec;
-// use crate::hooks::Hooks;
+use crate::hooks::Hooks;
+use exec::Exec;
 use log::{debug, error, info, trace, warn};
-use pipeline::types::Config;
+use pipeline::cast::Config;
 use std::error::Error;
 
 pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
@@ -36,7 +36,7 @@ pub fn list() -> Result<(), Box<dyn Error>> {
         "{0: <10} {1: <20} {2: <10} {3}",
         "status", "last_run_date", "hook", "name"
     );
-    for pipeline in config.pipelines {
+    for pipeline in config.pipelines.unwrap() {
         println!(
             "{0: <10} {1: <20} {2: <10} {3}",
             "status", "last_run date", "hook", pipeline.name

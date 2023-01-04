@@ -6,11 +6,11 @@ use std::fmt;
 
 impl fmt::Display for Pipeline {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} - ", &self.status);
+        write!(f, "{} - ", &self.status)?;
         let str_date = &self.date.as_ref().unwrap();
         let date = str_date.parse::<DateTime<Local>>().unwrap();
         // let date: &str = &binding.as_ref();
-        write!(f, "{}\n", date.to_rfc2822());
+        write!(f, "{}\n", date.to_rfc2822())?;
         write!(f, "\t\tpipeline: {}\n", self.name);
         if self.pid.is_some() {
             write!(f, "   pid: {}\n", &self.pid.unwrap());

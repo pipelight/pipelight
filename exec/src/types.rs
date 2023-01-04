@@ -1,10 +1,9 @@
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
 use std::cmp::PartialEq;
-use std::process::Output;
+pub use std::process::Output;
 
-// #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct StrOutput {
     pub status: bool,
     pub stdout: Option<String>,

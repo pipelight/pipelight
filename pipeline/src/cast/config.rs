@@ -1,10 +1,13 @@
-use super::Config;
-use utils::get_root;
+use super::{Config, Pipeline};
+use exec::Exec;
+use log::{debug, error, info, trace, warn};
+use std::error::Error;
+use std::path::Path;
+use utils::{get_root, git::Git};
 
 impl Config {
     pub fn new() -> Result<Config, Box<dyn Error>> {
-        let default = Config {}
-
+        // let default = Config { pipelines: None };
         Git::new();
         Ok(Config::get()?)
     }
@@ -34,13 +37,15 @@ impl Config {
         Ok(())
     }
     pub fn pipeline(&self, name: &str) -> Result<Pipeline, Box<dyn Error>> {
-        let pipeline_result = &self
+        let pipeline_result = self
+            .clone()
             .pipelines
+            .unwrap()
             .iter()
             .filter(|p| p.name == name)
             .cloned()
             .next();
-        let pipeline = match pipeline_result {
+        match pipeline_result {
             Some(res) => return Ok(res.to_owned()),
             None => {
                 let message = format!("Couldn't find pipeline {:?}", name);
@@ -87,7 +92,9 @@ impl Config {
     }
     fn check(config: &Config) -> Result<Self, Box<dyn Error>> {
         let names = config
+            .clone()
             .pipelines
+            .unwrap()
             .iter()
             .map(|p| &p.name)
             .cloned()
@@ -106,4 +113,3 @@ impl Config {
         }
     }
 }
-

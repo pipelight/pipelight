@@ -1,4 +1,4 @@
-// use crate::types::logs::PipelineLog;
+// use crate::types::logs::pipeline;
 pub use log::Level;
 pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 use log4rs;
@@ -12,9 +12,9 @@ use std::clone::Clone;
 
 #[derive(Debug, Clone)]
 pub struct Logs {
-    path: String,
+    pub path: String,
     level: LevelFilter,
-    handle: Option<Handle>,
+    pub handle: Option<Handle>,
 }
 impl Logs {
     pub fn new() -> Self {

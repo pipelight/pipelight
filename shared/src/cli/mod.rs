@@ -2,15 +2,15 @@
 pub mod actions;
 pub mod print;
 pub mod types;
-use crate::logger::Logs;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use log::info;
 use std::error::Error;
+use utils::logger::Logs;
 
 pub fn get_args() -> Result<(), Box<dyn Error>> {
     let args = types::Cli::parse();
     let verbosity = args.verbose.log_level_filter();
-    Logs::new().set(&verbosity)?;
+    Logs::new().set(&verbosity);
     match args.command {
         types::Commands::Run(pipeline) => {
             info!("Triggering pipline {:#?}", pipeline.name);
@@ -22,11 +22,11 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
         }
         types::Commands::Logs(logs) => {
             if logs.json {
-                Logs::json()?
+                print::json()?;
             } else if logs.clear {
                 Logs::clear()?
             } else {
-                Logs::pretty()?
+                print::pretty()?;
             }
         }
         types::Commands::Ls(list) => {
