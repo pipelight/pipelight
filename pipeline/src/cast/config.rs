@@ -1,38 +1,10 @@
-#![allow(dead_code)]
-use crate::exec::Exec;
-use crate::git::Git;
-use log::{debug, error, info, trace, warn};
-use project_root::get_project_root;
-use serde::{Deserialize, Serialize};
-use serde_json;
-use std::cmp::PartialEq;
-use std::error::Error;
-use std::path::Path;
-pub mod logs;
+use super::Config;
+use utils::get_root;
 
-/// Return project root path as string
-fn get_root() -> Result<String, Box<dyn Error>> {
-    let root = get_project_root()?;
-    let to_str_result = root.to_str();
-    let path = match to_str_result {
-        Some(res) => return Ok(res.to_owned()),
-        None => {
-            let message = "Internal error: Couldn't find project root";
-            warn!("{}", message);
-            return Err(Box::from(message));
-        }
-    };
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[serde(deny_unknown_fields)]
-pub struct Config {
-    pub pipelines: Vec<Pipeline>,
-    #[serde(skip)]
-    path: String,
-}
 impl Config {
     pub fn new() -> Result<Config, Box<dyn Error>> {
+        let default = Config {}
+
         Git::new();
         Ok(Config::get()?)
     }
@@ -135,65 +107,3 @@ impl Config {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[serde(deny_unknown_fields)]
-pub struct Pipeline {
-    pub name: String,
-    pub steps: Vec<Step>,
-    pub triggers: Option<Vec<Trigger>>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[serde(deny_unknown_fields)]
-pub struct Step {
-    pub name: String,
-    pub commands: Vec<String>,
-    pub non_blocking: Option<bool>,
-    pub on_failure: Option<Vec<String>>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-#[serde(deny_unknown_fields)]
-pub struct Trigger {
-    pub actions: Vec<String>,
-    pub branches: Vec<String>,
-}
-impl Trigger {
-    pub fn to_tuples(&self) -> Result<Vec<TriggerTuple>, Box<dyn Error>> {
-        let mut list: Vec<TriggerTuple> = vec![];
-        for branch in &self.branches {
-            for action in &self.actions {
-                list.push(TriggerTuple {
-                    branch: branch.to_owned(),
-                    action: action.to_owned(),
-                })
-            }
-        }
-        Ok(list)
-    }
-}
-#[derive(Debug, Clone, PartialEq)]
-pub struct TriggerTuple {
-    pub action: String,
-    pub branch: String,
-}
-
-pub const GIT_HOOKS: [&str; 17] = [
-    "applypatch-msg",
-    "pre-applypatch",
-    "post-applypatch",
-    "pre-commit",
-    "prepare-commit-msg",
-    "commit-msg",
-    "post-commit",
-    "pre-rebase",
-    "post-checkout",
-    "post-merge",
-    "pre-receive",
-    "update",
-    "post-receive",
-    "post-update",
-    "pre-auto-gc",
-    "post-rewrite",
-    "pre-push",
-];

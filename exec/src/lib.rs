@@ -1,9 +1,9 @@
 pub mod subprocess;
-use crate::logger::{debug, error, info, trace, warn};
-use crate::types::logs::{PipelineLog, PipelineStatus, StepLog, StrOutput};
-use crate::types::{Pipeline, Step};
+pub mod types;
+use log::{debug, error, info, trace, warn, LevelFilter};
 use std::env;
 use std::error::Error;
+use types::StrOutput;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Exec {
@@ -19,7 +19,7 @@ impl Exec {
     fn shell(&mut self) -> Self {
         let default_shell = "sh".to_owned();
         let shell_result = env::var("SHELL");
-        let shell = match shell_result {
+        match shell_result {
             Ok(res) => {
                 self.shell = res;
                 return self.to_owned();
@@ -36,9 +36,8 @@ impl Exec {
         Ok(output)
     }
     pub fn attached(&mut self, command: &str) -> Result<String, Box<dyn Error>> {
-        let shell = &self.shell();
         let output = subprocess::attached(&self.shell, command);
-        let res = match output {
+        match output {
             Ok(output) => {
                 return Ok(output.to_owned());
             }

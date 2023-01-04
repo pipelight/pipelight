@@ -1,8 +1,8 @@
 // Actions: Functions called by cli
-use crate::exec::Exec;
-use crate::hooks::Hooks;
-use crate::types::Config;
+// use crate::exec::Exec;
+// use crate::hooks::Hooks;
 use log::{debug, error, info, trace, warn};
+use pipeline::types::Config;
 use std::error::Error;
 
 pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {

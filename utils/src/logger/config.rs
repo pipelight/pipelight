@@ -5,13 +5,14 @@ use log4rs::append::console::ConsoleAppender;
 use log4rs::append::file::FileAppender;
 use log4rs::config::{Appender, Config, Logger, Root};
 use log4rs::encode::pattern::PatternEncoder;
-use log4rs::Handle;
-use project_root::get_project_root;
-use std::error::Error;
-use uuid::{uuid, Uuid};
+use uuid::Uuid;
 
-pub fn set_with_file(level: LevelFilter, uuid: Uuid) -> Result<Config, Box<dyn Error>> {
-    let shell_pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — \n{m}{n}\n";
+pub fn file(level: LevelFilter, uuid: Uuid) -> Config {
+    // The raw logger will be implemented if needed
+    // to troubleshoot simultaneous pipline execution
+    // with same file acces error...
+
+    // let shell_pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — \n{m}{n}\n";
     let pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}";
     let json = "{m}{n}";
     let body = "{m}";
@@ -55,12 +56,11 @@ pub fn set_with_file(level: LevelFilter, uuid: Uuid) -> Result<Config, Box<dyn E
         )
         .build(Root::builder().appender("stdout").build(level))
         .unwrap();
-    Ok(config)
+    return config;
 }
 
 /// Return logger config with chosen verbosity level
-pub fn set(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
-    let shell_pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — \n{m}{n}\n";
+pub fn default(level: LevelFilter) -> Config {
     let pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}";
     let body = "{m}";
     let stdout = ConsoleAppender::builder()
@@ -81,5 +81,5 @@ pub fn set(level: LevelFilter) -> Result<Config, Box<dyn Error>> {
         )
         .build(Root::builder().appender("stdout").build(level))
         .unwrap();
-    Ok(config)
+    return config;
 }

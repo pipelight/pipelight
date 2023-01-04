@@ -300,6 +300,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "exec"
+version = "0.2.0"
+dependencies = [
+ "colored",
+ "io",
+ "json",
+ "log",
+ "serde",
+ "serde_json",
+ "subprocess",
+ "sysinfo",
+]
+
+[[package]]
 name = "fnv"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -727,11 +741,29 @@ checksum = "478c572c3d73181ff3c2539045f6eb99e5491218eae919370993b890cdbdd98e"
 
 [[package]]
 name = "pipelight"
-version = "0.1.6"
+version = "0.2.0"
 dependencies = [
  "log",
  "serde_json",
  "shared",
+]
+
+[[package]]
+name = "pipeline"
+version = "0.2.0"
+dependencies = [
+ "chrono",
+ "colored",
+ "exec",
+ "json",
+ "log",
+ "project-root",
+ "rev_buf_reader",
+ "serde",
+ "serde_json",
+ "sysinfo",
+ "utils",
+ "uuid",
 ]
 
 [[package]]
@@ -951,18 +983,20 @@ dependencies = [
 
 [[package]]
 name = "shared"
-version = "0.1.6"
+version = "0.2.0"
 dependencies = [
  "chrono",
  "clap",
  "clap-verbosity-flag",
  "colored",
  "derive-new",
+ "exec",
  "git2",
  "io",
  "json",
  "log",
  "log4rs",
+ "pipeline",
  "project-root",
  "rev_buf_reader",
  "serde",
@@ -970,6 +1004,7 @@ dependencies = [
  "subprocess",
  "sysinfo",
  "time 0.3.17",
+ "utils",
  "uuid",
 ]
 
@@ -1167,6 +1202,18 @@ dependencies = [
  "form_urlencoded",
  "idna",
  "percent-encoding",
+]
+
+[[package]]
+name = "utils"
+version = "0.2.0"
+dependencies = [
+ "git2",
+ "log",
+ "log4rs",
+ "project-root",
+ "rev_buf_reader",
+ "uuid",
 ]
 
 [[package]]

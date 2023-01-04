@@ -2,6 +2,9 @@
 
 members=[
   # "performance",
+  "utils",
+  "exec",
+  "pipeline",
   "shared",
   "pipelight",
 ]

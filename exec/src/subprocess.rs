@@ -1,9 +1,7 @@
-use crate::types::logs::StrOutput;
+use super::types::StrOutput;
 use log::{debug, error, info, trace, warn};
-use std::env;
 use std::error::Error;
 use std::process::{Command, Output, Stdio};
-use std::thread;
 
 /// Execute in same subprocess
 pub fn simple<'a>(shell: &str, command: &str) -> Result<StrOutput, Box<dyn Error>> {

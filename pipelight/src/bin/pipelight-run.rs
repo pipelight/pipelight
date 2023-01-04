@@ -27,6 +27,13 @@ fn handler() -> Result<(), Box<dyn Error>> {
     let mut pipeline = PipelineLog::from(&p);
 
     let handle = Logs::new().get()?;
+    let is_running: bool = pipeline.is_running()?;
+    if is_running {
+        let message = "Pipeline already running";
+        return Err(Box::from(message));
+    } else {
+        pipeline.run(&handle);
+    }
     pipeline.run(&handle);
     Ok(())
 }
