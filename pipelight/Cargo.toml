@@ -12,4 +12,3 @@ license="GPL2"
 [dependencies]
 shared = {path = "../shared" }
 log = "0.4.17"
-serde_json = "1.0.89"

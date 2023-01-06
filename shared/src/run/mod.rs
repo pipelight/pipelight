@@ -17,13 +17,13 @@ pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
 }
 
 /// Launch attached subprocess
-fn run_bin() -> Result<(), Box<dyn Error>> {
+pub fn run_bin() -> Result<(), Box<dyn Error>> {
     // Collect Args
     let args = env::args().collect::<Vec<String>>();
     let pipeline_name: String = args[1].to_owned();
 
     let p: Pipeline = Config::new()?.pipeline(&pipeline_name)?;
-    let mut pipeline = types::Pipeline::from(p);
+    let mut pipeline = types::Pipeline::from(&p);
 
     let is_running: bool = pipeline.is_running()?;
     if is_running {

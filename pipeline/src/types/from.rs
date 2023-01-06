@@ -1,21 +1,21 @@
-use super::*;
+use super::{Command, Pipeline, Step, Trigger};
 use crate::cast;
+use crate::types;
 use chrono::Utc;
-use exec::types::Output;
 use std::convert::From;
+use uuid::Uuid;
 
 impl From<&cast::Pipeline> for Pipeline {
     fn from(e: &cast::Pipeline) -> Self {
         let steps = e.steps.iter().map(|e| Step::from(e)).collect::<Vec<Step>>();
-        let triggers = e
-            .triggers
-            .iter()
-            .map(|e| Trigger::from(e))
-            .collect::<Vec<Trigger>>()
-            .iter()
-            .collect()
-            .flatten()
-            .collect();
+        // let triggers = vec![];
+        // for e in e.triggers.unwrap() {
+        //     let tuples = Trigger::from(&e);
+        //     for tuple in tuples {
+        //         triggers.push(tuple);
+        //     }
+        // }
+        // println!("{:?}", triggers);
         let p = Pipeline {
             pid: None,
             uuid: Uuid::new_v4(),
@@ -23,14 +23,15 @@ impl From<&cast::Pipeline> for Pipeline {
             name: e.name.to_owned(),
             steps: steps,
             status: None,
-            triggers: Some(triggers),
+            // triggers: Some(triggers),
+            triggers: None,
         };
         return p;
     }
 }
 
 impl From<&cast::Step> for Step {
-    fn from(e: &Step) -> Self {
+    fn from(e: &cast::Step) -> Self {
         let commands = e
             .commands
             .iter()
@@ -54,31 +55,17 @@ impl From<&String> for Command {
     }
 }
 
-trait TypeConvertion {
-impl From<&Output> for StrOutput {
-    fn from(s: &Output) -> Self {
-        let stdout = String::from_utf8(s.clone().stdout).unwrap().to_owned();
-        let stderr = String::from_utf8(s.clone().stderr).unwrap().to_owned();
-        return StrOutput {
-            status: s.status.success(),
-            stdout: Some(stdout),
-            stderr: Some(stderr),
-        };
-    }
-}
-}
-
-impl From<&cast::Trigger> for Trigger {
-    fn from(e: &cast::Trigger) -> Self {
-        let mut list: Vec<Trigger> = vec![];
-        for branch in e.branches {
-            for action in e.actions {
-                list.push(Trigger {
+impl Trigger {
+    pub fn flatten(e: &cast::Trigger) -> Vec<Trigger> {
+        let mut tuplelist: Vec<Trigger> = vec![];
+        for branch in e.branches.clone() {
+            for action in e.actions.clone().unwrap() {
+                tuplelist.push(types::Trigger {
                     branch: Some(branch.to_owned()),
                     action: Some(action.to_owned()),
                 })
             }
         }
-        return list;
+        return tuplelist;
     }
 }

@@ -1,10 +1,6 @@
 #![allow(unused_variables)]
 #![allow(unused_must_use)]
-use log::{debug, error, info, trace, warn};
-use shared::logger::Logs;
-use shared::types::logs::pipeline;
 #[allow(dead_code)]
-use std::env;
 use std::error::Error;
 use std::process::exit;
 

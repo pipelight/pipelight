@@ -308,7 +308,6 @@ dependencies = [
  "json",
  "log",
  "serde",
- "serde_json",
  "subprocess",
  "sysinfo",
 ]
@@ -744,7 +743,6 @@ name = "pipelight"
 version = "0.2.0"
 dependencies = [
  "log",
- "serde_json",
  "shared",
 ]
 
@@ -995,7 +993,6 @@ dependencies = [
  "io",
  "json",
  "log",
- "log4rs",
  "pipeline",
  "project-root",
  "rev_buf_reader",

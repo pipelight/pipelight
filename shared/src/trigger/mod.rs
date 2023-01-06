@@ -1,11 +1,9 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
-use crate::git::Git;
-use crate::logger::Logs;
 use log::{debug, error, info, trace, warn};
 use pipeline::{
-    cast::{Config, Pipeline},
+    cast::Config,
     types::{Pipeline, Trigger},
 };
 #[allow(dead_code)]
@@ -15,9 +13,10 @@ use std::env::current_dir;
 use std::error::Error;
 use std::path::Path;
 use std::process::exit;
+use utils::{git::Git, logger::Logs};
 
 /// Launch attached subprocess
-pub fn trigger() -> Result<(), Box<dyn Error>> {
+pub fn trigger_bin() -> Result<(), Box<dyn Error>> {
     get_event();
 
     // Retrieve action
@@ -28,21 +27,21 @@ pub fn trigger() -> Result<(), Box<dyn Error>> {
     let git = Git::new();
     let branch = git.branch().unwrap();
 
-    let env = types::Trigger {
-        action: action,
-        branch: branch,
+    let env = Trigger {
+        action: Some(action),
+        branch: Some(branch),
     };
 
-    let config = cast::Config::new()?;
+    let config = Config::new()?;
 
-    for pipeline in &config.pipelines {
+    for pipeline in &config.pipelines.unwrap() {
         if pipeline.triggers.is_none() {
             let message = format!("No triggers defined for pipeline: {:?}", &pipeline.name);
         } else {
             for trigger in &pipeline.clone().triggers.unwrap() {
-                let tuples = trigger.to_tuples()?;
-                if tuples.contains(env) {
-                    let mut pipeline = pipeline::from(pipeline);
+                let tuples = Trigger::flatten(trigger);
+                if tuples.contains(&env) {
+                    let mut pipeline = Pipeline::from(pipeline);
                 }
             }
         }

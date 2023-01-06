@@ -55,7 +55,7 @@ pub struct Pipeline {
     pub name: String,
     pub date: Option<String>,
     pub status: Option<Status>,
-    pub triggers: Option<Trigger>,
+    pub triggers: Option<Vec<Trigger>>,
     pub steps: Vec<Step>,
 }
 impl Pipeline {
@@ -97,7 +97,7 @@ impl Pipeline {
         info!(target: "pipeline_json","{}", json);
     }
     pub fn status(&mut self, status: &Status) {
-        self.status = status.to_owned();
+        self.status = Some(status.to_owned());
     }
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

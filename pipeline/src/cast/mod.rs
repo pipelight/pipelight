@@ -31,7 +31,7 @@ pub struct Step {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Trigger {
-    pub actions: Vec<String>,
+    pub actions: Option<Vec<String>>,
     pub branches: Vec<String>,
 }
 

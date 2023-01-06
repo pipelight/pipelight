@@ -6,7 +6,7 @@ use std::fmt;
 
 impl fmt::Display for Pipeline {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{} - ", &self.status)?;
+        write!(f, "{} - ", &self.status.unwrap())?;
         let str_date = &self.date.as_ref().unwrap();
         let date = str_date.parse::<DateTime<Local>>().unwrap();
         // let date: &str = &binding.as_ref();

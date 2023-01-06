@@ -8,7 +8,6 @@ colored = "2.0.0"
 io = "0.0.2"
 json = "0.12.4"
 log = "0.4.17"
-serde = "1.0.147"
-serde_json = "1.0.89"
+serde = { version = "1.0.147" ,features = ["derive"] }
 subprocess = "0.2.9"
 sysinfo = "0.27.0"
