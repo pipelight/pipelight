@@ -17,23 +17,21 @@ impl Exec {
         };
     }
     /// Return user session shell if possible
-    fn shell(&mut self) -> Self {
-        let default_shell = "sh".to_owned();
+    fn shell(&mut self) -> String {
         let shell_result = env::var("SHELL");
         match shell_result {
             Ok(res) => {
                 self.shell = res;
-                return self.to_owned();
+                return self.shell.clone();
             }
-            Err(e) => {
-                return self.to_owned();
+            Err(_) => {
+                return self.shell.clone();
             }
         };
     }
     /// Use for pipeline exewcution only
     pub fn simple(&mut self, command: &str) -> Result<StrOutput, Box<dyn Error>> {
-        let shell = &self.shell();
-        let output = subprocess::simple(&self.shell, command)?;
+        let output = subprocess::simple(&self.shell(), command)?;
         Ok(output)
     }
     pub fn attached(&mut self, command: &str) -> Result<String, Box<dyn Error>> {
@@ -49,8 +47,7 @@ impl Exec {
         };
     }
     pub fn detached(&mut self, command: &str) -> Result<(), Box<dyn Error>> {
-        let shell = &self.shell();
-        let output = subprocess::detached(&self.shell, command);
+        subprocess::detached(&self.shell, command)?;
         Ok(())
     }
 }

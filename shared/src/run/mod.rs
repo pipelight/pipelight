@@ -25,13 +25,6 @@ pub fn run_bin() -> Result<(), Box<dyn Error>> {
     let p: Pipeline = Config::new()?.pipeline(&pipeline_name)?;
     let mut pipeline = types::Pipeline::from(&p);
 
-    let is_running: bool = pipeline.is_running()?;
-    if is_running {
-        let message = "Pipeline already running";
-        return Err(Box::from(message));
-    } else {
-        pipeline.run();
-    }
     pipeline.run();
     Ok(())
 }

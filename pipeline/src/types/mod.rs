@@ -59,20 +59,20 @@ pub struct Pipeline {
     pub steps: Vec<Step>,
 }
 impl Pipeline {
-    pub fn is_running(&mut self) -> Result<bool, Box<dyn Error>> {
-        let pipelines = Pipelines::get()?;
-        let pid = pipelines
+    pub fn is_running(&mut self) -> bool {
+        let pipelines = Pipelines::get().unwrap();
+        let pipeline = pipelines
             .iter()
             .filter(|p| p.name == self.name)
             .cloned()
             .next();
-        println!("{:?}", pid);
-        println!("{:?}", pipelines);
-
-        let is = true;
-        Ok(is)
+        let is = pipeline.unwrap().pid.is_some();
+        return is;
     }
     pub fn run(&mut self) {
+        if self.is_running() {
+            return;
+        }
         let pid = process::id();
         self.pid = Some(pid);
         let pipeline: &mut Pipeline = self;

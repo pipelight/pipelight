@@ -6,27 +6,41 @@ use std::fmt;
 
 impl fmt::Display for Pipeline {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mtop = '┬';
+        let lbot = '╰';
+        let hbar = '─';
         write!(f, "{} - ", &self.status.unwrap())?;
         let str_date = &self.date.as_ref().unwrap();
         let date = str_date.parse::<DateTime<Local>>().unwrap();
-        // let date: &str = &binding.as_ref();
         write!(f, "{}\n", date.to_rfc2822())?;
-        write!(f, "\t\tpipeline: {}\n", self.name);
         if self.pid.is_some() {
-            write!(f, "   pid: {}\n", &self.pid.unwrap());
+            write!(f, "  pid: {}\n", &self.pid.unwrap());
         }
+        write!(f, "  pipeline: {}\n", self.name);
         for step in &self.steps {
-            info!(target :"nude","\t\t\tstep: {}\n", step.name);
+            info!(target :"nude","  {mtop}\n  {lbot}{hbar} step: {}\n", step.name);
             for command in &step.commands {
-                let stdout = command.output.as_ref().unwrap().stdout.as_ref().unwrap();
-                let stderr = command.output.as_ref().unwrap().stderr.as_ref().unwrap();
-                let status = command.output.as_ref().unwrap().status;
-                if status {
-                    info!(target: "nude", "\t\t\t\t{}\n", &command.stdin.green());
-                    debug!(target: "nude", "{}\n", stdout)
+                if command.output.as_ref().is_some() {
+                    let stdout = command
+                        .output
+                        .as_ref()
+                        .unwrap()
+                        .stdout
+                        .as_ref()
+                        .unwrap()
+                        .replace("\n", "\n\t\t");
+                    let stderr = command.output.as_ref().unwrap().stderr.as_ref().unwrap();
+                    let status = command.output.as_ref().unwrap().status;
+                    if status {
+                        info!(target: "nude", "\r      {mtop}\n      {lbot}{hbar} {}\n", &command.stdin.blue());
+                        debug!(target: "nude", "\t\t{}\n", stdout)
+                    } else {
+                        info!(target: "nude", "\r      {mtop}\n      {lbot}{hbar} {}\n", &command.stdin.red());
+                        debug!(target: "nude", "\t\t{}\n", stderr);
+                    }
                 } else {
-                    info!(target: "nude", "\t\t\t\t{}\n", &command.stdin.red());
-                    debug!(target: "nude", "\r{}\n", stderr);
+                    info!(target: "nude", "      {}", &command.stdin.green());
+                    break;
                 }
             }
         }
@@ -38,11 +52,11 @@ impl fmt::Display for Status {
         let icon = "●";
         match *self {
             Status::Started => write!(f, "{} Started", icon),
-            Status::Succeeded => write!(f, "{} Succeeded", icon.blue()),
-            Status::Failed => write!(f, "{} Failed", icon.red()),
-            Status::Running => write!(f, "{} Running", icon.green()),
-            Status::Aborted => write!(f, "{} Aborted", icon.yellow()),
-            Status::Never => write!(f, "{} Never", icon),
+            Status::Succeeded => write!(f, "{} {}", icon.blue(), "Succeeded".bold()),
+            Status::Failed => write!(f, "{} {}", icon.red(), "Failed".bold()),
+            Status::Running => write!(f, "{} {}", icon.green(), "Running".bold()),
+            Status::Aborted => write!(f, "{} {}", icon.yellow(), "Aborted".bold()),
+            Status::Never => write!(f, "{} {}", icon, "Never".bold()),
         };
         Ok(())
     }
