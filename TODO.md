@@ -1,17 +1,20 @@
 # Rust
 
-process termiation/ list pipelines/
+deprecate raw logger
 
-Unit Tests
+process termiation by pid (Stop)
+
+list pipelines and retrieve info from logs
+
+Bug in Init hook generation/ add template config if no file in dir
+
+Create Hooks if trigger in config/ else delete hook
+
+# Unit Tests
+
+Test bad config filed
 
 ##Logging
 
 Print **wrapped lines** after error
-
-## Cli
-
-Set autocompletion and autocorrection (for bash and zsh)
-
-# Doc
-
-Dummies -> adj positif
+Hint in Ariadne source code
