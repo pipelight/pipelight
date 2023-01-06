@@ -2,8 +2,10 @@
 pub mod actions;
 pub mod print;
 pub mod types;
+
 use clap::{Args, Parser, Subcommand, ValueEnum};
 use log::info;
+use pipeline::types::list;
 use std::error::Error;
 use utils::logger::Logs;
 
@@ -16,10 +18,10 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             info!("Triggering pipline {:#?}", pipeline.name);
             actions::run(pipeline.name)?;
         }
-        types::Commands::Stop(pipeline) => {
-            info!("Stopping pipline {:#?}", pipeline.name);
-            actions::stop();
-        }
+        // types::Commands::Stop(pipeline) => {
+        //     info!("Stopping pipline {:#?}", pipeline.name);
+        //     actions::stop();
+        // }
         types::Commands::Logs(logs) => {
             if logs.json {
                 print::json()?;
@@ -31,15 +33,14 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
         }
         types::Commands::Ls(list) => {
             info!("Listing piplines");
-            actions::list()?;
+            list::list()?;
         }
         types::Commands::Lint(lint) => {
             actions::lint()?;
-        }
-        types::Commands::Init(init) => {
-            info!("Ensure working tree");
-            actions::init()?;
-        }
+        } // types::Commands::Init(init) => {
+          //     info!("Ensure working tree");
+          //     actions::init()?;
+          // }
     }
     Ok(())
 }

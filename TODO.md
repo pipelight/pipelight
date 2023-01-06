@@ -15,5 +15,3 @@ Set autocompletion and autocorrection (for bash and zsh)
 # Doc
 
 Dummies -> adj positif
-
-run cargo clean to remove unused dependencies

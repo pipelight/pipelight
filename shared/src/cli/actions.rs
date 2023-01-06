@@ -29,18 +29,3 @@ pub fn stop() -> Result<(), Box<dyn Error>> {
     println!("stop");
     Ok(())
 }
-
-pub fn list() -> Result<(), Box<dyn Error>> {
-    let config = Config::new()?;
-    println!(
-        "{0: <10} {1: <20} {2: <10} {3}",
-        "status", "last_run_date", "hook", "name"
-    );
-    for pipeline in config.pipelines.unwrap() {
-        println!(
-            "{0: <10} {1: <20} {2: <10} {3}",
-            "status", "last_run date", "hook", pipeline.name
-        )
-    }
-    Ok(())
-}

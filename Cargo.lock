@@ -740,7 +740,7 @@ checksum = "478c572c3d73181ff3c2539045f6eb99e5491218eae919370993b890cdbdd98e"
 
 [[package]]
 name = "pipelight"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "log",
  "shared",

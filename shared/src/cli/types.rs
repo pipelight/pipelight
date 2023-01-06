@@ -19,18 +19,18 @@ pub enum Commands {
     /// Run a pipeline
     #[command(arg_required_else_help = true)]
     Run(Pipeline),
-    /// Stop the pipeline execution (kill subprocess)
-    #[command(arg_required_else_help = true)]
-    Stop(Pipeline),
+    // /// Stop the pipeline execution (kill subprocess)
+    // #[command(arg_required_else_help = true)]
+    // Stop(Pipeline),
     /// Display logs
     Logs(Logs),
     /// List pipelines
     Ls(Empty),
     /// Lint config file
     Lint(Empty),
-    /// Enable hook functionnalities and
-    /// Add some template config files if no config file detected
-    Init(Empty),
+    // /// Enable hook functionnalities and
+    // /// Add some template config files if no config file detected
+    // Init(Empty),
 }
 
 #[derive(Debug, Parser)]
@@ -44,34 +44,33 @@ pub struct Pipeline {
 
 #[derive(Parser, Debug)]
 pub struct Logs {
-    #[arg(long)]
-    /// Display pretty logs
-    pub pretty: bool,
-
-    #[arg(long)]
-    /// Display pretty logs
-    pub raw: bool,
-
+    // #[arg(long)]
+    // /// Display pretty logs
+    // pub pretty: bool,
+    //
+    // #[arg(long)]
+    // /// Display pretty logs
+    // pub raw: bool,
+    //
     #[arg(long)]
     /// Display json logs
     pub json: bool,
-
     #[arg(long)]
     /// Display json logs
     pub clear: bool,
 
-    #[arg(long, action, value_name = "BRANCH_NAME")]
-    /// Filter logs on git branch (master,...)
-    pub branch: Option<String>,
-
-    #[arg(long, action, value_name = "GIT_ACTION")]
-    /// Filter logs on git action (pre-push,...)
-    pub action: Option<String>,
-
-    #[arg(long, action, value_name = "PIPELINE_NAME")]
-    /// Filter logs with the name of the pipe
-    pub pipeline: Option<String>,
-
+    // #[arg(long, action, value_name = "BRANCH_NAME")]
+    // /// Filter logs on git branch (master,...)
+    // pub branch: Option<String>,
+    //
+    // #[arg(long, action, value_name = "GIT_ACTION")]
+    // /// Filter logs on git action (pre-push,...)
+    // pub action: Option<String>,
+    //
+    // #[arg(long, action, value_name = "PIPELINE_NAME")]
+    // /// Filter logs with the name of the pipe
+    // pub pipeline: Option<String>,
+    //
     #[clap(flatten)]
     pub verbose: Verbosity,
 }
