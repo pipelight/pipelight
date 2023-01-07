@@ -34,9 +34,6 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
         types::Commands::Ls(list) => {
             info!("Listing piplines");
             list::list()?;
-        }
-        types::Commands::Lint(lint) => {
-            actions::lint()?;
         } // types::Commands::Init(init) => {
           //     info!("Ensure working tree");
           //     actions::init()?;

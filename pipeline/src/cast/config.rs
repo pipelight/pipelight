@@ -11,30 +11,11 @@ impl Config {
         Git::new();
         Ok(Config::get()?)
     }
-    /// Ensure file exist
     pub fn get() -> Result<Config, Box<dyn Error>> {
         Config::exists()?;
         let mut config = Config::load()?;
         config = Config::check(&config)?;
         Ok(config)
-    }
-    /// Lint ts files.
-    pub fn lint(&self) -> Result<(), Box<dyn Error>> {
-        Config::exists()?;
-        let executable = "tsc --noEmit";
-        let file = "pipelight.config.ts";
-        let command = format!("{} {}", executable, file);
-        info!("Linting config file");
-        let res = Exec::new().simple(&command)?;
-
-        if res.status {
-            info!("Config file ok");
-        } else {
-            warn!("Config file contains errors");
-            println!("{}", res.stdout.unwrap());
-            println!("{}", res.stderr.unwrap());
-        }
-        Ok(())
     }
     pub fn pipeline(&self, name: &str) -> Result<Pipeline, Box<dyn Error>> {
         let pipeline_result = self
@@ -54,6 +35,7 @@ impl Config {
             }
         };
     }
+    /// Ensure config file exists
     fn exists() -> Result<(), Box<dyn Error>> {
         let path = Path::new("./pipelight.config.mjs");
         let exist = Path::new(path).exists();

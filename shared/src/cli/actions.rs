@@ -20,11 +20,6 @@ pub fn init() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn lint() -> Result<(), Box<dyn Error>> {
-    Config::new()?.lint()?;
-    Ok(())
-}
-
 pub fn stop() -> Result<(), Box<dyn Error>> {
     println!("stop");
     Ok(())
