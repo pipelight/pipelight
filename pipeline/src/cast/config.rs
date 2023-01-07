@@ -1,13 +1,13 @@
 use super::{Config, Pipeline};
 use exec::Exec;
 use log::{debug, error, info, trace, warn};
+use std::env::current_dir;
 use std::error::Error;
 use std::path::Path;
 use utils::git::Git;
 
 impl Config {
     pub fn new() -> Result<Config, Box<dyn Error>> {
-        // let default = Config { pipelines: None };
         Git::new();
         Ok(Config::get()?)
     }
@@ -37,7 +37,9 @@ impl Config {
     }
     /// Ensure config file exists
     fn exists() -> Result<(), Box<dyn Error>> {
-        let path = Path::new("./pipelight.config.mjs");
+        let pwd = current_dir()?;
+        let string = format!("{}/pipelight.config.mjs", &pwd.display().to_string());
+        let path = Path::new(&string);
         let exist = Path::new(path).exists();
         if exist {
             Ok(())
@@ -55,10 +57,9 @@ impl Config {
     fn load() -> Result<Config, Box<dyn Error>> {
         let executable = "node -e";
         let script = r#"'
-            const cwd = process.cwd();
             const stock = console;
             console = {};
-            const promess = import(`${cwd}/pipelight.config.mjs`);
+            const promess = import(`./pipelight.config.mjs`);
             promess
               .then((res) => {
                 console = stock;
