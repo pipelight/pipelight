@@ -3,7 +3,7 @@ use exec::Exec;
 use log::{debug, error, info, trace, warn};
 use std::error::Error;
 use std::path::Path;
-use utils::{get_root, git::Git};
+use utils::git::Git;
 
 impl Config {
     pub fn new() -> Result<Config, Box<dyn Error>> {
@@ -55,7 +55,7 @@ impl Config {
         };
     }
     fn exists() -> Result<(), Box<dyn Error>> {
-        let path = Path::new("./pipelight.config.ts");
+        let path = Path::new("./pipelight.config.mjs");
         let exist = Path::new(path).exists();
         if exist {
             Ok(())
@@ -71,11 +71,24 @@ impl Config {
 
     /// Return the config from .ts file inside the working dir.
     fn load() -> Result<Config, Box<dyn Error>> {
-        //Ensure config file exist
-        let executable = "ts-node --transpile-only";
-        let folder = &get_root()?;
-        let file = "typescript/scripts/main.ts";
-        let command = format!("{} {}/{}", executable, folder, file);
+        let executable = "node -e";
+        let script = r#"'
+            const cwd = process.cwd();
+            const stock = console;
+            console = {};
+            const promess = import(`${cwd}/pipelight.config.mjs`);
+            promess
+              .then((res) => {
+                console = stock;
+                const config = res.default;
+                const json = JSON.stringify(config, null, 2);
+                console.log(json);
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+        '"#;
+        let command = format!("{} {}", executable, script);
         let data = Exec::new().attached(&command)?;
         let config_result = serde_json::from_str::<Config>(&data);
         match config_result {
