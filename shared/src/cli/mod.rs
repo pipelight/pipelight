@@ -25,7 +25,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
         types::Commands::Logs(logs) => {
             if logs.json {
                 print::json()?;
-            } else if logs.rm {
+            } else if logs.json {
                 Logs::clear()?
             } else {
                 print::pretty()?;

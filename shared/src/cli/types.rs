@@ -23,7 +23,7 @@ pub enum Commands {
     // #[command(arg_required_else_help = true)]
     // Stop(Pipeline),
     /// Display logs
-    Logs,
+    Logs(Logs),
     /// List pipelines
     Ls(Empty),
     // /// Enable hook functionnalities and
@@ -41,20 +41,18 @@ pub struct Pipeline {
 }
 
 #[derive(Debug, Subcommand)]
-pub enum Logs {
-    // #[arg(long)]
-    // /// Display pretty logs
-    // pub pretty: bool,
-    //
-    // #[arg(long)]
-    // /// Display pretty logs
-    // pub raw: bool,
-    //
+pub enum LogsCommands {
     /// Clear logs
-    Rm, // #[arg(long, action, value_name = "PIPELINE_NAME")]
-        // /// Filter logs with the name of the pipe
-        // pub pipeline: Option<String>,
-        //
-        // #[clap(flatten)]
-        // pub verbose: Verbosity,
+    Rm,
+}
+
+#[derive(Debug, Args)]
+#[command(args_conflicts_with_subcommands = true)]
+pub struct Logs {
+    #[command(subcommand)]
+    commands: Option<LogsCommands>,
+
+    /// Display logs in json format
+    #[arg(long)]
+    pub json: bool,
 }

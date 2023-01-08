@@ -1,4 +1,4 @@
-use pipeline::types::Pipelines;
+use pipeline::types::{Pipeline, Pipelines};
 use std::error::Error;
 /// Pretty print logs from json log file
 pub fn pretty() -> Result<(), Box<dyn Error>> {
@@ -13,7 +13,8 @@ pub fn pretty() -> Result<(), Box<dyn Error>> {
 pub fn json() -> Result<(), Box<dyn Error>> {
     let pipelines = Pipelines::get()?;
     for pipeline in pipelines {
-        println!("{:?}", pipeline);
+        let pipeline_json = serde_json::to_string::<Pipeline>(&pipeline)?;
+        println!("{}", pipeline_json);
     }
     Ok(())
 }
