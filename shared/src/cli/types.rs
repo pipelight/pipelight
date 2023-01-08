@@ -23,7 +23,7 @@ pub enum Commands {
     // #[command(arg_required_else_help = true)]
     // Stop(Pipeline),
     /// Display logs
-    Logs(Logs),
+    Logs,
     /// List pipelines
     Ls(Empty),
     // /// Enable hook functionnalities and
@@ -40,8 +40,8 @@ pub struct Pipeline {
     pub name: String,
 }
 
-#[derive(Parser, Debug)]
-pub struct Logs {
+#[derive(Debug, Subcommand)]
+pub enum Logs {
     // #[arg(long)]
     // /// Display pretty logs
     // pub pretty: bool,
@@ -50,25 +50,11 @@ pub struct Logs {
     // /// Display pretty logs
     // pub raw: bool,
     //
-    #[arg(long)]
-    /// Display json logs
-    pub json: bool,
-    #[arg(long)]
-    /// Display json logs
-    pub clear: bool,
-
-    // #[arg(long, action, value_name = "BRANCH_NAME")]
-    // /// Filter logs on git branch (master,...)
-    // pub branch: Option<String>,
-    //
-    // #[arg(long, action, value_name = "GIT_ACTION")]
-    // /// Filter logs on git action (pre-push,...)
-    // pub action: Option<String>,
-    //
-    // #[arg(long, action, value_name = "PIPELINE_NAME")]
-    // /// Filter logs with the name of the pipe
-    // pub pipeline: Option<String>,
-    //
-    #[clap(flatten)]
-    pub verbose: Verbosity,
+    /// Clear logs
+    Rm, // #[arg(long, action, value_name = "PIPELINE_NAME")]
+        // /// Filter logs with the name of the pipe
+        // pub pipeline: Option<String>,
+        //
+        // #[clap(flatten)]
+        // pub verbose: Verbosity,
 }

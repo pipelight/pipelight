@@ -10,3 +10,6 @@ rev_buf_reader = "0.3.0"
 log = "0.4.17"
 log4rs = { version = "1.2.0", features = ["json_encoder","pattern_encoder","size_trigger","console_appender", "file_appender"]}
 uuid = { version = "1.2.2", features = [ "v4","serde","fast-rng","macro-diagnostics"]}
+strum = { version = "0.24.1", features = ["derive"] }
+strum_macros = "0.24.3"
+serde = { version = "1.0.152", features = ["derive"] }

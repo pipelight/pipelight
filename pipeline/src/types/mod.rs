@@ -18,6 +18,7 @@ use std::fs;
 use std::marker::Copy;
 use std::process;
 use utils;
+use utils::git::{Git, Hook};
 use utils::logger::Logs;
 use uuid::Uuid;
 
@@ -150,6 +151,17 @@ impl Command {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Trigger {
-    pub action: Option<String>,
+    pub action: Option<Hook>,
     pub branch: Option<String>,
+}
+impl Trigger {
+    /// Return actual triggering env
+    pub fn env() -> Result<Trigger, Box<dyn Error>> {
+        let branch = Git::new().get_branch()?;
+        let action = Hook::origin()?;
+        Ok(Trigger {
+            branch: Some(branch),
+            action: Some(action),
+        })
+    }
 }

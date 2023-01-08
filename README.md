@@ -14,8 +14,8 @@ paru -S pipelight
 
 Create this config file at the root of your project
 
-```ts
-//pipelight.config.ts
+```mjs
+//pipelight.config.mjs
 const config = {
   pipelines: [
     name: "my_pipeline"
@@ -54,6 +54,20 @@ Verbosity can be increased
 
 ```sh
 pipelight logs -vvvv
+```
+
+## Lint config file
+
+```sh
+pipelight ls -vvvv
+```
+
+If it's not enough,
+As it is pure Javascript.
+You can troubleshoot your config file with
+
+```sh
+node pipelight.config.mjs
 ```
 
 ## Why another CICD tool ?

@@ -12,7 +12,7 @@ fn main() {
 
 /// Launch detached subprocess
 fn handler() -> Result<(), Box<dyn Error>> {
-    shared::trigger::trigger_bin()?;
+    shared::trigger::trigger()?;
     Ok(())
 }
 

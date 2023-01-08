@@ -13,19 +13,23 @@ use std::env::current_dir;
 use std::error::Error;
 use std::path::Path;
 use std::process::exit;
-use utils::{git::Git, logger::Logs};
+use utils::git::Hook;
+use utils::{
+    git::{Git, GitHook},
+    logger::Logs,
+};
 
 /// Launch attached subprocess
-pub fn trigger_bin() -> Result<(), Box<dyn Error>> {
+pub fn trigger() -> Result<(), Box<dyn Error>> {
     get_event();
 
     // Retrieve action
     let args = env::args().collect::<Vec<String>>();
-    let action: String = args[1].to_owned();
+    let action: Hook = Hook::from_str(&args[1]);
 
     // Retrieve branch
     let git = Git::new();
-    let branch = git.branch().unwrap();
+    let branch = git.get_branch().unwrap();
 
     let env = Trigger {
         action: Some(action),

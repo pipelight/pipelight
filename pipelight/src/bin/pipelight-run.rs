@@ -13,7 +13,7 @@ fn main() {
 
 /// Launch detached subprocess
 fn handler() -> Result<(), Box<dyn Error>> {
-    shared::run::run_bin()?;
+    shared::run::run()?;
     Ok(())
 }
 

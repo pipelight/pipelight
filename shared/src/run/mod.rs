@@ -6,7 +6,7 @@ use std::env;
 use std::error::Error;
 
 /// To be called from the cli
-pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
+pub fn run_bin(pipeline_name: String) -> Result<(), Box<dyn Error>> {
     trace!("Create detached subprocess");
     let bin = "pipelight-run";
     let pipeline = Config::new()?.pipeline(&pipeline_name)?;
@@ -17,7 +17,7 @@ pub fn run(pipeline_name: String) -> Result<(), Box<dyn Error>> {
 }
 
 /// Launch attached subprocess
-pub fn run_bin() -> Result<(), Box<dyn Error>> {
+pub fn run() -> Result<(), Box<dyn Error>> {
     // Collect Args
     let args = env::args().collect::<Vec<String>>();
     let pipeline_name: String = args[1].to_owned();

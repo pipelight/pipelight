@@ -3,6 +3,7 @@ use crate::cast;
 use crate::types;
 use chrono::Utc;
 use std::convert::From;
+use utils::git::Hook;
 use uuid::Uuid;
 
 impl From<&cast::Pipeline> for Pipeline {
@@ -62,7 +63,7 @@ impl Trigger {
             for action in e.actions.clone().unwrap() {
                 tuplelist.push(types::Trigger {
                     branch: Some(branch.to_owned()),
-                    action: Some(action.to_owned()),
+                    action: Some(Hook::from_str(&action)),
                 })
             }
         }

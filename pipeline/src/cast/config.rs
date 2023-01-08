@@ -4,17 +4,19 @@ use log::{debug, error, info, trace, warn};
 use std::env::current_dir;
 use std::error::Error;
 use std::path::Path;
-use utils::git::Git;
 
 impl Config {
     pub fn new() -> Result<Config, Box<dyn Error>> {
-        Git::new();
-        Ok(Config::get()?)
-    }
-    pub fn get() -> Result<Config, Box<dyn Error>> {
-        Config::exists()?;
-        let mut config = Config::load()?;
-        config = Config::check(&config)?;
+        // Git::new();
+        let file = "pipelight.config.mjs".to_owned();
+        let mut config = Config {
+            file: file,
+            pipelines: None,
+        };
+        if config.exists() {
+            config = Config::load()?;
+            config = Config::check_duplicates(&config)?;
+        }
         Ok(config)
     }
     pub fn pipeline(&self, name: &str) -> Result<Pipeline, Box<dyn Error>> {
@@ -36,24 +38,22 @@ impl Config {
         };
     }
     /// Ensure config file exists
-    fn exists() -> Result<(), Box<dyn Error>> {
-        let pwd = current_dir()?;
-        let string = format!("{}/pipelight.config.mjs", &pwd.display().to_string());
+    fn exists(&self) -> bool {
+        let pwd = current_dir().unwrap();
+        let string = format!("{}/{}", &pwd.display().to_string(), self.file);
         let path = Path::new(&string);
         let exist = Path::new(path).exists();
-        if exist {
-            Ok(())
-        } else {
+        if !exist {
             let message = "Config file not found.";
             let hint =
                 "Use \"pipelight init\" to generate config file\n or move to the right directory";
-            warn!("{}", message);
+            error!("{}", message);
             debug!("{}", hint);
-            Err(Box::from(message))
         }
+        return exist;
     }
 
-    /// Return the config from .ts file inside the working dir.
+    /// Return the config from .mjs file inside the working dir.
     fn load() -> Result<Config, Box<dyn Error>> {
         let executable = "node -e";
         let script = r#"'
@@ -86,7 +86,29 @@ impl Config {
             }
         };
     }
-    fn check(config: &Config) -> Result<Self, Box<dyn Error>> {
+    fn check_duplicates(config: &Config) -> Result<Self, Box<dyn Error>> {
+        let names = config
+            .clone()
+            .pipelines
+            .unwrap()
+            .iter()
+            .map(|p| &p.name)
+            .cloned()
+            .collect::<Vec<String>>();
+        //Clone vector and remove duplicates
+        let mut dedup = names.clone();
+        dedup.sort();
+        dedup.dedup();
+        let has_duplicate = dedup.len() != names.len();
+        if has_duplicate {
+            let message = "Duplicate pipeline names in config";
+            warn!("{}", message);
+            Err(Box::from(message))
+        } else {
+            Ok(config.to_owned())
+        }
+    }
+    fn clean_hooks(config: &Config) -> Result<Self, Box<dyn Error>> {
         let names = config
             .clone()
             .pipelines
