@@ -7,8 +7,9 @@ use clap::{Args, Parser, Subcommand, ValueEnum};
 use log::info;
 use pipeline::types::Pipelines;
 use std::error::Error;
-use utils::logger::Logs;
+use utils::log::Logs;
 
+/// Execute the Command Line Tool (cli)
 pub fn get_args() -> Result<(), Box<dyn Error>> {
     let args = types::Cli::parse();
     let verbosity = args.verbose.log_level_filter();

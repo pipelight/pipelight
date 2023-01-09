@@ -3,7 +3,7 @@
 
 use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;
-use utils::logger::Logs;
+pub use utils::log::Logs;
 mod config;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

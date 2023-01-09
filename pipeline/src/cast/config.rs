@@ -4,6 +4,7 @@ use log::{debug, error, info, trace, warn};
 use std::env::current_dir;
 use std::error::Error;
 use std::path::Path;
+use utils::log::Logs;
 
 impl Config {
     pub fn new() -> Result<Config, Box<dyn Error>> {
@@ -17,7 +18,9 @@ impl Config {
         if config.exists() {
             config = Config::load()?;
             config = Config::check_duplicates(&config)?;
+            config.logs = Some(Logs::new());
         }
+
         Ok(config)
     }
     pub fn pipeline(&self, name: &str) -> Result<Pipeline, Box<dyn Error>> {

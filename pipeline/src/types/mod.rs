@@ -19,7 +19,7 @@ use std::marker::Copy;
 use std::process;
 use utils;
 use utils::git::{Git, Hook};
-use utils::logger::Logs;
+use utils::log::Logs;
 use uuid::Uuid;
 
 // use json::{Pipeline, Step, Trigger};

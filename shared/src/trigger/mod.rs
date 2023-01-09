@@ -16,7 +16,7 @@ use std::process::exit;
 use utils::git::Hook;
 use utils::{
     git::{Git, GitHook},
-    logger::Logs,
+    log::Logs,
 };
 
 /// Launch attached subprocess
