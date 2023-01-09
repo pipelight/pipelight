@@ -11,6 +11,7 @@ impl Config {
         let file = "pipelight.config.mjs".to_owned();
         let mut config = Config {
             file: file,
+            logs: None,
             pipelines: None,
         };
         if config.exists() {

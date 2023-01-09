@@ -7,7 +7,7 @@ use clap_verbosity_flag::{InfoLevel, Verbosity};
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
-    pub command: Commands,
+    pub commands: Commands,
 
     #[clap(flatten)]
     /// Set verbosity level
@@ -43,16 +43,22 @@ pub struct Pipeline {
 #[derive(Debug, Subcommand)]
 pub enum LogsCommands {
     /// Clear logs
-    Rm,
+    Rm(Empty),
+}
+#[derive(Debug, Args)]
+pub struct DisplayCommands {
+    /// Display logs in json format
+    #[arg(long)]
+    pub json: bool,
 }
 
 #[derive(Debug, Args)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct Logs {
     #[command(subcommand)]
-    commands: Option<LogsCommands>,
+    pub commands: Option<LogsCommands>,
 
     /// Display logs in json format
-    #[arg(long)]
-    pub json: bool,
+    #[command(flatten)]
+    pub display: DisplayCommands,
 }

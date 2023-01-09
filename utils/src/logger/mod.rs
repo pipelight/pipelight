@@ -3,6 +3,7 @@ pub use log::Level;
 pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 use log4rs;
 use log4rs::Handle;
+use std::env::current_dir;
 use std::error::Error;
 use std::fs;
 use std::path::Path;
@@ -19,7 +20,7 @@ pub struct Logs {
 impl Logs {
     pub fn new() -> Self {
         return Logs {
-            path: "./.pipelight/logs".to_owned(),
+            path: ".pipelight/logs".to_owned(),
             level: LevelFilter::Trace,
             handle: None,
         };
@@ -47,8 +48,9 @@ impl Logs {
         return self.to_owned();
     }
     /// Delete logs directory
-    pub fn clear() -> Result<(), Box<dyn Error>> {
+    pub fn remove() -> Result<(), Box<dyn Error>> {
         let path = Path::new(".pipelight/logs");
+        let root = current_dir()?;
         fs::remove_dir_all(path)?;
         Ok(())
     }

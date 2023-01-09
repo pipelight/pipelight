@@ -3,14 +3,16 @@
 
 use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;
-
+use utils::logger::Logs;
 mod config;
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
     #[serde(skip)]
     pub file: String,
+    #[serde(skip)]
+    pub logs: Option<Logs>,
     pub pipelines: Option<Vec<Pipeline>>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
