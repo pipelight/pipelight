@@ -1,3 +1,4 @@
+use convert_case::{Case, Casing};
 use git2::{Reference, Repository};
 use log::{debug, error, info, trace, warn};
 use serde::{Deserialize, Serialize};
@@ -77,12 +78,14 @@ pub struct Hook {
 }
 impl Hook {
     pub fn to_string(&self) -> String {
-        let string = self.githook.to_string().replace("_", "-");
+        let string = self.githook.to_string().to_case(Case::Kebab);
         return string;
     }
     /// Convert str into enum GitHook
     pub fn from_str(name: &str) -> Hook {
-        let githook = GitHook::from_str(&name.replace("_", "-")).unwrap();
+        let githook =
+            GitHook::from_str(&name.to_case(Case::Pascal)).expect("Couldn't parse git hook value");
+        error!("{:?}", githook);
         return Hook { githook: githook };
     }
     /// Detect name of the hook that triggers script

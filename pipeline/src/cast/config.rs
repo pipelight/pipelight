@@ -20,7 +20,6 @@ impl Config {
             config = Config::check_duplicates(&config)?;
             config.logs = Some(Logs::new());
         }
-
         Ok(config)
     }
     pub fn pipeline(&self, name: &str) -> Result<Pipeline, Box<dyn Error>> {
