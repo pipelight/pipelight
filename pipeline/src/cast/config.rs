@@ -1,4 +1,5 @@
 use super::{Config, Pipeline};
+use crate::types;
 use exec::Exec;
 use log::{debug, error, info, trace, warn};
 use std::env::current_dir;
@@ -13,14 +14,39 @@ impl Config {
         let mut config = Config {
             file: file,
             logs: None,
+            triggers: None,
             pipelines: None,
         };
         if config.exists() {
             config = Config::load()?;
             config = Config::check_duplicates(&config)?;
-            config.logs = Some(Logs::new());
+            config.triggers()?;
         }
         Ok(config)
+    }
+    pub fn logs(&mut self) {
+        self.logs = Some(Logs::new());
+    }
+    pub fn triggers(&self) -> Result<Vec<types::Trigger>, Box<dyn Error>> {
+        let mut triggers = vec![];
+        if self.pipelines.is_some() {
+            let pipelines = self
+                .clone()
+                .pipelines
+                .unwrap()
+                .iter()
+                .map(|p| types::Pipeline::from(p))
+                .collect::<Vec<types::Pipeline>>();
+
+            triggers = pipelines
+                .iter()
+                .map(|p| p.clone().triggers.unwrap())
+                .collect::<Vec<Vec<types::Trigger>>>()
+                .into_iter()
+                .flatten()
+                .collect::<Vec<types::Trigger>>();
+        }
+        Ok(triggers)
     }
     pub fn pipeline(&self, name: &str) -> Result<Pipeline, Box<dyn Error>> {
         let pipeline_result = self

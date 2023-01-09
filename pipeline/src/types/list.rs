@@ -6,7 +6,7 @@ use std::error::Error;
 impl Pipelines {
     pub fn list() -> Result<(), Box<dyn Error>> {
         let config = Config::new()?;
-        let pipelines_from_logs = Pipelines::get()?;
+        let pipelines_from_logs = Pipelines::get_logged()?;
         for pipeline in &config.pipelines.unwrap() {
             info!(target: "nude","pipeline_name\n");
             let names: Vec<String> = pipelines_from_logs.iter().map(|e| e.clone().name).collect();

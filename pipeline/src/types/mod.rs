@@ -36,7 +36,7 @@ pub enum Status {
 
 pub struct Pipelines {}
 impl Pipelines {
-    pub fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
+    pub fn get_logged() -> Result<Vec<Pipeline>, Box<dyn Error>> {
         let dir = Logs::new().path;
         let paths = fs::read_dir(dir).unwrap();
         let mut pipelines = vec![];
@@ -62,7 +62,7 @@ pub struct Pipeline {
 }
 impl Pipeline {
     pub fn is_running(&mut self) -> bool {
-        let pipelines = Pipelines::get().unwrap();
+        let pipelines = Pipelines::get_logged().unwrap();
         let pipeline = pipelines
             .iter()
             .filter(|p| p.name == self.name)
