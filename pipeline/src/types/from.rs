@@ -8,24 +8,26 @@ use uuid::Uuid;
 
 impl From<&cast::Pipeline> for Pipeline {
     fn from(e: &cast::Pipeline) -> Self {
-        let steps = e.steps.iter().map(|e| Step::from(e)).collect::<Vec<Step>>();
-        // let triggers = vec![];
-        // for e in e.triggers.unwrap() {
-        //     let tuples = Trigger::from(&e);
-        //     for tuple in tuples {
-        //         triggers.push(tuple);
-        //     }
-        // }
-        // println!("{:?}", triggers);
+        let steps = &e.steps.iter().map(|e| Step::from(e)).collect::<Vec<Step>>();
+        // Flatten triggers
+        let triggers = &e
+            .clone()
+            .triggers
+            .unwrap()
+            .into_iter()
+            .map(|e| Trigger::flatten(&e))
+            .collect::<Vec<Vec<Trigger>>>()
+            .into_iter()
+            .flatten()
+            .collect::<Vec<Trigger>>();
         let p = Pipeline {
             pid: None,
             uuid: Uuid::new_v4(),
             date: Some(Utc::now().to_string()),
             name: e.name.to_owned(),
-            steps: steps,
+            steps: steps.to_owned(),
             status: None,
-            // triggers: Some(triggers),
-            triggers: None,
+            triggers: Some(triggers.to_owned()),
         };
         return p;
     }
