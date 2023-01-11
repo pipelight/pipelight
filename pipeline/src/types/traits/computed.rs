@@ -11,8 +11,9 @@ trait Computed<T> {
     fn get() -> Result<Vec<T>, Box<dyn Error>>;
 }
 
-impl Computed<Pipeline> for Pipeline {
-    fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
+// impl Computed<Pipeline> for Pipeline {
+impl Pipeline {
+    pub fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
         let config = Config::new();
         let optional = config.pipelines;
         match optional {
@@ -24,8 +25,25 @@ impl Computed<Pipeline> for Pipeline {
         };
     }
 }
-impl Computed<Trigger> for Trigger {
-    fn get() -> Result<Vec<Trigger>, Box<dyn Error>> {
+// impl ByName<Pipeline> for Pipeline {
+impl Pipeline {
+    pub fn name(name: &str) -> Result<Pipeline, Box<dyn Error>> {
+        let pipelines = Pipeline::get()?;
+        let optional = pipelines.iter().filter(|p| p.name == name).next();
+        match optional {
+            Some(res) => return Ok(res.to_owned()),
+            None => {
+                let message = format!("Couldn't find pipeline {:?}", name);
+                warn!("{}", message);
+                return Err(Box::from(message));
+            }
+        };
+    }
+}
+
+// impl Computed<Trigger> for Trigger {
+impl Trigger {
+    pub fn get() -> Result<Vec<Trigger>, Box<dyn Error>> {
         let pipelines = Pipeline::get()?;
         let mut triggers = pipelines
             .iter()
@@ -37,19 +55,5 @@ impl Computed<Trigger> for Trigger {
         triggers.sort();
         triggers.dedup();
         Ok(triggers)
-    }
-}
-impl ByName<Pipeline> for Pipeline {
-    fn name(name: &str) -> Result<Pipeline, Box<dyn Error>> {
-        let pipelines = Pipeline::get()?;
-        let optional = pipelines.iter().filter(|p| p.name == name).next();
-        match optional {
-            Some(res) => return Ok(res.to_owned()),
-            None => {
-                let message = format!("Couldn't find pipeline {:?}", name);
-                warn!("{}", message);
-                return Err(Box::from(message));
-            }
-        };
     }
 }

@@ -13,9 +13,8 @@ use std::env::current_dir;
 use std::error::Error;
 use std::path::Path;
 use std::process::exit;
-use utils::git::Hook;
 use utils::{
-    git::{Git, GitHook},
+    git::{Git, Hook},
     log::Logs,
 };
 
