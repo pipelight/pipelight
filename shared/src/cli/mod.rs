@@ -36,9 +36,9 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
                     }
                 }
             } else if logs.display.json {
-                // print::json()?;
+                print::json()?;
             } else {
-                // print::pretty()?;
+                print::pretty()?;
             }
         }
     }

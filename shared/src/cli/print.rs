@@ -9,12 +9,12 @@ pub fn pretty() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-// /// Print json log file
-// pub fn json() -> Result<(), Box<dyn Error>> {
-//     let pipelines = Pipeline::get_logged()?;
-//     for pipeline in pipelines {
-//         let pipeline_json = serde_json::to_string::<Pipeline>(&pipeline)?;
-//         println!("{}", pipeline_json);
-//     }
-//     Ok(())
-// }
+/// Print json log file
+pub fn json() -> Result<(), Box<dyn Error>> {
+    let pipelines = Pipeline::from_log()?;
+    for pipeline in pipelines {
+        let pipeline_json = serde_json::to_string::<Pipeline>(&pipeline)?;
+        println!("{}", pipeline_json);
+    }
+    Ok(())
+}

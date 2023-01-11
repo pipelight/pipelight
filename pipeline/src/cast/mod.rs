@@ -11,7 +11,6 @@ mod config;
 pub struct Config {
     #[serde(skip)]
     pub file: String,
-    #[serde(skip)]
     pub pipelines: Option<Vec<Pipeline>>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

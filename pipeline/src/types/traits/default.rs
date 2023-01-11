@@ -1,3 +1,4 @@
+use crate::cast;
 use crate::types::Config;
 
 impl Default for Config {
@@ -12,6 +13,8 @@ impl Default for Config {
 
 impl Config {
     pub fn new() -> Self {
-        Config::default()
+        let json = cast::Config::new();
+        let config = Config::from(&json);
+        return config;
     }
 }

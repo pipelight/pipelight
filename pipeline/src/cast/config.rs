@@ -8,7 +8,7 @@ use std::path::Path;
 use utils::log::Logs;
 
 impl Config {
-    pub fn new() -> Result<Config, Box<dyn Error>> {
+    pub fn new() -> Self {
         // Git::new();
         let file = "pipelight.config.mjs";
         let mut config = Config {
@@ -16,9 +16,9 @@ impl Config {
             pipelines: None,
         };
         if config.exists() {
-            config = Config::load()?;
+            config = Config::load().unwrap();
         }
-        Ok(config)
+        return config;
     }
     /// Ensure config file exists
     fn exists(&self) -> bool {

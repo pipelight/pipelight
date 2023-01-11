@@ -1,10 +1,28 @@
 use crate::cast;
-use crate::types::{Command, Pipeline, Step, Trigger};
+use crate::types::{Command, Config, Pipeline, Step, Trigger};
 use chrono::Utc;
 use std::convert::From;
 use std::str::FromStr;
 use utils::git::Hook;
 use uuid::Uuid;
+
+impl From<&cast::Config> for Config {
+    fn from(e: &cast::Config) -> Self {
+        let mut config = Config::default();
+        if e.pipelines.is_some() {
+            println!("{:?}", e);
+            let pipelines = e
+                .clone()
+                .pipelines
+                .unwrap()
+                .iter()
+                .map(|e| Pipeline::from(e))
+                .collect();
+            config.pipelines = Some(pipelines);
+        }
+        return config;
+    }
+}
 
 impl From<&cast::Pipeline> for Pipeline {
     fn from(e: &cast::Pipeline) -> Self {

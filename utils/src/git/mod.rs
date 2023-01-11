@@ -56,9 +56,7 @@ impl Git {
     }
 }
 
-#[derive(
-    Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, EnumString, EnumIter, Eq, Ord,
-)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
 pub enum Hook {
     ApplypatchMsg,
     PreApplypatch,
@@ -92,7 +90,7 @@ impl Hook {
                 .unwrap()
                 .to_str()
                 .unwrap();
-            let hook = Hook::from_str(name)?;
+            let hook = Hook::from(name)?;
             Ok(hook)
         } else {
             let message = "Can't trigger hook outside of repository hook folder";
@@ -147,6 +145,7 @@ impl Hook {
         Ok(())
     }
     fn write(path: &Path, hook: &Hook) -> Result<(), Box<dyn Error>> {
+        let action: String = hook.into();
         let git = Git::new();
         let root = git.repo.unwrap().path().display().to_string();
         let mut file = fs::File::create(path)?;
@@ -157,7 +156,7 @@ impl Hook {
                   \"$f\" {hook}\n\
                 done",
             root = root,
-            hook = hook.to_string()
+            hook: String = hook.into()?
         );
         let b = s.as_bytes();
         file.write_all(b)?;
