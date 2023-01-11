@@ -1,9 +1,9 @@
 use crate::cast::Config;
-// use crate::types::Pipelines;
+use crate::types::Pipelines;
 use log::info;
 use std::error::Error;
 
-impl Pipeline {
+impl Pipelines {
     pub fn list() -> Result<(), Box<dyn Error>> {
         let config = Config::new()?;
         let pipelines_from_logs = Pipelines::get_logged()?;

@@ -1,6 +1,5 @@
-use super::{Command, Pipeline, Step, Trigger};
 use crate::cast;
-use crate::types;
+use crate::types::{Command, Pipeline, Step, Trigger};
 use chrono::Utc;
 use std::convert::From;
 use utils::git::Hook;
@@ -63,7 +62,7 @@ impl Trigger {
         let mut tuplelist: Vec<Trigger> = vec![];
         for branch in e.branches.clone() {
             for action in e.actions.clone().unwrap() {
-                tuplelist.push(types::Trigger {
+                tuplelist.push(Trigger {
                     branch: Some(branch.to_owned()),
                     action: Some(Hook::from_str(&action)),
                 })

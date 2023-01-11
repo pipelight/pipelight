@@ -5,7 +5,6 @@ use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;
 pub use utils::log::Logs;
 mod config;
-use crate::types;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
@@ -13,9 +12,6 @@ pub struct Config {
     #[serde(skip)]
     pub file: String,
     #[serde(skip)]
-    pub logs: Option<Logs>,
-    #[serde(skip)]
-    pub triggers: Option<Vec<types::Trigger>>,
     pub pipelines: Option<Vec<Pipeline>>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

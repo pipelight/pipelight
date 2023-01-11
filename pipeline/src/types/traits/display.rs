@@ -1,11 +1,11 @@
-use super::{Pipeline, Status};
+use crate::types::{Pipeline, Status};
 use chrono::{DateTime, Local};
 use colored::Colorize;
 use log::{debug, info};
 use std::fmt;
 
 impl fmt::Display for Pipeline {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mtop = '┬';
         let lbot = '╰';
         let hbar = '─';
@@ -48,7 +48,7 @@ impl fmt::Display for Pipeline {
     }
 }
 impl fmt::Display for Status {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let icon = "●";
         match *self {
             Status::Started => write!(f, "{} Started", icon),

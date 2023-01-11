@@ -12,6 +12,7 @@ use utils::log::Logs;
 /// Execute the Command Line Tool (cli)
 pub fn get_args() -> Result<(), Box<dyn Error>> {
     let args = types::Cli::parse();
+    // Set verbosity
     let verbosity = args.verbose.log_level_filter();
     Logs::new().set(&verbosity);
     match args.commands {

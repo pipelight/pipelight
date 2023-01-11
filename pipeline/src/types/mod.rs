@@ -3,28 +3,28 @@
 
 #![allow(dead_code)]
 
-mod display;
-mod from;
-pub mod list;
+// pub mod list;
+mod traits;
 
 use exec::types::StrOutput;
 use exec::Exec;
 use log::{debug, error, info, trace, warn, LevelFilter};
+use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
-use std::cmp::PartialEq;
+// use std::cmp::PartialEq;
 use std::error::Error;
 use std::fs;
-use std::marker::Copy;
 use std::process;
+use std::sync::Mutex;
 use utils;
 use utils::git::{Git, Hook};
 use utils::log::Logs;
 use uuid::Uuid;
 
-// use json::{Pipeline, Step, Trigger};
+const STORE: Lazy<Mutex<Config>> = Lazy::new(|| Mutex::new(Config::new()));
 
-#[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum Status {
     Started,
     Succeeded,
@@ -34,19 +34,15 @@ pub enum Status {
     Never,
 }
 
-pub struct Pipelines {}
-impl Pipelines {
-    pub fn get_logged() -> Result<Vec<Pipeline>, Box<dyn Error>> {
-        let dir = Logs::new().path;
-        let paths = fs::read_dir(dir).unwrap();
-        let mut pipelines = vec![];
-        for res in paths {
-            let dir_entry = res?;
-            let json = utils::read_last_line(&dir_entry.path())?;
-            let pipeline = serde_json::from_str::<Pipeline>(&json)?;
-            pipelines.push(pipeline);
-        }
-        Ok(pipelines)
+#[derive(Debug, Clone)]
+pub struct Config {
+    pipelines: Option<Vec<Pipeline>>,
+    logs: Option<Logs>,
+    hooks: Option<Vec<Hook>>,
+}
+impl Config {
+    pub fn logs(&mut self) {
+        self.logs = Some(Logs::new());
     }
 }
 
@@ -61,8 +57,24 @@ pub struct Pipeline {
     pub steps: Vec<Step>,
 }
 impl Pipeline {
+    pub fn from_log() -> Result<Vec<Pipeline>, Box<dyn Error>> {
+        let dir = Logs::new().path;
+        let paths = fs::read_dir(dir).unwrap();
+        let mut pipelines = vec![];
+        for res in paths {
+            let dir_entry = res?;
+            let json = utils::read_last_line(&dir_entry.path())?;
+            let pipeline = serde_json::from_str::<Pipeline>(&json)?;
+            pipelines.push(pipeline);
+        }
+        Ok(pipelines)
+    }
+    pub fn to_log(&self) {
+        let json = serde_json::to_string(&self).unwrap();
+        info!(target: "pipeline_json","{}", json);
+    }
     pub fn is_running(&mut self) -> bool {
-        let pipelines = Pipelines::get_logged().unwrap();
+        let pipelines = Pipeline::from_log().unwrap();
         let pipeline = pipelines
             .iter()
             .filter(|p| p.name == self.name)
@@ -82,7 +94,7 @@ impl Pipeline {
         Logs::new().set_file(&LevelFilter::Trace, pipeline.uuid);
 
         unsafe {
-            pipeline_ptr.as_mut().unwrap().log();
+            pipeline_ptr.as_mut().unwrap().to_log();
             pipeline_ptr.as_mut().unwrap().status(&Status::Running);
         }
         for step in &mut self.steps {
@@ -91,12 +103,8 @@ impl Pipeline {
         unsafe {
             pipeline_ptr.as_mut().unwrap().pid = None;
             pipeline_ptr.as_mut().unwrap().status(&Status::Succeeded);
-            pipeline_ptr.as_mut().unwrap().log();
+            pipeline_ptr.as_mut().unwrap().to_log();
         }
-    }
-    pub fn log(&self) {
-        let json = serde_json::to_string(&self).unwrap();
-        info!(target: "pipeline_json","{}", json);
     }
     pub fn status(&mut self, status: &Status) {
         self.status = Some(status.to_owned());
@@ -123,7 +131,7 @@ pub struct Command {
     output: Option<StrOutput>,
 }
 impl Command {
-    fn new() -> Self {
+    fn new() -> Command {
         return Command {
             stdin: "".to_owned(),
             output: None,
@@ -144,12 +152,12 @@ impl Command {
             }
         };
         unsafe {
-            pipeline_ptr.as_mut().unwrap().log();
+            pipeline_ptr.as_mut().unwrap().to_log();
         }
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd)]
 pub struct Trigger {
     pub action: Option<Hook>,
     pub branch: Option<String>,

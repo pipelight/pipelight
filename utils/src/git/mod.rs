@@ -1,4 +1,3 @@
-use convert_case::{Case, Casing};
 use git2::{Reference, Repository};
 use log::{debug, error, info, trace, warn};
 use serde::{Deserialize, Serialize};
@@ -12,8 +11,9 @@ use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
 use std::str::FromStr;
 use std::string::ToString;
-use strum::IntoEnumIterator;
-use strum_macros::{EnumIter, EnumString, ToString};
+use strum::EnumString;
+
+mod from;
 
 pub struct Git {
     pub repo: Option<Repository>,
@@ -52,8 +52,8 @@ impl Git {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, EnumString, ToString, EnumIter)]
-pub enum GitHook {
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, EnumString)]
+pub enum Hook {
     ApplypatchMsg,
     PreApplypatch,
     PostApplypatch,
@@ -72,47 +72,27 @@ pub enum GitHook {
     PostRewrite,
     PrePush,
 }
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub struct Hook {
-    githook: GitHook,
-}
+
 impl Hook {
-    pub fn to_string(&self) -> String {
-        let string = self.githook.to_string().to_case(Case::Kebab);
-        return string;
-    }
-    /// Convert str into enum GitHook
-    pub fn from_str(name: &str) -> Hook {
-        let githook =
-            GitHook::from_str(&name.to_case(Case::Pascal)).expect("Couldn't parse git hook value");
-        error!("{:?}", githook);
-        return Hook { githook: githook };
-    }
     /// Detect name of the hook that triggers script
     pub fn origin() -> Result<Hook, Box<dyn Error>> {
         let root = env::current_dir()?;
         let path_string = root.display().to_string();
-        let my_bool = path_string.contains("/.git/hooks/");
-        let name = root
-            .parent()
-            .unwrap()
-            .file_stem()
-            .unwrap()
-            .to_str()
-            .unwrap();
-        println!("{}", name);
-        let hook = Hook::from_str(name);
-        Ok(hook)
+        if path_string.contains("/.git/hooks/") {
+            let name = root
+                .parent()
+                .unwrap()
+                .file_stem()
+                .unwrap()
+                .to_str()
+                .unwrap();
+            let hook = Hook::from_str(name)?;
+            Ok(hook)
+        } else {
+            let message = "Can't trigger hook outside of repository hook folder";
+            Err(Box::from(message))
+        }
     }
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub struct Hooks {}
-impl Hooks {
-    pub fn iter() -> GitHookIter {
-        GitHook::iter()
-    }
-    /// Create/Ensure git hooks file trees
     pub fn ensure() -> Result<(), Box<dyn Error>> {
         let root = ".git/hooks";
         let extension = ".d";
@@ -120,7 +100,7 @@ impl Hooks {
 
         let bin_path = format!("/usr/bin/{}", bin);
         let bin_path = Path::new(&bin_path);
-        for hook in GitHook::iter() {
+        for hook in Hook::iter() {
             let file = format!("{}/{}", root, hook.to_string());
             let file = Path::new(&file);
 
@@ -130,9 +110,9 @@ impl Hooks {
             let link = format!("{}/{}", dir.display(), bin);
             let link = Path::new(&link);
 
-            Hooks::ensure_hook(file, &hook)?;
-            Hooks::ensure_directory(dir)?;
-            Hooks::ensure_symlink(bin_path, link)?;
+            Hook::ensure_hook(file, &hook)?;
+            Hook::ensure_directory(dir)?;
+            Hook::ensure_symlink(bin_path, link)?;
         }
         Ok(())
     }
@@ -146,7 +126,7 @@ impl Hooks {
         Ok(())
     }
     /// Create a hook that will call subfolder script
-    fn ensure_hook(path: &Path, hook: &GitHook) -> Result<(), Box<dyn Error>> {
+    fn ensure_hook(path: &Path, hook: &Hook) -> Result<(), Box<dyn Error>> {
         let exists = path.exists();
         if exists {
             fs::remove_file(path)?;
@@ -157,10 +137,10 @@ impl Hooks {
         perms.set_mode(0o755);
         fs::set_permissions(path, perms)?;
 
-        Hooks::write(path, hook)?;
+        Hook::write(path, hook)?;
         Ok(())
     }
-    fn write(path: &Path, hook: &GitHook) -> Result<(), Box<dyn Error>> {
+    fn write(path: &Path, hook: &Hook) -> Result<(), Box<dyn Error>> {
         let git = Git::new();
         let root = git.repo.unwrap().path().display().to_string();
         let mut file = fs::File::create(path)?;

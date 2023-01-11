@@ -10,61 +10,15 @@ use utils::log::Logs;
 impl Config {
     pub fn new() -> Result<Config, Box<dyn Error>> {
         // Git::new();
-        let file = "pipelight.config.mjs".to_owned();
+        let file = "pipelight.config.mjs";
         let mut config = Config {
-            file: file,
-            logs: None,
-            triggers: None,
+            file: file.to_owned(),
             pipelines: None,
         };
         if config.exists() {
             config = Config::load()?;
-            config = Config::check_duplicates(&config)?;
-            config.triggers()?;
         }
         Ok(config)
-    }
-    pub fn logs(&mut self) {
-        self.logs = Some(Logs::new());
-    }
-    pub fn triggers(&self) -> Result<Vec<types::Trigger>, Box<dyn Error>> {
-        let mut triggers = vec![];
-        if self.pipelines.is_some() {
-            let pipelines = self
-                .clone()
-                .pipelines
-                .unwrap()
-                .iter()
-                .map(|p| types::Pipeline::from(p))
-                .collect::<Vec<types::Pipeline>>();
-
-            triggers = pipelines
-                .iter()
-                .map(|p| p.clone().triggers.unwrap())
-                .collect::<Vec<Vec<types::Trigger>>>()
-                .into_iter()
-                .flatten()
-                .collect::<Vec<types::Trigger>>();
-        }
-        Ok(triggers)
-    }
-    pub fn pipeline(&self, name: &str) -> Result<Pipeline, Box<dyn Error>> {
-        let pipeline_result = self
-            .clone()
-            .pipelines
-            .unwrap()
-            .iter()
-            .filter(|p| p.name == name)
-            .cloned()
-            .next();
-        match pipeline_result {
-            Some(res) => return Ok(res.to_owned()),
-            None => {
-                let message = format!("Couldn't find pipeline {:?}", name);
-                warn!("{}", message);
-                return Err(Box::from(message));
-            }
-        };
     }
     /// Ensure config file exists
     fn exists(&self) -> bool {
@@ -114,49 +68,5 @@ impl Config {
                 return Err(Box::from(message));
             }
         };
-    }
-    fn check_duplicates(config: &Config) -> Result<Self, Box<dyn Error>> {
-        let names = config
-            .clone()
-            .pipelines
-            .unwrap()
-            .iter()
-            .map(|p| &p.name)
-            .cloned()
-            .collect::<Vec<String>>();
-        //Clone vector and remove duplicates
-        let mut dedup = names.clone();
-        dedup.sort();
-        dedup.dedup();
-        let has_duplicate = dedup.len() != names.len();
-        if has_duplicate {
-            let message = "Duplicate pipeline names in config";
-            warn!("{}", message);
-            Err(Box::from(message))
-        } else {
-            Ok(config.to_owned())
-        }
-    }
-    fn clean_hooks(config: &Config) -> Result<Self, Box<dyn Error>> {
-        let names = config
-            .clone()
-            .pipelines
-            .unwrap()
-            .iter()
-            .map(|p| &p.name)
-            .cloned()
-            .collect::<Vec<String>>();
-        //Clone vector and remove duplicates
-        let mut dedup = names.clone();
-        dedup.sort();
-        dedup.dedup();
-        let has_duplicate = dedup.len() != names.len();
-        if has_duplicate {
-            let message = "Duplicate pipeline names in config";
-            warn!("{}", message);
-            Err(Box::from(message))
-        } else {
-            Ok(config.to_owned())
-        }
     }
 }
