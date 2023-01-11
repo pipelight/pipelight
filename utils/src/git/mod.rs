@@ -4,14 +4,18 @@ use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;
 use std::env;
 use std::error::Error;
+
+// File systeme crates
 use std::fs;
 use std::io::Write;
 use std::os::unix::fs::symlink;
 use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
+
+// Enum workaround
 use std::str::FromStr;
 use std::string::ToString;
-use strum::EnumString;
+use strum::{EnumIter, EnumString, IntoEnumIterator};
 
 mod from;
 
@@ -52,7 +56,9 @@ impl Git {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, EnumString)]
+#[derive(
+    Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, EnumString, EnumIter, Eq, Ord,
+)]
 pub enum Hook {
     ApplypatchMsg,
     PreApplypatch,

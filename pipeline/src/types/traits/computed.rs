@@ -34,8 +34,8 @@ impl Computed<Trigger> for Trigger {
             .into_iter()
             .flatten()
             .collect::<Vec<Trigger>>();
-        triggers = triggers.sort();
-        triggers = triggers.dedup();
+        triggers.sort();
+        triggers.dedup();
         Ok(triggers)
     }
 }

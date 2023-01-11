@@ -2,6 +2,7 @@ use crate::cast;
 use crate::types::{Command, Pipeline, Step, Trigger};
 use chrono::Utc;
 use std::convert::From;
+use std::str::FromStr;
 use utils::git::Hook;
 use uuid::Uuid;
 
@@ -64,7 +65,7 @@ impl Trigger {
             for action in e.actions.clone().unwrap() {
                 tuplelist.push(Trigger {
                     branch: Some(branch.to_owned()),
-                    action: Some(Hook::from_str(&action)),
+                    action: Some(Hook::from_str(&action).unwrap()),
                 })
             }
         }

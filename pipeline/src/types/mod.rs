@@ -157,7 +157,7 @@ impl Command {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Trigger {
     pub action: Option<Hook>,
     pub branch: Option<String>,

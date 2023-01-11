@@ -9,14 +9,14 @@ impl fmt::Display for Pipeline {
         let mtop = '┬';
         let lbot = '╰';
         let hbar = '─';
-        write!(f, "{} - ", &self.status.unwrap())?;
+        write!(f, "{} - ", &self.clone().status.unwrap())?;
         let str_date = &self.date.as_ref().unwrap();
         let date = str_date.parse::<DateTime<Local>>().unwrap();
         write!(f, "{}\n", date.to_rfc2822())?;
         if self.pid.is_some() {
-            write!(f, "  pid: {}\n", &self.pid.unwrap());
+            write!(f, "  pid: {}\n", &self.pid.unwrap())?;
         }
-        write!(f, "  pipeline: {}\n", self.name);
+        write!(f, "  pipeline: {}\n", self.name)?;
         for step in &self.steps {
             info!(target :"nude","  {mtop}\n  {lbot}{hbar} step: {}\n", step.name);
             for command in &step.commands {
