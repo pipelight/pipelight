@@ -89,8 +89,9 @@ impl Hook {
                 .file_stem()
                 .unwrap()
                 .to_str()
-                .unwrap();
-            let hook = Hook::from(name)?;
+                .unwrap()
+                .to_owned();
+            let hook = Hook::from(&name);
             Ok(hook)
         } else {
             let message = "Can't trigger hook outside of repository hook folder";
@@ -145,18 +146,18 @@ impl Hook {
         Ok(())
     }
     fn write(path: &Path, hook: &Hook) -> Result<(), Box<dyn Error>> {
-        let action: String = hook.into();
+        let action = String::from(hook);
         let git = Git::new();
         let root = git.repo.unwrap().path().display().to_string();
         let mut file = fs::File::create(path)?;
         let s = format!(
             "#!/bin/sh \n\
-                dir=\"{root}hooks/{hook}.d\" \n\
+                dir=\"{root}hooks/{action}.d\" \n\
                 for f in \"$dir\"[>; do \n\
-                  \"$f\" {hook}\n\
+                  \"$f\" {action}\n\
                 done",
             root = root,
-            hook: String = hook.into()?
+            action = action
         );
         let b = s.as_bytes();
         file.write_all(b)?;

@@ -83,7 +83,7 @@ impl Trigger {
             for action in e.actions.clone().unwrap() {
                 tuplelist.push(Trigger {
                     branch: Some(branch.to_owned()),
-                    action: Some(Hook::from_str(&action).unwrap()),
+                    action: Some(Hook::from(&action)),
                 })
             }
         }
