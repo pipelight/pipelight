@@ -1,8 +1,9 @@
 use pipeline::types::Pipeline;
 use std::error::Error;
+
 /// Pretty print logs from json log file
 pub fn pretty() -> Result<(), Box<dyn Error>> {
-    let pipelines = Pipeline::get()?;
+    let pipelines = Pipeline::from_log()?;
     for pipeline in pipelines {
         println!("{}", pipeline);
     }

@@ -40,11 +40,6 @@ pub struct Config {
     logs: Option<Logs>,
     hooks: Option<Vec<Hook>>,
 }
-impl Config {
-    pub fn logs(&mut self) {
-        self.logs = Some(Logs::new());
-    }
-}
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Pipeline {
@@ -74,14 +69,22 @@ impl Pipeline {
         info!(target: "pipeline_json","{}", json);
     }
     pub fn is_running(&mut self) -> bool {
-        let pipelines = Pipeline::from_log().unwrap();
-        let pipeline = pipelines
-            .iter()
-            .filter(|p| p.name == self.name)
-            .cloned()
-            .next();
-        let is = pipeline.unwrap().pid.is_some();
-        return is;
+        let res = Pipeline::from_log();
+        match res {
+            Ok(pipelines) => {
+                let pipeline = pipelines
+                    .iter()
+                    .filter(|p| p.name == self.name)
+                    .cloned()
+                    .next();
+                if pipeline.is_none() {
+                    return false;
+                }
+                let is = pipeline.unwrap().pid.is_some();
+                return is;
+            }
+            Err(_) => return false,
+        };
     }
     pub fn run(&mut self) {
         if self.is_running() {

@@ -1,5 +1,6 @@
 use crate::cast;
 use crate::types::Config;
+use utils::log::Logs;
 
 impl Default for Config {
     fn default() -> Self {
@@ -14,7 +15,8 @@ impl Default for Config {
 impl Config {
     pub fn new() -> Self {
         let json = cast::Config::new();
-        let config = Config::from(&json);
+        let mut config = Config::from(&json);
+        config.logs = Some(Logs::new());
         return config;
     }
 }

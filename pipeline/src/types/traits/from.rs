@@ -10,7 +10,6 @@ impl From<&cast::Config> for Config {
     fn from(e: &cast::Config) -> Self {
         let mut config = Config::default();
         if e.pipelines.is_some() {
-            println!("{:?}", e);
             let pipelines = e
                 .clone()
                 .pipelines

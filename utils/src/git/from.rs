@@ -14,7 +14,8 @@ impl fmt::Display for Hook {
 
 impl From<&String> for Hook {
     fn from(action: &String) -> Hook {
-        let cased: &str = &action.to_case(Case::Snake);
+        // let cased: &str = &action.to_case(Case::Snake);
+        let cased: &str = &action.to_case(Case::Kebab);
         match cased {
             "applypatch-msg" => return ApplypatchMsg,
             "pre-apply-patch" => return PreApplypatch,
@@ -34,7 +35,7 @@ impl From<&String> for Hook {
             "post-rewrite" => return PostRewrite,
             "pre-push" => return PrePush,
             _ => {
-                let message = "The hook {} is not known.";
+                let message = format!("The hook {} is not known", cased);
                 error!("{}", message);
                 exit(1);
             }
