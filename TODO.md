@@ -1,6 +1,7 @@
 # Rust
 
-deprecate raw logger
+Flag pipeline as aborted when pid doesn't exist or program name isn't pipelight-run
+Adapt function "is_running" with this.
 
 process termiation by pid (Stop)
 
