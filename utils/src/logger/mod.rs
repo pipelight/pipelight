@@ -50,7 +50,7 @@ impl Logger {
         return LOGGER.lock().unwrap().to_owned();
     }
     /// Delete logs directory
-    pub fn remove() -> Result<(), Box<dyn Error>> {
+    pub fn clear() -> Result<(), Box<dyn Error>> {
         let binding = LOGGER;
         let global = binding.lock().unwrap();
         let pwd = current_dir().unwrap();

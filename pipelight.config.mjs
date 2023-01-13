@@ -5,7 +5,7 @@ const config = {
       steps: [
         {
           name: "mystep",
-          commands: ["ls", "sleep 35", "pwd"],
+          commands: ["ls", "sleep 30", "pwd"],
         },
       ],
       triggers: [

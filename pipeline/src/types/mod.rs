@@ -11,21 +11,15 @@ use exec::Exec;
 use log::{debug, error, info, trace, warn, LevelFilter};
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
+use sysinfo::{NetworkExt, NetworksExt, Pid, PidExt, ProcessExt, System, SystemExt};
 // use std::cmp::PartialEq;
 use std::error::Error;
 use std::fs;
 use std::process;
-
-// Global Vars
-use once_cell::sync::Lazy;
-use std::sync::Mutex;
-
 use utils;
 use utils::git::{Git, Hook};
 use utils::logger::Logger;
 use uuid::Uuid;
-
-const CONFIG: Lazy<Mutex<Config>> = Lazy::new(|| Mutex::new(Config::new()));
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum Status {
@@ -61,17 +55,29 @@ impl Pipeline {
     pub fn is_running(&mut self) -> bool {
         let res = Logs::get();
         match res {
-            Ok(pipelines) => {
-                let pipeline = pipelines
+            Ok(mut pipelines) => {
+                // Sort logs by name and most recent run
+                pipelines = pipelines
                     .iter()
                     .filter(|p| p.name == self.name)
                     .cloned()
-                    .next();
+                    .collect::<Vec<Pipeline>>();
+                pipelines.sort_by_key(|e| e.clone().date.unwrap());
+                pipelines.reverse();
+                let pipeline = pipelines.iter().next();
+                info!("{:?}", pipelines);
+
                 if pipeline.is_none() {
                     return false;
                 }
-                let is = pipeline.unwrap().pid.is_some();
-                return is;
+                if pipeline.clone().unwrap().pid.is_none() {
+                    return false;
+                }
+                let mut sys = System::new_all();
+                sys.refresh_all();
+                return sys
+                    .process(PidExt::from_u32(pipeline.unwrap().pid.unwrap()))
+                    .is_some();
             }
             Err(_) => return false,
         };
@@ -80,8 +86,6 @@ impl Pipeline {
         if self.is_running() {
             return;
         }
-        const PIPELINE: Lazy<Mutex<Pipeline>> = Lazy::new(|| Mutex::new(Pipeline::new()));
-
         let pid = process::id();
         self.pid = Some(pid);
         let pipeline: &mut Pipeline = self;
@@ -95,9 +99,11 @@ impl Pipeline {
         for step in &mut self.steps {
             step.run(pipeline_ptr);
         }
-        PIPELINE.lock().unwrap().pid = None;
-        PIPELINE.lock().unwrap().status(&Status::Succeeded);
-        PIPELINE.lock().unwrap().log();
+        unsafe {
+            pipeline_ptr.as_mut().unwrap().pid = None;
+            pipeline_ptr.as_mut().unwrap().status(&Status::Succeeded);
+            pipeline_ptr.as_mut().unwrap().log();
+        }
     }
     pub fn status(&mut self, status: &Status) {
         self.status = Some(status.to_owned());
@@ -173,7 +179,6 @@ pub struct Logs;
 impl Logs {
     /// Return pipelines from log files
     pub fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
-        // let dir = Logger::get().directory;
         let dir = Logger::new().directory;
         let paths = fs::read_dir(dir).unwrap();
         let mut pipelines = vec![];

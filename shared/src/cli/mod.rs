@@ -5,6 +5,7 @@ pub mod types;
 use crate::run;
 use clap::Parser;
 use log::info;
+// use pipeline::types::Logs;
 use std::error::Error;
 use utils::logger::Logger;
 
@@ -33,7 +34,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
                 let logs_cmd = logs.commands.unwrap();
                 match logs_cmd {
                     types::LogsCommands::Rm(logs) => {
-                        // Logs::remove()?;
+                        Logger::clear()?;
                     }
                 }
             } else if logs.display.json {

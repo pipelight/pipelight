@@ -1,5 +1,6 @@
 use crate::cast;
-use crate::types::{Command, Config, Pipeline, Step};
+use crate::types::{Command, Config, Logs, Pipeline, Step};
+use chrono::Utc;
 use uuid::Uuid;
 
 impl Default for Config {
@@ -34,6 +35,7 @@ impl Default for Pipeline {
             pid: None,
             name: "default".to_owned(),
             date: None,
+            // date: Some(Utc::now().to_string()),
             status: None,
             triggers: None,
             steps: steps,
@@ -41,6 +43,16 @@ impl Default for Pipeline {
     }
 }
 impl Pipeline {
+    pub fn new() -> Self {
+        Pipeline::default()
+    }
+}
+impl Default for Logs {
+    fn default() -> Self {
+        Logs
+    }
+}
+impl Logs {
     pub fn new() -> Self {
         Self::default()
     }
