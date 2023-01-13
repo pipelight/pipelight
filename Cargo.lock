@@ -1391,6 +1391,7 @@ dependencies = [
  "git2",
  "log",
  "log4rs",
+ "once_cell",
  "project-root",
  "rev_buf_reader",
  "serde",

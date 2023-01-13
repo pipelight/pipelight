@@ -1,8 +1,11 @@
 use crate::cast;
 use crate::types::{Command, Config, Pipeline, Step, Trigger};
 use chrono::Utc;
+use log::info;
 use std::convert::From;
-use std::str::FromStr;
+use std::error::Error;
+use std::fs;
+// use std::str::FromStr;
 use utils::git::Hook;
 use uuid::Uuid;
 
@@ -89,3 +92,24 @@ impl Trigger {
         return tuplelist;
     }
 }
+
+// impl From<&Logs> for Pipeline {
+//     fn from(logs: &Logs) -> Result<Vec<Pipeline>, Box<dyn Error>> {
+//         let dir = Logs::new().directory;
+//         let paths = fs::read_dir(dir).unwrap();
+//         let mut pipelines = vec![];
+//         for res in paths {
+//             let dir_entry = res?;
+//             let json = utils::read_last_line(&dir_entry.path())?;
+//             let pipeline = serde_json::from_str::<Pipeline>(&json)?;
+//             pipelines.push(pipeline);
+//         }
+//         Ok(pipelines)
+//     }
+// }
+// impl Into<&Logs> for Pipeline {
+//     fn into(&self) -> Logs {
+//         let json = serde_json::to_string(&self).unwrap();
+//         info!(target: "pipeline_json","{}", json);
+//     }
+// }

@@ -6,7 +6,7 @@ use std::io::BufRead;
 use std::path::Path;
 
 pub mod git;
-pub mod log;
+pub mod logger;
 
 /// Return project root path as string
 pub fn get_root() -> Result<String, Box<dyn Error>> {

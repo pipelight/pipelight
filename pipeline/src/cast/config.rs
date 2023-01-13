@@ -1,11 +1,11 @@
-use super::{Config, Pipeline};
-use crate::types;
+use super::Config;
 use exec::Exec;
 use log::{debug, error, info, trace, warn};
+
+// standard lib
 use std::env::current_dir;
 use std::error::Error;
 use std::path::Path;
-use utils::log::Logs;
 
 impl Config {
     pub fn new() -> Self {

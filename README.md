@@ -38,6 +38,12 @@ List pipelines defined in config file
 pipelight ls
 ```
 
+or
+
+```sh
+pipelight ls -vvvv
+```
+
 Trigger a specific pipeline execution
 
 ```sh
@@ -56,14 +62,8 @@ Verbosity can be increased
 pipelight logs -vvvv
 ```
 
-## Lint config file
+## Lint your config file
 
-```sh
-pipelight ls -vvvv
-```
-
-If it's not enough,
-As it is pure Javascript.
 You can troubleshoot your config file with
 
 ```sh
@@ -75,7 +75,7 @@ node pipelight.config.mjs
 The need of something that keep it simple but allows for the great modularity.
 As you know some javascript, you're ready to go.
 
-### The power of Typescript (Code as configuration)
+### The power of Javascript (Code as configuration)
 
 This tool is written in Rust and Typescript.
 It combines the speed and security of Rust with the easy scripting of Javascript.

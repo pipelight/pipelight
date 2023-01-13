@@ -3,11 +3,10 @@ pub mod actions;
 pub mod print;
 pub mod types;
 use crate::run;
-use clap::{Args, Parser, Subcommand, ValueEnum};
+use clap::Parser;
 use log::info;
-use pipeline::types::Pipeline;
 use std::error::Error;
-use utils::log::Logs;
+use utils::logger::Logger;
 
 /// Execute the Command Line Tool (cli)
 pub fn get_args() -> Result<(), Box<dyn Error>> {
@@ -15,7 +14,9 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
     // Set verbosity
     let verbosity = args.verbose.log_level_filter();
     // Set logs (deprecated)
-    Logs::new().set(&verbosity);
+    //
+    Logger::level(&verbosity);
+    // Logger::new();
     // Set config
     //
     match args.commands {

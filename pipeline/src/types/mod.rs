@@ -9,20 +9,23 @@ mod traits;
 use exec::types::StrOutput;
 use exec::Exec;
 use log::{debug, error, info, trace, warn, LevelFilter};
-use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
 // use std::cmp::PartialEq;
 use std::error::Error;
 use std::fs;
 use std::process;
+
+// Global Vars
+use once_cell::sync::Lazy;
 use std::sync::Mutex;
+
 use utils;
 use utils::git::{Git, Hook};
-use utils::log::Logs;
+use utils::logger::Logger;
 use uuid::Uuid;
 
-const STORE: Lazy<Mutex<Config>> = Lazy::new(|| Mutex::new(Config::new()));
+const CONFIG: Lazy<Mutex<Config>> = Lazy::new(|| Mutex::new(Config::new()));
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum Status {
@@ -37,7 +40,6 @@ pub enum Status {
 #[derive(Debug, Clone)]
 pub struct Config {
     pipelines: Option<Vec<Pipeline>>,
-    logs: Option<Logs>,
     hooks: Option<Vec<Hook>>,
 }
 
@@ -52,24 +54,12 @@ pub struct Pipeline {
     pub steps: Vec<Step>,
 }
 impl Pipeline {
-    pub fn from_log() -> Result<Vec<Pipeline>, Box<dyn Error>> {
-        let dir = Logs::new().path;
-        let paths = fs::read_dir(dir).unwrap();
-        let mut pipelines = vec![];
-        for res in paths {
-            let dir_entry = res?;
-            let json = utils::read_last_line(&dir_entry.path())?;
-            let pipeline = serde_json::from_str::<Pipeline>(&json)?;
-            pipelines.push(pipeline);
-        }
-        Ok(pipelines)
-    }
-    pub fn to_log(&self) {
+    pub fn log(&self) {
         let json = serde_json::to_string(&self).unwrap();
         info!(target: "pipeline_json","{}", json);
     }
     pub fn is_running(&mut self) -> bool {
-        let res = Pipeline::from_log();
+        let res = Logs::get();
         match res {
             Ok(pipelines) => {
                 let pipeline = pipelines
@@ -90,24 +80,24 @@ impl Pipeline {
         if self.is_running() {
             return;
         }
+        const PIPELINE: Lazy<Mutex<Pipeline>> = Lazy::new(|| Mutex::new(Pipeline::new()));
+
         let pid = process::id();
         self.pid = Some(pid);
         let pipeline: &mut Pipeline = self;
         let pipeline_ptr: *mut Pipeline = pipeline;
-        Logs::new().set_file(&LevelFilter::Trace, pipeline.uuid);
+        Logger::file(&pipeline.uuid);
 
         unsafe {
-            pipeline_ptr.as_mut().unwrap().to_log();
+            pipeline_ptr.as_mut().unwrap().log();
             pipeline_ptr.as_mut().unwrap().status(&Status::Running);
         }
         for step in &mut self.steps {
             step.run(pipeline_ptr);
         }
-        unsafe {
-            pipeline_ptr.as_mut().unwrap().pid = None;
-            pipeline_ptr.as_mut().unwrap().status(&Status::Succeeded);
-            pipeline_ptr.as_mut().unwrap().to_log();
-        }
+        PIPELINE.lock().unwrap().pid = None;
+        PIPELINE.lock().unwrap().status(&Status::Succeeded);
+        PIPELINE.lock().unwrap().log();
     }
     pub fn status(&mut self, status: &Status) {
         self.status = Some(status.to_owned());
@@ -155,7 +145,7 @@ impl Command {
             }
         };
         unsafe {
-            pipeline_ptr.as_mut().unwrap().to_log();
+            pipeline_ptr.as_mut().unwrap().log();
         }
     }
 }
@@ -174,5 +164,25 @@ impl Trigger {
             branch: Some(branch),
             action: Some(action),
         })
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
+pub struct Logs;
+
+impl Logs {
+    /// Return pipelines from log files
+    pub fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
+        // let dir = Logger::get().directory;
+        let dir = Logger::new().directory;
+        let paths = fs::read_dir(dir).unwrap();
+        let mut pipelines = vec![];
+        for res in paths {
+            let dir_entry = res?;
+            let json = utils::read_last_line(&dir_entry.path())?;
+            let pipeline = serde_json::from_str::<Pipeline>(&json)?;
+            pipelines.push(pipeline);
+        }
+        Ok(pipelines)
     }
 }
