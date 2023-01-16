@@ -7,6 +7,7 @@ pub fn pretty() -> Result<(), Box<dyn Error>> {
     for mut pipeline in pipelines {
         if pipeline.is_aborted() {
             pipeline.status = Some(Status::Aborted);
+            pipeline.pid = None;
             pipeline.log();
         }
         println!("{}", pipeline);
