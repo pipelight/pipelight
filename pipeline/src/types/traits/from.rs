@@ -36,6 +36,7 @@ impl From<&cast::Pipeline> for Pipeline {
         if e.triggers.is_none() {
             triggers = None
         } else {
+            Hook::new().unwrap();
             triggers = Some(
                 e.clone()
                     .triggers

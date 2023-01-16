@@ -1,5 +1,4 @@
 // Cli core
-pub mod actions;
 pub mod print;
 pub mod types;
 use crate::run;

@@ -103,13 +103,14 @@ impl Hook {
         }
     }
     /// Ensure .git/hook folder
-    pub fn ensure() -> Result<(), Box<dyn Error>> {
+    pub fn new() -> Result<(), Box<dyn Error>> {
         let root = ".git/hooks";
         let extension = ".d";
         let bin = "pipelight-trigger";
 
         let bin_path = format!("/usr/bin/{}", bin);
         let bin_path = Path::new(&bin_path);
+
         for hook in Hook::iter() {
             let file = format!("{}/{}", root, hook.to_string());
             let file = Path::new(&file);
@@ -120,6 +121,7 @@ impl Hook {
             let link = format!("{}/{}", dir.display(), bin);
             let link = Path::new(&link);
 
+            fs::create_dir_all(root)?;
             Hook::ensure_hook(file, &hook)?;
             Hook::ensure_directory(dir)?;
             Hook::ensure_symlink(bin_path, link)?;
@@ -130,9 +132,10 @@ impl Hook {
     fn ensure_directory(path: &Path) -> Result<(), Box<dyn Error>> {
         let dir_exists = path.exists();
         if dir_exists {
-            fs::remove_dir_all(path)?;
+            // fs::remove_dir_all(path)?;
+            return Ok(());
         }
-        fs::create_dir(path)?;
+        fs::create_dir_all(path)?;
         Ok(())
     }
     /// Create a hook.d subfolder
