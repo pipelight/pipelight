@@ -25,7 +25,11 @@ pub struct Git {
 impl Git {
     pub fn new() -> Self {
         let mut e = Git { repo: None };
-        e.exists();
+        if e.exists() {
+            // Get the repo
+        } else {
+            // Maybe create the repo
+        }
         return e;
     }
     ///  Detect if there is a git repo in pwd
@@ -98,6 +102,7 @@ impl Hook {
             Err(Box::from(message))
         }
     }
+    /// Ensure .git/hook folder
     pub fn ensure() -> Result<(), Box<dyn Error>> {
         let root = ".git/hooks";
         let extension = ".d";
@@ -130,11 +135,12 @@ impl Hook {
         fs::create_dir(path)?;
         Ok(())
     }
-    /// Create a hook that will call subfolder script
+    /// Create a hook.d subfolder
     fn ensure_hook(path: &Path, hook: &Hook) -> Result<(), Box<dyn Error>> {
         let exists = path.exists();
         if exists {
-            fs::remove_file(path)?;
+            // fs::remove_file(path)?;
+            return Ok(());
         }
         let file = fs::File::create(path)?;
         let metadata = file.metadata()?;
@@ -145,9 +151,10 @@ impl Hook {
         Hook::write(path, hook)?;
         Ok(())
     }
+    /// Create a hook that will call scrpts from a hook.d subfolder
     fn write(path: &Path, hook: &Hook) -> Result<(), Box<dyn Error>> {
-        let action = String::from(hook);
         let git = Git::new();
+        let action = String::from(hook);
         let root = git.repo.unwrap().path().display().to_string();
         let mut file = fs::File::create(path)?;
         let s = format!(

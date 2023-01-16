@@ -62,11 +62,6 @@ impl From<&Hook> for String {
             PreAutoGc => return "pre-auto-gc".to_owned(),
             PostRewrite => return "post-rewrite".to_owned(),
             PrePush => return "pre-push".to_owned(),
-            _ => {
-                let message = "The hook is not known.";
-                error!("{}", message);
-                exit(1);
-            }
         };
     }
 }

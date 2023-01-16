@@ -32,24 +32,30 @@ impl From<&cast::Pipeline> for Pipeline {
     fn from(e: &cast::Pipeline) -> Self {
         let steps = &e.steps.iter().map(|e| Step::from(e)).collect::<Vec<Step>>();
         // Flatten triggers
-        let triggers = &e
-            .clone()
-            .triggers
-            .unwrap()
-            .into_iter()
-            .map(|e| Trigger::flatten(&e))
-            .collect::<Vec<Vec<Trigger>>>()
-            .into_iter()
-            .flatten()
-            .collect::<Vec<Trigger>>();
+        let triggers: Option<Vec<Trigger>>;
+        if e.triggers.is_none() {
+            triggers = None
+        } else {
+            triggers = Some(
+                e.clone()
+                    .triggers
+                    .unwrap()
+                    .into_iter()
+                    .map(|e| Trigger::flatten(&e))
+                    .collect::<Vec<Vec<Trigger>>>()
+                    .into_iter()
+                    .flatten()
+                    .collect::<Vec<Trigger>>(),
+            )
+        }
         let p = Pipeline {
             pid: None,
             uuid: Uuid::new_v4(),
             date: Some(Utc::now().to_string()),
             name: e.name.to_owned(),
             steps: steps.to_owned(),
-            status: None,
-            triggers: Some(triggers.to_owned()),
+            status: Some(Status::Never),
+            triggers: triggers,
         };
         return p;
     }
@@ -122,11 +128,6 @@ impl From<&Status> for String {
             Running => return "running".to_owned(),
             Aborted => return "aborted".to_owned(),
             Never => return "never".to_owned(),
-            _ => {
-                let message = format!("The pipeline status is not known");
-                error!("{}", message);
-                exit(1);
-            }
         };
     }
 }

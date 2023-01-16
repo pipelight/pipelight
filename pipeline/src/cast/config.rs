@@ -9,7 +9,6 @@ use std::path::Path;
 
 impl Config {
     pub fn new() -> Self {
-        // Git::new();
         let file = "pipelight.config.mjs";
         let mut config = Config {
             file: file.to_owned(),

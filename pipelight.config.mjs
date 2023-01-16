@@ -10,7 +10,7 @@ const config = {
       ],
       triggers: [
         {
-          branches: ["master"],
+          branches: ["master", "dev"],
           actions: ["pre-push"],
         },
       ],
