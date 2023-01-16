@@ -846,6 +846,7 @@ version = "0.2.0"
 dependencies = [
  "chrono",
  "colored",
+ "convert_case",
  "derive_deref",
  "exec",
  "global",

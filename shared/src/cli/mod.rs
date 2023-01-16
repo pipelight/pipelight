@@ -5,7 +5,7 @@ pub mod types;
 use crate::run;
 use clap::Parser;
 use log::info;
-// use pipeline::types::Logs;
+use pipeline::types::Pipeline;
 use std::error::Error;
 use utils::logger::logger;
 
@@ -20,7 +20,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
     match args.commands {
         types::Commands::Ls(list) => {
             info!("Listing piplines");
-            // Pipeline::list()?;
+            print::list()?;
         }
         types::Commands::Run(pipeline) => {
             info!("Triggering pipline {:#?}", pipeline.name);

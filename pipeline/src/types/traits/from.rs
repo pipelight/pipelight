@@ -1,11 +1,13 @@
 use crate::cast;
-use crate::types::{Command, Config, Pipeline, Step, Trigger};
+use crate::types::Status::*;
+use crate::types::{Command, Config, Pipeline, Status, Step, Trigger};
 use chrono::Utc;
-use log::info;
+use convert_case::{Case, Casing};
+use log::{error, info};
 use std::convert::From;
 use std::error::Error;
 use std::fs;
-// use std::str::FromStr;
+use std::process::exit;
 use utils::git::Hook;
 use uuid::Uuid;
 
@@ -93,23 +95,38 @@ impl Trigger {
     }
 }
 
-// impl From<&Logs> for Pipeline {
-//     fn from(logs: &Logs) -> Result<Vec<Pipeline>, Box<dyn Error>> {
-//         let dir = Logs::new().directory;
-//         let paths = fs::read_dir(dir).unwrap();
-//         let mut pipelines = vec![];
-//         for res in paths {
-//             let dir_entry = res?;
-//             let json = utils::read_last_line(&dir_entry.path())?;
-//             let pipeline = serde_json::from_str::<Pipeline>(&json)?;
-//             pipelines.push(pipeline);
-//         }
-//         Ok(pipelines)
-//     }
-// }
-// impl Into<&Logs> for Pipeline {
-//     fn into(&self) -> Logs {
-//         let json = serde_json::to_string(&self).unwrap();
-//         info!(target: "pipeline_json","{}", json);
-//     }
-// }
+impl From<&String> for Status {
+    fn from(status: &String) -> Status {
+        let cased: &str = &status.to_case(Case::Snake);
+        match cased {
+            "started" => return Started,
+            "succeeded" => return Succeeded,
+            "failed" => return Failed,
+            "running" => return Never,
+            "aborted" => return Aborted,
+            "never" => return Aborted,
+            _ => {
+                let message = format!("The pipeline status {} is not known", cased);
+                error!("{}", message);
+                exit(1);
+            }
+        };
+    }
+}
+impl From<&Status> for String {
+    fn from(action: &Status) -> String {
+        match action {
+            Started => return "started".to_owned(),
+            Succeeded => return "succeeded".to_owned(),
+            Failed => return "failed".to_owned(),
+            Running => return "running".to_owned(),
+            Aborted => return "aborted".to_owned(),
+            Never => return "never".to_owned(),
+            _ => {
+                let message = format!("The pipeline status is not known");
+                error!("{}", message);
+                exit(1);
+            }
+        };
+    }
+}

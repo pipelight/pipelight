@@ -33,8 +33,8 @@ pub enum Status {
 
 #[derive(Debug, Clone)]
 pub struct Config {
-    pipelines: Option<Vec<Pipeline>>,
-    hooks: Option<Vec<Hook>>,
+    pub pipelines: Option<Vec<Pipeline>>,
+    pub hooks: Option<Vec<Hook>>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -66,34 +66,21 @@ impl Pipeline {
     /// If the log_pid exists it means the program runs
     /// (need to add process name comparision to harden func)
     pub fn is_running(&mut self) -> bool {
-        let res = Logs::get();
-        match res {
-            Ok(mut pipelines) => {
-                // Sort logs by name and most recent run
-                pipelines = pipelines
-                    .iter()
-                    .filter(|p| p.name == self.name)
-                    .cloned()
-                    .collect::<Vec<Pipeline>>();
-                pipelines.sort_by_key(|e| e.clone().date.unwrap());
-                pipelines.reverse();
-                let pipeline = pipelines.iter().next();
-                // info!("{:?}", pipelines);
+        let pipelines = Logs::get_by_name(&self.name).unwrap();
+        let pipeline = pipelines.iter().next();
+        // info!("{:?}", pipelines);
 
-                if pipeline.is_none() {
-                    return false;
-                }
-                if pipeline.clone().unwrap().pid.is_none() {
-                    return false;
-                }
-                let mut sys = System::new_all();
-                sys.refresh_all();
-                return sys
-                    .process(PidExt::from_u32(pipeline.unwrap().pid.unwrap()))
-                    .is_some();
-            }
-            Err(_) => return false,
-        };
+        if pipeline.is_none() {
+            return false;
+        }
+        if pipeline.clone().unwrap().pid.is_none() {
+            return false;
+        }
+        let mut sys = System::new_all();
+        sys.refresh_all();
+        return sys
+            .process(PidExt::from_u32(pipeline.unwrap().pid.unwrap()))
+            .is_some();
     }
     pub fn run(&mut self) {
         if self.is_running() {
@@ -200,6 +187,18 @@ impl Logs {
             let pipeline = serde_json::from_str::<Pipeline>(&json)?;
             pipelines.push(pipeline);
         }
+        Ok(pipelines)
+    }
+    pub fn get_by_name(name: &String) -> Result<Vec<Pipeline>, Box<dyn Error>> {
+        let pipelines = Logs::get()?;
+        let mut pipelines = pipelines
+            .iter()
+            .filter(|p| &p.name == name)
+            .cloned()
+            .collect::<Vec<Pipeline>>();
+        // Sort by date descending
+        pipelines.sort_by_key(|e| e.clone().date.unwrap());
+        pipelines.reverse();
         Ok(pipelines)
     }
 }
