@@ -47,6 +47,7 @@ pub fn default_with_file(level: &LevelFilter, uuid: &Uuid) -> Config {
 
 /// Return logger config with chosen verbosity level
 pub fn default(level: &LevelFilter) -> Config {
+    // let level = LevelFilter::Trace;
     let level = level.to_owned();
     let pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}";
     let body = "{m}";

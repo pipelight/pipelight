@@ -18,7 +18,7 @@ use std::fs;
 use std::process;
 use utils;
 use utils::git::{Git, Hook};
-use utils::logger::Logger;
+use utils::logger::logger;
 use uuid::Uuid;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -49,9 +49,22 @@ pub struct Pipeline {
 }
 impl Pipeline {
     pub fn log(&self) {
+        logger.file(&self.uuid);
         let json = serde_json::to_string(&self).unwrap();
         info!(target: "pipeline_json","{}", json);
     }
+    /// Compares if log_pid is in system pid list.
+    /// If not, the program has been aborted
+    pub fn is_aborted(&mut self) -> bool {
+        if self.pid.is_none() {
+            return false;
+        }
+        let mut sys = System::new_all();
+        sys.refresh_all();
+        return !sys.process(PidExt::from_u32(self.pid.unwrap())).is_some();
+    }
+    /// If the log_pid exists it means the program runs
+    /// (need to add process name comparision to harden func)
     pub fn is_running(&mut self) -> bool {
         let res = Logs::get();
         match res {
@@ -65,7 +78,7 @@ impl Pipeline {
                 pipelines.sort_by_key(|e| e.clone().date.unwrap());
                 pipelines.reverse();
                 let pipeline = pipelines.iter().next();
-                info!("{:?}", pipelines);
+                // info!("{:?}", pipelines);
 
                 if pipeline.is_none() {
                     return false;
@@ -90,11 +103,10 @@ impl Pipeline {
         self.pid = Some(pid);
         let pipeline: &mut Pipeline = self;
         let pipeline_ptr: *mut Pipeline = pipeline;
-        Logger::file(&pipeline.uuid);
 
         unsafe {
-            pipeline_ptr.as_mut().unwrap().log();
             pipeline_ptr.as_mut().unwrap().status(&Status::Running);
+            pipeline_ptr.as_mut().unwrap().log();
         }
         for step in &mut self.steps {
             step.run(pipeline_ptr);
@@ -179,7 +191,7 @@ pub struct Logs;
 impl Logs {
     /// Return pipelines from log files
     pub fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
-        let dir = Logger::new().directory;
+        let dir = &logger.directory;
         let paths = fs::read_dir(dir).unwrap();
         let mut pipelines = vec![];
         for res in paths {

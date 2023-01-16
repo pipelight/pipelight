@@ -7,19 +7,16 @@ use clap::Parser;
 use log::info;
 // use pipeline::types::Logs;
 use std::error::Error;
-use utils::logger::Logger;
+use utils::logger::logger;
 
 /// Execute the Command Line Tool (cli)
+/// Initialize Logger and program global vars
 pub fn get_args() -> Result<(), Box<dyn Error>> {
     let args = types::Cli::parse();
     // Set verbosity
     let verbosity = args.verbose.log_level_filter();
-    // Set logs (deprecated)
-    //
-    Logger::level(&verbosity);
-    // Logger::new();
-    // Set config
-    //
+    logger.level(&verbosity);
+
     match args.commands {
         types::Commands::Ls(list) => {
             info!("Listing piplines");
@@ -34,7 +31,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
                 let logs_cmd = logs.commands.unwrap();
                 match logs_cmd {
                     types::LogsCommands::Rm(logs) => {
-                        Logger::clear()?;
+                        logger.clear()?;
                     }
                 }
             } else if logs.display.json {

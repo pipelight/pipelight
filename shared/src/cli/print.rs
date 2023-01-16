@@ -1,10 +1,14 @@
-use pipeline::types::{Logs, Pipeline};
+use pipeline::types::{Logs, Pipeline, Status};
 use std::error::Error;
 
 /// Pretty print logs from json log file
 pub fn pretty() -> Result<(), Box<dyn Error>> {
     let pipelines = Logs::get()?;
-    for pipeline in pipelines {
+    for mut pipeline in pipelines {
+        if pipeline.is_aborted() {
+            pipeline.status = Some(Status::Aborted);
+            pipeline.log();
+        }
         println!("{}", pipeline);
     }
     Ok(())
