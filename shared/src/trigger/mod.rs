@@ -1,6 +1,7 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
+use exec::Exec;
 use log::{debug, error, info, trace, warn};
 use pipeline::types::{Config, Pipeline, Trigger};
 #[allow(dead_code)]
@@ -15,9 +16,17 @@ use utils::{
     logger::Logger,
 };
 
+/// To be called from the cli
+pub fn trigger_bin() -> Result<(), Box<dyn Error>> {
+    trace!("Create detached subprocess");
+    let bin = "pipelight-trigger";
+    let command = format!("{}", bin);
+    Exec::new().detached(&command)?;
+    Ok(())
+}
+
 /// Filter pipeline by trigger and run
 pub fn trigger() -> Result<(), Box<dyn Error>> {
-    // Go to git root folder
     let config = Config::new();
     let env = Trigger::env()?;
     Git::new().teleport();
