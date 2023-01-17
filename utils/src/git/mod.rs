@@ -145,7 +145,7 @@ impl Hook {
             "#!/bin/sh \n\
                 dir=\"{root}hooks/{action}.d\" \n\
                 for file in \"$dir\"; do \n\
-                    if [[-f $file ]]; then \n\
+                    if [[ -f $file ]]; then \n\
                       \"./$f\"
                     fi
                 done",
