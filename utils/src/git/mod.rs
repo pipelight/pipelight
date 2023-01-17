@@ -145,7 +145,7 @@ impl Hook {
             "#!/bin/sh \n\
             dir=\"{root}hooks/{action}.d\" \n\
             for file in \"$dir/*\"; do \n\
-              $file \n\
+              $file >/dev/null 2>&1 & \n\
             done",
             root = root,
             action = action
