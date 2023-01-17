@@ -26,6 +26,9 @@ pub enum Commands {
     Logs(Logs),
     /// List pipelines
     Ls(Empty),
+
+    /// Manualy Triggers Pipelines
+    Trigger(Empty),
     // /// Enable hook functionnalities and
     // /// Add some template config files if no config file detected
     // Init(Empty),

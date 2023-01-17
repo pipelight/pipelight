@@ -16,6 +16,14 @@ use utils::{
     logger::Logger,
 };
 
+pub fn trigger_bin() -> Result<(), Box<dyn Error>> {
+    trace!("Create detached subprocess");
+    let bin = "pipelight-trigger";
+    // let command = format!("cargo run --bin {} {}", bin, pipeline_name);
+    let command = format!("{}", bin);
+    Exec::new().detached(&command)?;
+    Ok(())
+}
 /// Filter pipeline by trigger and run
 pub fn trigger() -> Result<(), Box<dyn Error>> {
     let config = Config::new();

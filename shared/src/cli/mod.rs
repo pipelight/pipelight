@@ -2,6 +2,7 @@
 pub mod print;
 pub mod types;
 use crate::run;
+use crate::trigger;
 use clap::Parser;
 use log::info;
 use pipeline::types::Pipeline;
@@ -21,8 +22,12 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             info!("Listing piplines");
             print::list()?;
         }
+        types::Commands::Trigger(trigger) => {
+            info!("Triggering piplines");
+            trigger::trigger_bin()?;
+        }
         types::Commands::Run(pipeline) => {
-            info!("Triggering pipline {:#?}", pipeline.name);
+            info!("Running pipline {:#?}", pipeline.name);
             run::run_bin(pipeline.name)?;
         }
         types::Commands::Logs(logs) => {

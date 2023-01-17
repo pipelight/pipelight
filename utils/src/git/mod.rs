@@ -97,10 +97,7 @@ impl Hook {
     pub fn new() -> Result<(), Box<dyn Error>> {
         let root = ".git/hooks";
         let extension = ".d";
-        let bin = "pipelight-trigger";
-
-        let bin_path = format!("/usr/bin/{}", bin);
-        let bin_path = Path::new(&bin_path);
+        let bin = "pipelight";
 
         for hook in Hook::iter() {
             let file = format!("{}/{}", root, String::from(&hook));
@@ -109,13 +106,13 @@ impl Hook {
             let dir = format!("{}/{}{}", root, String::from(&hook), extension);
             let dir = Path::new(&dir);
 
-            let link = format!("{}/{}", dir.display(), bin);
-            let link = Path::new(&link);
+            let executable = format!("{}/{}.sh", dir.display(), bin);
+            let executable = Path::new(&executable);
 
             fs::create_dir_all(root)?;
             Hook::ensure_hook(file, &hook)?;
             Hook::ensure_directory(dir)?;
-            Hook::ensure_symlink(bin_path, link)?;
+            Hook::create_script(&executable)?;
         }
         Ok(())
     }
@@ -145,7 +142,7 @@ impl Hook {
             "#!/bin/sh \n\
             dir=\"{root}hooks/{action}.d\" \n\
             for file in \"$dir/*\"; do \n\
-              $file >/dev/null 2>&1 & \n\
+              $file \n\
             done",
             root = root,
             action = action
@@ -161,12 +158,22 @@ impl Hook {
 
         Ok(())
     }
-    fn ensure_symlink(src: &Path, dest: &Path) -> Result<(), Box<dyn Error>> {
-        let link_exists = dest.exists();
-        if link_exists {
-            fs::remove_file(dest)?;
-        }
-        symlink(src, dest)?;
+    fn create_script(path: &Path) -> Result<(), Box<dyn Error>> {
+        let mut file = fs::File::create(path)?;
+        let s = format!(
+            "#!/bin/sh \n\
+            pipelight trigger
+            "
+        );
+        let b = s.as_bytes();
+        file.write_all(b)?;
+
+        // Set permissions
+        let metadata = file.metadata()?;
+        let mut perms = metadata.permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(path, perms)?;
+
         Ok(())
     }
 }
