@@ -1,6 +1,7 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
+use crate::run;
 use exec::Exec;
 use log::{debug, error, info, trace, warn};
 use pipeline::types::{Config, Pipeline, Trigger};
@@ -19,8 +20,8 @@ use utils::{
 pub fn trigger_bin() -> Result<(), Box<dyn Error>> {
     trace!("Create detached subprocess");
     let bin = "pipelight-trigger";
-    // let command = format!("cargo run --bin {} {}", bin, pipeline_name);
-    let command = format!("{}", bin);
+    let command = format!("cargo run --bin {}", bin);
+    // let command = format!("{}", bin);
     Exec::new().detached(&command)?;
     Ok(())
 }
@@ -40,7 +41,7 @@ pub fn trigger() -> Result<(), Box<dyn Error>> {
             debug!("{}", message)
         } else {
             if pipeline.clone().triggers.unwrap().contains(&env) {
-                pipeline.clone().run()
+                run::run_bin(pipeline.clone().name);
             }
         }
     }

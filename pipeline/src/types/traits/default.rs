@@ -17,7 +17,7 @@ impl Config {
     pub fn new() -> Self {
         let origin = env::current_dir().unwrap();
         Git::new().teleport();
-        let json = cast::Config::new();
+        let json = cast::Config::get();
         let config = Config::from(&json);
         env::set_current_dir(origin).unwrap();
         return config;

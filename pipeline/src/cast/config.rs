@@ -6,53 +6,55 @@ use log::{debug, error, info, trace, warn};
 use std::env::current_dir;
 use std::error::Error;
 use std::path::Path;
+use std::process::exit;
 
 impl Config {
-    pub fn new() -> Self {
-        let file = "pipelight.config.mjs";
-        let mut config = Config {
-            file: file.to_owned(),
-            pipelines: None,
-        };
-        if config.exists() {
-            config = Config::load().unwrap();
-        }
-        return config;
+    pub fn get() -> Config {
+        let file = "pipelight.config.mjs".to_owned();
+        return Config::load(&file).unwrap();
     }
     /// Ensure config file exists
-    fn exists(&self) -> bool {
+    fn exists(file: &String) -> Result<bool, Box<dyn Error>> {
         let pwd = current_dir().unwrap();
-        let string = format!("{}/{}", &pwd.display().to_string(), self.file);
+        let string = format!("{}/{}", &pwd.display().to_string(), file);
         let path = Path::new(&string);
         let exist = Path::new(path).exists();
         if !exist {
             let message = "Config file not found.";
-            let hint =
-                "Use \"pipelight init\" to generate config file\n or move to the right directory";
             error!("{}", message);
-            debug!("{}", hint);
+            exit(1);
+        } else {
+            return Ok(exist);
         }
-        return exist;
     }
 
     /// Return the config from .mjs file inside the working dir.
-    fn load() -> Result<Config, Box<dyn Error>> {
+    fn load(file: &String) -> Result<Config, Box<dyn Error>> {
+        Config::exists(file)?;
+        let pwd = current_dir().unwrap();
+        let string = format!("{}/{}", &pwd.display().to_string(), file);
+        let path = Path::new(&string);
+
         let executable = "node -e";
-        let script = r#"'
+        // Javascript with rust escape sequence (double curly braces)
+        let script = format!(
+            "\'
             const stock = console;
-            console = {};
-            const promess = import(`./pipelight.config.mjs`);
+            console = {{}};
+            const promess = import(`{}`);
             promess
-              .then((res) => {
+              .then((res) => {{ 
                 console = stock;
                 const config = res.default;
                 const json = JSON.stringify(config, null, 2);
                 console.log(json);
-              })
-              .catch((err) => {
+              }})
+              .catch((err) => {{
                 console.log(err);
-              });
-        '"#;
+              }});
+        \'",
+            path.display().to_string()
+        );
         let command = format!("{} {}", executable, script);
         let data = Exec::new().attached(&command)?;
         let config_result = serde_json::from_str::<Config>(&data);
