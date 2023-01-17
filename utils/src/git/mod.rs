@@ -143,12 +143,10 @@ impl Hook {
         let mut file = fs::File::create(path)?;
         let s = format!(
             "#!/bin/sh \n\
-                dir=\"{root}hooks/{action}.d\" \n\
-                for file in \"$dir\"; do \n\
-                    if [[ -f $file ]]; then \n\
-                      \"./$f\"
-                    fi
-                done",
+            dir=\"{root}hooks/{action}.d\" \n\
+            for file in \"$dir/*\"; do \n\
+              $file \n\
+            done",
             root = root,
             action = action
         );
