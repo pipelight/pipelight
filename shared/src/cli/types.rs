@@ -28,6 +28,7 @@ pub enum Commands {
     Ls(Empty),
 
     /// Manualy Triggers Pipelines
+    #[command(hide = true)]
     Trigger(Empty),
     // /// Enable hook functionnalities and
     // /// Add some template config files if no config file detected
