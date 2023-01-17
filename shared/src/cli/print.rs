@@ -51,7 +51,7 @@ pub fn list() -> Result<(), Box<dyn Error>> {
             date = "".to_owned();
         }
         println!(
-            "{:<10} {:<25} {:<40}\n",
+            "{:<10} {:<25} {:<40}",
             String::from(&pipe_last_log.status.unwrap()),
             date,
             pipeline.name

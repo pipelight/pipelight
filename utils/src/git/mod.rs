@@ -106,7 +106,7 @@ impl Hook {
             let dir = format!("{}/{}{}", root, String::from(&hook), extension);
             let dir = Path::new(&dir);
 
-            let executable = format!("{}/{}.sh", dir.display(), bin);
+            let executable = format!("{}/{}", dir.display(), bin);
             let executable = Path::new(&executable);
 
             fs::create_dir_all(root)?;
@@ -162,7 +162,7 @@ impl Hook {
         let mut file = fs::File::create(path)?;
         let s = format!(
             "#!/bin/sh \n\
-            pipelight trigger
+            pipelight trigger \
             "
         );
         let b = s.as_bytes();
