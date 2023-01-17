@@ -1,6 +1,8 @@
 use super::config;
 use super::Logger;
+use crate::git::Git;
 pub use log::{error, trace, LevelFilter};
+use std::env;
 use std::env::current_dir;
 use std::fs;
 use std::path::Path;
@@ -37,6 +39,12 @@ impl Default for Logger {
 }
 impl Logger {
     pub fn new() -> Self {
-        Self::default()
+        let origin = env::current_dir().unwrap();
+
+        Git::new().teleport();
+        let logger = Self::default();
+
+        env::set_current_dir(origin).unwrap();
+        return logger;
     }
 }

@@ -5,10 +5,18 @@ use log4rs::append::console::ConsoleAppender;
 use log4rs::append::file::FileAppender;
 use log4rs::config::{Appender, Config, Logger, Root};
 use log4rs::encode::pattern::PatternEncoder;
+use std::env::current_dir;
+use std::path::Path;
 use uuid::Uuid;
 
 /// Return logger config with chosen verbosity level and logging file "uuid.log"
 pub fn default_with_file(level: &LevelFilter, uuid: &Uuid) -> Config {
+    // Set logs path.
+    let pwd = current_dir().unwrap();
+    let file = format!(".pipelight/logs/{}.json", uuid);
+    let string = format!("{}/{}", &pwd.display().to_string(), file);
+    let path = Path::new(&string);
+
     let level = level.to_owned();
     let pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}";
     let json = "{m}{n}";
@@ -21,7 +29,7 @@ pub fn default_with_file(level: &LevelFilter, uuid: &Uuid) -> Config {
         .build();
     let pipeline_json_appender = FileAppender::builder()
         .encoder(Box::new(PatternEncoder::new(json)))
-        .build(format!(".pipelight/logs/{}.json", uuid))
+        .build(path.display().to_string())
         .unwrap();
     let config = Config::builder()
         .appender(Appender::builder().build("stdout", Box::new(stdout)))

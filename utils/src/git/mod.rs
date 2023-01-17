@@ -23,31 +23,28 @@ pub struct Git {
     pub repo: Option<Repository>,
 }
 impl Git {
-    pub fn new() -> Self {
-        let mut e = Git { repo: None };
-        if e.exists() {
-            // Get the repo
-        } else {
-            // Maybe create the repo
+    pub fn new() -> Git {
+        let root = env::current_dir().unwrap();
+        return Git {
+            repo: Repository::discover(root).ok(),
+        };
+    }
+    pub fn teleport(&mut self) {
+        if self.exists() {
+            let wd = self
+                .repo
+                .as_mut()
+                .unwrap()
+                .workdir()
+                .unwrap()
+                .display()
+                .to_string();
+            env::set_current_dir(wd).unwrap();
         }
-        return e;
     }
     ///  Detect if there is a git repo in pwd
     fn exists(&mut self) -> bool {
-        // Seek git repo in current directory
-        let root = env::current_dir().unwrap();
-        let repo = Repository::discover(root).unwrap();
-        // Set working dir
-        let exist = repo.workdir().is_some();
-        if exist {
-            let wd = repo.workdir().unwrap().display().to_string();
-            // Set working directory to .git parent
-            // Use this function to teleport from hook folder to root
-            // and read config file
-            env::set_current_dir(wd).unwrap();
-        }
-        self.repo = Some(repo);
-        return exist;
+        return self.repo.is_some();
     }
     /// Return actual attached branch
     pub fn get_branch(&self) -> Result<String, Box<dyn Error>> {
@@ -87,14 +84,8 @@ impl Hook {
         let root = env::current_dir()?;
         let path_string = root.display().to_string();
         if path_string.contains("/.git/hooks/") {
-            let name = root
-                .parent()
-                .unwrap()
-                .file_stem()
-                .unwrap()
-                .to_str()
-                .unwrap()
-                .to_owned();
+            // Get hook name from folder name
+            let name = root.file_stem().unwrap().to_str().unwrap().to_owned();
             let hook = Hook::from(&name);
             Ok(hook)
         } else {
@@ -112,10 +103,10 @@ impl Hook {
         let bin_path = Path::new(&bin_path);
 
         for hook in Hook::iter() {
-            let file = format!("{}/{}", root, hook.to_string());
+            let file = format!("{}/{}", root, String::from(&hook));
             let file = Path::new(&file);
 
-            let dir = format!("{}/{}{}", root, hook.to_string(), extension);
+            let dir = format!("{}/{}{}", root, String::from(&hook), extension);
             let dir = Path::new(&dir);
 
             let link = format!("{}/{}", dir.display(), bin);
@@ -140,22 +131,12 @@ impl Hook {
     }
     /// Create a hook.d subfolder
     fn ensure_hook(path: &Path, hook: &Hook) -> Result<(), Box<dyn Error>> {
-        let exists = path.exists();
-        if exists {
-            // fs::remove_file(path)?;
-            return Ok(());
-        }
-        let file = fs::File::create(path)?;
-        let metadata = file.metadata()?;
-        let mut perms = metadata.permissions();
-        perms.set_mode(0o755);
-        fs::set_permissions(path, perms)?;
+        Hook::create_subscripts_caller(path, hook)?;
 
-        Hook::write(path, hook)?;
         Ok(())
     }
     /// Create a hook that will call scrpts from a hook.d subfolder
-    fn write(path: &Path, hook: &Hook) -> Result<(), Box<dyn Error>> {
+    fn create_subscripts_caller(path: &Path, hook: &Hook) -> Result<(), Box<dyn Error>> {
         let git = Git::new();
         let action = String::from(hook);
         let root = git.repo.unwrap().path().display().to_string();
@@ -163,14 +144,23 @@ impl Hook {
         let s = format!(
             "#!/bin/sh \n\
                 dir=\"{root}hooks/{action}.d\" \n\
-                for f in \"$dir\"[>; do \n\
-                  \"$f\" {action}\n\
+                for file in \"$dir\"; do \n\
+                    if [[-f $file ]]; then \n\
+                      \"./$f\"
+                    fi
                 done",
             root = root,
             action = action
         );
         let b = s.as_bytes();
         file.write_all(b)?;
+
+        // Set permissions
+        let metadata = file.metadata()?;
+        let mut perms = metadata.permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(path, perms)?;
+
         Ok(())
     }
     fn ensure_symlink(src: &Path, dest: &Path) -> Result<(), Box<dyn Error>> {

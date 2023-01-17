@@ -2,10 +2,7 @@
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
 use log::{debug, error, info, trace, warn};
-use pipeline::{
-    cast::Config,
-    types::{Pipeline, Trigger},
-};
+use pipeline::types::{Config, Pipeline, Trigger};
 #[allow(dead_code)]
 use project_root::get_project_root;
 use std::env;
@@ -21,19 +18,21 @@ use utils::{
 /// Filter pipeline by trigger and run
 pub fn trigger() -> Result<(), Box<dyn Error>> {
     // Go to git root folder
-    let git = Git::new();
     let config = Config::new();
-
+    let env = Trigger::env()?;
+    Git::new().teleport();
+    if config.pipelines.is_none() {
+        let message = "No pipeline found";
+        debug!("{}", message);
+        return Ok(());
+    }
     for pipeline in &config.pipelines.unwrap() {
-        if pipeline.triggers.is_none() {
+        if pipeline.clone().triggers.is_none() {
             let message = format!("No triggers defined for pipeline: {:?}", &pipeline.name);
+            debug!("{}", message)
         } else {
-            for trigger in &pipeline.clone().triggers.unwrap() {
-                let tuples = Trigger::flatten(trigger);
-                if tuples.contains(&Trigger::env().unwrap()) {
-                    let mut pipeline = Pipeline::from(pipeline);
-                    pipeline.run()
-                }
+            if pipeline.clone().triggers.unwrap().contains(&env) {
+                pipeline.clone().run()
             }
         }
     }

@@ -165,6 +165,8 @@ impl Trigger {
     pub fn env() -> Result<Trigger, Box<dyn Error>> {
         let branch = Git::new().get_branch()?;
         let action = Hook::origin()?;
+        println!("{:?}", branch);
+        println!("{:?}", action);
         Ok(Trigger {
             branch: Some(branch),
             action: Some(action),

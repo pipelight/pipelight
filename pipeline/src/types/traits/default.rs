@@ -1,6 +1,8 @@
 use crate::cast;
 use crate::types::{Command, Config, Logs, Pipeline, Step};
 use chrono::Utc;
+use std::env;
+use utils::git::Git;
 use uuid::Uuid;
 
 impl Default for Config {
@@ -13,8 +15,11 @@ impl Default for Config {
 }
 impl Config {
     pub fn new() -> Self {
+        let origin = env::current_dir().unwrap();
+        Git::new().teleport();
         let json = cast::Config::new();
-        let mut config = Config::from(&json);
+        let config = Config::from(&json);
+        env::set_current_dir(origin).unwrap();
         return config;
     }
 }
