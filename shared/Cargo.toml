@@ -10,17 +10,10 @@ utils = {path = "../utils" }
 chrono = "0.4.23"
 clap = { version = "4.0.27", features = ["derive","wrap_help"]}
 clap-verbosity-flag = "2.0.0"
-colored = "2.0.0"
-derive-new = "0.5.9"
 git2 = "0.15.0"
-io = "0.0.2"
-json = "0.12.4"
 log = "0.4.17"
 project-root = "0.2.2"
-rev_buf_reader = "0.3.0"
 serde = { version = "1.0.147" ,features = ["derive"] }
 serde_json = "1.0.89"
-subprocess = "0.2.9"
 sysinfo = "0.27.0"
-time = "0.3.17"
 uuid = { version = "1.2.2", features = [ "v4","serde","fast-rng","macro-diagnostics"]}

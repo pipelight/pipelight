@@ -1,5 +1,4 @@
 use super::types::StrOutput;
-// use log::{debug, error, info, trace, warn};
 use std::error::Error;
 use std::process::{Command, Stdio};
 
