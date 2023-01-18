@@ -1,6 +1,6 @@
 use super::Config;
 use exec::Exec;
-use log::{debug, error, info, trace, warn};
+use log::{debug, error, warn};
 
 // standard lib
 use std::env::current_dir;

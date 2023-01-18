@@ -5,7 +5,6 @@ use crate::run;
 use crate::trigger;
 use clap::Parser;
 use log::info;
-use pipeline::types::Pipeline;
 use std::error::Error;
 use utils::logger::logger;
 

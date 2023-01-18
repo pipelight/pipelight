@@ -1,5 +1,4 @@
-use git2::{Reference, Repository};
-use log::{debug, error, info, trace, warn};
+use git2::Repository;
 use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;
 use std::env;
@@ -8,14 +7,12 @@ use std::error::Error;
 // File systeme crates
 use std::fs;
 use std::io::Write;
-use std::os::unix::fs::symlink;
 use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
 
 // Enum workaround
-use std::str::FromStr;
 use std::string::ToString;
-use strum::{EnumIter, EnumString, IntoEnumIterator};
+use strum::{EnumIter, IntoEnumIterator};
 
 mod from;
 

@@ -1,6 +1,5 @@
 use crate::cast;
 use crate::types::{Command, Config, Logs, Pipeline, Step};
-use chrono::Utc;
 use std::env;
 use utils::git::Git;
 use uuid::Uuid;

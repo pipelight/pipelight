@@ -2,7 +2,6 @@ use super::Hook;
 use super::Hook::*;
 use convert_case::{Case, Casing};
 use log::error;
-use std::error::Error;
 use std::fmt;
 use std::process::exit;
 

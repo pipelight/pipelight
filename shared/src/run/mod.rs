@@ -1,7 +1,6 @@
 use exec::Exec;
-use log::{debug, error, info, trace, warn};
-use pipeline::types;
-use pipeline::types::{Config, Pipeline};
+use log::trace;
+use pipeline::types::Pipeline;
 use std::env;
 use std::error::Error;
 

@@ -1,10 +1,17 @@
+// Rules
+#![allow(unused_variables)]
+#![allow(unused_imports)]
+#![allow(unused_must_use)]
+#![allow(non_upper_case_globals)]
+#[allow(dead_code)]
+// External Imports
 use project_root::get_project_root;
 use rev_buf_reader::RevBufReader;
 use std::error::Error;
 use std::fs::File;
 use std::io::BufRead;
 use std::path::Path;
-
+// Internal Imports
 pub mod git;
 pub mod logger;
 

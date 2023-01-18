@@ -1,7 +1,7 @@
 // Cli commands structure
 
-use clap::{Args, Parser, Subcommand, ValueEnum};
-use clap_verbosity_flag::{InfoLevel, Verbosity};
+use clap::{Args, Parser, Subcommand};
+use clap_verbosity_flag::Verbosity;
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]

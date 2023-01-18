@@ -1,5 +1,5 @@
 use chrono::{DateTime, Local};
-use log::{debug, info};
+use log::info;
 use pipeline::types::{Config, Logs, Pipeline, Status};
 use std::error::Error;
 

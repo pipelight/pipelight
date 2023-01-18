@@ -8,11 +8,11 @@ mod traits;
 
 use exec::types::StrOutput;
 use exec::Exec;
-use log::{debug, error, info, trace, warn, LevelFilter};
-use once_cell::sync::Lazy;
+use log::info;
+// use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
-use sysinfo::{NetworkExt, NetworksExt, Pid, PidExt, ProcessExt, System, SystemExt};
+use sysinfo::{PidExt, System, SystemExt};
 // use std::cmp::PartialEq;
 use std::error::Error;
 use std::fs;

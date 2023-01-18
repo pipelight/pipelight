@@ -12,8 +12,8 @@ use uuid::Uuid;
 /// Return logger config with chosen verbosity level and logging file "uuid.log"
 pub fn default_with_file(directory: &String, level: &LevelFilter, uuid: &Uuid) -> Config {
     // Set logs path.
-    let pwd = current_dir().unwrap();
-    let file = format!(".pipelight/logs/{}.json", uuid);
+    let pwd = current_dir().unwrap().display().to_string();
+    let file = format!("{}.pipelight/logs/{}.json", pwd, uuid);
     let string = format!("{}/{}", directory, file);
     let path = Path::new(&string);
 

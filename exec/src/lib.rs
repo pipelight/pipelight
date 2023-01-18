@@ -1,10 +1,16 @@
-pub mod subprocess;
-pub mod types;
-
-use log::{debug, error, info, trace, warn, LevelFilter};
+// Rules
+#![allow(unused_variables)]
+#![allow(unused_imports)]
+#![allow(unused_must_use)]
+#[allow(dead_code)]
+// External Imports
+use log::warn;
 use std::env;
 use std::error::Error;
 use types::StrOutput;
+// Internal Imports
+pub mod subprocess;
+pub mod types;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Exec {

@@ -1,5 +1,5 @@
 use crate::types::{Config, Pipeline, Trigger};
-use log::{error, warn};
+use log::warn;
 use std::error::Error;
 
 trait ByName<T> {
