@@ -1,3 +1,4 @@
+// External Import
 use git2::Repository;
 use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;
@@ -14,6 +15,7 @@ use std::path::Path;
 use std::string::ToString;
 use strum::{EnumIter, IntoEnumIterator};
 
+// Internal Import
 mod from;
 
 pub struct Git {
@@ -97,31 +99,18 @@ impl Hook {
         let bin = "pipelight";
 
         for hook in Hook::iter() {
-            let file = format!("{}/{}", root, String::from(&hook));
-            let file = Path::new(&file);
+            let caller = format!("{}/{}", root, String::from(&hook));
+            let caller_path = Path::new(&caller);
 
-            let dir = format!("{}/{}{}", root, String::from(&hook), extension);
-            let dir = Path::new(&dir);
+            let dot_d_dir = format!("{}/{}{}", root, String::from(&hook), extension);
+            let dot_d_dir_path = Path::new(&dot_d_dir);
 
-            let executable = format!("{}/{}", dir.display(), bin);
-            let executable = Path::new(&executable);
+            let script = format!("{}/{}", dot_d_dir, bin);
+            let script_path = Path::new(&script);
 
-            fs::create_dir_all(root)?;
-            Hook::ensure_hook(file, &hook)?;
-            Hook::ensure_directory(dir)?;
-            Hook::create_script(&executable)?;
+            Hook::create_subscripts_caller(&caller_path, &hook)?;
+            Hook::create_script(&dot_d_dir_path, &script_path)?;
         }
-        Ok(())
-    }
-    /// Create directories
-    fn ensure_directory(path: &Path) -> Result<(), Box<dyn Error>> {
-        fs::create_dir_all(path)?;
-        Ok(())
-    }
-    /// Create a hook.d subfolder
-    fn ensure_hook(path: &Path, hook: &Hook) -> Result<(), Box<dyn Error>> {
-        Hook::create_subscripts_caller(path, hook)?;
-
         Ok(())
     }
     /// Create a hook that will call scrpts from a hook.d subfolder
@@ -151,8 +140,9 @@ impl Hook {
 
         Ok(())
     }
-    fn create_script(path: &Path) -> Result<(), Box<dyn Error>> {
-        let mut file = fs::File::create(path)?;
+    fn create_script(directory_path: &Path, file_path: &Path) -> Result<(), Box<dyn Error>> {
+        fs::create_dir_all(directory_path)?;
+        let mut file = fs::File::create(file_path)?;
         #[cfg(debug_assertions)]
         let s = format!(
             "#!/bin/sh \n\
@@ -172,7 +162,7 @@ impl Hook {
         let metadata = file.metadata()?;
         let mut perms = metadata.permissions();
         perms.set_mode(0o755);
-        fs::set_permissions(path, perms)?;
+        fs::set_permissions(file_path, perms)?;
 
         Ok(())
     }
