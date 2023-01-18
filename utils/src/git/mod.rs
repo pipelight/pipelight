@@ -134,6 +134,7 @@ impl Hook {
             "#!/bin/sh \n\
             dir=\"{root}hooks/{action}.d\" \n\
             for file in \"$dir/*\"; do \n\
+              cd $dir
               $file \n\
             done",
             root = root,
