@@ -3,24 +3,29 @@
 
 #![allow(dead_code)]
 
-// pub mod list;
+// Internal imports
 mod traits;
 
-use exec::types::StrOutput;
-use exec::Exec;
+// Standard libs
 use log::info;
-// use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
-use sysinfo::{PidExt, System, SystemExt};
-// use std::cmp::PartialEq;
 use std::error::Error;
 use std::fs;
+use std::path::Path;
 use std::process;
-use utils;
-use utils::git::{Git, Hook};
-use utils::logger::logger;
+use sysinfo::{PidExt, System, SystemExt};
 use uuid::Uuid;
+
+// External imports
+use exec::types::StrOutput;
+use exec::Exec;
+use utils;
+use utils::git::{Flag, Git, Hook};
+use utils::logger::logger;
+
+//Store
+use once_cell::sync::Lazy;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum Status {
@@ -29,7 +34,6 @@ pub enum Status {
     Failed,
     Running,
     Aborted,
-    Never,
 }
 
 #[derive(Debug, Clone)]
@@ -38,23 +42,22 @@ pub struct Config {
     pub hooks: Option<Vec<Hook>>,
 }
 
-// struct Store {
-//     pipeline: Pipeline,
-// }
-//
-// static store: Lazy<Store> = Lazy::new(|| {
-//     let defaultPipeline = Pipeline::new();
-//     return Store {
-//         pipeline: defaultPipeline,
-//     };
-// });
-//
+struct Store {
+    pipeline: Pipeline,
+}
+
+static store: Lazy<Store> = Lazy::new(|| {
+    let defaultPipeline = Pipeline::new();
+    return Store {
+        pipeline: defaultPipeline,
+    };
+});
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Pipeline {
     pub uuid: Uuid,
-    pub pid: Option<u32>,
+    pub event: Option<Event>,
     pub name: String,
-    pub date: Option<String>,
     pub status: Option<Status>,
     pub triggers: Option<Vec<Trigger>>,
     pub steps: Vec<Step>,
@@ -68,12 +71,17 @@ impl Pipeline {
     /// Compares if log_pid is in system pid list.
     /// If not, the program has been aborted
     pub fn is_aborted(&mut self) -> bool {
-        if self.pid.is_none() {
+        if self.event.is_none() {
+            return false;
+        }
+        if self.clone().event.unwrap().pid.is_none() {
             return false;
         }
         let mut sys = System::new_all();
         sys.refresh_all();
-        return !sys.process(PidExt::from_u32(self.pid.unwrap())).is_some();
+        return !sys
+            .process(PidExt::from_u32(self.clone().event.unwrap().pid.unwrap()))
+            .is_some();
     }
     /// If the log_pid exists it means the program runs
     /// (need to add process name comparision to harden func)
@@ -85,13 +93,15 @@ impl Pipeline {
         if pipeline.is_none() {
             return false;
         }
-        if pipeline.clone().unwrap().pid.is_none() {
+        if pipeline.clone().unwrap().event.is_none() {
             return false;
         }
         let mut sys = System::new_all();
         sys.refresh_all();
         return sys
-            .process(PidExt::from_u32(pipeline.unwrap().pid.unwrap()))
+            .process(PidExt::from_u32(
+                pipeline.unwrap().clone().event.unwrap().pid.unwrap(),
+            ))
             .is_some();
     }
     pub fn run(&mut self) {
@@ -99,7 +109,7 @@ impl Pipeline {
             return;
         }
         let pid = process::id();
-        self.pid = Some(pid);
+        self.event.as_mut().unwrap().pid = Some(pid);
 
         // Store
         // store.pipeline = self.to_owned();
@@ -115,7 +125,7 @@ impl Pipeline {
             step.run(pipeline_ptr);
         }
         unsafe {
-            pipeline_ptr.as_mut().unwrap().pid = None;
+            pipeline_ptr.as_mut().unwrap().event.as_mut().unwrap().pid = None;
             pipeline_ptr.as_mut().unwrap().status(&Status::Succeeded);
             pipeline_ptr.as_mut().unwrap().log();
         }
@@ -173,7 +183,7 @@ impl Command {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Trigger {
-    pub action: Option<Hook>,
+    pub action: Option<Flag>,
     pub branch: Option<String>,
 }
 impl Trigger {
@@ -181,13 +191,18 @@ impl Trigger {
     pub fn env() -> Result<Trigger, Box<dyn Error>> {
         let branch = Git::new().get_branch()?;
         let action = Hook::origin()?;
-        println!("{:?}", branch);
-        println!("{:?}", action);
         Ok(Trigger {
             branch: Some(branch),
             action: Some(action),
         })
     }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct Event {
+    pub trigger: Trigger,
+    pub date: String,
+    pub pid: Option<u32>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
@@ -197,6 +212,11 @@ impl Logs {
     /// Return pipelines from log files
     pub fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
         let dir = &logger.directory;
+        // Safe exit if no log folder
+        if !Path::new(dir).exists() {
+            let message = "No log can be displayed. Log folder is empty";
+            return Err(Box::from(message));
+        }
         let paths = fs::read_dir(dir).unwrap();
         let mut pipelines = vec![];
         for res in paths {
@@ -215,7 +235,7 @@ impl Logs {
             .cloned()
             .collect::<Vec<Pipeline>>();
         // Sort by date descending
-        pipelines.sort_by_key(|e| e.clone().date.unwrap());
+        pipelines.sort_by_key(|e| e.clone().event.unwrap().date);
         pipelines.reverse();
         Ok(pipelines)
     }

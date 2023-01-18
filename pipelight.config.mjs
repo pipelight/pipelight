@@ -19,14 +19,16 @@ const config = {
       name: "test",
       steps: [
         {
-          name: "mystep",
-          commands: ["ls", "sleep 30", "pwd"],
+          name: "test",
+          commands: [
+            "cargo test --package pipeline -- --nocapture --test-threads=1",
+          ],
         },
       ],
       triggers: [
         {
           branches: ["master", "dev"],
-          actions: ["pre-push"],
+          actions: ["pre-push", "manual"],
         },
       ],
     },

@@ -76,20 +76,27 @@ pub enum Hook {
     PostRewrite,
     PrePush,
 }
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
+pub enum Flag {
+    Hook(Hook),
+    Manual,
+}
 
 impl Hook {
     /// Detect name of the hook that triggers script
-    pub fn origin() -> Result<Hook, Box<dyn Error>> {
+    pub fn origin() -> Result<Flag, Box<dyn Error>> {
         let root = env::current_dir()?;
         let path_string = root.display().to_string();
         if path_string.contains("/.git/hooks/") {
             // Get hook name from folder name
             let name = root.file_stem().unwrap().to_str().unwrap().to_owned();
-            let hook = Hook::from(&name);
+            let hook = Flag::Hook(Hook::from(&name));
             Ok(hook)
         } else {
-            let message = "Can't trigger hook outside of repository hook folder";
-            Err(Box::from(message))
+            Ok(Flag::Manual)
+
+            // let message = "Can't trigger hook outside of repository hook folder";
+            // Err(Box::from(message))
         }
     }
     /// Ensure .git/hook folder

@@ -1,5 +1,5 @@
-use super::Hook;
 use super::Hook::*;
+use super::{Flag, Hook};
 use convert_case::{Case, Casing};
 use log::error;
 use std::fmt;
@@ -61,6 +61,24 @@ impl From<&Hook> for String {
             PreAutoGc => return "pre-auto-gc".to_owned(),
             PostRewrite => return "post-rewrite".to_owned(),
             PrePush => return "pre-push".to_owned(),
+        };
+    }
+}
+impl From<&String> for Flag {
+    fn from(action: &String) -> Flag {
+        let cased: &str = &action.to_case(Case::Kebab);
+        if cased == "manual" {
+            return Flag::Manual;
+        } else {
+            return Flag::Hook(Hook::from(action));
+        }
+    }
+}
+impl From<&Flag> for String {
+    fn from(action: &Flag) -> String {
+        match action {
+            Flag::Manual => return "manual".to_owned(),
+            Flag::Hook(hook) => return String::from(hook),
         };
     }
 }

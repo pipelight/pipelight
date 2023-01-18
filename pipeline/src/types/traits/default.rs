@@ -1,5 +1,6 @@
 use crate::cast;
-use crate::types::{Command, Config, Logs, Pipeline, Step};
+use crate::types::{Command, Config, Event, Logs, Pipeline, Step, Trigger};
+use chrono::Utc;
 use std::env;
 use utils::git::Git;
 use uuid::Uuid;
@@ -36,10 +37,8 @@ impl Default for Pipeline {
         }];
         Pipeline {
             uuid: Uuid::new_v4(),
-            pid: None,
             name: "default".to_owned(),
-            date: None,
-            // date: Some(Utc::now().to_string()),
+            event: None,
             status: None,
             triggers: None,
             steps: steps,
@@ -58,6 +57,21 @@ impl Default for Logs {
 }
 impl Logs {
     pub fn new() -> Self {
+        Self::default()
+    }
+}
+
+impl Default for Event {
+    fn default() -> Self {
+        Event {
+            trigger: Trigger::env().unwrap(),
+            date: Utc::now().to_string(),
+            pid: None,
+        }
+    }
+}
+impl Event {
+    pub fn new() -> Event {
         Self::default()
     }
 }

@@ -9,7 +9,7 @@ pub fn pretty() -> Result<(), Box<dyn Error>> {
     for mut pipeline in pipelines {
         if pipeline.is_aborted() {
             pipeline.status = Some(Status::Aborted);
-            pipeline.pid = None;
+            pipeline.event.as_mut().unwrap().pid = None;
             pipeline.log();
         }
         println!("{}", pipeline);
@@ -39,9 +39,8 @@ pub fn list() -> Result<(), Box<dyn Error>> {
         let pipe_logs = Logs::get_by_name(&pipeline.name)?;
         let pipe_last_log = pipe_logs.iter().next().unwrap().clone();
         let date;
-        if pipe_last_log.status.is_some() && pipe_last_log.status.clone().unwrap() != Status::Never
-        {
-            let str_date = pipe_last_log.date.unwrap();
+        if pipe_last_log.status.is_some() {
+            let str_date = pipe_last_log.event.unwrap().date;
             date = str_date
                 .parse::<DateTime<Local>>()
                 .unwrap()

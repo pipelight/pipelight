@@ -1,11 +1,12 @@
 use crate::cast;
 use crate::types::Status::*;
-use crate::types::{Command, Config, Pipeline, Status, Step, Trigger};
+use crate::types::{Command, Config, Event, Pipeline, Status, Step, Trigger};
 use chrono::Utc;
 use convert_case::{Case, Casing};
 use log::error;
 use std::convert::From;
 use std::process::exit;
+use utils::git::Flag;
 use utils::git::Hook;
 use uuid::Uuid;
 
@@ -48,12 +49,11 @@ impl From<&cast::Pipeline> for Pipeline {
             )
         }
         let p = Pipeline {
-            pid: None,
+            event: None,
             uuid: Uuid::new_v4(),
-            date: Some(Utc::now().to_string()),
             name: e.name.to_owned(),
             steps: steps.to_owned(),
-            status: Some(Status::Never),
+            status: None,
             triggers: triggers,
         };
         return p;
@@ -92,7 +92,7 @@ impl Trigger {
             for action in e.actions.clone().unwrap() {
                 tuplelist.push(Trigger {
                     branch: Some(branch.to_owned()),
-                    action: Some(Hook::from(&action)),
+                    action: Some(Flag::from(&action)),
                 })
             }
         }
@@ -107,9 +107,8 @@ impl From<&String> for Status {
             "started" => return Started,
             "succeeded" => return Succeeded,
             "failed" => return Failed,
-            "running" => return Never,
+            "running" => return Running,
             "aborted" => return Aborted,
-            "never" => return Aborted,
             _ => {
                 let message = format!("The pipeline status {} is not known", cased);
                 error!("{}", message);
@@ -126,7 +125,6 @@ impl From<&Status> for String {
             Failed => return "failed".to_owned(),
             Running => return "running".to_owned(),
             Aborted => return "aborted".to_owned(),
-            Never => return "never".to_owned(),
         };
     }
 }
