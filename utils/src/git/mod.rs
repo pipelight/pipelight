@@ -115,11 +115,6 @@ impl Hook {
     }
     /// Create directories
     fn ensure_directory(path: &Path) -> Result<(), Box<dyn Error>> {
-        let dir_exists = path.exists();
-        if dir_exists {
-            // fs::remove_dir_all(path)?;
-            return Ok(());
-        }
         fs::create_dir_all(path)?;
         Ok(())
     }
@@ -157,6 +152,13 @@ impl Hook {
     }
     fn create_script(path: &Path) -> Result<(), Box<dyn Error>> {
         let mut file = fs::File::create(path)?;
+        #[cfg(debug_assertions)]
+        let s = format!(
+            "#!/bin/sh \n\
+            cargo run --bin pipelight trigger \
+            "
+        );
+        #[cfg(not(debug_assertions))]
         let s = format!(
             "#!/bin/sh \n\
             pipelight trigger \
