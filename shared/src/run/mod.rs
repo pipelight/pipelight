@@ -11,8 +11,12 @@ pub fn run_bin(pipeline_name: String) -> Result<(), Box<dyn Error>> {
     let bin = "pipelight-run";
 
     let pipeline = Pipeline::name(&pipeline_name)?;
-    // let command = format!("cargo run --bin {} {}", bin, pipeline_name);
+
+    #[cfg(debug_assertions)]
+    let command = format!("cargo run --bin {} {}", bin, pipeline_name);
+    #[cfg(not(debug_assertions))]
     let command = format!("{} {}", bin, pipeline_name);
+
     Exec::new().detached(&command)?;
     Ok(())
 }

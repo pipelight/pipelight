@@ -20,8 +20,12 @@ use utils::{
 pub fn trigger_bin() -> Result<(), Box<dyn Error>> {
     trace!("Create detached subprocess");
     let bin = "pipelight-trigger";
+
+    #[cfg(debug_assertions)]
     let command = format!("cargo run --bin {}", bin);
-    // let command = format!("{}", bin);
+    #[cfg(not(debug_assertions))]
+    let command = format!("{}", bin);
+
     Exec::new().detached(&command)?;
     Ok(())
 }

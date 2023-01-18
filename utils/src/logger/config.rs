@@ -10,11 +10,11 @@ use std::path::Path;
 use uuid::Uuid;
 
 /// Return logger config with chosen verbosity level and logging file "uuid.log"
-pub fn default_with_file(level: &LevelFilter, uuid: &Uuid) -> Config {
+pub fn default_with_file(directory: &String, level: &LevelFilter, uuid: &Uuid) -> Config {
     // Set logs path.
     let pwd = current_dir().unwrap();
     let file = format!(".pipelight/logs/{}.json", uuid);
-    let string = format!("{}/{}", &pwd.display().to_string(), file);
+    let string = format!("{}/{}", directory, file);
     let path = Path::new(&string);
 
     let level = level.to_owned();

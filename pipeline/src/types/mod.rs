@@ -9,6 +9,7 @@ mod traits;
 use exec::types::StrOutput;
 use exec::Exec;
 use log::{debug, error, info, trace, warn, LevelFilter};
+use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
 use sysinfo::{NetworkExt, NetworksExt, Pid, PidExt, ProcessExt, System, SystemExt};
@@ -37,6 +38,17 @@ pub struct Config {
     pub hooks: Option<Vec<Hook>>,
 }
 
+// struct Store {
+//     pipeline: Pipeline,
+// }
+//
+// static store: Lazy<Store> = Lazy::new(|| {
+//     let defaultPipeline = Pipeline::new();
+//     return Store {
+//         pipeline: defaultPipeline,
+//     };
+// });
+//
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Pipeline {
     pub uuid: Uuid,
@@ -88,6 +100,10 @@ impl Pipeline {
         }
         let pid = process::id();
         self.pid = Some(pid);
+
+        // Store
+        // store.pipeline = self.to_owned();
+
         let pipeline: &mut Pipeline = self;
         let pipeline_ptr: *mut Pipeline = pipeline;
 
