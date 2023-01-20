@@ -1,11 +1,12 @@
 #![allow(unused_variables)]
 #[allow(dead_code)]
+use log::error;
 use std::error::Error;
 use std::process::exit;
 
 fn main() {
     handler().unwrap_or_else(|e| {
-        // error!("{}", e);
+        error!("{}", e);
         exit(1)
     })
 }

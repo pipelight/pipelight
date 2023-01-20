@@ -2,6 +2,7 @@ use crate::cast;
 use crate::types::{Command, Config, Event, Logs, Pipeline, Step, Trigger};
 use chrono::Utc;
 use std::env;
+use std::process;
 use utils::git::Git;
 use uuid::Uuid;
 
@@ -63,10 +64,11 @@ impl Logs {
 
 impl Default for Event {
     fn default() -> Self {
+        let pid = process::id();
         Event {
             trigger: Trigger::env().unwrap(),
             date: Utc::now().to_string(),
-            pid: None,
+            pid: Some(pid),
         }
     }
 }

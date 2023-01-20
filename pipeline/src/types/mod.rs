@@ -20,12 +20,10 @@ use uuid::Uuid;
 // External imports
 use exec::types::StrOutput;
 use exec::Exec;
+use lens_rs::{optics, Lens, LensMut, LensRef, Prism, Review};
 use utils;
 use utils::git::{Flag, Git, Hook};
 use utils::logger::logger;
-
-//Store
-use once_cell::sync::Lazy;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum Status {
@@ -46,16 +44,10 @@ struct Store {
     pipeline: Pipeline,
 }
 
-static store: Lazy<Store> = Lazy::new(|| {
-    let defaultPipeline = Pipeline::new();
-    return Store {
-        pipeline: defaultPipeline,
-    };
-});
-
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Lens)]
 pub struct Pipeline {
     pub uuid: Uuid,
+    #[optic(mut)]
     pub event: Option<Event>,
     pub name: String,
     pub status: Option<Status>,
@@ -83,17 +75,14 @@ impl Pipeline {
             .process(PidExt::from_u32(self.clone().event.unwrap().pid.unwrap()))
             .is_some();
     }
-    /// If the log_pid exists it means the program runs
-    /// (need to add process name comparision to harden func)
+    /// If the pid (extracted from logs) exists it means the pipeline is running
+    /// (improvement: need to add process name comparision to harden func)
     pub fn is_running(&mut self) -> bool {
         let pipelines = Logs::get_by_name(&self.name).unwrap();
         let pipeline = pipelines.iter().next();
-        // info!("{:?}", pipelines);
 
-        if pipeline.is_none() {
-            return false;
-        }
-        if pipeline.clone().unwrap().event.is_none() {
+        let x: Option<Event> = pipeline.preview(optics!(event.pid));
+        if x.is_none() {
             return false;
         }
         let mut sys = System::new_all();
@@ -104,31 +93,28 @@ impl Pipeline {
             ))
             .is_some();
     }
+    /// Execute the pipeline
     pub fn run(&mut self) {
-        if self.is_running() {
-            return;
-        }
-        let pid = process::id();
-        self.event.as_mut().unwrap().pid = Some(pid);
-
-        // Store
-        // store.pipeline = self.to_owned();
-
+        // Globals
         let pipeline: &mut Pipeline = self;
         let pipeline_ptr: *mut Pipeline = pipeline;
 
-        unsafe {
-            pipeline_ptr.as_mut().unwrap().status(&Status::Running);
-            pipeline_ptr.as_mut().unwrap().log();
+        if pipeline.is_running() {
+            return;
         }
-        for step in &mut self.steps {
+
+        // Set Pid and Status
+        pipeline.event = Some(Event::new());
+        pipeline.status(&Status::Running);
+        pipeline.log();
+
+        for step in &mut pipeline.steps {
             step.run(pipeline_ptr);
         }
-        unsafe {
-            pipeline_ptr.as_mut().unwrap().event.as_mut().unwrap().pid = None;
-            pipeline_ptr.as_mut().unwrap().status(&Status::Succeeded);
-            pipeline_ptr.as_mut().unwrap().log();
-        }
+
+        pipeline.event.as_mut().unwrap().pid = None;
+        pipeline.status(&Status::Succeeded);
+        pipeline.log();
     }
     pub fn status(&mut self, status: &Status) {
         self.status = Some(status.to_owned());
@@ -198,10 +184,11 @@ impl Trigger {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Lens)]
 pub struct Event {
     pub trigger: Trigger,
     pub date: String,
+    #[optic(mut)]
     pub pid: Option<u32>,
 }
 
