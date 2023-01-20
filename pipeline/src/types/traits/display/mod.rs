@@ -63,6 +63,9 @@ impl fmt::Display for Pipeline {
         if self.clone().status.is_some() {
             write!(f, "{} - ", &self.clone().status.unwrap())?;
         }
+        if self.clone().event.is_some() {
+            write!(f, "{}", &self.clone().event.unwrap())?;
+        }
         write!(f, "  pipeline: {}\n", &self.name)?;
         for step in &self.steps {
             write!(f, "{}", step);
