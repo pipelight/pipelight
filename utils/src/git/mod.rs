@@ -42,7 +42,7 @@ impl Git {
         }
     }
     ///  Detect if there is a git repo in pwd
-    fn exists(&mut self) -> bool {
+    pub fn exists(&mut self) -> bool {
         return self.repo.is_some();
     }
     /// Return actual attached branch

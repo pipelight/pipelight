@@ -178,11 +178,14 @@ pub struct Trigger {
 impl Trigger {
     /// Return actual triggering env
     pub fn env() -> Result<Trigger, Box<dyn Error>> {
-        let branch = Git::new().get_branch()?;
-        let action = Hook::origin()?;
+        let mut branch = None;
+        if Git::new().exists() {
+            branch = Some(Git::new().get_branch()?);
+        }
+        let action = Some(Hook::origin()?);
         Ok(Trigger {
-            branch: Some(branch),
-            action: Some(action),
+            branch: branch,
+            action: action,
         })
     }
 }
