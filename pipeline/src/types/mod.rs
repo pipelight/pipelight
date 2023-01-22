@@ -78,6 +78,9 @@ impl Pipeline {
     /// If the pid (extracted from logs) exists it means the pipeline is running
     /// (improvement: need to add process name comparision to harden func)
     pub fn is_running(&mut self) -> bool {
+        if Logs::get().is_err() {
+            return false;
+        }
         let pipelines = Logs::get_by_name(&self.name).unwrap();
         let pipeline = pipelines.iter().next();
 

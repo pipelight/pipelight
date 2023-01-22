@@ -115,8 +115,8 @@ impl Hook {
             let script = format!("{}/{}", dot_d_dir, bin);
             let script_path = Path::new(&script);
 
-            Hook::create_subscripts_caller(&caller_path, &hook)?;
             Hook::create_script(&dot_d_dir_path, &script_path)?;
+            Hook::create_subscripts_caller(&caller_path, &hook)?;
         }
         Ok(())
     }
