@@ -2,6 +2,7 @@
 pub mod print;
 pub mod types;
 use crate::run;
+use crate::stop;
 use crate::trigger;
 use clap::Parser;
 use log::info;
@@ -28,6 +29,10 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
         types::Commands::Run(pipeline) => {
             info!("Running pipline {:#?}", pipeline.name);
             run::run_bin(pipeline.name)?;
+        }
+        types::Commands::Stop(pipeline) => {
+            info!("Stopping pipline {:#?}", pipeline.name);
+            stop::stop(&pipeline.name)?;
         }
         types::Commands::Logs(logs) => {
             if logs.commands.is_some() {

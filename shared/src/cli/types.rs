@@ -19,9 +19,9 @@ pub enum Commands {
     /// Run a pipeline
     #[command(arg_required_else_help = true)]
     Run(Pipeline),
-    // /// Stop the pipeline execution (kill subprocess)
-    // #[command(arg_required_else_help = true)]
-    // Stop(Pipeline),
+    /// Stop the pipeline execution (kill subprocess)
+    #[command(arg_required_else_help = true)]
+    Stop(Pipeline),
     /// Display logs
     Logs(Logs),
     /// List pipelines
@@ -30,9 +30,6 @@ pub enum Commands {
     /// Manualy Triggers Pipelines
     #[command(hide = true)]
     Trigger(Empty),
-    // /// Enable hook functionnalities and
-    // /// Add some template config files if no config file detected
-    // Init(Empty),
 }
 
 #[derive(Debug, Parser)]

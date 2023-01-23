@@ -14,7 +14,7 @@ use std::error::Error;
 use std::fs;
 use std::path::Path;
 use std::process;
-use sysinfo::{PidExt, System, SystemExt};
+use sysinfo::{Pid, PidExt, ProcessExt, System, SystemExt};
 use uuid::Uuid;
 
 // External imports
@@ -82,9 +82,9 @@ impl Pipeline {
         let pipelines = Logs::get_by_name(&self.name).unwrap();
         let pipeline = pipelines.iter().next();
         if pipeline.is_some() {
-            let event = &pipeline.as_ref().unwrap().event;
+            let event = &pipeline.clone().unwrap().event;
             if event.is_some() {
-                let pid = event.as_ref().unwrap().pid;
+                let pid = &event.clone().unwrap().pid;
                 if pid.is_some() {
                     let mut sys = System::new_all();
                     sys.refresh_all();
@@ -93,6 +93,20 @@ impl Pipeline {
             }
         }
         return false;
+    }
+    /// Abort process execution
+    pub fn stop(&mut self) {
+        if self.event.is_some() {
+            if self.event.clone().unwrap().pid.is_some() {
+                let pid = self.clone().event.unwrap().pid.unwrap();
+                let mut sys = System::new_all();
+                sys.refresh_all();
+                let process = sys.process(PidExt::from_u32(pid));
+                if process.clone().is_some() {
+                    process.unwrap().kill();
+                }
+            }
+        }
     }
     /// Execute the pipeline
     pub fn run(&mut self) {

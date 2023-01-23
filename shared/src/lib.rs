@@ -4,4 +4,5 @@
 #[allow(dead_code)]
 pub mod cli;
 pub mod run;
+pub mod stop;
 pub mod trigger;
