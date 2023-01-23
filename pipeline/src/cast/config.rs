@@ -1,6 +1,6 @@
 use super::Config;
 use exec::Exec;
-use log::{debug, error, warn};
+use log::{debug, error, trace, warn};
 
 // standard lib
 use std::env::current_dir;
@@ -92,7 +92,7 @@ impl Config {
         let command = format!("{} {}", executable, script);
         let data = Exec::new().simple(&command)?;
 
-        debug!("Config json output:\n{}", &data.stdout.clone().unwrap());
+        trace!("Config json output:\n{}", &data.stdout.clone().unwrap());
 
         let config = serde_json::from_str::<Config>(&data.stdout.clone().unwrap())?;
         Ok(config)
