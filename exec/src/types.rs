@@ -9,6 +9,7 @@ pub struct StrOutput {
     pub stdout: Option<String>,
     pub stderr: Option<String>,
 }
+
 impl From<&Output> for StrOutput {
     fn from(s: &Output) -> Self {
         let mut stdout = None;

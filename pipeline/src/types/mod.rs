@@ -20,7 +20,6 @@ use uuid::Uuid;
 // External imports
 use exec::types::StrOutput;
 use exec::Exec;
-use lens_rs::{optics, Lens, LensMut, LensRef, Prism, Review};
 use utils;
 use utils::git::{Flag, Git, Hook};
 use utils::logger::logger;
@@ -44,10 +43,9 @@ struct Store {
     pipeline: Pipeline,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Lens)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Pipeline {
     pub uuid: Uuid,
-    #[optic(mut)]
     pub event: Option<Event>,
     pub name: String,
     pub status: Option<Status>,
@@ -83,18 +81,18 @@ impl Pipeline {
         }
         let pipelines = Logs::get_by_name(&self.name).unwrap();
         let pipeline = pipelines.iter().next();
-
-        let x: Option<Event> = pipeline.preview(optics!(event.pid));
-        if x.is_none() {
-            return false;
+        if pipeline.is_some() {
+            let event = &pipeline.as_ref().unwrap().event;
+            if event.is_some() {
+                let pid = event.as_ref().unwrap().pid;
+                if pid.is_some() {
+                    let mut sys = System::new_all();
+                    sys.refresh_all();
+                    return sys.process(PidExt::from_u32(pid.unwrap())).is_some();
+                }
+            }
         }
-        let mut sys = System::new_all();
-        sys.refresh_all();
-        return sys
-            .process(PidExt::from_u32(
-                pipeline.unwrap().clone().event.unwrap().pid.unwrap(),
-            ))
-            .is_some();
+        return false;
     }
     /// Execute the pipeline
     pub fn run(&mut self) {
@@ -141,7 +139,7 @@ impl Step {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Command {
     pub stdin: String,
-    output: Option<StrOutput>,
+    pub output: Option<StrOutput>,
 }
 impl Command {
     fn new() -> Command {
@@ -190,11 +188,10 @@ impl Trigger {
     }
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Lens)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Event {
     pub trigger: Trigger,
     pub date: String,
-    #[optic(mut)]
     pub pid: Option<u32>,
 }
 

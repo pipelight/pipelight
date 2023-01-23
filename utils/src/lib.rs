@@ -37,5 +37,3 @@ pub fn read_last_line(path: &Path) -> Result<String, Box<dyn Error>> {
     let last_line = lines.next().unwrap().unwrap();
     Ok(last_line)
 }
-
-pub fn get_profile() {}

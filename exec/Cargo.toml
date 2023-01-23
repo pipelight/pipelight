@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 log = "0.4.17"
 serde = { version = "1.0.147" ,features = ["derive"] }
+

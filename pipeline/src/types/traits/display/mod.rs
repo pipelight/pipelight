@@ -31,29 +31,32 @@ impl fmt::Display for Step {
 }
 impl fmt::Display for Command {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let command: Command = self.clone();
         let mtop = '┬';
         let lbot = '╰';
         let hbar = '─';
         if self.output.is_none() {
             info!(target: "nude", "      {}", &self.stdin.green());
             return Ok(());
-        }
-        let stdout = self
-            .output
-            .as_ref()
-            .unwrap()
-            .stdout
-            .as_ref()
-            .unwrap()
-            .replace("\n", "\n\t\t");
-        let stderr = self.output.as_ref().unwrap().stderr.as_ref().unwrap();
-        let status = self.output.as_ref().unwrap().status;
-        if status {
-            info!(target: "nude", "\r      {mtop}\n      {lbot}{hbar} {}\n", &self.stdin.blue());
-            debug!(target: "nude", "\t\t{}\n", stdout)
         } else {
-            info!(target: "nude", "\r      {mtop}\n      {lbot}{hbar} {}\n", &self.stdin.red());
-            debug!(target: "nude", "\t\t{}\n", stderr);
+            let output = self.output.clone().unwrap();
+            let mut stdout = "".to_owned();
+            let mut stderr = "".to_owned();
+
+            if output.stdout.is_some() {
+                stdout = output.stdout.unwrap().replace("\n", "\n\t\t");
+            }
+            if output.stderr.is_some() {
+                stderr = output.stderr.unwrap().replace("\n", "\n\t\t");
+            }
+            let status = output.status;
+            if status {
+                info!(target: "nude", "\r      {mtop}\n      {lbot}{hbar} {}\n", &self.stdin.blue());
+                debug!(target: "nude", "\t\t{}\n", stdout)
+            } else {
+                info!(target: "nude", "\r      {mtop}\n      {lbot}{hbar} {}\n", &self.stdin.red());
+                debug!(target: "nude", "\t\t{}\n", stderr);
+            }
         }
         Ok(())
     }
