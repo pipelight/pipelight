@@ -1,6 +1,9 @@
 # Pipelight
 
-A cli to write routines in typescript/javascript.
+A cli to write pipelines in javascript.
+And trigger them automatically on git action.
+
+Lightweight CI/CD tool.
 
 ## Install
 
@@ -10,27 +13,33 @@ From the AUR
 paru -S pipelight
 ```
 
-## Example
+## Configuration example
 
-Create this config file at the root of your project
+Create a config file at the root of your project
 
 ```mjs
 //pipelight.config.mjs
 const config = {
   pipelines: [
-    name: "my_pipeline"
     {
-      name: "list working directory",
-      commands: ["ls -alh"],
-    },
-    {
-      name: "find a file",
-      commands: ["find . -name myfile"],
+      name: "my_pipeline",
+      steps: [
+        {
+          name: "list working directory",
+          commands: ["ls -alh"],
+        },
+        {
+          name: "get working directory",
+          commands: ["pwd"],
+        },
+      ],
     },
   ],
 };
 export default config;
 ```
+
+## Usage
 
 List pipelines defined in config file
 
@@ -62,13 +71,39 @@ Verbosity can be increased
 pipelight logs -vvvv
 ```
 
-## Lint your config file
-
-You can troubleshoot your config file with
+Abort pipeline execution
 
 ```sh
-node pipelight.config.mjs
+pipelight stop my_pipeline
 ```
+
+## Triggers
+
+Only works in a Git repo.
+
+```sh
+git init
+```
+
+```mjs
+//pipelight.config.mjs
+const config = {
+  pipelines: [
+    {
+      name: "automatic",
+      triggers: [
+        {
+          actions: ["pre-push", "pre-commit"],
+          branches: ["master"],
+        },
+      ],
+    },
+  ],
+};
+export default config;
+```
+
+Define triggers as combinations of branch name and git-hooks.
 
 ## Why another CICD tool ?
 
