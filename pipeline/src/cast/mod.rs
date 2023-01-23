@@ -4,6 +4,7 @@
 use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;
 mod config;
+mod default;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]

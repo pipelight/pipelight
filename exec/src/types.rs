@@ -11,12 +11,22 @@ pub struct StrOutput {
 }
 impl From<&Output> for StrOutput {
     fn from(s: &Output) -> Self {
-        let stdout = String::from_utf8(s.clone().stdout).unwrap().to_owned();
-        let stderr = String::from_utf8(s.clone().stderr).unwrap().to_owned();
+        let mut stdout = None;
+        let mut stderr = None;
+        let stdout_str = String::from_utf8(s.clone().stdout).unwrap().to_owned();
+        let stderr_str = String::from_utf8(s.clone().stderr).unwrap().to_owned();
+
+        if !stdout_str.is_empty() {
+            stdout = Some(stdout_str);
+        }
+        if !stderr_str.is_empty() {
+            stderr = Some(stderr_str);
+        }
+
         return StrOutput {
             status: s.status.success(),
-            stdout: Some(stdout),
-            stderr: Some(stderr),
+            stdout: stdout,
+            stderr: stderr,
         };
     }
 }

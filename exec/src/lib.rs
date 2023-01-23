@@ -40,18 +40,6 @@ impl Exec {
         let output = subprocess::simple(&self.shell(), command)?;
         Ok(output)
     }
-    pub fn attached(&mut self, command: &str) -> Result<String, Box<dyn Error>> {
-        let output = subprocess::attached(&self.shell, command);
-        match output {
-            Ok(output) => {
-                return Ok(output.to_owned());
-            }
-            Err(e) => {
-                warn!("command: {}\n output: {}", command, e);
-                return Err(Box::from(e));
-            }
-        };
-    }
     pub fn detached(&mut self, command: &str) -> Result<(), Box<dyn Error>> {
         subprocess::detached(&self.shell, command)?;
         Ok(())

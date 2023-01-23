@@ -11,7 +11,17 @@ use std::process::exit;
 impl Config {
     pub fn get() -> Config {
         let file = "pipelight.config.mjs".to_owned();
-        return Config::load(&file).unwrap();
+        let res = Config::load(&file);
+        match res {
+            Ok(res) => {
+                return res;
+            }
+            Err(e) => {
+                let message = format!("From config file:\n{}", e);
+                error!("{}", message);
+                exit(1);
+            }
+        };
     }
     /// Ensure config file exists
     fn exists(file: &String) -> Result<bool, Box<dyn Error>> {
@@ -28,9 +38,33 @@ impl Config {
         }
     }
 
+    /// Ensure that the node.js has no error
+    fn lint(file: &String) -> Result<(), Box<dyn Error>> {
+        debug!("Linting config file");
+        let command = format!("node {}", file);
+        let data = Exec::new().simple(&command)?;
+        if data.stdout.is_none() {
+            if data.stderr.is_none() {
+                Ok(())
+            } else {
+                let message = format!("{}", data.stderr.unwrap());
+                Err(Box::from(message))
+            }
+        } else {
+            if data.stderr.is_none() {
+                Ok(())
+            } else {
+                let message = format!("{}", data.stderr.unwrap());
+                warn!("Node.js Output:\n{}", data.stdout.unwrap());
+                Err(Box::from(message))
+            }
+        }
+    }
     /// Return the config from .mjs file inside the working dir.
     fn load(file: &String) -> Result<Config, Box<dyn Error>> {
         Config::exists(file)?;
+        Config::lint(file)?;
+
         let pwd = current_dir().unwrap();
         let string = format!("{}/{}", &pwd.display().to_string(), file);
         let path = Path::new(&string);
@@ -56,18 +90,11 @@ impl Config {
             path.display().to_string()
         );
         let command = format!("{} {}", executable, script);
-        let data = Exec::new().attached(&command)?;
-        let config_result = serde_json::from_str::<Config>(&data);
-        match config_result {
-            Ok(res) => {
-                return Ok(res);
-            }
-            Err(e) => {
-                let message = format!("From config file: {}", e);
-                warn!("{}", message);
-                debug!("Json output:\n{}", data);
-                return Err(Box::from(message));
-            }
-        };
+        let data = Exec::new().simple(&command)?;
+
+        debug!("Config json output:\n{}", &data.stdout.clone().unwrap());
+
+        let config = serde_json::from_str::<Config>(&data.stdout.clone().unwrap())?;
+        Ok(config)
     }
 }
