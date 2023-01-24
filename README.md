@@ -73,6 +73,22 @@ or
 pipelight ls -vvvv
 ```
 
+---
+
+TL;DR
+
+If you're too "zero attention genZ tiktok user" to go further in the documentation.
+Just read until here and rush to the CLI.
+It will yell a few times until your config file is good (don't forget to increase verbosity to debug).
+But in the end it will run smooth.
+Enjoy!
+
+Come back later if you need some of the tips below or in the coockbook.
+
+Plus Ultra!!
+
+---
+
 Trigger a specific pipeline execution
 
 ```sh
@@ -127,7 +143,8 @@ Define triggers as combinations of branch-name and git-hooks.
 
 ## Types
 
-The only constraint of pipelight is to default export an Object of type Config.
+The only constraint of pipelight is to "default export" an Object of type Config.
+The second only constraint is that different Pipelines can't have the same name.
 
 Here "?" means optionnal property in Typescript
 
@@ -136,7 +153,7 @@ type Config {
   pipelines?: [Pipeline]
 }
 type Pipeline {
-  name: String,
+  name: String, \\ Must be unique
   steps: [Step]
   triggers?: [Trigger]
 }
@@ -202,8 +219,6 @@ export default config;
 ```
 
 Add triggers, appreciate logs, and bettern your deployment scripts.
-
-##
 
 ## Why another CICD tool ?
 
