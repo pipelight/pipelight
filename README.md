@@ -33,6 +33,8 @@ From the AUR
 paru -S pipelight
 ```
 
+# Usage
+
 ## Configuration example
 
 Create a config file at the root of your project
@@ -58,8 +60,6 @@ const config = {
 };
 export default config;
 ````
-
-## Usage
 
 List pipelines defined in config file
 
@@ -125,6 +125,38 @@ export default config;
 
 Define triggers as combinations of branch-name and git-hooks.
 
+## Types
+
+The only constraint of pipelight is to default export an Object of type Config.
+
+Here "?" means optionnal property in Typescript
+
+```ts
+type Config {
+  pipelines?: [Pipeline]
+}
+type Pipeline {
+  name: String,
+  steps: [Step]
+  triggers?: [Trigger]
+}
+type Step {
+  command: [String]
+}
+
+struct Trigger {
+  branches: [String],
+  actions?: [Hook],
+}
+
+eum Hook {
+  "pre-push",
+  "pre-commit",
+    ...
+  // every git-hook
+}
+```
+
 ## How it works
 
 Think of it as a bash wrapper.
@@ -141,7 +173,7 @@ rsync local_files to_my_remote_server
 
 But at some point, this method lakes verbosity, and automation...
 
-Just put your commands into a pipeline object.
+Just put your commands into a Pipeline object.
 
 ```mjs
 //pipelight.config.mjs
@@ -169,7 +201,9 @@ const config = {
 export default config;
 ```
 
-And add trigger, check logs, and bettern your deployment scripts.
+Add triggers, appreciate logs, and bettern your deployment scripts.
+
+##
 
 ## Why another CICD tool ?
 
@@ -237,7 +271,7 @@ const config = {
 export default config;
 ```
 
-Overuse string interpolation and parameter destructuring.
+Overuse string interpolation, and parameter destructuring.
 
 ```mjs
 //pipelight.config.mjs
@@ -273,10 +307,59 @@ const config = makeConfig(params)
 export default config;
 ```
 
-Bang!! Rest the seventh day!
-You havn't even yet see the **pretty** logs.
+Overuse string interpolation, parameter destructuring and import/export ESM synthax.
 
-Overuse string interpolation, parameter destructuring, function, loops... coooooode!!!
+Export here
+
+```mjs
+//.pipelight/config/default.mjs
+
+const makeDefaultConfig = ({remote, local}) = > {
+  pipelines: [
+    {
+      name: "deploy",
+      steps: [
+        {
+          name: `send files to ${remote.domain}`,
+          commands: [
+            `scp -r ${local.path} ${remote.domain}@${remote.path}`
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+export {
+  makeDefaultConfig
+}
+
+```
+
+And import here
+
+```mjs
+//pipelight.config.mjs
+
+import { makeDefaultConfig } from ".pipelight/config/default.mjs";
+
+const params = {
+  remote: {
+    domain: "myserver.com",
+    path: "/remote/directory",
+  },
+  local: {
+    path: "/my/build/directory",
+  },
+};
+
+const config = makeConfig(params);
+
+export default config;
+```
+
+In the end it's just JS, either it is functionnal programming or object oriented,
+you just have to return an object that satisfies the Config type.
 
 ## Dummy deployement
 
