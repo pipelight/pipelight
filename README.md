@@ -31,7 +31,7 @@ From the AUR
 
 ````sh
 paru -S pipelight
-`
+```
 
 ## Configuration example
 
