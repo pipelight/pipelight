@@ -29,7 +29,7 @@ You'll understand! ;D
 
 From the AUR
 
-````sh
+```sh
 paru -S pipelight
 ```
 
@@ -59,7 +59,7 @@ const config = {
   ],
 };
 export default config;
-````
+```
 
 List pipelines defined in config file
 
@@ -75,7 +75,7 @@ pipelight ls -vvvv
 
 ---
 
-TL;DR
+## TL;DR
 
 If you're too "zero attention genZ tiktok user" to go further in the documentation.
 Just read until here and rush to the CLI.
