@@ -1,5 +1,5 @@
 use chrono::{DateTime, Local};
-use log::info;
+use log::{info, warn};
 use pipeline::types::{Config, Logs, Pipeline, Status};
 use std::error::Error;
 
@@ -31,9 +31,9 @@ pub fn json() -> Result<(), Box<dyn Error>> {
 pub fn list() -> Result<(), Box<dyn Error>> {
     // Retrieve pipelines defined in config and run logs.
     let config = Config::new();
-    info!(target: "nude",
-        "{:<10} {:<25} {:<40}\n",
-        "status", "date" ,"name"
+    warn!(target: "nude",
+        "{:<15} {:<25} {:<40}\n",
+        "last_status", "last_run_date" ,"name"
     );
     for pipeline in &config.pipelines.unwrap() {
         let mut date = "".to_owned();
@@ -52,7 +52,7 @@ pub fn list() -> Result<(), Box<dyn Error>> {
                     .to_string();
             }
         }
-        println!("{:<10} {:<25} {:<40}", status, date, pipeline.name);
+        println!("{:<15} {:<25} {:<40}", status, date, pipeline.name);
     }
     Ok(())
 }

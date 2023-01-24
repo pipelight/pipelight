@@ -32,6 +32,23 @@ const config = {
         },
       ],
     },
+    {
+      name: "test",
+      steps: [
+        {
+          name: "test",
+          commands: [
+            "cargo test --package pipeline -- --nocapture --test-threads=1",
+          ],
+        },
+      ],
+      triggers: [
+        {
+          branches: ["master", "dev"],
+          actions: ["pre-push", "manual"],
+        },
+      ],
+    },
   ],
 };
 export default config;

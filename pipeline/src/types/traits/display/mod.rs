@@ -1,7 +1,7 @@
 use crate::types::{Command, Event, Pipeline, Status, Step, Trigger};
 use chrono::{DateTime, Local};
 use colored::Colorize;
-use log::{debug, info};
+use log::{debug, info, warn};
 use std::fmt;
 
 // Tests
@@ -33,9 +33,9 @@ impl fmt::Display for Event {
         let date = self.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
         write!(f, "{}\n", date)?;
         if self.pid.is_some() {
-            write!(f, "{}pid: {}\n", i, &self.pid.unwrap())?;
+            warn!(target:"nude", "{}pid: {}\n", i, &self.pid.unwrap());
         }
-        write!(f, "{}trigger:\n{}", i, &self.trigger);
+        warn!(target:"nude", "{}trigger:\n{}", i, &self.trigger);
         Ok(())
     }
 }
