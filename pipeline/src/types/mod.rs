@@ -7,7 +7,7 @@
 mod traits;
 
 // Standard libs
-use log::info;
+use log::{info, warn};
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
 use std::error::Error;
@@ -64,9 +64,9 @@ impl Pipeline {
         if self.event.is_none() {
             return false;
         }
-        if self.clone().event.unwrap().pid.is_none() {
-            return false;
-        }
+        // if self.clone().event.unwrap().pid.is_none() {
+        //     return false;
+        // }
         let mut sys = System::new_all();
         sys.refresh_all();
         return !sys
@@ -104,6 +104,8 @@ impl Pipeline {
                 let process = sys.process(PidExt::from_u32(pid));
                 if process.clone().is_some() {
                     process.unwrap().kill();
+                    self.status = Some(Status::Aborted);
+                    self.log();
                 }
             }
         }
@@ -127,7 +129,6 @@ impl Pipeline {
             step.run(pipeline_ptr);
         }
 
-        pipeline.event.as_mut().unwrap().pid = None;
         pipeline.status(&Status::Succeeded);
         pipeline.log();
     }
@@ -213,6 +214,15 @@ pub struct Event {
 pub struct Logs;
 
 impl Logs {
+    fn sanitize(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>, Box<dyn Error>> {
+        for mut pipeline in pipelines.clone() {
+            if pipeline.is_aborted() {
+                pipeline.status = Some(Status::Aborted);
+                pipeline.log();
+            }
+        }
+        Ok(pipelines.to_owned())
+    }
     /// Return pipelines from log files
     pub fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
         let dir = &logger.directory;
@@ -229,6 +239,8 @@ impl Logs {
             let pipeline = serde_json::from_str::<Pipeline>(&json)?;
             pipelines.push(pipeline);
         }
+
+        pipelines = Logs::sanitize(pipelines)?;
         Ok(pipelines)
     }
     pub fn get_by_name(name: &String) -> Result<Vec<Pipeline>, Box<dyn Error>> {
@@ -238,9 +250,11 @@ impl Logs {
             .filter(|p| &p.name == name)
             .cloned()
             .collect::<Vec<Pipeline>>();
-        // Sort by date descending
         pipelines.sort_by_key(|e| e.clone().event.unwrap().date);
-        pipelines.reverse();
+
+        if pipelines.is_empty() {
+            warn!("Couldn't find a pipeline named {:?}", name);
+        }
         Ok(pipelines)
     }
 }

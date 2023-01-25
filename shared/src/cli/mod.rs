@@ -6,6 +6,7 @@ use crate::stop;
 use crate::trigger;
 use clap::Parser;
 use log::info;
+use pipeline::types::{Config, Logs, Pipeline, Status};
 use std::error::Error;
 use utils::logger::logger;
 
@@ -34,20 +35,26 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             info!("Stopping pipline {:#?}", pipeline.name);
             stop::stop(&pipeline.name)?;
         }
-        types::Commands::Logs(logs) => {
-            if logs.commands.is_some() {
-                let logs_cmd = logs.commands.unwrap();
-                match logs_cmd {
-                    types::LogsCommands::Rm(logs) => {
-                        logger.clear()?;
-                    }
+        types::Commands::Logs(logs) => match logs.commands {
+            None => {
+                let pipelines;
+                if logs.display.name.is_some() {
+                    pipelines = Logs::get_by_name(&logs.display.name.unwrap())?;
+                } else {
+                    pipelines = Logs::get()?;
                 }
-            } else if logs.display.json {
-                print::json()?;
-            } else {
-                print::pretty()?;
+                if logs.display.json {
+                    print::json(&pipelines)?;
+                } else {
+                    print::pretty(&pipelines)?;
+                }
             }
-        }
+            Some(logs_cmd) => match logs_cmd {
+                types::LogsCommands::Rm(logs) => {
+                    logger.clear()?;
+                }
+            },
+        },
     }
     Ok(())
 }

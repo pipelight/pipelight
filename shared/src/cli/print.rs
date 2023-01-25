@@ -4,24 +4,17 @@ use pipeline::types::{Config, Logs, Pipeline, Status};
 use std::error::Error;
 
 /// Pretty print logs from json log file
-pub fn pretty() -> Result<(), Box<dyn Error>> {
-    let pipelines = Logs::get()?;
-    for mut pipeline in pipelines {
-        if pipeline.is_aborted() {
-            pipeline.status = Some(Status::Aborted);
-            pipeline.event.as_mut().unwrap().pid = None;
-            pipeline.log();
-        }
+pub fn pretty(pipelines: &Vec<Pipeline>) -> Result<(), Box<dyn Error>> {
+    for pipeline in pipelines {
         println!("{}", pipeline);
     }
     Ok(())
 }
 
 /// Print json log file
-pub fn json() -> Result<(), Box<dyn Error>> {
-    let pipelines = Logs::get()?;
+pub fn json(pipelines: &Vec<Pipeline>) -> Result<(), Box<dyn Error>> {
     for pipeline in pipelines {
-        let pipeline_json = serde_json::to_string::<Pipeline>(&pipeline)?;
+        let pipeline_json = serde_json::to_string_pretty::<Pipeline>(&pipeline)?;
         println!("{}", pipeline_json);
     }
     Ok(())

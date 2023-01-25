@@ -32,9 +32,9 @@ impl fmt::Display for Event {
         let i = INDENT.repeat(1);
         let date = self.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
         write!(f, "{}\n", date)?;
-        if self.pid.is_some() {
-            warn!(target:"nude", "{}pid: {}\n", i, &self.pid.unwrap());
-        }
+        // if self.pid.is_some() {
+        //     warn!(target:"nude", "{}pid: {}\n", i, &self.pid.unwrap());
+        // }
         warn!(target:"nude", "{}trigger:\n{}", i, &self.trigger);
         Ok(())
     }

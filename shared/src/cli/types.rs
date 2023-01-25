@@ -61,6 +61,8 @@ pub enum LogsCommands {
 }
 #[derive(Debug, Args)]
 pub struct DisplayCommands {
+    /// The pipeline name
+    pub name: Option<String>,
     /// Display logs in json format
     #[arg(long)]
     pub json: bool,
