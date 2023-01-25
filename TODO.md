@@ -4,6 +4,8 @@ Lint config file with miette/ or esle
 
 Add Clap-rs version feature
 
+Performance crate
+
 # Unit Tests
 
 Test bad config file

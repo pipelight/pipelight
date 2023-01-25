@@ -11,7 +11,7 @@ Lightweight CI/CD tool.
 
 ## What it is.
 
-A Rust program that execute "js strings parsed as bash commands" on a given git event.
+A Rust program that execute "js strings parsed as bash commands" on a git event.
 
 ## Motivation
 

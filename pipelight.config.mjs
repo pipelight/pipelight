@@ -22,23 +22,7 @@ const config = {
           name: "test",
           commands: [
             "cargo test --package pipeline -- --nocapture --test-threads=1",
-          ],
-        },
-      ],
-      triggers: [
-        {
-          branches: ["master", "dev"],
-          actions: ["pre-push", "manual"],
-        },
-      ],
-    },
-    {
-      name: "test",
-      steps: [
-        {
-          name: "test",
-          commands: [
-            "cargo test --package pipeline -- --nocapture --test-threads=1",
+            "sleep 30",
           ],
         },
       ],

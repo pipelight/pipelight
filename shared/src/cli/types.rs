@@ -4,7 +4,9 @@ use clap::{Args, Parser, Subcommand};
 use clap_verbosity_flag::Verbosity;
 
 #[derive(Debug, Parser)]
-#[command(author, version, about, long_about = None)]
+#[command(author, 
+          //version,
+           about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
     pub commands: Commands,
