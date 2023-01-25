@@ -31,17 +31,28 @@ pub enum Commands {
 
     /// Manualy Triggers Pipelines
     #[command(hide = true)]
-    Trigger(Empty),
+    Trigger(Trigger),
 }
 
 #[derive(Debug, Parser)]
 pub struct Empty {}
 
 #[derive(Debug, Parser)]
-/// The pipeline name
 pub struct Pipeline {
+    /// The pipeline name
     pub name: String,
+    /// Attach command to standard I/O
+    #[arg(long)]
+    pub attach: bool,
 }
+
+#[derive(Debug, Parser)]
+pub struct Trigger {
+    /// Attach command to standard I/O
+    #[arg(long)]
+    pub attach: bool,
+}
+
 
 #[derive(Debug, Subcommand)]
 pub enum LogsCommands {

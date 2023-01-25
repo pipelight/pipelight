@@ -24,11 +24,11 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
         }
         types::Commands::Trigger(trigger) => {
             info!("Triggering piplines");
-            trigger::trigger_bin()?;
+            trigger::trigger_bin(trigger.attach)?;
         }
         types::Commands::Run(pipeline) => {
             info!("Running pipline {:#?}", pipeline.name);
-            run::run_bin(pipeline.name)?;
+            run::run_bin(pipeline.name, pipeline.attach)?;
         }
         types::Commands::Stop(pipeline) => {
             info!("Stopping pipline {:#?}", pipeline.name);

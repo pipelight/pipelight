@@ -12,23 +12,36 @@ use std::env::current_dir;
 use std::error::Error;
 use std::path::Path;
 use std::process::exit;
+use std::thread;
 use utils::{
     git::{Git, Hook},
     logger::Logger,
 };
 
-pub fn trigger_bin() -> Result<(), Box<dyn Error>> {
+pub fn trigger_bin(attach: bool) -> Result<(), Box<dyn Error>> {
     trace!("Create detached subprocess");
     let bin = "pipelight-trigger";
 
     #[cfg(debug_assertions)]
     let command = format!("cargo run --bin {}", bin);
+
     #[cfg(not(debug_assertions))]
     let command = format!("{}", bin);
 
-    Exec::new().detached(&command)?;
+    match attach {
+        true => {
+            // Lauch attach thread
+            trigger_in_thread()?;
+        }
+        false => {
+            // Lauch detached process
+            trace!("Create detached subprocess");
+            Exec::new().detached(&command)?;
+        }
+    }
     Ok(())
 }
+
 /// Filter pipeline by trigger and run
 pub fn trigger() -> Result<(), Box<dyn Error>> {
     let config = Config::new();
@@ -45,9 +58,16 @@ pub fn trigger() -> Result<(), Box<dyn Error>> {
             debug!("{}", message)
         } else {
             if pipeline.clone().triggers.unwrap().contains(&env) {
-                run::run_bin(pipeline.clone().name);
+                run::run_bin(pipeline.clone().name, false);
             }
         }
     }
+    Ok(())
+}
+
+/// Launch attached thread
+pub fn trigger_in_thread() -> Result<(), Box<dyn Error>> {
+    let thread = thread::spawn(|| trigger().unwrap());
+    thread.join().unwrap();
     Ok(())
 }

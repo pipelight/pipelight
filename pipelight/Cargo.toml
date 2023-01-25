@@ -11,4 +11,7 @@ license="GPL2"
 
 [dependencies]
 shared = {path = "../shared" }
+pipeline = {path = "../pipeline" }
+utils = {path = "../utils" }
 log = "0.4.17"
+

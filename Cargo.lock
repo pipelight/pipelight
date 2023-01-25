@@ -724,7 +724,9 @@ name = "pipelight"
 version = "0.2.1"
 dependencies = [
  "log",
+ "pipeline",
  "shared",
+ "utils",
 ]
 
 [[package]]
