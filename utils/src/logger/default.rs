@@ -20,6 +20,7 @@ impl Default for Logger {
         let logger = Logger {
             directory: path_string.clone(),
             handle: handle,
+            level: LevelFilter::Error,
         };
 
         return logger;

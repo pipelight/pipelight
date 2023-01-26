@@ -23,5 +23,5 @@ pub fn pipeline_duration (attr: TokenStream, item: TokenStream) -> TokenStream {
         let start = Instant::now();
         $function;
         let duration = start.elapsed();
-        trace!("{:?}", duration)
-    }
+        trace!("{:?}", duration);
+}

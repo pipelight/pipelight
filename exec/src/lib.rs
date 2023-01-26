@@ -9,6 +9,8 @@ use std::env;
 use std::error::Error;
 use types::StrOutput;
 // Internal Imports
+mod display;
+mod from;
 pub mod subprocess;
 pub mod types;
 

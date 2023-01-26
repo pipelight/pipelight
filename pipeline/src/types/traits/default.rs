@@ -45,21 +45,39 @@ impl Config {
         return self.to_owned();
     }
 }
-impl Default for Pipeline {
+impl Default for Step {
     fn default() -> Self {
-        let commands = vec![Command {
-            stdin: "".to_owned(),
-            output: None,
-        }];
-        let steps = vec![Step {
+        let commands = vec![Command::default()];
+        Step {
             name: "default".to_owned(),
             commands: commands,
             non_blocking: None,
             on_failure: None,
-        }];
+            status: None,
+        }
+    }
+}
+impl Step {
+    pub fn new() -> Self {
+        Step::default()
+    }
+}
+impl Default for Command {
+    fn default() -> Self {
+        Command {
+            stdin: "".to_owned(),
+            output: None,
+        }
+    }
+}
+
+impl Default for Pipeline {
+    fn default() -> Self {
+        let steps = vec![Step::default()];
         Pipeline {
             uuid: Uuid::new_v4(),
             name: "default".to_owned(),
+            duration: None,
             event: None,
             status: None,
             triggers: None,

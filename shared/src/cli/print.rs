@@ -1,6 +1,6 @@
 use chrono::{DateTime, Local};
 use log::{info, warn};
-use pipeline::types::{Config, Logs, Pipeline, Status};
+use pipeline::types::{Config, Logs, Pipeline};
 use std::error::Error;
 
 /// Pretty print logs from json log file

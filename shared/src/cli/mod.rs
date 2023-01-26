@@ -6,9 +6,10 @@ use crate::stop;
 use crate::trigger;
 use clap::Parser;
 use log::info;
-use pipeline::types::{Config, Logs, Pipeline, Status};
-use std::error::Error;
 use utils::logger::logger;
+// Logger
+use pipeline::types::{Config, Logs, Pipeline};
+use std::error::Error;
 
 /// Execute the Command Line Tool (cli)
 /// Initialize Logger and program global vars
@@ -16,7 +17,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
     let args = types::Cli::parse();
     // Set verbosity
     let verbosity = args.verbose.log_level_filter();
-    logger.level(&verbosity);
+    logger.load().level(&verbosity);
 
     match args.commands {
         types::Commands::Ls(list) => {
@@ -51,7 +52,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             }
             Some(logs_cmd) => match logs_cmd {
                 types::LogsCommands::Rm(logs) => {
-                    logger.clear()?;
+                    logger.load().clear()?;
                 }
             },
         },

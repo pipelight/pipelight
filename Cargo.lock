@@ -301,6 +301,8 @@ dependencies = [
 name = "exec"
 version = "0.2.0"
 dependencies = [
+ "colored",
+ "convert_case",
  "log",
  "serde",
 ]
@@ -1188,6 +1190,7 @@ dependencies = [
 name = "utils"
 version = "0.2.0"
 dependencies = [
+ "arc-swap",
  "convert_case",
  "git2",
  "log",

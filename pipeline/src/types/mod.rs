@@ -18,20 +18,14 @@ use sysinfo::{Pid, PidExt, ProcessExt, System, SystemExt};
 use uuid::Uuid;
 
 // External imports
-use exec::types::StrOutput;
+use exec::types::{Status, StrOutput};
 use exec::Exec;
 use utils;
 use utils::git::{Flag, Git, Hook};
 use utils::logger::logger;
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub enum Status {
-    Started,
-    Succeeded,
-    Failed,
-    Running,
-    Aborted,
-}
+// Duraion
+use std::time::{Duration, Instant};
 
 #[derive(Debug, Clone)]
 pub struct Config {
@@ -47,6 +41,7 @@ struct Store {
 pub struct Pipeline {
     pub uuid: Uuid,
     pub event: Option<Event>,
+    pub duration: Option<Duration>,
     pub name: String,
     pub status: Option<Status>,
     pub triggers: Option<Vec<Trigger>>,
@@ -54,7 +49,7 @@ pub struct Pipeline {
 }
 impl Pipeline {
     pub fn log(&self) {
-        logger.file(&self.uuid);
+        logger.load().file(&self.uuid);
         let json = serde_json::to_string(&self).unwrap();
         info!(target: "pipeline_json","{}", json);
     }
@@ -65,8 +60,9 @@ impl Pipeline {
             return false;
         }
         // if self.clone().event.unwrap().pid.is_none() {
-        //     return false;
-        // }
+        if self.clone().status.is_none() {
+            return false;
+        }
         let mut sys = System::new_all();
         sys.refresh_all();
         return !sys
@@ -112,6 +108,10 @@ impl Pipeline {
     }
     /// Execute the pipeline
     pub fn run(&mut self) {
+        // Duration
+        let start = Instant::now();
+        let duration = start.elapsed();
+
         // Globals
         let pipeline: &mut Pipeline = self;
         let pipeline_ptr: *mut Pipeline = pipeline;
@@ -120,16 +120,23 @@ impl Pipeline {
             return;
         }
 
-        // Set Pid and Status
+        // Set Pid and Status and Duration
         pipeline.event = Some(Event::new());
         pipeline.status(&Status::Running);
+        pipeline.duration = Some(duration);
         pipeline.log();
 
         for step in &mut pipeline.steps {
             step.run(pipeline_ptr);
         }
 
-        pipeline.status(&Status::Succeeded);
+        // Set pipeline status to last Step status
+        let last_step = pipeline.steps.last().unwrap();
+        if last_step.status.is_some() {
+            pipeline.status(&last_step.status.clone().unwrap())
+        } else {
+            pipeline.status(&Status::Failed)
+        }
         pipeline.log();
     }
     pub fn status(&mut self, status: &Status) {
@@ -138,6 +145,7 @@ impl Pipeline {
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Step {
+    pub status: Option<Status>,
     pub name: String,
     pub commands: Vec<Command>,
     pub non_blocking: Option<bool>,
@@ -148,6 +156,16 @@ impl Step {
         for command in &mut self.commands {
             command.run(pipeline_ptr);
         }
+
+        let optional_output = &self.commands.last().unwrap().output;
+        if optional_output.is_some() {
+            self.status(&optional_output.clone().unwrap().status)
+        } else {
+            self.status(&Status::Failed)
+        }
+    }
+    pub fn status(&mut self, status: &Status) {
+        self.status = Some(status.to_owned());
     }
 }
 
@@ -164,6 +182,13 @@ impl Command {
         };
     }
     fn run(&mut self, pipeline_ptr: *mut Pipeline) {
+        // Duration
+        let start = Instant::now();
+        let mut duration = start.elapsed();
+        // unsafe {
+        //     pipeline_ptr.as_mut().unwrap().duration.unwrap() + duration;
+        // }
+
         let output_res = Exec::new().simple(&self.stdin.clone());
         match output_res {
             Ok(output) => {
@@ -177,7 +202,9 @@ impl Command {
                 Err(e)
             }
         };
+        duration = start.elapsed();
         unsafe {
+            pipeline_ptr.as_mut().unwrap().duration.unwrap() + duration;
             pipeline_ptr.as_mut().unwrap().log();
         }
     }
@@ -215,6 +242,8 @@ pub struct Logs;
 
 impl Logs {
     fn sanitize(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>, Box<dyn Error>> {
+        let message = "Sanitizing log files";
+        info!("{}", message);
         for mut pipeline in pipelines.clone() {
             if pipeline.is_aborted() {
                 pipeline.status = Some(Status::Aborted);
@@ -225,7 +254,7 @@ impl Logs {
     }
     /// Return pipelines from log files
     pub fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
-        let dir = &logger.directory;
+        let dir = &logger.load().directory;
         // Safe exit if no log folder
         if !Path::new(dir).exists() {
             let message = "No log can be displayed. Log folder is empty";
@@ -239,8 +268,7 @@ impl Logs {
             let pipeline = serde_json::from_str::<Pipeline>(&json)?;
             pipelines.push(pipeline);
         }
-
-        pipelines = Logs::sanitize(pipelines)?;
+        // pipelines = Logs::sanitize(pipelines)?;
         Ok(pipelines)
     }
     pub fn get_by_name(name: &String) -> Result<Vec<Pipeline>, Box<dyn Error>> {

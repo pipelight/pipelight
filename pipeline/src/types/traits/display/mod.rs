@@ -1,6 +1,7 @@
-use crate::types::{Command, Event, Pipeline, Status, Step, Trigger};
+use crate::types::{Command, Event, Pipeline, Step, Trigger};
 use chrono::{DateTime, Local};
 use colored::Colorize;
+use exec::types::Status;
 use log::{debug, info, warn};
 use std::fmt;
 
@@ -78,7 +79,7 @@ impl fmt::Display for Command {
                 stderr = output.stderr.unwrap().replace("\n", &format!("\n{}", j));
             }
             let status = output.status;
-            if status {
+            if status == Status::Succeeded {
                 info!(target: "nude", "\r{i:} {mtop}\n{i:} {lbot}{hbar} {}\n", &self.stdin.blue() ,i=i);
                 debug!(target: "nude", "{}{}\n", j,stdout);
             } else {
@@ -102,19 +103,6 @@ impl fmt::Display for Pipeline {
         for step in &self.steps {
             write!(f, "{}", step);
         }
-        Ok(())
-    }
-}
-impl fmt::Display for Status {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let icon = "●";
-        match *self {
-            Status::Started => write!(f, "{} Started", icon),
-            Status::Succeeded => write!(f, "{} {}", icon.blue(), "Succeeded".bold()),
-            Status::Failed => write!(f, "{} {}", icon.red(), "Failed".bold()),
-            Status::Running => write!(f, "{} {}", icon.green(), "Running".bold()),
-            Status::Aborted => write!(f, "{} {}", icon.yellow(), "Aborted".bold()),
-        };
         Ok(())
     }
 }

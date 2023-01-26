@@ -14,3 +14,4 @@ strum = { version = "0.24.1", features = ["derive"] }
 serde = { version = "1.0.152", features = ["derive"] }
 convert_case = "0.6.0"
 once_cell = "1.17.0"
+arc-swap = "1.6.0"

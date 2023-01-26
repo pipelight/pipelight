@@ -1,6 +1,5 @@
-// use crate::types::logs::pipeline;
-pub use log::Level;
-pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
+use log::Level;
+use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 use log4rs;
 use log4rs::Handle;
 use once_cell::sync::Lazy;
@@ -9,21 +8,28 @@ use std::error::Error;
 use std::fs;
 use uuid::Uuid;
 
+//Global var
+use arc_swap::ArcSwap;
+use std::sync::Arc;
+
 pub mod config;
 pub mod default;
 
-pub static logger: Lazy<Logger> = Lazy::new(|| Logger::new());
+pub static logger: Lazy<ArcSwap<Logger>> = Lazy::new(|| ArcSwap::from(Arc::new(Logger::new())));
 
 #[derive(Debug, Clone)]
 pub struct Logger {
     pub directory: String,
     pub handle: Handle,
+    pub level: LevelFilter,
 }
 
 impl Logger {
     /// Set log level and logging file, and return handler to change logLevels at runtime
     pub fn file(&self, uuid: &Uuid) -> Self {
-        let level = LevelFilter::Trace;
+        let message = "Setting pipeline log file";
+        info!("{}", message);
+        let level = self.level;
         let config = config::default_with_file(&self.directory, &level, uuid);
         self.handle.set_config(config);
         return self.to_owned();

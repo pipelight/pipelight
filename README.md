@@ -153,7 +153,7 @@ type Config {
   pipelines?: [Pipeline]
 }
 type Pipeline {
-  name: String, \\ Must be unique
+  name: String, \\ Must be
   steps: [Step]
   triggers?: [Trigger]
 }

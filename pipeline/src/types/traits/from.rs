@@ -1,6 +1,5 @@
 use crate::cast;
-use crate::types::Status::*;
-use crate::types::{Command, Config, Event, Pipeline, Status, Step, Trigger};
+use crate::types::{Command, Config, Event, Pipeline, Step, Trigger};
 use chrono::Utc;
 use convert_case::{Case, Casing};
 use log::error;
@@ -49,12 +48,13 @@ impl From<&cast::Pipeline> for Pipeline {
             )
         }
         let p = Pipeline {
-            event: None,
             uuid: Uuid::new_v4(),
             name: e.name.to_owned(),
-            steps: steps.to_owned(),
+            duration: None,
+            event: None,
             status: None,
             triggers: triggers,
+            steps: steps.to_owned(),
         };
         return p;
     }
@@ -67,11 +67,13 @@ impl From<&cast::Step> for Step {
             .iter()
             .map(|e| Command::from(e))
             .collect::<Vec<Command>>();
+        let default_step = Step::new();
         Step {
             name: e.clone().name,
             commands: commands,
-            non_blocking: e.non_blocking,
+            non_blocking: e.clone().non_blocking,
             on_failure: e.clone().on_failure,
+            ..default_step
         }
     }
 }
@@ -97,34 +99,5 @@ impl Trigger {
             }
         }
         return tuplelist;
-    }
-}
-
-impl From<&String> for Status {
-    fn from(status: &String) -> Status {
-        let cased: &str = &status.to_case(Case::Snake);
-        match cased {
-            "started" => return Started,
-            "succeeded" => return Succeeded,
-            "failed" => return Failed,
-            "running" => return Running,
-            "aborted" => return Aborted,
-            _ => {
-                let message = format!("The pipeline status {} is not known", cased);
-                error!("{}", message);
-                exit(1);
-            }
-        };
-    }
-}
-impl From<&Status> for String {
-    fn from(action: &Status) -> String {
-        match action {
-            Started => return "started".to_owned(),
-            Succeeded => return "succeeded".to_owned(),
-            Failed => return "failed".to_owned(),
-            Running => return "running".to_owned(),
-            Aborted => return "aborted".to_owned(),
-        };
     }
 }

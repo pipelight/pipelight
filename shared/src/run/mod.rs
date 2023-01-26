@@ -33,17 +33,6 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<(), Box<dyn Error>
     Ok(())
 }
 
-/// Get command line args and run pipeline
-pub fn run() -> Result<(), Box<dyn Error>> {
-    // Collect Args
-    let args = env::args().collect::<Vec<String>>();
-    let pipeline_name: String = args[1].to_owned();
-
-    let mut pipeline = Pipeline::name(&pipeline_name)?;
-    pipeline.run();
-    Ok(())
-}
-
 /// Launch attached thread
 pub fn run_in_thread(name: &str) -> Result<(), Box<dyn Error>> {
     let name = name.to_owned();

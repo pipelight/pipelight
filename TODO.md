@@ -1,17 +1,23 @@
 # Rust
 
-Lint config file with miette/ or esle
+Add Clap-rs version feature flag
+Add on_failure, on_success and on_abortion fallback Option<Step>.
+Add parallel steps.
 
-Add Clap-rs version feature
+## Linting
 
-Performance crate
+Lint config file with miette/ or else
 
-# Unit Tests
+## Unit Tests
 
-Test bad config file
+Finish Performance crate.
+Test multiple bad config file.
 
 ## Logging
 
 Print **wrapped lines** after error
+Hint in Ariadne/Miette source code
 
-Hint in Ariadne source code
+Sanitize logs.
+if logs corrupted
+Delete unparsable lines.
