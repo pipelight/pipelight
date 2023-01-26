@@ -3,6 +3,7 @@
 Add Clap-rs version feature flag
 Add on_failure, on_success and on_abortion fallback Option<Step>.
 Add parallel steps.
+Add signal handeling.
 
 ## Linting
 
@@ -21,3 +22,7 @@ Hint in Ariadne/Miette source code
 Sanitize logs.
 if logs corrupted
 Delete unparsable lines.
+
+## Packaging
+
+Package app for RPM and Deb

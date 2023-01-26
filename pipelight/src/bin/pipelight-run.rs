@@ -1,5 +1,6 @@
 #![allow(unused_variables)]
 #![allow(unused_must_use)]
+use exec::types::Status;
 #[allow(dead_code)]
 use log::error;
 use pipeline::types::Pipeline;
@@ -28,7 +29,16 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
     let mut pipeline = Pipeline::name(&pipeline_name)?;
     pipeline.run();
-    Ok(())
+    match pipeline.status {
+        Some(Status::Succeeded) => {
+            return Ok(());
+        }
+        Some(Status::Failed) => {
+            let message = "Pipeline execution failed";
+            return Err(Box::from(message));
+        }
+        _ => return Ok(()),
+    }
 }
 
 #[cfg(test)]

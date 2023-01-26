@@ -1,9 +1,10 @@
+use exec::types::Status;
 use exec::Exec;
 use log::trace;
 use pipeline::types::Pipeline;
 use std::env;
 use std::error::Error;
-use std::thread;
+// use std::thread;
 
 /// To be called from the cli.
 /// Either spawn a detached new process or spawn an attached thread
@@ -36,10 +37,20 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<(), Box<dyn Error>
 /// Launch attached thread
 pub fn run_in_thread(name: &str) -> Result<(), Box<dyn Error>> {
     let name = name.to_owned();
-    let thread = thread::spawn(move || {
-        let mut pipeline = Pipeline::name(&name).unwrap();
-        pipeline.run();
-    });
-    thread.join().unwrap();
-    Ok(())
+    // let thread = thread::spawn(move || {
+    let mut pipeline = Pipeline::name(&name).unwrap();
+    pipeline.run();
+    match pipeline.status {
+        Some(Status::Succeeded) => {
+            return Ok(());
+        }
+        Some(Status::Failed) => {
+            let message = "Pipeline execution failed";
+            return Err(Box::from(message));
+        }
+        _ => return Ok(()),
+    }
+    // });
+    // thread.join().unwrap();
+    // Ok(())
 }

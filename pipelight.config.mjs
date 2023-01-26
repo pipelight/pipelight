@@ -32,6 +32,21 @@ const config = {
         },
       ],
     },
+    {
+      name: "sync",
+      steps: [
+        {
+          name: "run another pipeline",
+          commands: ["cargo run --bin pipelight run test --attach"],
+        },
+      ],
+      triggers: [
+        {
+          branches: ["master", "dev"],
+          actions: ["pre-push", "manual"],
+        },
+      ],
+    },
   ],
 };
 export default config;

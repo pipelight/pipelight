@@ -34,15 +34,18 @@ pub fn list() -> Result<(), Box<dyn Error>> {
         // Retrieve logs data if any
         if Logs::get().is_ok() {
             let pipe_logs = Logs::get_by_name(&pipeline.name)?;
-            let pipe_last_log = pipe_logs.iter().next().unwrap().clone();
-            if pipe_last_log.status.is_some() {
-                status = String::from(&pipe_last_log.status.unwrap());
-                let str_date = pipe_last_log.event.unwrap().date;
-                date = str_date
-                    .parse::<DateTime<Local>>()
-                    .unwrap()
-                    .format("%Y-%m-%d %H:%M:%S")
-                    .to_string();
+            let last_log = pipe_logs.iter().next();
+            if last_log.is_some() {
+                let last_log = last_log.unwrap();
+                if last_log.status.is_some() {
+                    status = String::from(&last_log.status.clone().unwrap());
+                    let str_date = last_log.event.clone().unwrap().date;
+                    date = str_date
+                        .parse::<DateTime<Local>>()
+                        .unwrap()
+                        .format("%Y-%m-%d %H:%M:%S")
+                        .to_string();
+                }
             }
         }
         println!("{:<15} {:<25} {:<40}", status, date, pipeline.name);
