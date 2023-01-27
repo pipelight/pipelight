@@ -45,7 +45,7 @@ pub struct Pipeline {
     pub name: String,
     pub status: Option<Status>,
     pub triggers: Option<Vec<Trigger>>,
-    pub steps: Vec<Step>,
+    pub steps: Vec<StepOrParallel>,
 }
 impl Pipeline {
     pub fn log(&self) {
@@ -132,8 +132,8 @@ impl Pipeline {
 
         // Set pipeline status to last Step status
         let last_step = pipeline.steps.last().unwrap();
-        if last_step.status.is_some() {
-            pipeline.status(&last_step.status.clone().unwrap())
+        if last_step.get_status().is_some() {
+            pipeline.status(&last_step.get_status().clone().unwrap())
         } else {
             pipeline.status(&Status::Failed)
         }
@@ -143,6 +143,61 @@ impl Pipeline {
         self.status = Some(status.to_owned());
     }
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub enum StepOrParallel {
+    Step(Step),
+    Parallel(Parallel),
+}
+impl StepOrParallel {
+    fn run(&mut self, pipeline_ptr: *mut Pipeline) {
+        match self {
+            StepOrParallel::Step(res) => res.run(pipeline_ptr),
+            StepOrParallel::Parallel(res) => res.run(pipeline_ptr),
+        }
+    }
+    fn set_status(&mut self, status: &Status) {
+        match self {
+            StepOrParallel::Step(res) => res.status(status),
+            StepOrParallel::Parallel(res) => res.status(status),
+        }
+    }
+    fn get_status(&self) -> Option<Status> {
+        match self {
+            StepOrParallel::Step(res) => res.status.clone(),
+            StepOrParallel::Parallel(res) => res.status.clone(),
+        }
+    }
+}
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct Parallel {
+    pub parallel: Vec<Step>,
+    pub status: Option<Status>,
+    pub non_blocking: Option<bool>,
+    pub on_failure: Option<Vec<String>>,
+}
+impl Parallel {
+    fn run(&mut self, pipeline_ptr: *mut Pipeline) {
+        for step in &mut self.parallel {
+            println!("{}", step);
+            step.run(pipeline_ptr);
+        }
+
+        // Set parallel status
+        // let last_step = pipeline_ptr.as_mut().unwrap().steps.last().unwrap();
+        //
+        // if last_step.status.is_some() {
+        //     pipeline.status(&last_step.status.clone().unwrap())
+        // } else {
+        //     pipeline.status(&Status::Failed)
+        // }
+        // pipeline.log();
+    }
+    pub fn status(&mut self, status: &Status) {
+        self.status = Some(status.to_owned());
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Step {
     pub status: Option<Status>,

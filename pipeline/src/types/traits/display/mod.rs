@@ -1,4 +1,4 @@
-use crate::types::{Command, Event, Pipeline, Step, Trigger};
+use crate::types::{Command, Event, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 use chrono::{DateTime, Local};
 use colored::Colorize;
 use exec::types::Status;
@@ -51,6 +51,27 @@ impl fmt::Display for Step {
             write!(f, "{}", command);
             if command.output.is_none() {
                 break;
+            }
+        }
+        Ok(())
+    }
+}
+impl fmt::Display for Parallel {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        for step in &self.parallel {
+            write!(f, "{}", step);
+        }
+        Ok(())
+    }
+}
+impl fmt::Display for StepOrParallel {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            StepOrParallel::Step(res) => {
+                write!(f, "{}", res);
+            }
+            StepOrParallel::Parallel(res) => {
+                write!(f, "{}", res);
             }
         }
         Ok(())

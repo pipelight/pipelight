@@ -6,8 +6,24 @@ mod tests {
 
     #[test]
     fn run() {
-        logger.level(&LevelFilter::Trace);
+        logger.load().level(&LevelFilter::Trace);
         let pipeline = Pipeline::new();
         pipeline.run()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::types::Parallel;
+    use log::LevelFilter;
+    use utils::logger::logger;
+
+    #[test]
+    fn run_parallel() {
+        // Set logger
+        logger.load().level(&LevelFilter::Trace);
+
+        let Parallel = Parallel::new();
+        parallel.run()
     }
 }

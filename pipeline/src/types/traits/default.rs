@@ -1,5 +1,7 @@
 use crate::cast;
-use crate::types::{Command, Config, Event, Logs, Pipeline, Step, Trigger};
+use crate::types::{
+    Command, Config, Event, Logs, Parallel, Pipeline, Step, StepOrParallel, Trigger,
+};
 use chrono::Utc;
 use log::{info, trace, warn};
 use std::env;
@@ -45,6 +47,40 @@ impl Config {
         return self.to_owned();
     }
 }
+impl Default for StepOrParallel {
+    fn default() -> Self {
+        let commands = vec![Command::default()];
+        let step = Step {
+            name: "default".to_owned(),
+            status: None,
+            commands: commands,
+            non_blocking: None,
+            on_failure: None,
+        };
+        StepOrParallel::Step(step)
+    }
+}
+impl StepOrParallel {
+    pub fn new() -> Self {
+        StepOrParallel::default()
+    }
+}
+
+impl Default for Parallel {
+    fn default() -> Self {
+        Parallel {
+            parallel: vec![Step::default()],
+            status: None,
+            non_blocking: None,
+            on_failure: None,
+        }
+    }
+}
+impl Parallel {
+    pub fn new() -> Self {
+        Parallel::default()
+    }
+}
 impl Default for Step {
     fn default() -> Self {
         let commands = vec![Command::default()];
@@ -73,7 +109,7 @@ impl Default for Command {
 
 impl Default for Pipeline {
     fn default() -> Self {
-        let steps = vec![Step::default()];
+        let steps = vec![StepOrParallel::Step(Step::default())];
         Pipeline {
             uuid: Uuid::new_v4(),
             name: "default".to_owned(),

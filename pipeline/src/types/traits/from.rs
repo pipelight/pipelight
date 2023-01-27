@@ -1,5 +1,5 @@
 use crate::cast;
-use crate::types::{Command, Config, Event, Pipeline, Step, Trigger};
+use crate::types::{Command, Config, Event, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 use chrono::Utc;
 use convert_case::{Case, Casing};
 use log::error;
@@ -28,7 +28,11 @@ impl From<&cast::Config> for Config {
 
 impl From<&cast::Pipeline> for Pipeline {
     fn from(e: &cast::Pipeline) -> Self {
-        let steps = &e.steps.iter().map(|e| Step::from(e)).collect::<Vec<Step>>();
+        let steps = &e
+            .steps
+            .iter()
+            .map(|e| StepOrParallel::from(e))
+            .collect::<Vec<StepOrParallel>>();
         // Flatten triggers
         let triggers: Option<Vec<Trigger>>;
         if e.triggers.is_none() {
@@ -60,6 +64,15 @@ impl From<&cast::Pipeline> for Pipeline {
     }
 }
 
+impl From<&cast::StepOrParallel> for StepOrParallel {
+    fn from(e: &cast::StepOrParallel) -> Self {
+        match e {
+            cast::StepOrParallel::Step(res) => StepOrParallel::Step(Step::from(res)),
+            cast::StepOrParallel::Parallel(res) => StepOrParallel::Parallel(Parallel::from(res)),
+        }
+    }
+}
+
 impl From<&cast::Step> for Step {
     fn from(e: &cast::Step) -> Self {
         let commands = e
@@ -75,6 +88,18 @@ impl From<&cast::Step> for Step {
             on_failure: e.clone().on_failure,
             ..default_step
         }
+    }
+}
+impl From<&cast::Parallel> for Parallel {
+    fn from(e: &cast::Parallel) -> Self {
+        let mut res = Parallel {
+            parallel: vec![],
+            ..Parallel::new()
+        };
+        for step in &e.parallel {
+            res.parallel.push(Step::from(step));
+        }
+        return res;
     }
 }
 

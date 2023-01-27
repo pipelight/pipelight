@@ -1,9 +1,11 @@
 # Rust
 
-Add Clap-rs version feature flag
-Add on_failure, on_success and on_abortion fallback Option<Step>.
 Add parallel steps.
-Add signal handeling.
+Add on_failure, on_success and on_abortion fallback Option<Step>.
+
+Add Clap-rs version feature flag
+
+Add signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
 
 ## Linting
 
@@ -26,3 +28,9 @@ Delete unparsable lines.
 ## Packaging
 
 Package app for RPM and Deb
+
+## Pretty
+
+If pipelines have same pid, link them in logs
+
+Print Pipeline execution time
