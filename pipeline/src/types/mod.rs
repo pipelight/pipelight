@@ -4,6 +4,8 @@
 #![allow(dead_code)]
 
 // Internal imports
+mod logs;
+mod run;
 mod traits;
 
 // Standard libs
@@ -14,6 +16,7 @@ use std::error::Error;
 use std::fs;
 use std::path::Path;
 use std::process;
+use std::time::{Duration, Instant};
 use sysinfo::{Pid, PidExt, ProcessExt, System, SystemExt};
 use uuid::Uuid;
 
@@ -24,17 +27,10 @@ use utils;
 use utils::git::{Flag, Git, Hook};
 use utils::logger::logger;
 
-// Duraion
-use std::time::{Duration, Instant};
-
 #[derive(Debug, Clone)]
 pub struct Config {
     pub pipelines: Option<Vec<Pipeline>>,
     pub hooks: Option<Vec<Hook>>,
-}
-
-struct Store {
-    pipeline: Pipeline,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -47,6 +43,7 @@ pub struct Pipeline {
     pub triggers: Option<Vec<Trigger>>,
     pub steps: Vec<StepOrParallel>,
 }
+
 impl Pipeline {
     pub fn log(&self) {
         logger.load().file(&self.uuid);
@@ -106,39 +103,6 @@ impl Pipeline {
             }
         }
     }
-    /// Execute the pipeline
-    pub fn run(&mut self) {
-        // Duration
-        let start = Instant::now();
-        let duration = start.elapsed();
-
-        // Globals
-        let pipeline: &mut Pipeline = self;
-        let pipeline_ptr: *mut Pipeline = pipeline;
-
-        if pipeline.is_running() {
-            return;
-        }
-
-        // Set Pid and Status and Duration
-        pipeline.event = Some(Event::new());
-        pipeline.status(&Status::Running);
-        pipeline.duration = Some(duration);
-        pipeline.log();
-
-        for step in &mut pipeline.steps {
-            step.run(pipeline_ptr);
-        }
-
-        // Set pipeline status to last Step status
-        let last_step = pipeline.steps.last().unwrap();
-        if last_step.get_status().is_some() {
-            pipeline.status(&last_step.get_status().clone().unwrap())
-        } else {
-            pipeline.status(&Status::Failed)
-        }
-        pipeline.log();
-    }
     pub fn status(&mut self, status: &Status) {
         self.status = Some(status.to_owned());
     }
@@ -150,12 +114,6 @@ pub enum StepOrParallel {
     Parallel(Parallel),
 }
 impl StepOrParallel {
-    fn run(&mut self, pipeline_ptr: *mut Pipeline) {
-        match self {
-            StepOrParallel::Step(res) => res.run(pipeline_ptr),
-            StepOrParallel::Parallel(res) => res.run(pipeline_ptr),
-        }
-    }
     fn set_status(&mut self, status: &Status) {
         match self {
             StepOrParallel::Step(res) => res.status(status),
@@ -177,22 +135,6 @@ pub struct Parallel {
     pub on_failure: Option<Vec<String>>,
 }
 impl Parallel {
-    fn run(&mut self, pipeline_ptr: *mut Pipeline) {
-        for step in &mut self.parallel {
-            println!("{}", step);
-            step.run(pipeline_ptr);
-        }
-
-        // Set parallel status
-        // let last_step = pipeline_ptr.as_mut().unwrap().steps.last().unwrap();
-        //
-        // if last_step.status.is_some() {
-        //     pipeline.status(&last_step.status.clone().unwrap())
-        // } else {
-        //     pipeline.status(&Status::Failed)
-        // }
-        // pipeline.log();
-    }
     pub fn status(&mut self, status: &Status) {
         self.status = Some(status.to_owned());
     }
@@ -207,18 +149,6 @@ pub struct Step {
     pub on_failure: Option<Vec<String>>,
 }
 impl Step {
-    fn run(&mut self, pipeline_ptr: *mut Pipeline) {
-        for command in &mut self.commands {
-            command.run(pipeline_ptr);
-        }
-
-        let optional_output = &self.commands.last().unwrap().output;
-        if optional_output.is_some() {
-            self.status(&optional_output.clone().unwrap().status)
-        } else {
-            self.status(&Status::Failed)
-        }
-    }
     pub fn status(&mut self, status: &Status) {
         self.status = Some(status.to_owned());
     }
@@ -228,41 +158,6 @@ impl Step {
 pub struct Command {
     pub stdin: String,
     pub output: Option<StrOutput>,
-}
-impl Command {
-    fn new() -> Command {
-        return Command {
-            stdin: "".to_owned(),
-            output: None,
-        };
-    }
-    fn run(&mut self, pipeline_ptr: *mut Pipeline) {
-        // Duration
-        let start = Instant::now();
-        let mut duration = start.elapsed();
-        // unsafe {
-        //     pipeline_ptr.as_mut().unwrap().duration.unwrap() + duration;
-        // }
-
-        let output_res = Exec::new().simple(&self.stdin.clone());
-        match output_res {
-            Ok(output) => {
-                self.output = Some(output);
-                Ok(())
-            }
-            Err(e) => {
-                unsafe {
-                    pipeline_ptr.as_mut().unwrap().status(&Status::Failed);
-                }
-                Err(e)
-            }
-        };
-        duration = start.elapsed();
-        unsafe {
-            pipeline_ptr.as_mut().unwrap().duration.unwrap() + duration;
-            pipeline_ptr.as_mut().unwrap().log();
-        }
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
@@ -294,50 +189,3 @@ pub struct Event {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Logs;
-
-impl Logs {
-    fn sanitize(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>, Box<dyn Error>> {
-        let message = "Sanitizing log files";
-        info!("{}", message);
-        for mut pipeline in pipelines.clone() {
-            if pipeline.is_aborted() {
-                pipeline.status = Some(Status::Aborted);
-                pipeline.log();
-            }
-        }
-        Ok(pipelines.to_owned())
-    }
-    /// Return pipelines from log files
-    pub fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
-        let dir = &logger.load().directory;
-        // Safe exit if no log folder
-        if !Path::new(dir).exists() {
-            let message = "No log can be displayed. Log folder is empty";
-            return Err(Box::from(message));
-        }
-        let paths = fs::read_dir(dir).unwrap();
-        let mut pipelines = vec![];
-        for res in paths {
-            let dir_entry = res?;
-            let json = utils::read_last_line(&dir_entry.path())?;
-            let pipeline = serde_json::from_str::<Pipeline>(&json)?;
-            pipelines.push(pipeline);
-        }
-        // pipelines = Logs::sanitize(pipelines)?;
-        Ok(pipelines)
-    }
-    pub fn get_by_name(name: &String) -> Result<Vec<Pipeline>, Box<dyn Error>> {
-        let pipelines = Logs::get()?;
-        let mut pipelines = pipelines
-            .iter()
-            .filter(|p| &p.name == name)
-            .cloned()
-            .collect::<Vec<Pipeline>>();
-        pipelines.sort_by_key(|e| e.clone().event.unwrap().date);
-
-        if pipelines.is_empty() {
-            warn!("Couldn't find a pipeline named {:?}", name);
-        }
-        Ok(pipelines)
-    }
-}

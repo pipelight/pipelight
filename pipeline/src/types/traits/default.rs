@@ -30,6 +30,7 @@ impl Config {
     /// Remove pipelines with the same name
     pub fn dedup_pipelines(&mut self) -> Self {
         if self.pipelines.is_some() {
+            let init_length = &self.pipelines.clone().unwrap().len();
             &self
                 .pipelines
                 .as_mut()
@@ -41,10 +42,32 @@ impl Config {
                 .unwrap()
                 .dedup_by_key(|p| p.clone().name);
 
-            let message = "Removed pipelines with identical names";
-            warn!("{}", message)
+            let end_length = &self.pipelines.clone().unwrap().len();
+            if init_length != end_length {
+                let message = "Removed pipelines with identical names";
+                warn!("{}", message)
+            }
         }
         return self.to_owned();
+    }
+}
+impl Default for Pipeline {
+    fn default() -> Self {
+        let steps = vec![StepOrParallel::Step(Step::default())];
+        Pipeline {
+            uuid: Uuid::new_v4(),
+            name: "default".to_owned(),
+            duration: None,
+            event: None,
+            status: None,
+            triggers: None,
+            steps: steps,
+        }
+    }
+}
+impl Pipeline {
+    pub fn new() -> Self {
+        Pipeline::default()
     }
 }
 impl Default for StepOrParallel {
@@ -106,24 +129,9 @@ impl Default for Command {
         }
     }
 }
-
-impl Default for Pipeline {
-    fn default() -> Self {
-        let steps = vec![StepOrParallel::Step(Step::default())];
-        Pipeline {
-            uuid: Uuid::new_v4(),
-            name: "default".to_owned(),
-            duration: None,
-            event: None,
-            status: None,
-            triggers: None,
-            steps: steps,
-        }
-    }
-}
-impl Pipeline {
-    pub fn new() -> Self {
-        Pipeline::default()
+impl Command {
+    pub fn new() -> Command {
+        Self::default()
     }
 }
 impl Default for Logs {

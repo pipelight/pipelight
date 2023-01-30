@@ -29,6 +29,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 
     let mut pipeline = Pipeline::name(&pipeline_name)?;
     pipeline.run();
+
     match pipeline.status {
         Some(Status::Succeeded) => {
             return Ok(());

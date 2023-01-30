@@ -736,12 +736,15 @@ dependencies = [
 name = "pipeline"
 version = "0.2.0"
 dependencies = [
+ "arc-swap",
  "chrono",
  "colored",
  "convert_case",
  "exec",
+ "lock_api",
  "log",
  "once_cell",
+ "rayon",
  "serde",
  "serde_json",
  "sysinfo",

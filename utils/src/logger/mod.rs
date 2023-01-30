@@ -2,14 +2,14 @@ use log::Level;
 use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 use log4rs;
 use log4rs::Handle;
-use once_cell::sync::Lazy;
 use std::clone::Clone;
 use std::error::Error;
 use std::fs;
 use uuid::Uuid;
 
-//Global var
+// Global var
 use arc_swap::ArcSwap;
+use once_cell::sync::Lazy;
 use std::sync::Arc;
 
 pub mod config;

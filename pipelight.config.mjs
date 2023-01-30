@@ -5,7 +5,11 @@ const config = {
       steps: [
         {
           name: "wait",
-          commands: ["ls", "sleep 30", "pwd"],
+          commands: ["ls", "sleep 2", "pwd"],
+        },
+        {
+          name: "wait2",
+          commands: ["ls", "sleep 2", "pwd"],
         },
       ],
       triggers: [

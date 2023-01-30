@@ -18,3 +18,17 @@ pub struct StrOutput {
     pub stdout: Option<String>,
     pub stderr: Option<String>,
 }
+impl Default for StrOutput {
+    fn default() -> Self {
+        StrOutput {
+            status: Status::Started,
+            stdout: None,
+            stderr: None,
+        }
+    }
+}
+impl StrOutput {
+    pub fn new() -> StrOutput {
+        Self::default()
+    }
+}
