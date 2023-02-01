@@ -129,8 +129,8 @@ impl StepOrParallel {
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Parallel {
-    pub parallel: Vec<Step>,
     pub status: Option<Status>,
+    pub steps: Vec<Step>,
     pub non_blocking: Option<bool>,
     pub on_failure: Option<Vec<String>>,
 }

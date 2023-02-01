@@ -83,9 +83,8 @@ impl From<&cast::Step> for Step {
         let default_step = Step::new();
         Step {
             name: e.clone().name,
-            commands: commands,
             non_blocking: e.clone().non_blocking,
-            on_failure: e.clone().on_failure,
+            commands: commands,
             ..default_step
         }
     }
@@ -93,11 +92,11 @@ impl From<&cast::Step> for Step {
 impl From<&cast::Parallel> for Parallel {
     fn from(e: &cast::Parallel) -> Self {
         let mut res = Parallel {
-            parallel: vec![],
+            steps: vec![],
             ..Parallel::new()
         };
         for step in &e.parallel {
-            res.parallel.push(Step::from(step));
+            res.steps.push(Step::from(step));
         }
         return res;
     }

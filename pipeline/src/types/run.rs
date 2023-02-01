@@ -16,7 +16,6 @@ use std::time::{Duration, Instant};
 
 // Global var
 static mut PIPELINE: Lazy<Pipeline> = Lazy::new(|| Pipeline::new());
-// static mut pipeline: Box<Pipeline> = unsafe { Box::new(PIPELINE) };
 
 impl Pipeline {
     /// Execute the pipeline
@@ -64,6 +63,9 @@ impl Pipeline {
                 (*ptr).status(&Status::Failed)
             }
         }
+        unsafe {
+            (*ptr).log();
+        }
     }
 }
 
@@ -71,31 +73,23 @@ impl StepOrParallel {
     fn run(&mut self, ptr: *mut Pipeline) {
         match self {
             StepOrParallel::Step(res) => res.run(ptr),
-            StepOrParallel::Parallel(res) => res.run(),
+            StepOrParallel::Parallel(res) => res.run(ptr),
         }
     }
 }
-impl Parallel {
-    fn run(&self) {
-        // let ptr = Arc::new(pipeline_ptr);
-        // let ptr = Arc::clone(&ptr);
-        // self.parallel.par_iter_mut().for_each(|step| {
-        //     step.run(ptr);
-        // })
 
-        // Set parallel status
-        // let last_step = pipeline_ptr.as_mut().unwrap().steps.last().unwrap();
-        //
-        // if last_step.status.is_some() {
-        //     pipeline.status(&last_step.status.clone().unwrap())
-        // } else {
-        //     pipeline.status(&Status::Failed)
-        // }
-        // pipeline.log();
-    }
-}
+#[derive(Debug, Clone, Copy)]
+struct PtrWrapper(*mut Pipeline);
+unsafe impl Sync for PtrWrapper {}
+unsafe impl Send for PtrWrapper {}
+
 impl Step {
+    fn unsafe_run(&mut self, ptr: PtrWrapper) {
+        let ptr = ptr.0.clone();
+        self.run(ptr);
+    }
     fn run(&mut self, ptr: *mut Pipeline) {
+        self.status(&Status::Running);
         for command in &mut self.commands {
             command.run(ptr);
         }
@@ -105,8 +99,44 @@ impl Step {
         } else {
             self.status(&Status::Failed)
         }
+        unsafe {
+            (*ptr).log();
+        }
     }
 }
+
+impl Parallel {
+    fn run(&mut self, ptr: *mut Pipeline) {
+        self.status(&Status::Running);
+
+        // Pass wrapped pointer to thread
+        let ptr_wrapper = PtrWrapper(ptr);
+        self.steps
+            .par_iter_mut()
+            .for_each(|e| e.unsafe_run(ptr_wrapper));
+
+        // Set parallel global status
+        let steps_res: Vec<Status> = self
+            .steps
+            .iter()
+            .map(|e| e.clone().status.unwrap())
+            .collect();
+
+        if steps_res.contains(&Status::Failed) {
+            self.status(&Status::Failed);
+        } else {
+            if steps_res.contains(&Status::Aborted) {
+                self.status(&Status::Aborted);
+            } else {
+                self.status(&Status::Succeeded);
+            }
+        }
+        unsafe {
+            (*ptr).log();
+        }
+    }
+}
+
 impl Command {
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
@@ -124,13 +154,9 @@ impl Command {
                 let mut output = StrOutput::new();
                 output.status = Status::Failed;
                 self.output = Some(output);
-                unsafe {
-                    (*ptr).status(&Status::Failed);
-                }
                 Err(e)
             }
         };
-        // *p.steps[step_index].command[cmd_index] = self;
         duration = start.elapsed();
 
         // pipeline.duration.unwrap() + duration;

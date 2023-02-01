@@ -10,36 +10,38 @@ mod test;
 
 static INDENT: &str = " ";
 
-impl fmt::Display for Trigger {
+impl fmt::Display for Pipeline {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let i = INDENT.repeat(2);
-        if self.action.is_some() {
-            write!(
-                f,
-                "{}action: {}\n",
-                i,
-                String::from(&self.clone().action.unwrap())
-            )?;
+        let i = INDENT.repeat(1);
+        if self.clone().status.is_some() {
+            write!(f, "{} - ", &self.clone().status.unwrap())?;
         }
-        if self.branch.is_some() {
-            write!(f, "{}branch: {}\n", i, self.clone().branch.unwrap())?;
+        if self.clone().event.is_some() {
+            write!(f, "{}", &self.clone().event.unwrap())?;
+        }
+        write!(f, "{}pipeline: {}\n", i, &self.name)?;
+        for step in &self.steps {
+            if step.get_status() != None {
+                write!(f, "{}", step);
+            }
+        }
+        Ok(())
+    }
+}
+impl fmt::Display for StepOrParallel {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            StepOrParallel::Step(res) => {
+                write!(f, "{}", res);
+            }
+            StepOrParallel::Parallel(res) => {
+                write!(f, "{}", res);
+            }
         }
         Ok(())
     }
 }
 
-impl fmt::Display for Event {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let i = INDENT.repeat(1);
-        let date = self.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
-        write!(f, "{}\n", date)?;
-        // if self.pid.is_some() {
-        //     warn!(target:"nude", "{}pid: {}\n", i, &self.pid.unwrap());
-        // }
-        warn!(target:"nude", "{}trigger:\n{}", i, &self.trigger);
-        Ok(())
-    }
-}
 impl fmt::Display for Step {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let i = INDENT.repeat(2);
@@ -58,21 +60,8 @@ impl fmt::Display for Step {
 }
 impl fmt::Display for Parallel {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        for step in &self.parallel {
+        for step in &self.steps {
             write!(f, "{}", step);
-        }
-        Ok(())
-    }
-}
-impl fmt::Display for StepOrParallel {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            StepOrParallel::Step(res) => {
-                write!(f, "{}", res);
-            }
-            StepOrParallel::Parallel(res) => {
-                write!(f, "{}", res);
-            }
         }
         Ok(())
     }
@@ -111,18 +100,28 @@ impl fmt::Display for Command {
         Ok(())
     }
 }
-impl fmt::Display for Pipeline {
+impl fmt::Display for Event {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let i = INDENT.repeat(1);
-        if self.clone().status.is_some() {
-            write!(f, "{} - ", &self.clone().status.unwrap())?;
+        let date = self.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
+        write!(f, "{}\n", date)?;
+        warn!(target:"nude", "{}trigger:\n{}", i, &self.trigger);
+        Ok(())
+    }
+}
+impl fmt::Display for Trigger {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let i = INDENT.repeat(2);
+        if self.action.is_some() {
+            write!(
+                f,
+                "{}action: {}\n",
+                i,
+                String::from(&self.clone().action.unwrap())
+            )?;
         }
-        if self.clone().event.is_some() {
-            write!(f, "{}", &self.clone().event.unwrap())?;
-        }
-        write!(f, "{}pipeline: {}\n", i, &self.name)?;
-        for step in &self.steps {
-            write!(f, "{}", step);
+        if self.branch.is_some() {
+            write!(f, "{}branch: {}\n", i, self.clone().branch.unwrap())?;
         }
         Ok(())
     }

@@ -92,7 +92,7 @@ impl StepOrParallel {
 impl Default for Parallel {
     fn default() -> Self {
         Parallel {
-            parallel: vec![Step::default()],
+            steps: vec![Step::default()],
             status: None,
             non_blocking: None,
             on_failure: None,

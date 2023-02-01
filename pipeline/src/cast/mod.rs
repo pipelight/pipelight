@@ -19,21 +19,22 @@ pub struct Pipeline {
     pub name: String,
     pub steps: Vec<StepOrParallel>,
     pub triggers: Option<Vec<Trigger>>,
+    pub on_failure: Option<Vec<String>>,
+    pub on_success: Option<Vec<String>>,
+    pub on_abortion: Option<Vec<String>>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Step {
+    pub non_blocking: Option<bool>,
     pub name: String,
     pub commands: Vec<String>,
-    pub non_blocking: Option<bool>,
-    pub on_failure: Option<Vec<String>>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Parallel {
-    pub parallel: Vec<Step>,
     pub non_blocking: Option<bool>,
-    pub on_failure: Option<Vec<String>>,
+    pub parallel: Vec<Step>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]

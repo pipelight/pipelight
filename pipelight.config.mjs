@@ -1,15 +1,38 @@
 const config = {
   pipelines: [
     {
+      name: "default_para",
+      steps: [
+        {
+          parallel: [
+            {
+              name: "wait",
+              commands: ["ls", "sleep 15", "pwd"],
+            },
+            {
+              name: "wait2",
+              commands: ["ls", "sleep 15", "pwd"],
+            },
+          ],
+        },
+      ],
+      triggers: [
+        {
+          branches: ["master", "dev"],
+          actions: ["pre-push"],
+        },
+      ],
+    },
+    {
       name: "default",
       steps: [
         {
           name: "wait",
-          commands: ["ls", "sleep 2", "pwd"],
+          commands: ["ls", "sleep 10", "pwd"],
         },
         {
           name: "wait2",
-          commands: ["ls", "sleep 2", "pwd"],
+          commands: ["ls", "sleep 10", "pwd"],
         },
       ],
       triggers: [
