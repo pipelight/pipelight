@@ -1,9 +1,10 @@
 # Rust
 
-Add parallel steps.
 Add on_failure, on_success and on_abortion fallback Option<Step>.
 
 Add Clap-rs version feature flag
+
+Add dutration compution
 
 Add signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
 
