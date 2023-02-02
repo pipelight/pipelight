@@ -182,7 +182,7 @@ impl Command {
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
         let start = Instant::now();
-        let mut duration = start.elapsed();
+        // let mut duration = start.elapsed();
         // pipeline.duration.unwrap() + duration;
 
         let output_res = Exec::new().simple(&self.stdin);
@@ -198,8 +198,7 @@ impl Command {
                 Err(e)
             }
         };
-        duration = start.elapsed();
-
+        // duration = start.elapsed();
         // pipeline.duration.unwrap() + duration;
         unsafe {
             (*ptr).log();
