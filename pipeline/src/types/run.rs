@@ -78,6 +78,18 @@ impl Pipeline {
                     step.run(ptr);
                 }
             }
+            if (*ptr).status == Some(Status::Succeeded) && (*ptr).on_success.is_some() {
+                // let steps = (*ptr).on_failure.as_mut().unwrap();
+                for step in (*ptr).on_success.as_mut().unwrap() {
+                    step.run(ptr);
+                }
+            }
+            if (*ptr).status == Some(Status::Aborted) && (*ptr).on_success.is_some() {
+                // let steps = (*ptr).on_failure.as_mut().unwrap();
+                for step in (*ptr).on_abortion.as_mut().unwrap() {
+                    step.run(ptr);
+                }
+            }
         }
     }
 }
@@ -116,9 +128,18 @@ impl Step {
             (*ptr).log();
         }
         // Execute post-run steps
-        println!("{:?}", self.on_failure);
         if self.status == Some(Status::Failed) && self.on_failure.is_some() {
             for step in self.on_failure.as_mut().unwrap() {
+                step.run(ptr);
+            }
+        }
+        if self.status == Some(Status::Succeeded) && self.on_success.is_some() {
+            for step in self.on_success.as_mut().unwrap() {
+                step.run(ptr);
+            }
+        }
+        if self.status == Some(Status::Aborted) && self.on_abortion.is_some() {
+            for step in self.on_success.as_mut().unwrap() {
                 step.run(ptr);
             }
         }
