@@ -12,7 +12,7 @@ use std::error::Error;
 pub fn run_bin(pipeline_name: String, attach: bool) -> Result<(), Box<dyn Error>> {
     let bin = "pipelight-run";
 
-    let pipeline = Pipeline::name(&pipeline_name)?;
+    let pipeline = Pipeline::get_by_name(&pipeline_name)?;
 
     #[cfg(debug_assertions)]
     let command = format!("cargo run --bin {} {}", bin, pipeline_name);
@@ -38,7 +38,7 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<(), Box<dyn Error>
 pub fn run_in_thread(name: &str) -> Result<(), Box<dyn Error>> {
     let name = name.to_owned();
     // let thread = thread::spawn(move || {
-    let mut pipeline = Pipeline::name(&name).unwrap();
+    let mut pipeline = Pipeline::get_by_name(&name).unwrap();
     pipeline.run();
     match pipeline.status {
         Some(Status::Succeeded) => {

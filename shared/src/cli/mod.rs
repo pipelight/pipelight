@@ -22,7 +22,12 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
     match args.commands {
         types::Commands::Ls(list) => {
             info!("Listing piplines");
-            print::list()?;
+            if list.name.is_some() {
+                let pipeline = Pipeline::get_by_name(&list.name.unwrap())?;
+                print::inspect(&pipeline, list.json)?;
+            } else {
+                print::list();
+            }
         }
         types::Commands::Trigger(trigger) => {
             info!("Triggering piplines");

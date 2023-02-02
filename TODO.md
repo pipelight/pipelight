@@ -2,6 +2,8 @@
 
 Better log printing
 
+provide pipeline inspection with ls [Name]
+
 Add Clap-rs version feature flag
 
 Add signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)

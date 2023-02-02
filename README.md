@@ -15,15 +15,22 @@ A Rust program that execute "js strings parsed as bash commands" on a git event.
 
 ## Motivation
 
-### Money
-
-I've been working with quite small servers, that struggle to build docker image, forget about kubernetes, graphana and so on.
-But I have local powerful computers.
-Pipelight allows me to git-push from a machine, build on another, and send the result on my tiny server.
-
 ### Lazy
 
-You'll understand! ;D
+Config is written in Js so lots of loops and variables can be used
+to end the struggle with CI/CD pipelines written in configuration optimised languages.
+
+### Frugal Power User
+
+I've been working with quite small servers, that struggle to build docker images, forget about kubernetes, graphana and so on.
+But I have local powerful computers.
+Pipelight allows me to git-push from a machine, build on another, and send the result on my tiny server, so I don't have to spend much in Cloud ressources.
+
+### Heavy work
+
+When I need to deploy a machine and install and configure everything to deploy my apps in different envs..
+I use it with docker, ansible, vagrant and others.
+It becomes pretty simple to share variables/env between tools and one click full deployement.
 
 ## Install
 
@@ -32,6 +39,31 @@ From the AUR
 ```sh
 paru -S pipelight
 ```
+
+From Source
+
+```sh
+git clone <this_repo>
+cd pipelight
+cargo build --release
+cp target/release/pipelight* /my_bin_directory/
+```
+
+---
+
+## TL;DR
+
+If you're too "zero attention genZ tiktok user" to go further in the documentation.
+Just read the [USAGE](#USAGE) section and rush to the CLI.
+It will yell a few times until your config file is good (don't forget to increase verbosity to debug).
+But in the end it will run smooth.
+Enjoy!
+
+In short:
+
+Pipelight is easy to install, fast, and usable on every project.
+
+---
 
 # Usage
 
@@ -72,22 +104,6 @@ or
 ```sh
 pipelight ls -vvvv
 ```
-
----
-
-## TL;DR
-
-If you're too "zero attention genZ tiktok user" to go further in the documentation.
-Just read until here and rush to the CLI.
-It will yell a few times until your config file is good (don't forget to increase verbosity to debug).
-But in the end it will run smooth.
-Enjoy!
-
-Come back later if you need some of the tips below or in the coockbook.
-
-Plus Ultra!!
-
----
 
 Trigger a specific pipeline execution
 
@@ -141,6 +157,8 @@ export default config;
 
 Define triggers as combinations of branch-name and git-hooks.
 
+# Documentation
+
 ## Types
 
 The only constraint of pipelight is to "default export" an Object of type Config.
@@ -173,6 +191,9 @@ eum Hook {
   // every git-hook
 }
 ```
+
+For the sake of readability,
+it is a simplified object that omit success/failure/abortion callbacks and parallelism special types.
 
 ## How it works
 
@@ -245,6 +266,27 @@ Only git-hooks and bash commands with syntaxic sugar.
 ### Terminal friendly
 
 Deploy, Backup, Restore... without living your terminal.
+
+# Master the Cli
+
+Pipeline inspection
+
+```sh
+pipelight ls <pipeline_name>
+```
+
+or
+in depth json inspection
+
+```sh
+pipelight ls --json <pipeline_name>
+```
+
+For long pipelines, you may want to redirect the output to your favorite reader.
+
+```sh
+pipelight ls --json <pipeline_name> | less
+```
 
 # CookBook / Deployement startegies
 

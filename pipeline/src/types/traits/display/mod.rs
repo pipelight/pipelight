@@ -15,6 +15,9 @@ impl fmt::Display for Pipeline {
         let i = INDENT.repeat(1);
         if self.clone().status.is_some() {
             write!(f, "{} - ", &self.clone().status.unwrap())?;
+        } else {
+            let icon = "●";
+            write!(f, "{} {:?} - ", icon, &self.clone().status)?;
         }
         if self.clone().event.is_some() {
             write!(f, "{}", &self.clone().event.unwrap())?;
@@ -22,6 +25,8 @@ impl fmt::Display for Pipeline {
         write!(f, "{}pipeline: {}\n", i, &self.name)?;
         for step in &self.steps {
             if step.get_status() != None {
+                write!(f, "{}", step);
+            } else {
                 write!(f, "{}", step);
             }
         }
@@ -48,11 +53,17 @@ impl fmt::Display for Step {
         let mtop = '┬';
         let lbot = '╰';
         let hbar = '─';
-        info!(target :"nude","{}{mtop}\n  {lbot}{hbar} step: {}\n",i, &self.name);
-        for command in &self.commands {
-            write!(f, "{}", command);
-            if command.output.is_none() {
-                break;
+        warn!(target :"nude","{}{mtop}\n  {lbot}{hbar} step: {}\n",i, &self.name);
+        if self.status.is_some() {
+            for command in &self.commands {
+                write!(f, "{}", command);
+                if command.output.is_none() {
+                    break;
+                }
+            }
+        } else {
+            for command in &self.commands {
+                write!(f, "{}", command);
             }
         }
         Ok(())
@@ -75,26 +86,30 @@ impl fmt::Display for Command {
         let lbot = '╰';
         let hbar = '─';
         if self.output.is_none() {
-            info!(target: "nude", "\r{i:} {mtop}\n{i:} {lbot}{hbar} {}\n", &self.stdin.green() ,i=i);
-            return Ok(());
+            info!(target: "nude", "\r{i:} {mtop}\n{i:} {lbot}{hbar} {}\n", &self.stdin ,i=i);
         } else {
-            let output = self.output.clone().unwrap();
-            let mut stdout = "".to_owned();
-            let mut stderr = "".to_owned();
-
-            if output.stdout.is_some() {
-                stdout = output.stdout.unwrap().replace("\n", &format!("\n{}", j));
-            }
-            if output.stderr.is_some() {
-                stderr = output.stderr.unwrap().replace("\n", &format!("\n{}", j));
-            }
-            let status = output.status;
-            if status == Status::Succeeded {
-                info!(target: "nude", "\r{i:} {mtop}\n{i:} {lbot}{hbar} {}\n", &self.stdin.blue() ,i=i);
-                debug!(target: "nude", "{}{}\n", j,stdout);
+            if self.output.clone().unwrap().status == Status::Running {
+                info!(target: "nude", "\r{i:} {mtop}\n{i:} {lbot}{hbar} {}\n", &self.stdin.green() ,i=i);
+                return Ok(());
             } else {
-                info!(target: "nude", "\r{i:} {mtop}\n{i:} {lbot}{hbar} {}\n", &self.stdin.red() ,i=i);
-                debug!(target: "nude", "{}{}\n", j,stderr);
+                let output = self.output.clone().unwrap();
+                let mut stdout = "".to_owned();
+                let mut stderr = "".to_owned();
+
+                if output.stdout.is_some() {
+                    stdout = output.stdout.unwrap().replace("\n", &format!("\n{}", j));
+                }
+                if output.stderr.is_some() {
+                    stderr = output.stderr.unwrap().replace("\n", &format!("\n{}", j));
+                }
+                let status = output.status;
+                if status == Status::Succeeded {
+                    info!(target: "nude", "\r{i:} {mtop}\n{i:} {lbot}{hbar} {}\n", &self.stdin.blue() ,i=i);
+                    debug!(target: "nude", "{}{}\n", j,stdout);
+                } else {
+                    info!(target: "nude", "\r{i:} {mtop}\n{i:} {lbot}{hbar} {}\n", &self.stdin.red() ,i=i);
+                    debug!(target: "nude", "{}{}\n", j,stderr);
+                }
             }
         }
         Ok(())

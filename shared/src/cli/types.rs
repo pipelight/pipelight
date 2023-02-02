@@ -27,7 +27,7 @@ pub enum Commands {
     /// Display logs
     Logs(Logs),
     /// List pipelines
-    Ls(Empty),
+    Ls(DisplayCommands),
 
     /// Manualy Triggers Pipelines
     #[command(hide = true)]
@@ -53,12 +53,6 @@ pub struct Trigger {
     pub attach: bool,
 }
 
-
-#[derive(Debug, Subcommand)]
-pub enum LogsCommands {
-    /// Clear logs
-    Rm(Empty),
-}
 #[derive(Debug, Args)]
 pub struct DisplayCommands {
     /// The pipeline name
@@ -70,6 +64,15 @@ pub struct DisplayCommands {
 
 #[derive(Debug, Args)]
 #[command(args_conflicts_with_subcommands = true)]
+pub struct List {
+
+    /// Display logs in json format
+    #[command(flatten)]
+    pub display: DisplayCommands,
+}
+
+#[derive(Debug, Args)]
+#[command(args_conflicts_with_subcommands = true)]
 pub struct Logs {
     #[command(subcommand)]
     pub commands: Option<LogsCommands>,
@@ -77,4 +80,9 @@ pub struct Logs {
     /// Display logs in json format
     #[command(flatten)]
     pub display: DisplayCommands,
+}
+#[derive(Debug, Subcommand)]
+pub enum LogsCommands {
+    /// Clear logs
+    Rm(Empty),
 }

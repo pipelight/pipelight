@@ -4,7 +4,7 @@ use std::error::Error;
 
 trait ByName<T> {
     /// Return an instance of the struct.
-    fn name(name: &str) -> Result<T, Box<dyn Error>>;
+    fn get_by_name(name: &str) -> Result<T, Box<dyn Error>>;
 }
 trait Computed<T> {
     /// Return every instances of the struct.
@@ -27,7 +27,7 @@ impl Pipeline {
 }
 // impl ByName<Pipeline> for Pipeline {
 impl Pipeline {
-    pub fn name(name: &str) -> Result<Pipeline, Box<dyn Error>> {
+    pub fn get_by_name(name: &str) -> Result<Pipeline, Box<dyn Error>> {
         let pipelines = Pipeline::get()?;
         let optional = pipelines.iter().filter(|p| p.name == name).next();
         match optional {

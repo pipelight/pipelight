@@ -11,11 +11,21 @@ pub fn pretty(pipelines: &Vec<Pipeline>) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-/// Print json log file
+/// Print pipeline from json log file
 pub fn json(pipelines: &Vec<Pipeline>) -> Result<(), Box<dyn Error>> {
     for pipeline in pipelines {
         let pipeline_json = serde_json::to_string_pretty::<Pipeline>(&pipeline)?;
         println!("{}", pipeline_json);
+    }
+    Ok(())
+}
+/// Print pipeline from config file
+pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<(), Box<dyn Error>> {
+    if json {
+        let pipeline_json = serde_json::to_string_pretty::<Pipeline>(pipeline)?;
+        println!("{}", pipeline_json);
+    } else {
+        println!("{}", pipeline);
     }
     Ok(())
 }
