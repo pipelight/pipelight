@@ -61,6 +61,9 @@ impl Default for Pipeline {
             event: None,
             status: None,
             triggers: None,
+            on_failure: None,
+            on_success: None,
+            on_abortion: None,
             steps: steps,
         }
     }
@@ -79,6 +82,8 @@ impl Default for StepOrParallel {
             commands: commands,
             non_blocking: None,
             on_failure: None,
+            on_success: None,
+            on_abortion: None,
         };
         StepOrParallel::Step(step)
     }
@@ -109,10 +114,12 @@ impl Default for Step {
         let commands = vec![Command::default()];
         Step {
             name: "default".to_owned(),
+            status: None,
             commands: commands,
             non_blocking: None,
             on_failure: None,
-            status: None,
+            on_success: None,
+            on_abortion: None,
         }
     }
 }

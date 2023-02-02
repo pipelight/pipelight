@@ -17,11 +17,11 @@ pub struct Config {
 #[serde(deny_unknown_fields)]
 pub struct Pipeline {
     pub name: String,
-    pub steps: Vec<StepOrParallel>,
     pub triggers: Option<Vec<Trigger>>,
-    pub on_failure: Option<Vec<String>>,
-    pub on_success: Option<Vec<String>>,
-    pub on_abortion: Option<Vec<String>>,
+    pub on_failure: Option<Vec<StepOrParallel>>,
+    pub on_success: Option<Vec<StepOrParallel>>,
+    pub on_abortion: Option<Vec<StepOrParallel>>,
+    pub steps: Vec<StepOrParallel>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
@@ -29,6 +29,9 @@ pub struct Step {
     pub non_blocking: Option<bool>,
     pub name: String,
     pub commands: Vec<String>,
+    pub on_failure: Option<Vec<StepOrParallel>>,
+    pub on_success: Option<Vec<StepOrParallel>>,
+    pub on_abortion: Option<Vec<StepOrParallel>>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]

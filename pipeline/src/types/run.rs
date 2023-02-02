@@ -66,6 +66,16 @@ impl Pipeline {
         unsafe {
             (*ptr).log();
         }
+
+        // Execute post-run steps
+        unsafe {
+            if (*ptr).status == Some(Status::Failed) && (*ptr).on_failure.is_some() {
+                let steps = (*ptr).on_failure.as_mut().unwrap();
+                for step in steps {
+                    step.run(ptr);
+                }
+            }
+        }
     }
 }
 

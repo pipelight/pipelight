@@ -41,6 +41,9 @@ pub struct Pipeline {
     pub name: String,
     pub status: Option<Status>,
     pub triggers: Option<Vec<Trigger>>,
+    pub on_failure: Option<Vec<StepOrParallel>>,
+    pub on_success: Option<Vec<StepOrParallel>>,
+    pub on_abortion: Option<Vec<StepOrParallel>>,
     pub steps: Vec<StepOrParallel>,
 }
 
@@ -146,7 +149,9 @@ pub struct Step {
     pub name: String,
     pub commands: Vec<Command>,
     pub non_blocking: Option<bool>,
-    pub on_failure: Option<Vec<String>>,
+    pub on_failure: Option<Vec<StepOrParallel>>,
+    pub on_success: Option<Vec<StepOrParallel>>,
+    pub on_abortion: Option<Vec<StepOrParallel>>,
 }
 impl Step {
     pub fn status(&mut self, status: &Status) {

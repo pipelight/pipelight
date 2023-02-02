@@ -28,6 +28,43 @@ impl From<&cast::Config> for Config {
 
 impl From<&cast::Pipeline> for Pipeline {
     fn from(e: &cast::Pipeline) -> Self {
+        // Convert post-run steps
+        let mut on_failure = None;
+        if e.on_failure.is_some() {
+            let binding = e.on_success.clone();
+            on_failure = Some(
+                binding
+                    .unwrap()
+                    .iter()
+                    .map(|e| StepOrParallel::from(e))
+                    .collect::<Vec<StepOrParallel>>(),
+            );
+        }
+        // Convert post-run steps
+        let mut on_success = None;
+        if e.on_success.is_some() {
+            let binding = e.on_success.clone();
+            on_success = Some(
+                binding
+                    .unwrap()
+                    .iter()
+                    .map(|e| StepOrParallel::from(e))
+                    .collect::<Vec<StepOrParallel>>(),
+            );
+        }
+        // Convert post-run steps
+        let mut on_abortion = None;
+        if e.on_abortion.is_some() {
+            let binding = e.on_success.clone();
+            on_abortion = Some(
+                binding
+                    .unwrap()
+                    .iter()
+                    .map(|e| StepOrParallel::from(e))
+                    .collect::<Vec<StepOrParallel>>(),
+            );
+        }
+        // Convert steps
         let steps = &e
             .steps
             .iter()
@@ -59,6 +96,9 @@ impl From<&cast::Pipeline> for Pipeline {
             status: None,
             triggers: triggers,
             steps: steps.to_owned(),
+            on_success: on_success,
+            on_failure: on_failure,
+            on_abortion: on_abortion,
         };
         return p;
     }
