@@ -9,9 +9,33 @@ use std::path::Path;
 use std::process::exit;
 
 impl Config {
+    pub fn load_from_string(js_object: &str) -> Result<Config, Box<dyn Error>> {
+        let executable = "node -e";
+
+        // Javascript with rust escape sequence (double curly braces)
+        let script = format!(
+            "\'
+            const stock = console;
+            console = {{}};
+            console = stock;
+            {};
+            const json = JSON.stringify(config, null, 2);
+            console.log(json);
+        \'",
+            js_object
+        );
+
+        let command = format!("{} {}", executable, script);
+        let data = Exec::new().simple(&command)?;
+
+        trace!("Config json output:\n{}", &data.stdout.clone().unwrap());
+
+        let config = serde_json::from_str::<Config>(&data.stdout.clone().unwrap())?;
+        Ok(config)
+    }
     pub fn get() -> Config {
-        let file = "pipelight.config.mjs".to_owned();
-        let res = Config::load(&file);
+        let file = "pipelight.config.mjs";
+        let res = Config::load_from_file(&file);
         match res {
             Ok(res) => {
                 return res;
@@ -24,7 +48,7 @@ impl Config {
         };
     }
     /// Ensure config file exists
-    fn exists(file: &String) -> Result<bool, Box<dyn Error>> {
+    fn exists(file: &str) -> Result<bool, Box<dyn Error>> {
         let pwd = current_dir().unwrap();
         let string = format!("{}/{}", &pwd.display().to_string(), file);
         let path = Path::new(&string);
@@ -39,7 +63,7 @@ impl Config {
     }
 
     /// Ensure that the node.js has no error
-    fn lint(file: &String) -> Result<(), Box<dyn Error>> {
+    fn lint(file: &str) -> Result<(), Box<dyn Error>> {
         debug!("Linting config file");
         let command = format!("node {}", file);
         let data = Exec::new().simple(&command)?;
@@ -61,7 +85,7 @@ impl Config {
         }
     }
     /// Return the config from .mjs file inside the working dir.
-    fn load(file: &String) -> Result<Config, Box<dyn Error>> {
+    fn load_from_file(file: &str) -> Result<Config, Box<dyn Error>> {
         Config::exists(file)?;
         Config::lint(file)?;
 
