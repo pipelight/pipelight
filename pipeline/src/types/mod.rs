@@ -129,6 +129,12 @@ impl StepOrParallel {
             StepOrParallel::Parallel(res) => res.status.clone(),
         }
     }
+    fn non_blocking(&self) -> Option<bool> {
+        match self {
+            StepOrParallel::Step(res) => res.non_blocking,
+            StepOrParallel::Parallel(res) => res.non_blocking,
+        }
+    }
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Parallel {

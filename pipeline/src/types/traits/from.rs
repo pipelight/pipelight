@@ -31,10 +31,9 @@ impl From<&cast::Pipeline> for Pipeline {
         // Convert post-run steps
         let mut on_failure = None;
         if e.on_failure.is_some() {
-            let binding = e.on_success.clone();
+            let binding = e.on_failure.clone().unwrap();
             on_failure = Some(
                 binding
-                    .unwrap()
                     .iter()
                     .map(|e| StepOrParallel::from(e))
                     .collect::<Vec<StepOrParallel>>(),
@@ -43,10 +42,9 @@ impl From<&cast::Pipeline> for Pipeline {
         // Convert post-run steps
         let mut on_success = None;
         if e.on_success.is_some() {
-            let binding = e.on_success.clone();
+            let binding = e.on_success.clone().unwrap();
             on_success = Some(
                 binding
-                    .unwrap()
                     .iter()
                     .map(|e| StepOrParallel::from(e))
                     .collect::<Vec<StepOrParallel>>(),
@@ -55,10 +53,9 @@ impl From<&cast::Pipeline> for Pipeline {
         // Convert post-run steps
         let mut on_abortion = None;
         if e.on_abortion.is_some() {
-            let binding = e.on_success.clone();
+            let binding = e.on_abortion.clone().unwrap();
             on_abortion = Some(
                 binding
-                    .unwrap()
                     .iter()
                     .map(|e| StepOrParallel::from(e))
                     .collect::<Vec<StepOrParallel>>(),
@@ -70,6 +67,7 @@ impl From<&cast::Pipeline> for Pipeline {
             .iter()
             .map(|e| StepOrParallel::from(e))
             .collect::<Vec<StepOrParallel>>();
+
         // Flatten triggers
         let triggers: Option<Vec<Trigger>>;
         if e.triggers.is_none() {
@@ -115,6 +113,39 @@ impl From<&cast::StepOrParallel> for StepOrParallel {
 
 impl From<&cast::Step> for Step {
     fn from(e: &cast::Step) -> Self {
+        // Convert post-run steps
+        let mut on_failure = None;
+        if e.on_failure.is_some() {
+            let binding = e.on_failure.clone().unwrap();
+            on_failure = Some(
+                binding
+                    .iter()
+                    .map(|e| StepOrParallel::from(e))
+                    .collect::<Vec<StepOrParallel>>(),
+            );
+        }
+        // Convert post-run steps
+        let mut on_success = None;
+        if e.on_success.is_some() {
+            let binding = e.on_success.clone().unwrap();
+            on_success = Some(
+                binding
+                    .iter()
+                    .map(|e| StepOrParallel::from(e))
+                    .collect::<Vec<StepOrParallel>>(),
+            );
+        }
+        // Convert post-run steps
+        let mut on_abortion = None;
+        if e.on_abortion.is_some() {
+            let binding = e.on_abortion.clone().unwrap();
+            on_abortion = Some(
+                binding
+                    .iter()
+                    .map(|e| StepOrParallel::from(e))
+                    .collect::<Vec<StepOrParallel>>(),
+            );
+        }
         let commands = e
             .commands
             .iter()
@@ -125,7 +156,10 @@ impl From<&cast::Step> for Step {
             name: e.clone().name,
             non_blocking: e.clone().non_blocking,
             commands: commands,
-            ..default_step
+            status: None,
+            on_success: on_success,
+            on_failure: on_failure,
+            on_abortion: on_abortion,
         }
     }
 }

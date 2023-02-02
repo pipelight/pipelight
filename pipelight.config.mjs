@@ -28,11 +28,17 @@ const config = {
       steps: [
         {
           name: "wait",
-          commands: ["ls", "sleep 10", "pwd"],
+          commands: ["ls", "sleep 1", "psssswd"],
+          on_failure: [
+            {
+              name: "wait failure",
+              commands: [`echo \"caca\"`],
+            },
+          ],
         },
         {
           name: "wait2",
-          commands: ["ls", "sleep 10", "pwd"],
+          commands: ["ls", "sleep 1", "pwd"],
         },
       ],
       triggers: [

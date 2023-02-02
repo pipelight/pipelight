@@ -1,10 +1,8 @@
 # Rust
 
-Add on_failure, on_success and on_abortion fallback Option<Step>.
+Better log printing
 
 Add Clap-rs version feature flag
-
-Add dutration compution
 
 Add signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
 
@@ -14,6 +12,7 @@ Lint config file with miette/ or else
 
 ## Unit Tests
 
+Add dutration computation
 Finish Performance crate.
 Test multiple bad config file.
 
