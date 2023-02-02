@@ -52,6 +52,11 @@ impl Pipeline {
         unsafe {
             for step in &mut (*ptr).steps {
                 step.run(ptr);
+                if step.get_status() != Some(Status::Succeeded)
+                    && (step.non_blocking().is_none() || step.non_blocking() == Some(false))
+                {
+                    break;
+                }
             }
         }
         // Set pipeline status to last Step status
@@ -62,16 +67,14 @@ impl Pipeline {
             } else {
                 (*ptr).status(&Status::Failed)
             }
-        }
-        unsafe {
             (*ptr).log();
         }
 
         // Execute post-run steps
         unsafe {
             if (*ptr).status == Some(Status::Failed) && (*ptr).on_failure.is_some() {
-                let steps = (*ptr).on_failure.as_mut().unwrap();
-                for step in steps {
+                // let steps = (*ptr).on_failure.as_mut().unwrap();
+                for step in (*ptr).on_failure.as_mut().unwrap() {
                     step.run(ptr);
                 }
             }
@@ -111,6 +114,13 @@ impl Step {
         }
         unsafe {
             (*ptr).log();
+        }
+        // Execute post-run steps
+        println!("{:?}", self.on_failure);
+        if self.status == Some(Status::Failed) && self.on_failure.is_some() {
+            for step in self.on_failure.as_mut().unwrap() {
+                step.run(ptr);
+            }
         }
     }
 }
