@@ -6,9 +6,10 @@ use crate::stop;
 use crate::trigger;
 use clap::Parser;
 use log::info;
-use utils::logger::logger;
 // Logger
-use pipeline::types::{Config, Logs, Pipeline};
+use utils::logger::logger;
+
+use pipeline::types::{traits::getters::Getters, Config, Logs, Pipeline};
 use std::error::Error;
 
 /// Execute the Command Line Tool (cli)

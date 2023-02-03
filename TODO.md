@@ -8,6 +8,8 @@ Add Clap-rs version feature flag
 
 Add signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
 
+Use miette for error report
+
 ## Linting
 
 Lint config file with miette/ or else

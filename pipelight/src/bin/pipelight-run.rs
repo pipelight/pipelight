@@ -3,7 +3,7 @@
 use exec::types::Status;
 #[allow(dead_code)]
 use log::error;
-use pipeline::types::Pipeline;
+use pipeline::types::{traits::getters::Getters, Pipeline};
 use std::env;
 use std::error::Error;
 use std::process::exit;
@@ -27,7 +27,7 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     let args = env::args().collect::<Vec<String>>();
     let pipeline_name: String = args[1].to_owned();
 
-    let mut pipeline = Pipeline::name(&pipeline_name)?;
+    let mut pipeline = Pipeline::get_by_name(&pipeline_name)?;
     pipeline.run();
 
     match pipeline.status {

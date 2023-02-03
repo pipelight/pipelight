@@ -6,7 +6,7 @@
 // Internal imports
 mod logs;
 mod run;
-mod traits;
+pub mod traits;
 
 // Standard libs
 use log::{info, warn};

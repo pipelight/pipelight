@@ -2,18 +2,15 @@ use crate::types::{Config, Pipeline, Trigger};
 use log::warn;
 use std::error::Error;
 
-trait ByName<T> {
+pub trait Getters<T> {
+    /// Return every instances of the struct.
+    fn get() -> Result<Vec<T>, Box<dyn Error>>;
     /// Return an instance of the struct.
     fn get_by_name(name: &str) -> Result<T, Box<dyn Error>>;
 }
-trait Computed<T> {
-    /// Return every instances of the struct.
-    fn get() -> Result<Vec<T>, Box<dyn Error>>;
-}
 
-// impl Computed<Pipeline> for Pipeline {
-impl Pipeline {
-    pub fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
+impl Getters<Pipeline> for Pipeline {
+    fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
         let config = Config::new();
         let optional = config.pipelines;
         match optional {
@@ -24,10 +21,7 @@ impl Pipeline {
             }
         };
     }
-}
-// impl ByName<Pipeline> for Pipeline {
-impl Pipeline {
-    pub fn get_by_name(name: &str) -> Result<Pipeline, Box<dyn Error>> {
+    fn get_by_name(name: &str) -> Result<Pipeline, Box<dyn Error>> {
         let pipelines = Pipeline::get()?;
         let optional = pipelines.iter().filter(|p| p.name == name).next();
         match optional {
@@ -41,9 +35,8 @@ impl Pipeline {
     }
 }
 
-// impl Computed<Trigger> for Trigger {
-impl Trigger {
-    pub fn get() -> Result<Vec<Trigger>, Box<dyn Error>> {
+impl Getters<Trigger> for Trigger {
+    fn get() -> Result<Vec<Trigger>, Box<dyn Error>> {
         let pipelines = Pipeline::get()?;
         let mut triggers = pipelines
             .iter()
@@ -55,5 +48,11 @@ impl Trigger {
         triggers.sort();
         triggers.dedup();
         Ok(triggers)
+    }
+    fn get_by_name(name: &str) -> Result<Trigger, Box<dyn Error>> {
+        let triggers = Trigger::get();
+        let binding = triggers?;
+        let trigger = binding.iter().next().unwrap();
+        Ok(trigger.to_owned())
     }
 }

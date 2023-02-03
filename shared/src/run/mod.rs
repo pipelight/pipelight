@@ -1,7 +1,7 @@
 use exec::types::Status;
 use exec::Exec;
 use log::trace;
-use pipeline::types::Pipeline;
+use pipeline::types::{traits::getters::Getters, Pipeline};
 use std::env;
 use std::error::Error;
 // use std::thread;

@@ -28,7 +28,7 @@ const config = {
       steps: [
         {
           name: "wait",
-          commands: ["ls", "sleep 1", "psssswd"],
+          commands: ["ls", "sleep 1", "psssswd", "pwd"],
           on_failure: [
             {
               name: "wait failure",
@@ -38,6 +38,10 @@ const config = {
         },
         {
           name: "wait2",
+          commands: ["ls", "sleep 1", "pwd"],
+        },
+        {
+          name: "wait3",
           commands: ["ls", "sleep 1", "pwd"],
         },
       ],

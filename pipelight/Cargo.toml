@@ -15,4 +15,5 @@ exec = {path = "../exec" }
 pipeline = {path = "../pipeline" }
 utils = {path = "../utils" }
 log = "0.4.17"
+miette = { version = "5.5.0", features = ["fancy"] }
 
