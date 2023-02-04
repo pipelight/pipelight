@@ -1,14 +1,10 @@
-use crate::types::traits::display::tree::Tree;
+use crate::types::traits::tree::Tree;
 use crate::types::{Command, Event, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 use chrono::{DateTime, Local};
 use colored::Colorize;
 use exec::types::Status;
 use log::{debug, info, warn};
 use std::fmt;
-
-// Characteres
-mod characters;
-pub mod tree;
 
 // Tests
 mod test;
@@ -17,9 +13,14 @@ static INDENT: &str = " ";
 
 impl fmt::Display for Pipeline {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let level = 0;
-        let printable = self.make_tree(level).unwrap();
-        write!(f, "{}", printable);
+        let level = 1;
+        if self.status.is_some() {
+            let printable = self.make_tree(level).unwrap();
+            write!(f, "{}", printable);
+        } else {
+            let printable = self.make_stateless_tree(level).unwrap();
+            write!(f, "{}", printable);
+        }
 
         // let i = INDENT.repeat(1);
         // if self.clone().status.is_some() {
@@ -61,8 +62,13 @@ impl fmt::Display for StepOrParallel {
 impl fmt::Display for Step {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let level = 0;
-        let printable = self.make_tree(level).unwrap();
-        write!(f, "{}", printable);
+        if self.status.is_some() {
+            let printable = self.make_tree(level).unwrap();
+            write!(f, "{}", printable);
+        } else {
+            let printable = self.make_stateless_tree(level).unwrap();
+            write!(f, "{}", printable);
+        }
         //     let i = INDENT.repeat(2);
         //     let mtop = '┬';
         //     let lbot = '╰';
@@ -93,7 +99,14 @@ impl fmt::Display for Parallel {
 }
 impl fmt::Display for Command {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}\n", &self.stdin)?;
+        let level = 0;
+        if self.output.is_some() {
+            let printable = self.make_tree(level).unwrap();
+            write!(f, "{}", printable);
+        } else {
+            let printable = self.make_stateless_tree(level).unwrap();
+            write!(f, "{}", printable);
+        }
         // self.make_tree();
         // let i = INDENT.repeat(4);
         // let j = INDENT.repeat(6);
