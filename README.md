@@ -288,11 +288,9 @@ For long pipelines, you may want to redirect the output to your favorite reader.
 pipelight ls --json <pipeline_name> | less
 ```
 
-# CookBook / Deployement startegies
+# Tips
 
-!!! Work in progress !!!
-
-## Tips
+## Make it soft on the eye
 
 For the sake of reusability and when you need to deploy in multiple evironnements.
 
@@ -364,6 +362,9 @@ const config = makeConfig(params)
 export default config;
 ```
 
+## Split your config
+
+Split your config into multiple files and separate concerns.
 Overuse string interpolation, parameter destructuring and import/export ESM synthax.
 
 Export here
@@ -414,6 +415,8 @@ const config = makeConfig(params);
 
 export default config;
 ```
+
+# CookBook / Deployement startegies
 
 In the end it's just JS, either it is functionnal programming or object oriented,
 you just have to return an object that satisfies the Config type.

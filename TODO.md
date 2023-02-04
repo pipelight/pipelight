@@ -1,14 +1,15 @@
 # Rust
 
 Better log printing
-
-provide pipeline inspection with ls [Name]
+change logging step to error! level, output to info and phantom to trace
 
 Add Clap-rs version feature flag
 
 Add signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
 
 Use miette for error report
+
+Dtect if node/ts-node is installed
 
 ## Linting
 

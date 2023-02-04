@@ -80,7 +80,6 @@ const config = {
       triggers: [
         {
           branches: ["master", "dev"],
-          actions: ["pre-push", "manual"],
         },
       ],
     },
