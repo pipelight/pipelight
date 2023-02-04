@@ -1,4 +1,6 @@
 use crate::types::{Command, Event, Parallel, Pipeline, Step, StepOrParallel, Trigger};
+use colored::Colorize;
+use exec::types::Status;
 use log::{debug, info, warn};
 use std::error::Error;
 
@@ -65,7 +67,7 @@ impl Tree<Step> for Step {
         level = level + 1;
         let mut leaf = format!(
             "{indent:}{}\n{indent:}{}{}{}",
-            Characters::unicode().mtop,
+            Characters::unicode().vbar,
             Characters::unicode().lcross,
             Characters::unicode().hbar,
             Characters::unicode().rarrow,
@@ -77,7 +79,7 @@ impl Tree<Step> for Step {
             if 0 <= i && i < cmds_length {
                 leaf = format!(
                     "{indent:}{}\n{indent:}{}{}{}",
-                    Characters::unicode().mtop,
+                    Characters::unicode().vbar,
                     Characters::unicode().lcross,
                     Characters::unicode().hbar,
                     Characters::unicode().rarrow,
@@ -87,7 +89,7 @@ impl Tree<Step> for Step {
             if i == cmds_length {
                 leaf = format!(
                     "{indent:}{}\n{indent:}{}{}{}",
-                    Characters::unicode().mtop,
+                    Characters::unicode().vbar,
                     Characters::unicode().lcross,
                     Characters::unicode().hbar,
                     Characters::unicode().rarrow,
@@ -113,7 +115,7 @@ impl Tree<Step> for Step {
         level = level + 1;
         let mut leaf = format!(
             "{indent:}{}\n{indent:}{}{}{}",
-            Characters::unicode().mtop,
+            Characters::unicode().vbar,
             Characters::unicode().lcross,
             Characters::unicode().hbar,
             Characters::unicode().rarrow,
@@ -150,12 +152,12 @@ impl Tree<Step> for Step {
 impl Tree<Command> for Command {
     fn make_tree(&self, level: usize) -> Result<String, Box<dyn Error>> {
         let level = level + 2;
-        let indent = INDENT.repeat(level);
+        let mut indent = INDENT.repeat(level);
 
         let mut printable: String = "".to_owned();
 
-        let root = format!(" {}\n", &self.stdin);
-        printable.push_str(&root);
+        let mut root: String;
+        let mut cmd_with_leaf: String;
 
         let leaf = format!(
             "{indent:}{}\n{indent:}{}{}",
@@ -166,8 +168,43 @@ impl Tree<Command> for Command {
         );
 
         if self.output.is_some() {
-            let cmd_with_leaf = format!("{} {}\n", leaf, "my_output");
-            printable.push_str(&cmd_with_leaf);
+            match self.output.clone().unwrap().status {
+                Status::Started => {
+                    root = format!(" {}\n", &self.stdin);
+                    printable.push_str(&root);
+                }
+                Status::Running => {
+                    root = format!(" {}\n", &self.stdin.green());
+                    printable.push_str(&root);
+                }
+
+                Status::Succeeded => {
+                    root = format!(" {}\n", &self.stdin.blue());
+                    printable.push_str(&root);
+                    if self.output.clone().unwrap().stdout.is_some() {
+                        let mut stdout = self.output.clone().unwrap().stdout.unwrap();
+                        indent = INDENT.repeat(level + 1);
+                        stdout = stdout.replace("\n", &format!("\n{indent:} ", indent = indent));
+                        cmd_with_leaf = format!("{} {}\n", leaf, stdout);
+                        printable.push_str(&cmd_with_leaf);
+                    }
+                }
+                Status::Failed => {
+                    root = format!(" {}\n", &self.stdin.red());
+                    printable.push_str(&root);
+                    if self.output.clone().unwrap().stderr.is_some() {
+                        let mut stderr = self.output.clone().unwrap().stderr.unwrap();
+                        indent = INDENT.repeat(level + 1);
+                        stderr = stderr.replace("\n", &format!("\n{indent:} ", indent = indent));
+                        cmd_with_leaf = format!("{} {}\n", leaf, stderr);
+                        printable.push_str(&cmd_with_leaf);
+                    }
+                }
+                Status::Aborted => {
+                    root = format!(" {}\n", &self.stdin.yellow());
+                    printable.push_str(&root);
+                }
+            }
         }
         Ok(printable)
     }

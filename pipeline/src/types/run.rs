@@ -117,6 +117,9 @@ impl Step {
         self.status(&Status::Running);
         for command in &mut self.commands {
             command.run(ptr);
+            if command.output.clone().unwrap().status != Status::Succeeded {
+                break;
+            }
         }
         let optional_output = &self.commands.last().unwrap().output;
         if optional_output.is_some() {
