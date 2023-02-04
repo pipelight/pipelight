@@ -17,7 +17,9 @@ static INDENT: &str = " ";
 
 impl fmt::Display for Pipeline {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.make_tree();
+        let level = 0;
+        let printable = self.make_tree(level).unwrap();
+        write!(f, "{}", printable);
 
         // let i = INDENT.repeat(1);
         // if self.clone().status.is_some() {
@@ -58,7 +60,9 @@ impl fmt::Display for StepOrParallel {
 
 impl fmt::Display for Step {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.make_tree();
+        let level = 0;
+        let printable = self.make_tree(level).unwrap();
+        write!(f, "{}", printable);
         //     let i = INDENT.repeat(2);
         //     let mtop = '┬';
         //     let lbot = '╰';
@@ -89,7 +93,7 @@ impl fmt::Display for Parallel {
 }
 impl fmt::Display for Command {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        info!(target: "nude", "{}\n", &self.stdin);
+        write!(f, "{}\n", &self.stdin)?;
         // self.make_tree();
         // let i = INDENT.repeat(4);
         // let j = INDENT.repeat(6);
