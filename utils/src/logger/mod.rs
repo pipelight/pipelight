@@ -8,14 +8,14 @@ use std::fs;
 use uuid::Uuid;
 
 // Global var
-use arc_swap::ArcSwap;
+// use arc_swap::ArcSwap;
 use once_cell::sync::Lazy;
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 pub mod config;
 pub mod default;
 
-pub static logger: Lazy<ArcSwap<Logger>> = Lazy::new(|| ArcSwap::from(Arc::new(Logger::new())));
+pub static logger: Lazy<Arc<Mutex<Logger>>> = Lazy::new(|| Arc::new(Mutex::new(Logger::new())));
 
 #[derive(Debug, Clone)]
 pub struct Logger {
@@ -34,9 +34,10 @@ impl Logger {
         self.handle.set_config(config);
         return self.to_owned();
     }
-    pub fn level(&self, level: &LevelFilter) -> Self {
+    pub fn level(&mut self, level: &LevelFilter) -> Self {
         let config = config::default(level);
         self.handle.set_config(config);
+        self.level = level.to_owned();
         return self.to_owned();
     }
     /// Get handler to change logLevel at runtime

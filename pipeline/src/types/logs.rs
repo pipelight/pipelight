@@ -20,7 +20,7 @@ impl Logs {
     }
     /// Return pipelines from log files
     pub fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
-        let dir = &logger.load().directory;
+        let dir = &logger.lock().unwrap().directory;
         // Safe exit if no log folder
         if !Path::new(dir).exists() {
             let message = "No log can be displayed. Log folder is empty";

@@ -18,7 +18,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
     let args = types::Cli::parse();
     // Set verbosity
     let verbosity = args.verbose.log_level_filter();
-    logger.load().level(&verbosity);
+    logger.lock().unwrap().level(&verbosity);
 
     match args.commands {
         types::Commands::Ls(list) => {
@@ -58,7 +58,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             }
             Some(logs_cmd) => match logs_cmd {
                 types::LogsCommands::Rm(logs) => {
-                    logger.load().clear()?;
+                    logger.lock().unwrap().clear()?;
                 }
             },
         },

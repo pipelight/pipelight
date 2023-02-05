@@ -199,7 +199,7 @@ impl Trigger {
             } else {
                 tuplelist.push(Trigger {
                     branch: Some(branch.to_owned()),
-                    action: None,
+                    action: Some(Flag::Manual),
                 })
             }
         }

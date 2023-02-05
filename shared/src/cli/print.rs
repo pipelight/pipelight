@@ -1,7 +1,8 @@
 use chrono::{DateTime, Local};
-use log::{info, warn};
+use log::{info, warn, LevelFilter};
 use pipeline::types::{Config, Logs, Pipeline};
 use std::error::Error;
+use utils::logger::logger;
 
 /// Pretty print logs from json log file
 pub fn pretty(pipelines: &Vec<Pipeline>) -> Result<(), Box<dyn Error>> {
@@ -32,33 +33,54 @@ pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<(), Box<dyn Error>> {
 
 /// Print a flatten list of pipelines present in config file
 pub fn list() -> Result<(), Box<dyn Error>> {
-    // Retrieve pipelines defined in config and run logs.
+    let level = logger.lock().unwrap().level;
     let config = Config::new();
-    warn!(target: "nude",
-        "{:<15} {:<25} {:<40}\n",
-        "last_status", "last_run_date" ,"name"
-    );
+    // Retrieve pipelines defined in config and run logs.
     for pipeline in &config.pipelines.unwrap() {
         let mut date = "".to_owned();
         let mut status = "".to_owned();
+        let mut action = "".to_owned();
+        let mut branch = "".to_owned();
         // Retrieve logs data if any
         if Logs::get().is_ok() {
             let pipe_logs = Logs::get_by_name(&pipeline.name)?;
             let last_log = pipe_logs.iter().next();
             if last_log.is_some() {
                 let last_log = last_log.unwrap();
-                if last_log.status.is_some() {
-                    status = String::from(&last_log.status.clone().unwrap());
-                    let str_date = last_log.event.clone().unwrap().date;
-                    date = str_date
-                        .parse::<DateTime<Local>>()
-                        .unwrap()
-                        .format("%Y-%m-%d %H:%M:%S")
-                        .to_string();
-                }
+                status = String::from(&last_log.status.clone().unwrap());
+                branch = String::from(&last_log.event.clone().unwrap().trigger.branch.unwrap());
+                action = String::from(&last_log.event.clone().unwrap().trigger.action.unwrap());
+                let str_date = last_log.event.clone().unwrap().date;
+                date = str_date
+                    .parse::<DateTime<Local>>()
+                    .unwrap()
+                    .format("%Y-%m-%d %H:%M:%S")
+                    .to_string();
             }
         }
-        println!("{:<15} {:<25} {:<40}", status, date, pipeline.name);
+        match level {
+            LevelFilter::Info => {
+                info!(target: "nude",
+                    "{:<15} {:<15} {:<15} {:<25} {:<40}\n",
+                    "status", "action", "branch","date" ,"name"
+                );
+                info!(target: "nude",
+                    "{:<15} {:<15} {:<15} {:<25} {:<40}",
+                    status, action, branch, date, pipeline.name
+                );
+            }
+            LevelFilter::Warn => {
+                warn!(target: "nude",
+                    "{:<15} {:<25} {:<40}\n",
+                    "status","date" ,"name"
+                );
+                warn!(target: "nude",
+                    "{:<15} {:<25} {:<40}",
+                    status, date, pipeline.name);
+            }
+
+            _ => {}
+        }
     }
     Ok(())
 }
