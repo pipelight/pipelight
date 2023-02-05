@@ -143,7 +143,6 @@ impl Tree<Step> for Step {
                     indent = indent,
                 );
             }
-            // printable.push_str(cmd.make_tree(level)?);
             printable.push_str(&format!("{}{}", leaf, cmd.make_stateless_tree(level)?))
         }
         Ok(printable)

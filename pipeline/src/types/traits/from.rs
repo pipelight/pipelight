@@ -189,10 +189,17 @@ impl Trigger {
     pub fn flatten(e: &cast::Trigger) -> Vec<Trigger> {
         let mut tuplelist: Vec<Trigger> = vec![];
         for branch in e.branches.clone() {
-            for action in e.actions.clone().unwrap() {
+            if e.actions.clone().is_some() {
+                for action in e.actions.clone().unwrap() {
+                    tuplelist.push(Trigger {
+                        branch: Some(branch.to_owned()),
+                        action: Some(Flag::from(&action)),
+                    })
+                }
+            } else {
                 tuplelist.push(Trigger {
                     branch: Some(branch.to_owned()),
-                    action: Some(Flag::from(&action)),
+                    action: None,
                 })
             }
         }

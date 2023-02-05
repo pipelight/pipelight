@@ -1,11 +1,9 @@
 # Pipelight
 
-Now Stable!!
+A Lightweight CI/CD tool.
 
-A cli to write pipelines in Javascript.
+Write pipelines in Javascript.
 And trigger them automatically on git action.
-
-Lightweight CI/CD tool.
 
 [Full Documentation](https://pipelight.areskul.com) in progress.
 
