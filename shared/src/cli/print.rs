@@ -1,5 +1,5 @@
 use chrono::{DateTime, Local};
-use log::{info, warn, LevelFilter};
+use log::{debug, error, info, warn, LevelFilter};
 use pipeline::types::{Config, Logs, Pipeline};
 use std::error::Error;
 use utils::logger::logger;
@@ -35,6 +35,27 @@ pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<(), Box<dyn Error>> {
 pub fn list() -> Result<(), Box<dyn Error>> {
     let level = logger.lock().unwrap().level;
     let config = Config::new();
+    // Print headers
+    match level {
+        LevelFilter::Warn => {
+            warn!(target: "nude",
+                "{:<15} {:<25} {:<40}\n",
+                "status","date" ,"name"
+            );
+        }
+        LevelFilter::Error => {
+            error!(target: "nude",
+                "{:<40}\n",
+                "name"
+            );
+        }
+        _ => {
+            info!(target: "nude",
+                "{:<15} {:<15} {:<15} {:<25} {:<40}\n",
+                "status", "action", "branch","date" ,"name"
+            );
+        }
+    }
     // Retrieve pipelines defined in config and run logs.
     for pipeline in &config.pipelines.unwrap() {
         let mut date = "".to_owned();
@@ -59,27 +80,22 @@ pub fn list() -> Result<(), Box<dyn Error>> {
             }
         }
         match level {
-            LevelFilter::Info => {
-                info!(target: "nude",
-                    "{:<15} {:<15} {:<15} {:<25} {:<40}\n",
-                    "status", "action", "branch","date" ,"name"
-                );
-                info!(target: "nude",
-                    "{:<15} {:<15} {:<15} {:<25} {:<40}",
-                    status, action, branch, date, pipeline.name
-                );
-            }
             LevelFilter::Warn => {
                 warn!(target: "nude",
                     "{:<15} {:<25} {:<40}\n",
-                    "status","date" ,"name"
-                );
-                warn!(target: "nude",
-                    "{:<15} {:<25} {:<40}",
                     status, date, pipeline.name);
             }
-
-            _ => {}
+            LevelFilter::Error => {
+                error!(target: "nude",
+                    "{:<40}\n",
+                     pipeline.name);
+            }
+            _ => {
+                info!(target: "nude",
+                    "{:<15} {:<15} {:<15} {:<25} {:<40}\n",
+                    status, action, branch, date, pipeline.name
+                );
+            }
         }
     }
     Ok(())

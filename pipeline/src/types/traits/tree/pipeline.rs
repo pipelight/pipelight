@@ -30,7 +30,7 @@ impl Tree<Pipeline> for Pipeline {
         );
         for (i, step) in self.steps.iter().enumerate() {
             let indent = INDENT.repeat(level);
-            if 0 <= i && i < steps_length {
+            if i < steps_length {
                 leaf = format!(
                     "{indent:}{}\n{indent:}{}{}",
                     Characters::unicode().vbar,
@@ -75,7 +75,7 @@ impl Tree<Pipeline> for Pipeline {
         );
         for (i, step) in self.steps.iter().enumerate() {
             let indent = INDENT.repeat(level);
-            if 0 <= i && i < steps_length {
+            if i < steps_length {
                 leaf = format!(
                     "{indent:}{}\n{indent:}{}{}",
                     Characters::unicode().vbar,

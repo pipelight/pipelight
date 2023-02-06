@@ -76,7 +76,7 @@ impl Tree<Step> for Step {
 
         for (i, cmd) in self.commands.iter().enumerate() {
             let indent = INDENT.repeat(level);
-            if 0 <= i && i < cmds_length {
+            if i < cmds_length {
                 leaf = format!(
                     "{indent:}{}\n{indent:}{}{}{}",
                     Characters::unicode().vbar,
@@ -123,7 +123,7 @@ impl Tree<Step> for Step {
         );
         for (i, cmd) in self.commands.iter().enumerate() {
             let indent = INDENT.repeat(level);
-            if 0 <= i && i < cmds_length {
+            if i < cmds_length {
                 leaf = format!(
                     "{indent:}{}\n{indent:}{}{}{}",
                     Characters::unicode().vbar,
@@ -155,8 +155,8 @@ impl Tree<Command> for Command {
 
         let mut printable: String = "".to_owned();
 
-        let mut root: String;
-        let mut cmd_with_leaf: String;
+        let root: String;
+        let cmd_with_leaf: String;
 
         let leaf = format!(
             "{indent:}{}\n{indent:}{}{}",
