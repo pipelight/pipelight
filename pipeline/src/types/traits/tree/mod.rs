@@ -1,23 +1,108 @@
 use crate::types::{Command, Event, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 use colored::Colorize;
-use exec::types::Status;
+use exec::types::{Statuable, Status};
 use log::{debug, info, warn};
 use std::error::Error;
 
 pub mod characters;
 pub mod composables;
-pub mod pipeline;
 use super::tree::characters::Characters;
-use super::tree::composables::{make_branch, make_statefull_tree, make_stateless_tree};
 
-static INDENT: &str = "  ";
+static INDENT: &str = "   ";
 
+pub fn make_branch(index: usize, vec_length: usize, level: usize) -> String {
+    let indent = INDENT.repeat(level);
+    let leaf: String;
+    if index < vec_length {
+        leaf = format!(
+            "{indent:}{}\n{indent:}{}{}",
+            Characters::unicode().vbar,
+            Characters::unicode().lcross,
+            Characters::unicode().hbar,
+            indent = indent,
+        );
+    } else {
+        leaf = format!(
+            "{indent:}{}\n{indent:}{}{}",
+            Characters::unicode().vbar,
+            Characters::unicode().lbot,
+            Characters::unicode().hbar,
+            indent = indent,
+        );
+    }
+    return leaf;
+}
 pub trait Tree {
     /// Return a tree structure
     fn make_stateless_tree(&self, level: usize) -> String;
     fn make_statefull_tree(&self, level: usize) -> String;
 }
 
+impl Tree for Pipeline {
+    fn make_statefull_tree(&self, level: usize) -> String {
+        let mut printable: String = "".to_owned();
+
+        // Make root
+        let root = format!("pipeline: {}\n", &self.name);
+        printable.push_str(&root);
+
+        // Make sub branch
+        let vec_length = &self.steps.len() - 1;
+        for (i, e) in self.steps.iter().enumerate() {
+            match e {
+                StepOrParallel::Step(res) => {
+                    let leafed = format!(
+                        "{}{}",
+                        make_branch(i, vec_length, level),
+                        &res.make_statefull_tree(level),
+                    );
+                    printable.push_str(&leafed);
+                }
+
+                StepOrParallel::Parallel(res) => {
+                    let leafed = format!("{}", &res.make_statefull_tree(level),);
+                    printable.push_str(&leafed);
+                }
+            }
+        }
+        return printable;
+    }
+    fn make_stateless_tree(&self, level: usize) -> String {
+        let mut printable: String = "".to_owned();
+
+        // Make root
+        let root = format!("pipeline: {}\n", &self.name);
+        printable.push_str(&root);
+
+        // Make branch
+        let vec_length = &self.steps.len() - 1;
+        for (i, e) in self.steps.iter().enumerate() {
+            match e {
+                StepOrParallel::Step(res) => {
+                    let leafed = format!(
+                        "{}{}",
+                        make_branch(i, vec_length, level),
+                        &res.make_statefull_tree(level),
+                    );
+                    printable.push_str(&leafed);
+                }
+
+                StepOrParallel::Parallel(res) => {
+                    let leafed = format!("{}", &res.make_stateless_tree(level),);
+                    printable.push_str(&leafed);
+                }
+            }
+            match e.get_status() {
+                None => {}
+                Some(Status::Failed) => {
+                    break;
+                }
+                _ => {}
+            }
+        }
+        return printable;
+    }
+}
 impl Tree for StepOrParallel {
     fn make_statefull_tree(&self, level: usize) -> String {
         let printable: String;
@@ -38,16 +123,33 @@ impl Tree for StepOrParallel {
 }
 impl Tree for Parallel {
     fn make_statefull_tree(&self, level: usize) -> String {
+        let mut level = level;
         let mut printable: String = "".to_owned();
-        for e in &self.steps {
-            printable.push_str(&e.make_statefull_tree(level));
+
+        // Make branch
+        let vec_length = &self.steps.len() - 1;
+        for (i, e) in self.steps.iter().enumerate() {
+            let leafed = format!(
+                "{}{}",
+                make_branch(i, vec_length, level),
+                &e.make_statefull_tree(level),
+            );
+            printable.push_str(&leafed);
         }
         return printable;
     }
     fn make_stateless_tree(&self, level: usize) -> String {
+        let mut level = level;
         let mut printable: String = "".to_owned();
-        for e in &self.steps {
-            printable.push_str(&e.make_stateless_tree(level));
+        // Make branch
+        let vec_length = &self.steps.len() - 1;
+        for (i, e) in self.steps.iter().enumerate() {
+            let leafed = format!(
+                "{}{}",
+                make_branch(i, vec_length, level),
+                &e.make_statefull_tree(level),
+            );
+            printable.push_str(&leafed);
         }
         return printable;
     }

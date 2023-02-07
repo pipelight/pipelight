@@ -13,7 +13,7 @@ static INDENT: &str = " ";
 
 impl fmt::Display for Pipeline {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let level = 1;
+        let level = 0;
         if self.status.is_some() {
             let printable = self.clone().make_statefull_tree(level);
             write!(f, "{}", printable);
