@@ -15,10 +15,10 @@ impl fmt::Display for Pipeline {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let level = 1;
         if self.status.is_some() {
-            let printable = self.make_tree(level).unwrap();
+            let printable = self.clone().make_statefull_tree(level);
             write!(f, "{}", printable);
         } else {
-            let printable = self.make_stateless_tree(level).unwrap();
+            let printable = self.clone().make_stateless_tree(level);
             write!(f, "{}", printable);
         }
 
@@ -63,10 +63,10 @@ impl fmt::Display for Step {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let level = 0;
         if self.status.is_some() {
-            let printable = self.make_tree(level).unwrap();
+            let printable = self.clone().make_statefull_tree(level);
             write!(f, "{}", printable);
         } else {
-            let printable = self.make_stateless_tree(level).unwrap();
+            let printable = self.clone().make_stateless_tree(level);
             write!(f, "{}", printable);
         }
         //     let i = INDENT.repeat(2);
@@ -101,13 +101,13 @@ impl fmt::Display for Command {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let level = 0;
         if self.output.is_some() {
-            let printable = self.make_tree(level).unwrap();
+            let printable = self.clone().make_statefull_tree(level);
             write!(f, "{}", printable);
         } else {
-            let printable = self.make_stateless_tree(level).unwrap();
+            let printable = self.clone().make_stateless_tree(level);
             write!(f, "{}", printable);
         }
-        // self.make_tree();
+        // self.clone().make_tree();
         // let i = INDENT.repeat(4);
         // let j = INDENT.repeat(6);
         // let command: Command = self.clone();

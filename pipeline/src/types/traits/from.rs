@@ -179,6 +179,7 @@ impl From<&cast::Parallel> for Parallel {
 impl From<&String> for Command {
     fn from(s: &String) -> Self {
         Command {
+            status: None,
             stdin: s.to_owned(),
             output: None,
         }

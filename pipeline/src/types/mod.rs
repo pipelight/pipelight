@@ -117,19 +117,7 @@ pub enum StepOrParallel {
     Parallel(Parallel),
 }
 impl StepOrParallel {
-    fn set_status(&mut self, status: &Status) {
-        match self {
-            StepOrParallel::Step(res) => res.status(status),
-            StepOrParallel::Parallel(res) => res.status(status),
-        }
-    }
-    fn get_status(&self) -> Option<Status> {
-        match self {
-            StepOrParallel::Step(res) => res.status.clone(),
-            StepOrParallel::Parallel(res) => res.status.clone(),
-        }
-    }
-    fn non_blocking(&self) -> Option<bool> {
+    pub fn non_blocking(&self) -> Option<bool> {
         match self {
             StepOrParallel::Step(res) => res.non_blocking,
             StepOrParallel::Parallel(res) => res.non_blocking,
@@ -167,6 +155,7 @@ impl Step {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Command {
+    pub status: Option<Status>,
     pub stdin: String,
     pub output: Option<StrOutput>,
 }

@@ -131,6 +131,7 @@ impl Step {
 impl Default for Command {
     fn default() -> Self {
         Command {
+            status: None,
             stdin: "".to_owned(),
             output: None,
         }

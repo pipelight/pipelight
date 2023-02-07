@@ -25,7 +25,7 @@ impl From<&Output> for StrOutput {
             false => Status::Failed,
         };
         return StrOutput {
-            status: status,
+            status: Some(status),
             stdout: stdout,
             stderr: stderr,
         };

@@ -1,103 +1,85 @@
 // Relative paths
 use super::characters::Characters;
+use super::composables::{make_branch, make_statefull_tree, make_stateless_tree};
 use super::Tree;
 
 // Absolute paths
 use crate::types::{Command, Event, Parallel, Pipeline, Step, StepOrParallel, Trigger};
+use exec::types::{Statuable, Status};
 use log::{debug, info, warn};
 use std::error::Error;
 
 static INDENT: &str = " ";
 
-impl Tree<Pipeline> for Pipeline {
-    fn make_tree(&self, level: usize) -> Result<String, Box<dyn Error>> {
+impl Tree for Pipeline {
+    fn make_statefull_tree(&self, level: usize) -> String {
         let mut level = level;
         let indent = INDENT.repeat(level);
-        let has_status = self.status.is_some();
         let mut printable: String = "".to_owned();
 
+        // Make root
         let root = format!(" pipeline: {}\n", &self.name);
         printable.push_str(&root);
 
-        let steps_length = &self.steps.len() - 1;
+        // Make sub branch
         level = level + 1;
-        let mut leaf = format!(
-            "{indent:}{}\n{indent:}{}{}",
-            Characters::unicode().mtop,
-            Characters::unicode().lcross,
-            Characters::unicode().hbar,
-            indent = indent,
-        );
-        for (i, step) in self.steps.iter().enumerate() {
-            let indent = INDENT.repeat(level);
-            if i < steps_length {
-                leaf = format!(
-                    "{indent:}{}\n{indent:}{}{}",
-                    Characters::unicode().vbar,
-                    Characters::unicode().lcross,
-                    Characters::unicode().hbar,
-                    indent = indent,
-                );
-            }
-            if i == steps_length {
-                leaf = format!(
-                    "{indent:}{}\n{indent:}{}{}",
-                    Characters::unicode().vbar,
-                    Characters::unicode().lbot,
-                    Characters::unicode().hbar,
-                    indent = indent,
-                );
-            }
-            // warn!(target: "nude", "{}{}", leaf, step)
-            let step_with_leaf = format!("{}{}", leaf, &step.make_tree(level)?);
-            printable.push_str(&step_with_leaf);
-        }
+        let vec_length = &self.steps.len() - 1;
+        for (i, e) in self.steps.iter().enumerate() {
+            match e {
+                StepOrParallel::Step(res) => {
+                    let leafed = format!(
+                        "{}{}",
+                        make_branch(i, vec_length, level),
+                        &res.make_statefull_tree(level),
+                    );
+                    printable.push_str(&leafed);
+                }
 
-        Ok(printable)
+                StepOrParallel::Parallel(res) => {
+                    let leafed = format!("{}", &res.make_statefull_tree(level),);
+                    printable.push_str(&leafed);
+                }
+            }
+        }
+        return printable;
     }
-    fn make_stateless_tree(&self, level: usize) -> Result<String, Box<dyn Error>> {
+    fn make_stateless_tree(&self, level: usize) -> String {
         let mut level = level;
         let indent = INDENT.repeat(level);
-        let has_status = self.status.is_some();
         let mut printable: String = "".to_owned();
 
+        // Make root
         let root = format!(" pipeline: {}\n", &self.name);
         printable.push_str(&root);
 
-        let steps_length = &self.steps.len() - 1;
+        // Make branch
         level = level + 1;
-        let mut leaf = format!(
-            "{indent:}{}\n{indent:}{}{}",
-            Characters::unicode().mtop,
-            Characters::unicode().lcross,
-            Characters::unicode().hbar,
-            indent = indent,
-        );
-        for (i, step) in self.steps.iter().enumerate() {
-            let indent = INDENT.repeat(level);
-            if i < steps_length {
-                leaf = format!(
-                    "{indent:}{}\n{indent:}{}{}",
-                    Characters::unicode().vbar,
-                    Characters::unicode().lcross,
-                    Characters::unicode().hbar,
-                    indent = indent,
-                );
-            }
-            if i == steps_length {
-                leaf = format!(
-                    "{indent:}{}\n{indent:}{}{}",
-                    Characters::unicode().vbar,
-                    Characters::unicode().lbot,
-                    Characters::unicode().hbar,
-                    indent = indent,
-                );
-            }
-            // warn!(target: "nude", "{}{}", leaf, step)
-            let step_with_leaf = format!("{}{}", leaf, &step.make_stateless_tree(level)?);
-            printable.push_str(&step_with_leaf);
-        }
+        let vec_length = &self.steps.len() - 1;
+        for (i, e) in self.steps.iter().enumerate() {
+            match e {
+                StepOrParallel::Step(res) => {
+                    let leafed = format!(
+                        "{}{tag:}{}",
+                        make_branch(i, vec_length, level),
+                        &res.make_statefull_tree(level),
+                        tag = res.name
+                    );
+                    printable.push_str(&leafed);
+                }
 
-        Ok(printable)
+                StepOrParallel::Parallel(res) => {
+                    let leafed = format!("{}", &res.make_stateless_tree(level),);
+                    printable.push_str(&leafed);
+                }
+            }
+            match e.get_status() {
+                None => {}
+                Some(Status::Failed) => {
+                    break;
+                }
+                _ => {}
+            }
+        }
+        return printable;
     }
 }

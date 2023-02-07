@@ -1,5 +1,7 @@
 # Rust
 
+Prefix with leaf if level != 0
+
 Better log printing
 change logging step to error! level, output to info and phantom to trace
 

@@ -1,5 +1,5 @@
 use super::{Command, Event, Parallel, Pipeline, Step, StepOrParallel};
-use exec::types::{Status, StrOutput};
+use exec::types::{Statuable, Status, StrOutput};
 use exec::Exec;
 use std::clone::Clone;
 use std::error::Error;
@@ -103,57 +103,11 @@ impl StepOrParallel {
     }
 }
 
-#[derive(Debug, Clone, Copy)]
-struct PtrWrapper(*mut Pipeline);
-unsafe impl Sync for PtrWrapper {}
-unsafe impl Send for PtrWrapper {}
-
-impl Step {
-    fn unsafe_run(&mut self, ptr: PtrWrapper) {
-        let ptr = ptr.0.clone();
-        self.run(ptr);
-    }
-    fn run(&mut self, ptr: *mut Pipeline) {
-        self.status(&Status::Running);
-        for command in &mut self.commands {
-            command.run(ptr);
-            if command.output.clone().unwrap().status != Status::Succeeded {
-                break;
-            }
-        }
-        let optional_output = &self.commands.last().unwrap().output;
-        if optional_output.is_some() {
-            self.status(&optional_output.clone().unwrap().status)
-        } else {
-            self.status(&Status::Failed)
-        }
-        unsafe {
-            (*ptr).log();
-        }
-        // Execute post-run steps
-        if self.status == Some(Status::Failed) && self.on_failure.is_some() {
-            for step in self.on_failure.as_mut().unwrap() {
-                step.run(ptr);
-            }
-        }
-        if self.status == Some(Status::Succeeded) && self.on_success.is_some() {
-            for step in self.on_success.as_mut().unwrap() {
-                step.run(ptr);
-            }
-        }
-        if self.status == Some(Status::Aborted) && self.on_abortion.is_some() {
-            for step in self.on_success.as_mut().unwrap() {
-                step.run(ptr);
-            }
-        }
-    }
-}
-
 impl Parallel {
     fn run(&mut self, ptr: *mut Pipeline) {
         self.status(&Status::Running);
 
-        // Pass wrapped pointer to thread
+        // Pass wrapped pointer to threads
         let ptr_wrapper = PtrWrapper(ptr);
         self.steps
             .par_iter_mut()
@@ -181,22 +135,78 @@ impl Parallel {
     }
 }
 
+#[derive(Debug, Clone, Copy)]
+struct PtrWrapper(*mut Pipeline);
+unsafe impl Sync for PtrWrapper {}
+unsafe impl Send for PtrWrapper {}
+impl Step {
+    fn unsafe_run(&mut self, ptr: PtrWrapper) {
+        let ptr = ptr.0.clone();
+        self.run(ptr);
+    }
+    fn run(&mut self, ptr: *mut Pipeline) {
+        self.status(&Status::Running);
+
+        // Run commands
+        for command in &mut self.commands {
+            command.run(ptr);
+            if command.status.is_none() {
+                break;
+            }
+        }
+
+        // Set global status after run
+        let final_status = &self.commands.last().unwrap().status;
+        if final_status.is_some() {
+            self.status = final_status.clone();
+        } else {
+            self.status(&Status::Failed)
+        }
+
+        unsafe {
+            (*ptr).log();
+        }
+        // Execute post-run steps
+        if self.status == Some(Status::Failed) && self.on_failure.is_some() {
+            for step in self.on_failure.as_mut().unwrap() {
+                step.run(ptr);
+            }
+        }
+        if self.status == Some(Status::Succeeded) && self.on_success.is_some() {
+            for step in self.on_success.as_mut().unwrap() {
+                step.run(ptr);
+            }
+        }
+        if self.status == Some(Status::Aborted) && self.on_abortion.is_some() {
+            for step in self.on_success.as_mut().unwrap() {
+                step.run(ptr);
+            }
+        }
+    }
+}
+
 impl Command {
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
-        let start = Instant::now();
+        // let start = Instant::now();
         // let mut duration = start.elapsed();
         // pipeline.duration.unwrap() + duration;
+
+        self.status = Some(Status::Running);
+        unsafe {
+            (*ptr).log();
+        }
 
         let output_res = Exec::new().simple(&self.stdin);
         match output_res {
             Ok(output) => {
-                self.output = Some(output);
+                self.output = Some(output.clone());
+                self.status = output.clone().status;
                 Ok(())
             }
             Err(e) => {
                 let mut output = StrOutput::new();
-                output.status = Status::Failed;
+                output.status = Some(Status::Aborted);
                 self.output = Some(output);
                 Err(e)
             }

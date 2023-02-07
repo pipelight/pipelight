@@ -14,14 +14,14 @@ pub enum Status {
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct StrOutput {
-    pub status: Status,
+    pub status: Option<Status>,
     pub stdout: Option<String>,
     pub stderr: Option<String>,
 }
 impl Default for StrOutput {
     fn default() -> Self {
         StrOutput {
-            status: Status::Started,
+            status: Some(Status::Started),
             stdout: None,
             stderr: None,
         }
@@ -30,5 +30,18 @@ impl Default for StrOutput {
 impl StrOutput {
     pub fn new() -> StrOutput {
         Self::default()
+    }
+}
+
+pub trait Statuable {
+    fn get_status(&self) -> Option<Status>;
+    fn set_status(&mut self, status: Option<Status>);
+}
+impl Statuable for StrOutput {
+    fn get_status(&self) -> Option<Status> {
+        return self.status.clone();
+    }
+    fn set_status(&mut self, status: Option<Status>) {
+        self.status = status;
     }
 }
