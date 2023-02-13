@@ -11,9 +11,17 @@ use super::tree::characters::Characters;
 static INDENT: &str = "   ";
 
 pub fn make_branch(index: usize, vec_length: usize, level: usize) -> String {
-    let indent = INDENT.repeat(level);
     let leaf: String;
+    let mut indent = "".to_owned();
+
     if index < vec_length {
+        let mut i = 0;
+        while i < level {
+            i = i + 1;
+            indent.push_str(&format!("{}", Characters::unicode().vbar));
+            indent.push_str(&INDENT);
+        }
+        // indent.push_str(&INDENT.repeat(level));
         leaf = format!(
             "{indent:}{}\n{indent:}{}{}",
             Characters::unicode().vbar,
@@ -22,6 +30,14 @@ pub fn make_branch(index: usize, vec_length: usize, level: usize) -> String {
             indent = indent,
         );
     } else {
+        let mut i = 0;
+        while i < level {
+            i = i + 1;
+            // indent.push_str(&format!("{}", Characters::unicode().vbar));
+            indent.push_str("");
+            indent.push_str(&INDENT);
+        }
+        // indent.push_str(&INDENT.repeat(level));
         leaf = format!(
             "{indent:}{}\n{indent:}{}{}",
             Characters::unicode().vbar,
@@ -206,7 +222,8 @@ impl Tree for Step {
 impl Tree for Command {
     fn make_statefull_tree(&self, level: usize) -> String {
         let mut level = level;
-        let mut indent = INDENT.repeat(level);
+        // let mut indent = INDENT.repeat(level);
+        let mut indent = "".to_owned();
 
         let mut printable: String = "".to_owned();
 
@@ -227,10 +244,20 @@ impl Tree for Command {
 
                 // Sub branch
                 level = level + 1;
-                indent = INDENT.repeat(level);
+                // indent = INDENT.repeat(level);
+                let mut i = 0;
+                while i < level {
+                    i = i + 1;
+                    indent.push_str(&format!("{}", Characters::unicode().vbar));
+                    indent.push_str(&INDENT);
+                }
+
                 if self.output.clone().unwrap().stdout.is_some() {
                     let mut out = self.output.clone().unwrap().stdout.unwrap();
+
+                    // Indent output
                     out = out.replace("\n", &format!("\n{indent:} ", indent = indent));
+                    out.push_str("\n");
 
                     let leafed = format!("{}{}", make_branch(0, 0, level), out);
                     printable.push_str(&leafed);
@@ -245,7 +272,10 @@ impl Tree for Command {
                 indent = INDENT.repeat(level);
                 if self.output.clone().unwrap().stderr.is_some() {
                     let mut out = self.output.clone().unwrap().stderr.unwrap();
+
+                    // Indent output
                     out = out.replace("\n", &format!("\n{indent:} ", indent = indent));
+                    out.push_str("\n");
 
                     let leafed = format!("{}{}", make_branch(0, 0, level), out);
                     printable.push_str(&leafed);
