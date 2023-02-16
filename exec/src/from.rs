@@ -12,13 +12,13 @@ impl From<&Output> for StrOutput {
         let mut stderr = None;
         let stdout_str = String::from_utf8(s.clone().stdout)
             .unwrap()
-            .strip_suffix("\r\n")
-            .unwrap()
+            // .strip_suffix("\r\n")
+            // .unwrap()
             .to_owned();
         let stderr_str = String::from_utf8(s.clone().stderr)
             .unwrap()
-            .strip_suffix("\r\n")
-            .unwrap()
+            // .strip_suffix("\r\n")
+            // .unwrap()
             .to_owned();
 
         if !stdout_str.is_empty() {

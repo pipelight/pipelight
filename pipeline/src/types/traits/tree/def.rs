@@ -1,6 +1,8 @@
 use crate::types::traits::tree::characters::Characters;
 use crate::types::{Command, Config, Event, Parallel, Pipeline, Step, StepOrParallel, Trigger};
+use colored::{ColoredString, Colorize};
 use exec::types::{Status, StrOutput};
+use log::LevelFilter;
 use log::{debug, error, info, warn};
 use std::collections::HashMap;
 use std::error::Error;
@@ -20,7 +22,7 @@ pub struct Node {
     value: Option<String>,
     status: Option<Status>,
     children: Option<Vec<Node>>,
-    params: DrawParams,
+    level: LevelFilter,
 }
 impl Default for Node {
     fn default() -> Self {
@@ -28,11 +30,7 @@ impl Default for Node {
             value: None,
             status: None,
             children: None,
-            params: DrawParams {
-                depth: 0,
-                level: 0,
-                prefix: None,
-            },
+            level: LevelFilter::Error,
         }
     }
 }
@@ -51,14 +49,7 @@ impl From<&Pipeline> for Node {
             children: None,
             ..Node::default()
         };
-        let children = e
-            .steps
-            .iter()
-            .map(|el| {
-                let mut child_node = Node::from(el);
-                return child_node;
-            })
-            .collect();
+        let children = e.steps.iter().map(|e| Node::from(e)).collect();
         node = Node {
             children: Some(children),
             ..node
@@ -101,34 +92,48 @@ impl From<&Command> for Node {
     fn from(e: &Command) -> Self {
         let mut node = Node::default();
         // Command Output as child
-        let mut children = None;
         if e.output.is_some() {
-            let out = match e.status {
-                Some(Status::Succeeded) => e.output.clone().unwrap().stdout,
-                Some(Status::Failed) => e.output.clone().unwrap().stderr,
-                Some(Status::Started) => None,
-                Some(Status::Aborted) => None,
-                Some(Status::Running) => None,
-                None => None,
-            };
-            let child = Node {
-                value: out,
-                status: e.clone().status,
-                children: None,
-                ..Node::new()
-            };
-            children = Some(vec![child]);
+            if e.output.clone().unwrap().stdout.is_some()
+                | e.output.clone().unwrap().stderr.is_some()
+            {
+                let out = match e.status {
+                    Some(Status::Succeeded) => e.output.clone().unwrap().stdout,
+                    Some(Status::Failed) => e.output.clone().unwrap().stderr,
+                    Some(Status::Started) => None,
+                    Some(Status::Aborted) => None,
+                    Some(Status::Running) => None,
+                    None => None,
+                };
+                let child = Node {
+                    value: out,
+                    status: e.clone().status,
+                    children: None,
+                    ..Node::new()
+                };
+                node.children = Some(vec![child]);
+            }
         }
         node.value = Some(e.stdin.clone());
         node.status = e.status.clone();
-        node.children = children;
         return node;
     }
 }
 
+fn add_level(prefix: String) -> String {
+    let leaf: String = format!("{}{INDENT:}", Characters::unicode().vbar, INDENT = INDENT);
+    let mut prefix = prefix;
+    prefix.push_str(&leaf);
+    return prefix.to_owned();
+}
+fn add_level_phantom(prefix: String) -> String {
+    let leaf: String = format!("{}{INDENT:}", " ".to_owned());
+    let mut prefix = prefix;
+    prefix.push_str(&leaf);
+    return prefix.to_owned();
+}
 impl Node {
     /// Add a leaf to prefix T from inside [T] of nth element
-    pub fn leaf(&self, prefix: String, index: usize, length: usize) -> String {
+    pub fn leaf(&self, prefix: String, index: usize, length: usize) -> ColoredString {
         let leaf: String;
         if index == length {
             leaf = format!(
@@ -145,21 +150,8 @@ impl Node {
                 Characters::unicode().hbar,
             );
         }
-        return leaf;
+        return leaf.white();
     }
-}
-
-fn add_level(prefix: String) -> String {
-    let leaf: String = format!("{}{INDENT:}", Characters::unicode().vbar, INDENT = INDENT);
-    let mut prefix = prefix;
-    prefix.push_str(&leaf);
-    return prefix.to_owned();
-}
-fn add_level_phantom(prefix: String) -> String {
-    let leaf: String = format!("{}{INDENT:}", " ".to_owned());
-    let mut prefix = prefix;
-    prefix.push_str(&leaf);
-    return prefix.to_owned();
 }
 
 impl Node {
@@ -170,15 +162,20 @@ impl Node {
                 .value
                 .clone()
                 .unwrap()
-                .replace("\n", &format!("\n{prefix:} ", prefix = prefix));
-            error!(target: "nude", "{}\n", value);
+                .replace("\n", &format!("\n{prefix:} ", prefix = prefix.white()));
+            match self.status {
+                Some(Status::Started) => print!("{}\n", &value),
+                Some(Status::Running) => print!("{}\n", &value.green()),
+                Some(Status::Succeeded) => print!("{}\n", &value.blue()),
+                Some(Status::Failed) => print!("{}\n", &value.red()),
+                Some(Status::Aborted) => print!("{}\n", &value.yellow()),
+                None => {}
+            }
         }
-
         if self.children.is_some() {
             let length = self.children.clone().unwrap().len() - 1;
-
             for (index, child) in &mut self.children.clone().unwrap().iter().enumerate() {
-                error!(target: "nude","{}", child.leaf(prefix.clone(), index, length));
+                print!("{}", &child.leaf(prefix.clone(), index, length));
                 if index == length {
                     let prefix = add_level_phantom(prefix.clone());
                     child.display(prefix.clone());
@@ -186,13 +183,6 @@ impl Node {
                     let prefix = add_level(prefix.clone());
                     child.display(prefix.clone());
                 }
-                // Add branching level
-                // let mut prefix = prefix.clone();
-
-                // child.add_leaf(prefix).display(prefix);
-                // let mut binding = old_prefix.clone();
-                // prefix = binding;
-                // let mut binding = old_prefix.clone();
             }
         }
     }
