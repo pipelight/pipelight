@@ -1,3 +1,4 @@
+use crate::types::traits::tree::def::Node;
 use crate::types::traits::tree::Tree;
 use crate::types::{Command, Event, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 use chrono::{DateTime, Local};
@@ -13,13 +14,15 @@ static INDENT: &str = " ";
 
 impl fmt::Display for Pipeline {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let level = 0;
+        let mut indent = "".to_owned();
         if self.status.is_some() {
-            let printable = self.clone().make_statefull_tree(level);
-            write!(f, "{}", printable);
+            let tree = Node::from(self);
+            write!(f, "{}\n", tree)?;
+            // let printable = self.clone().make_statefull_tree(&mut indent);
+            // write!(f, "{}", printable);
         } else {
-            let printable = self.clone().make_stateless_tree(level);
-            write!(f, "{}", printable);
+            // let printable = self.clone().make_stateless_tree(&mut indent);
+            // write!(f, "{}", printable);
         }
 
         // let i = INDENT.repeat(1);
@@ -61,31 +64,14 @@ impl fmt::Display for StepOrParallel {
 
 impl fmt::Display for Step {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let level = 0;
+        let mut indent = "".to_owned();
         if self.status.is_some() {
-            let printable = self.clone().make_statefull_tree(level);
+            let printable = self.clone().make_statefull_tree(&mut indent);
             write!(f, "{}", printable);
         } else {
-            let printable = self.clone().make_stateless_tree(level);
+            let printable = self.clone().make_stateless_tree(&mut indent);
             write!(f, "{}", printable);
         }
-        //     let i = INDENT.repeat(2);
-        //     let mtop = '┬';
-        //     let lbot = '╰';
-        //     let hbar = '─';
-        //     warn!(target :"nude","{}{mtop}\n  {lbot}{hbar} step: {}\n",i, &self.name);
-        //     if self.status.is_some() {
-        //         for command in &self.commands {
-        //             write!(f, "{}", command);
-        //             if command.output.is_none() {
-        //                 break;
-        //             }
-        //         }
-        //     } else {
-        //         for command in &self.commands {
-        //             write!(f, "{}", command);
-        //         }
-        //     }
         Ok(())
     }
 }
@@ -99,48 +85,14 @@ impl fmt::Display for Parallel {
 }
 impl fmt::Display for Command {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let level = 0;
+        let mut indent = "".to_owned();
         if self.output.is_some() {
-            let printable = self.clone().make_statefull_tree(level);
+            let printable = self.clone().make_statefull_tree(&mut indent);
             write!(f, "{}", printable);
         } else {
-            let printable = self.clone().make_stateless_tree(level);
+            let printable = self.clone().make_stateless_tree(&mut indent);
             write!(f, "{}", printable);
         }
-        // self.clone().make_tree();
-        // let i = INDENT.repeat(4);
-        // let j = INDENT.repeat(6);
-        // let command: Command = self.clone();
-        // let mtop = '┬';
-        // let lbot = '╰';
-        // let hbar = '─';
-        // if self.output.is_none() {
-        //     info!(target: "nude", "\r{i:} {mtop}\n{i:} {lbot}{hbar} {}\n", &self.stdin ,i=i);
-        // } else {
-        //     if self.output.clone().unwrap().status == Status::Running {
-        //         info!(target: "nude", "\r{i:} {mtop}\n{i:} {lbot}{hbar} {}\n", &self.stdin.green() ,i=i);
-        //         return Ok(());
-        //     } else {
-        //         let output = self.output.clone().unwrap();
-        //         let mut stdout = "".to_owned();
-        //         let mut stderr = "".to_owned();
-        //
-        //         if output.stdout.is_some() {
-        //             stdout = output.stdout.unwrap().replace("\n", &format!("\n{}", j));
-        //         }
-        //         if output.stderr.is_some() {
-        //             stderr = output.stderr.unwrap().replace("\n", &format!("\n{}", j));
-        //         }
-        //         let status = output.status;
-        //         if status == Status::Succeeded {
-        //             info!(target: "nude", "\r{i:} {mtop}\n{i:} {lbot}{hbar} {}\n", &self.stdin.blue() ,i=i);
-        //             debug!(target: "nude", "{}{}\n", j,stdout);
-        //         } else {
-        //             info!(target: "nude", "\r{i:} {mtop}\n{i:} {lbot}{hbar} {}\n", &self.stdin.red() ,i=i);
-        //             debug!(target: "nude", "{}{}\n", j,stderr);
-        //         }
-        //     }
-        // }
         Ok(())
     }
 }
