@@ -53,7 +53,7 @@ impl Node {
                 .value
                 .clone()
                 .unwrap()
-                .replace("\n", &format!("\n{prefix:} ", prefix = prefix.white()));
+                .replace("\n", &format!("\n{prefix:}", prefix = prefix.white()));
             match self.status {
                 Some(Status::Started) => print!("{}\n", &value),
                 Some(Status::Running) => print!("{}\n", &value.green()),

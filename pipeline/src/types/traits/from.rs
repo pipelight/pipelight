@@ -3,6 +3,8 @@ use crate::types::{
     Command, Config, Event, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
 };
 use chrono::Utc;
+use chrono::{DateTime, Local};
+use colored::Colorize;
 use convert_case::{Case, Casing};
 use exec::types::Status;
 use log::LevelFilter;
@@ -213,19 +215,26 @@ impl Trigger {
 
 impl From<&Pipeline> for Node {
     fn from(e: &Pipeline) -> Self {
-        let tag = format!("pipeline: {}", e.name.clone());
-        let mut node = Node {
+        let mut tag: String = "".to_owned();
+        if e.status.is_some() {
+            let status = format!("{} - ", e.status.clone().unwrap());
+            tag.push_str(&status);
+        }
+        if e.event.is_some() {
+            let node = Node::from(&e.event.clone().unwrap());
+            let event = format!("{}", node);
+            tag.push_str(&event);
+        }
+        let name = format!("pipeline: {}", e.name.clone());
+        tag.push_str(&name);
+
+        let children = e.steps.iter().map(|e| Node::from(e)).collect();
+        let node = Node {
             value: Some(tag),
             status: e.status.clone(),
-            children: None,
+            children: Some(children),
             ..Node::default()
         };
-        let children = e.steps.iter().map(|e| Node::from(e)).collect();
-        node = Node {
-            children: Some(children),
-            ..node
-        };
-
         return node;
     }
 }
@@ -259,6 +268,38 @@ impl From<&Step> for Node {
             children: Some(children),
             level: LevelFilter::Warn,
             ..Node::default()
+        };
+        return node;
+    }
+}
+impl From<&Event> for Node {
+    fn from(e: &Event) -> Self {
+        let date = e.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
+        let action = format!(
+            "action: {}",
+            String::from(&e.trigger.action.clone().unwrap())
+        );
+        let branch = format!(
+            "branch: {}",
+            String::from(&e.trigger.branch.clone().unwrap())
+        );
+        let children = vec![
+            Node {
+                value: Some(action),
+                level: LevelFilter::Info,
+                ..Node::default()
+            },
+            Node {
+                value: Some(branch),
+                level: LevelFilter::Info,
+                ..Node::default()
+            },
+        ];
+        let node = Node {
+            value: Some(date),
+            status: None,
+            children: Some(children),
+            level: LevelFilter::Info,
         };
         return node;
     }
