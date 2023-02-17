@@ -4,6 +4,7 @@
 #![allow(dead_code)]
 
 // Internal imports
+pub mod characters;
 mod logs;
 mod run;
 pub mod traits;

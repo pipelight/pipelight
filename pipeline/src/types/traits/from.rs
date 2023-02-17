@@ -1,4 +1,5 @@
 use crate::cast;
+use crate::types::characters::Characters;
 use crate::types::{
     Command, Config, Event, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
 };
@@ -221,8 +222,7 @@ impl From<&Pipeline> for Node {
             tag.push_str(&status);
         }
         if e.event.is_some() {
-            let node = Node::from(&e.event.clone().unwrap());
-            let event = format!("{}", node);
+            let event = String::from(&e.event.clone().unwrap());
             tag.push_str(&event);
         }
         let name = format!("pipeline: {}", e.name.clone());
@@ -272,36 +272,37 @@ impl From<&Step> for Node {
         return node;
     }
 }
-impl From<&Event> for Node {
-    fn from(e: &Event) -> Self {
-        let date = e.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
+impl From<&Event> for String {
+    fn from(e: &Event) -> String {
+        let mut string = "".to_owned();
+        let mut date = e.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
+        date = format!("{}\n", date);
+
+        let top = format!(
+            "{}{}",
+            Characters::unicode().lcross,
+            Characters::unicode().hbar,
+        );
+        let bottom = format!(
+            "{}{}",
+            Characters::unicode().lbot,
+            Characters::unicode().hbar,
+        );
         let action = format!(
-            "action: {}",
+            "{}action: {}\n",
+            top,
             String::from(&e.trigger.action.clone().unwrap())
         );
         let branch = format!(
-            "branch: {}",
+            "{}branch: {}\n",
+            bottom,
             String::from(&e.trigger.branch.clone().unwrap())
         );
-        let children = vec![
-            Node {
-                value: Some(action),
-                level: LevelFilter::Info,
-                ..Node::default()
-            },
-            Node {
-                value: Some(branch),
-                level: LevelFilter::Info,
-                ..Node::default()
-            },
-        ];
-        let node = Node {
-            value: Some(date),
-            status: None,
-            children: Some(children),
-            level: LevelFilter::Info,
-        };
-        return node;
+        string.push_str(&date);
+        string.push_str(&action);
+        string.push_str(&branch);
+        // string.push_str(&Characters::unicode().hbar.to_string());
+        return string;
     }
 }
 

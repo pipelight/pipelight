@@ -1,3 +1,4 @@
+use crate::types::characters::Characters;
 use crate::types::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 use colored::{ColoredString, Colorize};
 use exec::types::{Statuable, Status};
@@ -6,9 +7,6 @@ use log::{debug, error, info, warn};
 use std::error::Error;
 use std::fmt;
 use utils::logger::logger;
-
-mod characters;
-use super::tree::characters::Characters;
 
 static INDENT: &str = "  ";
 
@@ -54,13 +52,17 @@ impl Node {
                 .clone()
                 .unwrap()
                 .replace("\n", &format!("\n{prefix:}", prefix = prefix.white()));
-            match self.status {
-                Some(Status::Started) => print!("{}\n", &value),
-                Some(Status::Running) => print!("{}\n", &value.green()),
-                Some(Status::Succeeded) => print!("{}\n", &value.blue()),
-                Some(Status::Failed) => print!("{}\n", &value.red()),
-                Some(Status::Aborted) => print!("{}\n", &value.yellow()),
-                None => print!("{}\n", &value.white()),
+            if self.level <= LevelFilter::Error {
+                print!("{}\n", &value.white());
+            } else {
+                match self.status {
+                    Some(Status::Started) => print!("{}\n", &value),
+                    Some(Status::Running) => print!("{}\n", &value.green()),
+                    Some(Status::Succeeded) => print!("{}\n", &value.blue()),
+                    Some(Status::Failed) => print!("{}\n", &value.red()),
+                    Some(Status::Aborted) => print!("{}\n", &value.yellow()),
+                    None => print!("{}\n", &value.white()),
+                }
             }
         }
         if self.children.is_some() {
