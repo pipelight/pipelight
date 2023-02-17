@@ -60,7 +60,7 @@ impl Node {
                 Some(Status::Succeeded) => print!("{}\n", &value.blue()),
                 Some(Status::Failed) => print!("{}\n", &value.red()),
                 Some(Status::Aborted) => print!("{}\n", &value.yellow()),
-                None => {}
+                None => print!("{}\n", &value.white()),
             }
         }
         if self.children.is_some() {
