@@ -7,8 +7,11 @@
 mod logs;
 mod run;
 pub mod traits;
+mod tree;
+use crate::types::traits::getters::Getters;
 
 // Standard libs
+use log::LevelFilter;
 use log::{info, warn};
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
@@ -31,6 +34,14 @@ use utils::logger::logger;
 pub struct Config {
     pub pipelines: Option<Vec<Pipeline>>,
     pub hooks: Option<Vec<Hook>>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Node {
+    value: Option<String>,
+    status: Option<Status>,
+    children: Option<Vec<Node>>,
+    level: LevelFilter,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -75,7 +86,7 @@ impl Pipeline {
         if Logs::get().is_err() {
             return false;
         }
-        let pipelines = Logs::get_by_name(&self.name).unwrap();
+        let pipelines = Logs::get_many_by_name(&self.name).unwrap();
         let pipeline = pipelines.iter().next();
         if pipeline.is_some() {
             let event = &pipeline.clone().unwrap().event;
@@ -106,9 +117,6 @@ impl Pipeline {
             }
         }
     }
-    pub fn status(&mut self, status: &Status) {
-        self.status = Some(status.to_owned());
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -131,11 +139,6 @@ pub struct Parallel {
     pub non_blocking: Option<bool>,
     pub on_failure: Option<Vec<String>>,
 }
-impl Parallel {
-    pub fn status(&mut self, status: &Status) {
-        self.status = Some(status.to_owned());
-    }
-}
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Step {
@@ -146,11 +149,6 @@ pub struct Step {
     pub on_failure: Option<Vec<StepOrParallel>>,
     pub on_success: Option<Vec<StepOrParallel>>,
     pub on_abortion: Option<Vec<StepOrParallel>>,
-}
-impl Step {
-    pub fn status(&mut self, status: &Status) {
-        self.status = Some(status.to_owned());
-    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

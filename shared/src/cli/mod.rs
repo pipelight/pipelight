@@ -22,7 +22,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
 
     match args.commands {
         types::Commands::Ls(list) => {
-            info!("Listing piplines");
+            // info!("Listing piplines");
             if list.name.is_some() {
                 let pipeline = Pipeline::get_by_name(&list.name.unwrap())?;
                 print::inspect(&pipeline, list.json)?;
@@ -31,22 +31,22 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
             }
         }
         types::Commands::Trigger(trigger) => {
-            info!("Triggering piplines");
+            // info!("Triggering piplines");
             trigger::trigger_bin(trigger.attach)?;
         }
         types::Commands::Run(pipeline) => {
-            info!("Running pipline {:#?}", pipeline.name);
+            // info!("Running pipline {:#?}", pipeline.name);
             run::run_bin(pipeline.name, pipeline.attach)?;
         }
         types::Commands::Stop(pipeline) => {
-            info!("Stopping pipline {:#?}", pipeline.name);
+            // info!("Stopping pipline {:#?}", pipeline.name);
             stop::stop(&pipeline.name)?;
         }
         types::Commands::Logs(logs) => match logs.commands {
             None => {
                 let pipelines;
                 if logs.display.name.is_some() {
-                    pipelines = Logs::get_by_name(&logs.display.name.unwrap())?;
+                    pipelines = Logs::get_many_by_name(&logs.display.name.unwrap())?;
                 } else {
                     pipelines = Logs::get()?;
                 }

@@ -1,8 +1,11 @@
 use crate::cast;
-use crate::types::{Command, Config, Event, Parallel, Pipeline, Step, StepOrParallel, Trigger};
+use crate::types::{
+    Command, Config, Event, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
+};
 use chrono::Utc;
 use convert_case::{Case, Casing};
-use log::error;
+use exec::types::Status;
+use log::LevelFilter;
 use std::convert::From;
 use std::process::exit;
 use utils::git::Flag;
@@ -205,5 +208,93 @@ impl Trigger {
             }
         }
         return tuplelist;
+    }
+}
+
+impl From<&Pipeline> for Node {
+    fn from(e: &Pipeline) -> Self {
+        let tag = format!("pipeline: {}", e.name.clone());
+        let mut node = Node {
+            value: Some(tag),
+            status: e.status.clone(),
+            children: None,
+            ..Node::default()
+        };
+        let children = e.steps.iter().map(|e| Node::from(e)).collect();
+        node = Node {
+            children: Some(children),
+            ..node
+        };
+
+        return node;
+    }
+}
+impl From<&StepOrParallel> for Node {
+    fn from(e: &StepOrParallel) -> Self {
+        match e {
+            StepOrParallel::Step(res) => Node::from(res),
+            StepOrParallel::Parallel(res) => Node::from(res),
+        }
+    }
+}
+impl From<&Parallel> for Node {
+    fn from(e: &Parallel) -> Self {
+        let children = e.steps.iter().map(|el| Node::from(el)).collect();
+        let node = Node {
+            level: LevelFilter::Warn,
+            children: Some(children),
+            status: e.status.clone(),
+            ..Node::new()
+        };
+        return node;
+    }
+}
+impl From<&Step> for Node {
+    fn from(e: &Step) -> Self {
+        let tag = format!("step: {}", e.name.clone());
+        let children = e.commands.iter().map(|el| Node::from(el)).collect();
+        let node = Node {
+            value: Some(tag),
+            status: e.status.clone(),
+            children: Some(children),
+            level: LevelFilter::Warn,
+            ..Node::default()
+        };
+        return node;
+    }
+}
+
+impl From<&Command> for Node {
+    fn from(e: &Command) -> Self {
+        let mut node = Node {
+            level: LevelFilter::Info,
+            ..Node::default()
+        };
+        // Convert command output as child node
+        if e.output.is_some() {
+            if e.output.clone().unwrap().stdout.is_some()
+                | e.output.clone().unwrap().stderr.is_some()
+            {
+                let out = match e.status {
+                    Some(Status::Succeeded) => e.output.clone().unwrap().stdout,
+                    Some(Status::Failed) => e.output.clone().unwrap().stderr,
+                    Some(Status::Started) => None,
+                    Some(Status::Aborted) => None,
+                    Some(Status::Running) => None,
+                    None => None,
+                };
+                let child = Node {
+                    value: out,
+                    status: e.clone().status,
+                    children: None,
+                    level: LevelFilter::Debug,
+                    ..Node::new()
+                };
+                node.children = Some(vec![child]);
+            }
+        }
+        node.value = Some(e.stdin.clone());
+        node.status = e.status.clone();
+        return node;
     }
 }

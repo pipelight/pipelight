@@ -10,9 +10,8 @@ use std::process::exit;
 
 impl Config {
     pub fn load_from_string(js_object: &str) -> Result<Config, Box<dyn Error>> {
-        let executable = "node -e";
-
         // Javascript with rust escape sequence (double curly braces)
+        let executable = "node -e";
         let script = format!(
             "\'
             const stock = console;
@@ -27,9 +26,7 @@ impl Config {
 
         let command = format!("{} {}", executable, script);
         let data = Exec::new().simple(&command)?;
-
-        trace!("Config json output:\n{}", &data.stdout.clone().unwrap());
-
+        // trace!("Config json output:\n{}", &data.stdout.clone().unwrap());
         let config = serde_json::from_str::<Config>(&data.stdout.clone().unwrap())?;
         Ok(config)
     }
@@ -64,7 +61,7 @@ impl Config {
 
     /// Ensure that the node.js has no error
     fn lint(file: &str) -> Result<(), Box<dyn Error>> {
-        debug!("Linting config file");
+        // debug!("Linting config file");
         let command = format!("node {}", file);
         let data = Exec::new().simple(&command)?;
         if data.stdout.is_none() {
@@ -93,8 +90,8 @@ impl Config {
         let string = format!("{}/{}", &pwd.display().to_string(), file);
         let path = Path::new(&string);
 
-        let executable = "node -e";
         // Javascript with rust escape sequence (double curly braces)
+        let executable = "node -e";
         let script = format!(
             "\'
             const stock = console;
@@ -115,9 +112,7 @@ impl Config {
         );
         let command = format!("{} {}", executable, script);
         let data = Exec::new().simple(&command)?;
-
-        trace!("Config json output:\n{}", &data.stdout.clone().unwrap());
-
+        // trace!("Config json output:\n{}", &data.stdout.clone().unwrap());
         let config = serde_json::from_str::<Config>(&data.stdout.clone().unwrap())?;
         Ok(config)
     }

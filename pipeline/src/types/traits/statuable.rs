@@ -1,5 +1,3 @@
-use crate::types::traits::tree::characters::Characters;
-use crate::types::traits::tree::Tree;
 use crate::types::{Command, Event, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 use exec::types::{Statuable, Status};
 

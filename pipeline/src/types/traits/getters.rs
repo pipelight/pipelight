@@ -1,6 +1,9 @@
-use crate::types::{Config, Pipeline, Trigger};
+use crate::types::{Config, Logs, Pipeline, Trigger};
 use log::warn;
 use std::error::Error;
+use std::fs;
+use std::path::Path;
+use utils::logger::logger;
 
 pub trait Getters<T> {
     /// Return every instances of the struct.
@@ -9,6 +12,60 @@ pub trait Getters<T> {
     fn get_by_name(name: &str) -> Result<T, Box<dyn Error>>;
 }
 
+impl Getters<Pipeline> for Logs {
+    fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
+        let dir = &logger.lock().unwrap().directory;
+        // Safe exit if no log folder
+        if !Path::new(dir).exists() {
+            let message = "No log can be displayed. Log folder is empty";
+            return Err(Box::from(message));
+        }
+        let paths = fs::read_dir(dir).unwrap();
+        let mut pipelines = vec![];
+        for res in paths {
+            let dir_entry = res?;
+            let json = utils::read_last_line(&dir_entry.path())?;
+            let pipeline = serde_json::from_str::<Pipeline>(&json)?;
+            pipelines.push(pipeline);
+        }
+        // pipelines = Logs::sanitize(pipelines)?;
+        Ok(pipelines)
+    }
+    fn get_by_name(name: &str) -> Result<Pipeline, Box<dyn Error>> {
+        let pipelines = Logs::get()?;
+        let pipeline;
+        let mut pipelines = pipelines
+            .iter()
+            .filter(|p| &p.name == name)
+            .cloned()
+            .collect::<Vec<Pipeline>>();
+        if !pipelines.is_empty() {
+            pipelines.sort_by_key(|e| e.clone().event.unwrap().date);
+            pipeline = pipelines.pop().unwrap();
+            Ok(pipeline)
+        } else {
+            let message = format!("Couldn't find a pipeline named {:?}, in logs", name);
+            return Err(Box::from(message));
+        }
+    }
+}
+impl Logs {
+    pub fn get_many_by_name(name: &str) -> Result<Vec<Pipeline>, Box<dyn Error>> {
+        let pipelines = Logs::get()?;
+        let mut pipelines = pipelines
+            .iter()
+            .filter(|p| &p.name == name)
+            .cloned()
+            .collect::<Vec<Pipeline>>();
+        if !pipelines.is_empty() {
+            pipelines.sort_by_key(|e| e.clone().event.unwrap().date);
+            Ok(pipelines)
+        } else {
+            let message = format!("Couldn't find a pipeline named {:?}, in logs", name);
+            return Err(Box::from(message));
+        }
+    }
+}
 impl Getters<Pipeline> for Pipeline {
     fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
         let config = Config::new();

@@ -44,7 +44,7 @@ impl Pipeline {
         // Set Pid and Status and Duration
         unsafe {
             (*ptr).event = Some(Event::new());
-            (*ptr).status(&Status::Running);
+            (*ptr).set_status(Some(Status::Running));
             (*ptr).duration = Some(duration);
             (*ptr).log();
         }
@@ -63,9 +63,9 @@ impl Pipeline {
         unsafe {
             let last_step = (*ptr).steps.last().unwrap();
             if last_step.get_status().is_some() {
-                (*ptr).status(&last_step.get_status().clone().unwrap())
+                (*ptr).set_status(Some(last_step.get_status().clone().unwrap()))
             } else {
-                (*ptr).status(&Status::Failed)
+                (*ptr).set_status(Some(Status::Failed))
             }
             (*ptr).log();
         }
@@ -105,7 +105,7 @@ impl StepOrParallel {
 
 impl Parallel {
     fn run(&mut self, ptr: *mut Pipeline) {
-        self.status(&Status::Running);
+        self.set_status(Some(Status::Running));
 
         // Pass wrapped pointer to threads
         let ptr_wrapper = PtrWrapper(ptr);
@@ -121,12 +121,12 @@ impl Parallel {
             .collect();
 
         if steps_res.contains(&Status::Failed) {
-            self.status(&Status::Failed);
+            self.set_status(Some(Status::Failed));
         } else {
             if steps_res.contains(&Status::Aborted) {
-                self.status(&Status::Aborted);
+                self.set_status(Some(Status::Aborted));
             } else {
-                self.status(&Status::Succeeded);
+                self.set_status(Some(Status::Succeeded));
             }
         }
         unsafe {
@@ -145,7 +145,7 @@ impl Step {
         self.run(ptr);
     }
     fn run(&mut self, ptr: *mut Pipeline) {
-        self.status(&Status::Running);
+        self.set_status(Some(Status::Running));
 
         // Run commands
         for command in &mut self.commands {
@@ -160,7 +160,7 @@ impl Step {
         if final_status.is_some() {
             self.status = final_status.clone();
         } else {
-            self.status(&Status::Failed)
+            self.set_status(Some(Status::Failed))
         }
 
         unsafe {

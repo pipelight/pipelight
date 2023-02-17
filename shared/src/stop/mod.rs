@@ -6,7 +6,7 @@ use std::error::Error;
 
 /// Launch attached subprocess
 pub fn stop(pipeline_name: &String) -> Result<(), Box<dyn Error>> {
-    let mut list = Logs::get_by_name(&pipeline_name)?;
+    let mut list = Logs::get_many_by_name(&pipeline_name)?;
     //Get latest element
     list.reverse();
     let pipeline = list.iter().next();

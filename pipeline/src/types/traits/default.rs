@@ -1,8 +1,9 @@
 use crate::cast;
 use crate::types::{
-    Command, Config, Event, Logs, Parallel, Pipeline, Step, StepOrParallel, Trigger,
+    Command, Config, Event, Logs, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
 };
 use chrono::Utc;
+use log::LevelFilter;
 use log::{info, trace, warn};
 use std::env;
 use std::process;
@@ -51,6 +52,22 @@ impl Config {
         return self.to_owned();
     }
 }
+impl Default for Node {
+    fn default() -> Self {
+        Node {
+            value: None,
+            status: None,
+            children: None,
+            level: LevelFilter::Error,
+        }
+    }
+}
+impl Node {
+    pub fn new() -> Node {
+        Self::default()
+    }
+}
+
 impl Default for Pipeline {
     fn default() -> Self {
         let steps = vec![StepOrParallel::Step(Step::default())];

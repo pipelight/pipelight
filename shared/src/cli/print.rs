@@ -1,13 +1,14 @@
 use chrono::{DateTime, Local};
 use log::{debug, error, info, warn, LevelFilter};
-use pipeline::types::{Config, Logs, Pipeline};
+use pipeline::types::{traits::getters::Getters, Config, Logs, Node, Pipeline};
 use std::error::Error;
 use utils::logger::logger;
 
 /// Pretty print logs from json log file
 pub fn pretty(pipelines: &Vec<Pipeline>) -> Result<(), Box<dyn Error>> {
     for pipeline in pipelines {
-        println!("{}", pipeline);
+        let node = Node::from(pipeline);
+        println!("{}", node);
     }
     Ok(())
 }
@@ -26,7 +27,8 @@ pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<(), Box<dyn Error>> {
         let pipeline_json = serde_json::to_string_pretty::<Pipeline>(pipeline)?;
         println!("{}", pipeline_json);
     } else {
-        println!("{}", pipeline);
+        let node = Node::from(pipeline);
+        println!("{}", node);
     }
     Ok(())
 }
@@ -64,9 +66,8 @@ pub fn list() -> Result<(), Box<dyn Error>> {
         let mut branch = "".to_owned();
         // Retrieve logs data if any
         if Logs::get().is_ok() {
-            let pipe_logs = Logs::get_by_name(&pipeline.name)?;
-            let last_log = pipe_logs.iter().next();
-            if last_log.is_some() {
+            let last_log = Logs::get_by_name(&pipeline.name);
+            if last_log.is_ok() {
                 let last_log = last_log.unwrap();
                 status = String::from(&last_log.status.clone().unwrap());
                 branch = String::from(&last_log.event.clone().unwrap().trigger.branch.unwrap());
