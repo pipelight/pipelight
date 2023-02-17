@@ -152,6 +152,10 @@ impl Step {
             command.run(ptr);
             if command.status.is_none() {
                 break;
+            } else if command.status == Some(Status::Failed)
+                || command.status == Some(Status::Aborted)
+            {
+                break;
             }
         }
 

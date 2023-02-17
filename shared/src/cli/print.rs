@@ -45,12 +45,6 @@ pub fn list() -> Result<(), Box<dyn Error>> {
                 "status","date" ,"name"
             );
         }
-        LevelFilter::Error => {
-            error!(target: "nude",
-                "{:<40}\n",
-                "name"
-            );
-        }
         _ => {
             info!(target: "nude",
                 "{:<15} {:<15} {:<15} {:<25} {:<40}\n",
