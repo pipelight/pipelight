@@ -53,7 +53,7 @@ impl Node {
                 .unwrap()
                 .replace("\n", &format!("\n{prefix:}", prefix = prefix.white()));
             if self.level <= LevelFilter::Error {
-                print!("{}\n", &value.white());
+                print!("{}\n", &value);
             } else {
                 match self.status {
                     Some(Status::Started) => print!("{}\n", &value),
@@ -64,18 +64,19 @@ impl Node {
                     None => print!("{}\n", &value.white()),
                 }
             }
-        }
-        if self.children.is_some() {
-            let length = self.children.clone().unwrap().len() - 1;
-            for (index, child) in &mut self.children.clone().unwrap().iter().enumerate() {
-                if child.level <= logger.lock().unwrap().level {
-                    print!("{}", &child.leaf(prefix.clone(), index, length));
-                    if index == length {
-                        let prefix = add_level_phantom(prefix.clone());
-                        child.display(prefix.clone());
-                    } else {
-                        let prefix = add_level(prefix.clone());
-                        child.display(prefix.clone());
+            // Iterate over childs
+            if self.children.is_some() {
+                let length = self.children.clone().unwrap().len() - 1;
+                for (index, child) in &mut self.children.clone().unwrap().iter().enumerate() {
+                    if child.level <= logger.lock().unwrap().level {
+                        print!("{}", &child.leaf(prefix.clone(), index, length));
+                        if index == length {
+                            let prefix = add_level_phantom(prefix.clone());
+                            child.display(prefix.clone());
+                        } else {
+                            let prefix = add_level(prefix.clone());
+                            child.display(prefix.clone());
+                        }
                     }
                 }
             }

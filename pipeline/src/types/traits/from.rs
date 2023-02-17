@@ -5,7 +5,7 @@ use crate::types::{
 };
 use chrono::Utc;
 use chrono::{DateTime, Local};
-use colored::Colorize;
+use colored::{ColoredString, Colorize};
 use convert_case::{Case, Casing};
 use exec::types::Status;
 use log::LevelFilter;
@@ -15,6 +15,29 @@ use utils::git::Flag;
 use utils::git::Hook;
 use uuid::Uuid;
 
+impl From<&Event> for String {
+    fn from(e: &Event) -> String {
+        let mut string = "".to_owned();
+        let mut date = e.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
+        date = format!("{}\n", date);
+        let header = "action: ";
+        let action = format!(
+            "{}{}\n",
+            header.white(),
+            String::from(&e.trigger.action.clone().unwrap()).white()
+        );
+        let header = "branch: ";
+        let branch = format!(
+            "{}{}\n",
+            header.white(),
+            String::from(&e.trigger.branch.clone().unwrap()).white()
+        );
+        string.push_str(&date);
+        string.push_str(&action);
+        string.push_str(&branch);
+        return string;
+    }
+}
 impl From<&cast::Config> for Config {
     fn from(e: &cast::Config) -> Self {
         let mut config = Config::default();
@@ -225,6 +248,8 @@ impl From<&Pipeline> for Node {
             let event = String::from(&e.event.clone().unwrap());
             tag.push_str(&event);
         }
+        tag = format!("{}", tag.white());
+
         let name = format!("pipeline: {}", e.name.clone());
         tag.push_str(&name);
 
@@ -250,10 +275,11 @@ impl From<&Parallel> for Node {
     fn from(e: &Parallel) -> Self {
         let children = e.steps.iter().map(|el| Node::from(el)).collect();
         let node = Node {
-            level: LevelFilter::Warn,
-            children: Some(children),
+            value: Some("parallel".to_owned()),
             status: e.status.clone(),
-            ..Node::new()
+            children: Some(children),
+            level: LevelFilter::Warn,
+            ..Node::default()
         };
         return node;
     }
@@ -270,39 +296,6 @@ impl From<&Step> for Node {
             ..Node::default()
         };
         return node;
-    }
-}
-impl From<&Event> for String {
-    fn from(e: &Event) -> String {
-        let mut string = "".to_owned();
-        let mut date = e.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
-        date = format!("{}\n", date);
-
-        let top = format!(
-            "{}{}",
-            Characters::unicode().lcross,
-            Characters::unicode().hbar,
-        );
-        let bottom = format!(
-            "{}{}",
-            Characters::unicode().lbot,
-            Characters::unicode().hbar,
-        );
-        let action = format!(
-            "{}action: {}\n",
-            top,
-            String::from(&e.trigger.action.clone().unwrap())
-        );
-        let branch = format!(
-            "{}branch: {}\n",
-            bottom,
-            String::from(&e.trigger.branch.clone().unwrap())
-        );
-        string.push_str(&date);
-        string.push_str(&action);
-        string.push_str(&branch);
-        // string.push_str(&Characters::unicode().hbar.to_string());
-        return string;
     }
 }
 
