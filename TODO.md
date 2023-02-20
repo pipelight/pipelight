@@ -1,9 +1,6 @@
 # Rust
 
-Prefix with leaf if level != 0
-
-Better log printing
-change logging step to error! level, output to info and phantom to trace
+Format node value for multiline better indentation
 
 Add Clap-rs version feature flag
 
@@ -11,7 +8,7 @@ Add signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
 
 Use miette for error report
 
-Dtect if node/ts-node is installed
+Detect if node/ts-node is installed
 
 ## Linting
 

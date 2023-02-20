@@ -18,11 +18,16 @@ pub mod types;
 pub struct Exec {
     shell: String,
 }
-impl Exec {
-    pub fn new() -> Self {
+impl Default for Exec {
+    fn default() -> Self {
         return Self {
             shell: "sh".to_owned(),
         };
+    }
+}
+impl Exec {
+    pub fn new() -> Self {
+        return Exec::default();
     }
     /// Return user session shell if possible
     fn shell(&mut self) -> String {

@@ -74,9 +74,9 @@ impl Default for Pipeline {
         Pipeline {
             uuid: Uuid::new_v4(),
             name: "default".to_owned(),
-            duration: None,
             event: None,
             status: None,
+            duration: None,
             triggers: None,
             on_failure: None,
             on_success: None,
@@ -96,6 +96,7 @@ impl Default for StepOrParallel {
         let step = Step {
             name: "default".to_owned(),
             status: None,
+            duration: None,
             commands: commands,
             non_blocking: None,
             on_failure: None,
@@ -114,8 +115,9 @@ impl StepOrParallel {
 impl Default for Parallel {
     fn default() -> Self {
         Parallel {
-            steps: vec![Step::default()],
             status: None,
+            duration: None,
+            steps: vec![Step::default()],
             non_blocking: None,
             on_failure: None,
         }
@@ -132,6 +134,7 @@ impl Default for Step {
         Step {
             name: "default".to_owned(),
             status: None,
+            duration: None,
             commands: commands,
             non_blocking: None,
             on_failure: None,
@@ -149,6 +152,7 @@ impl Default for Command {
     fn default() -> Self {
         Command {
             status: None,
+            duration: None,
             stdin: "".to_owned(),
             output: None,
         }

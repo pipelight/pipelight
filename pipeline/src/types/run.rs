@@ -166,7 +166,6 @@ impl Step {
         } else {
             self.set_status(Some(Status::Failed))
         }
-
         unsafe {
             (*ptr).log();
         }
@@ -192,8 +191,7 @@ impl Step {
 impl Command {
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
-        // let start = Instant::now();
-        // let mut duration = start.elapsed();
+        let start = Instant::now();
         // pipeline.duration.unwrap() + duration;
 
         self.status = Some(Status::Running);
@@ -215,8 +213,8 @@ impl Command {
                 Err(e)
             }
         };
-        // duration = start.elapsed();
-        // pipeline.duration.unwrap() + duration;
+
+        self.duration = Some(start.elapsed());
         unsafe {
             (*ptr).log();
         }

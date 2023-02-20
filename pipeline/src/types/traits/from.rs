@@ -189,6 +189,7 @@ impl From<&cast::Step> for Step {
             on_success: on_success,
             on_failure: on_failure,
             on_abortion: on_abortion,
+            ..Step::default()
         }
     }
 }
@@ -211,6 +212,7 @@ impl From<&String> for Command {
             status: None,
             stdin: s.to_owned(),
             output: None,
+            ..Command::default()
         }
     }
 }

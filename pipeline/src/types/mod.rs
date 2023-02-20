@@ -48,10 +48,10 @@ pub struct Node {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Pipeline {
     pub uuid: Uuid,
-    pub event: Option<Event>,
-    pub duration: Option<Duration>,
     pub name: String,
+    pub event: Option<Event>,
     pub status: Option<Status>,
+    pub duration: Option<Duration>,
     pub triggers: Option<Vec<Trigger>>,
     pub on_failure: Option<Vec<StepOrParallel>>,
     pub on_success: Option<Vec<StepOrParallel>>,
@@ -136,6 +136,7 @@ impl StepOrParallel {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Parallel {
     pub status: Option<Status>,
+    pub duration: Option<Duration>,
     pub steps: Vec<Step>,
     pub non_blocking: Option<bool>,
     pub on_failure: Option<Vec<String>>,
@@ -143,8 +144,9 @@ pub struct Parallel {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Step {
-    pub status: Option<Status>,
     pub name: String,
+    pub status: Option<Status>,
+    pub duration: Option<Duration>,
     pub commands: Vec<Command>,
     pub non_blocking: Option<bool>,
     pub on_failure: Option<Vec<StepOrParallel>>,
@@ -155,6 +157,7 @@ pub struct Step {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Command {
     pub status: Option<Status>,
+    pub duration: Option<Duration>,
     pub stdin: String,
     pub output: Option<StrOutput>,
 }
