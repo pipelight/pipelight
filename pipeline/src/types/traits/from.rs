@@ -259,6 +259,7 @@ impl From<&Pipeline> for Node {
         let node = Node {
             value: Some(tag),
             status: e.status.clone(),
+            duration: e.duration,
             children: Some(children),
             ..Node::default()
         };
@@ -279,6 +280,7 @@ impl From<&Parallel> for Node {
         let node = Node {
             value: Some("parallel".to_owned()),
             status: e.status.clone(),
+            duration: e.duration,
             children: Some(children),
             level: LevelFilter::Warn,
             ..Node::default()
@@ -293,6 +295,7 @@ impl From<&Step> for Node {
         let node = Node {
             value: Some(tag),
             status: e.status.clone(),
+            duration: e.duration,
             children: Some(children),
             level: LevelFilter::Warn,
             ..Node::default()
@@ -305,6 +308,7 @@ impl From<&Command> for Node {
     fn from(e: &Command) -> Self {
         let mut node = Node {
             level: LevelFilter::Info,
+            duration: e.duration,
             ..Node::default()
         };
         // Convert command output as child node

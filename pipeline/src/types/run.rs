@@ -29,7 +29,8 @@ impl Pipeline {
 
         // Duration
         let start = Instant::now();
-        let duration = start.elapsed();
+        let mut duration = start.elapsed();
+
         unsafe {
             (*ptr).duration = Some(duration);
         }
@@ -59,6 +60,13 @@ impl Pipeline {
                 }
             }
         }
+
+        // Duration
+        duration = start.elapsed();
+        unsafe {
+            (*ptr).duration = Some(duration);
+        }
+
         // Set pipeline status to last Step status
         unsafe {
             let last_step = (*ptr).steps.last().unwrap();
@@ -192,7 +200,7 @@ impl Command {
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
         let start = Instant::now();
-        // pipeline.duration.unwrap() + duration;
+        let mut duration = start.elapsed();
 
         self.status = Some(Status::Running);
         unsafe {
@@ -214,7 +222,10 @@ impl Command {
             }
         };
 
-        self.duration = Some(start.elapsed());
+        // Duration
+        duration = start.elapsed();
+        self.duration = Some(duration);
+
         unsafe {
             (*ptr).log();
         }

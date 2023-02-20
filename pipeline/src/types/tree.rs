@@ -1,5 +1,7 @@
 use crate::types::characters::Characters;
 use crate::types::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger};
+use chrono::Utc;
+use chrono::{DateTime, Duration, Local};
 use colored::{ColoredString, Colorize};
 use exec::types::{Statuable, Status};
 use log::LevelFilter;
@@ -47,11 +49,16 @@ impl Node {
     fn display(&self, prefix: String) {
         // Display node value
         if self.value.is_some() {
-            let value = self
+            let mut value = self
                 .value
                 .clone()
                 .unwrap()
                 .replace("\n", &format!("\n{prefix:}", prefix = prefix.white()));
+            if self.duration.is_some() {
+                let duration = format_duration(self.duration.unwrap()).unwrap();
+                let pretty = format!(" ({})", duration);
+                value.push_str(&format!("{}", pretty.white()));
+            }
             if self.level <= LevelFilter::Error {
                 print!("{}\n", &value);
             } else {
@@ -82,6 +89,25 @@ impl Node {
             }
         }
     }
+}
+
+pub fn format_duration(duration: std::time::Duration) -> Result<String, Box<dyn Error>> {
+    let res: String;
+    let computed = Duration::from_std(duration).unwrap();
+
+    let s = computed.num_seconds();
+    let ms = computed.num_milliseconds();
+    let m = computed.num_minutes();
+    if s != 0 {
+        res = format!("{}s", s);
+    } else {
+        if ms != 0 {
+            res = format!("{}ms", ms);
+        } else {
+            res = format!("{}m", m);
+        }
+    }
+    Ok(res)
 }
 
 impl fmt::Display for Node {

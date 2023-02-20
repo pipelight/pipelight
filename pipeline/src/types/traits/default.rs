@@ -57,6 +57,7 @@ impl Default for Node {
         Node {
             value: None,
             status: None,
+            duration: None,
             children: None,
             level: LevelFilter::Error,
         }

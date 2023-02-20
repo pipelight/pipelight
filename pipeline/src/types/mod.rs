@@ -40,6 +40,7 @@ pub struct Config {
 #[derive(Debug, Clone, PartialEq)]
 pub struct Node {
     value: Option<String>,
+    duration: Option<Duration>,
     status: Option<Status>,
     children: Option<Vec<Node>>,
     level: LevelFilter,
