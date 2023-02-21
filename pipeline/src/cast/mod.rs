@@ -6,6 +6,14 @@ use std::cmp::PartialEq;
 mod config;
 mod default;
 
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct Fallback {
+    pub on_failure: Option<Vec<StepOrParallel>>,
+    pub on_success: Option<Vec<StepOrParallel>>,
+    pub on_abortion: Option<Vec<StepOrParallel>>,
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
@@ -18,26 +26,26 @@ pub struct Config {
 pub struct Pipeline {
     pub name: String,
     pub triggers: Option<Vec<Trigger>>,
-    pub on_failure: Option<Vec<StepOrParallel>>,
-    pub on_success: Option<Vec<StepOrParallel>>,
-    pub on_abortion: Option<Vec<StepOrParallel>>,
     pub steps: Vec<StepOrParallel>,
+    #[serde(flatten)]
+    pub fallback: Option<Fallback>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Step {
-    pub non_blocking: Option<bool>,
     pub name: String,
     pub commands: Vec<String>,
-    pub on_failure: Option<Vec<StepOrParallel>>,
-    pub on_success: Option<Vec<StepOrParallel>>,
-    pub on_abortion: Option<Vec<StepOrParallel>>,
+    pub non_blocking: Option<bool>,
+    #[serde(flatten)]
+    pub fallback: Option<Fallback>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Parallel {
     pub non_blocking: Option<bool>,
     pub parallel: Vec<Step>,
+    #[serde(flatten)]
+    pub fallback: Option<Fallback>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]

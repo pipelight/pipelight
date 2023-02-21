@@ -53,6 +53,35 @@ const config = {
       ],
     },
     {
+      name: "posthook",
+      steps: [
+        {
+          name: "wait",
+          commands: ["ls", "sleep 1", "psssswd", "pwd"],
+          on_failure: [
+            {
+              name: "wait failure",
+              commands: [`echo \"caca\"`],
+            },
+          ],
+        },
+        {
+          name: "wait2",
+          commands: ["ls", "sleep 1", "pwd"],
+        },
+        {
+          name: "wait3",
+          commands: ["ls", "sleep 1", "pwd"],
+        },
+      ],
+      triggers: [
+        {
+          branches: ["master", "dev"],
+          actions: ["pre-push"],
+        },
+      ],
+    },
+    {
       name: "test",
       steps: [
         {

@@ -79,10 +79,8 @@ impl Default for Pipeline {
             status: None,
             duration: None,
             triggers: None,
-            on_failure: None,
-            on_success: None,
-            on_abortion: None,
             steps: steps,
+            fallback: None,
         }
     }
 }
@@ -100,9 +98,7 @@ impl Default for StepOrParallel {
             duration: None,
             commands: commands,
             non_blocking: None,
-            on_failure: None,
-            on_success: None,
-            on_abortion: None,
+            fallback: None,
         };
         StepOrParallel::Step(step)
     }
@@ -120,7 +116,7 @@ impl Default for Parallel {
             duration: None,
             steps: vec![Step::default()],
             non_blocking: None,
-            on_failure: None,
+            fallback: None,
         }
     }
 }
@@ -138,9 +134,7 @@ impl Default for Step {
             duration: None,
             commands: commands,
             non_blocking: None,
-            on_failure: None,
-            on_success: None,
-            on_abortion: None,
+            fallback: None,
         }
     }
 }

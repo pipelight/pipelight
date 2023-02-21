@@ -31,6 +31,12 @@ use utils;
 use utils::git::{Flag, Git, Hook};
 use utils::logger::logger;
 
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct Fallback {
+    pub on_failure: Option<Vec<StepOrParallel>>,
+    pub on_success: Option<Vec<StepOrParallel>>,
+    pub on_abortion: Option<Vec<StepOrParallel>>,
+}
 #[derive(Debug, Clone)]
 pub struct Config {
     pub pipelines: Option<Vec<Pipeline>>,
@@ -54,9 +60,7 @@ pub struct Pipeline {
     pub status: Option<Status>,
     pub duration: Option<Duration>,
     pub triggers: Option<Vec<Trigger>>,
-    pub on_failure: Option<Vec<StepOrParallel>>,
-    pub on_success: Option<Vec<StepOrParallel>>,
-    pub on_abortion: Option<Vec<StepOrParallel>>,
+    pub fallback: Option<Fallback>,
     pub steps: Vec<StepOrParallel>,
 }
 
@@ -140,7 +144,7 @@ pub struct Parallel {
     pub duration: Option<Duration>,
     pub steps: Vec<Step>,
     pub non_blocking: Option<bool>,
-    pub on_failure: Option<Vec<String>>,
+    pub fallback: Option<Fallback>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
@@ -150,9 +154,7 @@ pub struct Step {
     pub duration: Option<Duration>,
     pub commands: Vec<Command>,
     pub non_blocking: Option<bool>,
-    pub on_failure: Option<Vec<StepOrParallel>>,
-    pub on_success: Option<Vec<StepOrParallel>>,
-    pub on_abortion: Option<Vec<StepOrParallel>>,
+    pub fallback: Option<Fallback>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

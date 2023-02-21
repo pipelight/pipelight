@@ -55,9 +55,11 @@ impl Node {
                 .unwrap()
                 .replace("\n", &format!("\n{prefix:}", prefix = prefix.white()));
             if self.duration.is_some() {
-                let duration = format_duration(self.duration.unwrap()).unwrap();
-                let pretty = format!(" ({})", duration);
-                value.push_str(&format!("{}", pretty.white()));
+                if logger.lock().unwrap().level >= LevelFilter::Info {
+                    let duration = format_duration(self.duration.unwrap()).unwrap();
+                    let pretty = format!(" ({})", duration);
+                    value.push_str(&format!("{}", pretty.white()));
+                }
             }
             if self.level <= LevelFilter::Error {
                 print!("{}\n", &value);
@@ -92,19 +94,26 @@ impl Node {
 }
 
 pub fn format_duration(duration: std::time::Duration) -> Result<String, Box<dyn Error>> {
-    let res: String;
+    let mut res: String;
     let computed = Duration::from_std(duration).unwrap();
-
-    let s = computed.num_seconds();
-    let ms = computed.num_milliseconds();
-    let m = computed.num_minutes();
-    if s != 0 {
-        res = format!("{}s", s);
+    let mut m: f64 = computed.num_minutes() as f64;
+    let mut s: f64 = computed.num_seconds() as f64;
+    let mut ms: f64 = computed.num_milliseconds() as f64;
+    res = "1".to_owned();
+    if m > 0 as f64 {
+        res = format!("{:.2}m", m);
     } else {
-        if ms != 0 {
-            res = format!("{}ms", ms);
+        if s > 0 as f64 {
+            s = (ms / 1000 as f64) as f64;
+            res = format!("{:.2}s", s);
         } else {
-            res = format!("{}m", m);
+            if ms > 0 as f64 {
+                let ns = computed.num_nanoseconds();
+                if ns.is_some() {
+                    ms = (ns.unwrap() as f64 / (1000 * 1000) as f64) as f64;
+                    res = format!("{:.2}ms", ms);
+                }
+            }
         }
     }
     Ok(res)

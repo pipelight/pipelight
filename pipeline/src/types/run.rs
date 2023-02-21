@@ -20,16 +20,16 @@ static mut PIPELINE: Lazy<Pipeline> = Lazy::new(|| Pipeline::new());
 impl Pipeline {
     /// Execute the pipeline
     pub fn run(&mut self) {
+        // Duration
+        let start = Instant::now();
+        let mut duration = start.elapsed();
+
         // Globals
         let mut ptr: *mut Pipeline;
         unsafe {
             ptr = &mut *PIPELINE;
             *ptr = self.to_owned();
         }
-
-        // Duration
-        let start = Instant::now();
-        let mut duration = start.elapsed();
 
         unsafe {
             (*ptr).duration = Some(duration);
@@ -78,24 +78,27 @@ impl Pipeline {
             (*ptr).log();
         }
 
-        // Execute post-run steps
+        // Execute fallbacks
         unsafe {
-            if (*ptr).status == Some(Status::Failed) && (*ptr).on_failure.is_some() {
-                // let steps = (*ptr).on_failure.as_mut().unwrap();
-                for step in (*ptr).on_failure.as_mut().unwrap() {
-                    step.run(ptr);
+            if (*ptr).fallback.is_some() {
+                let fallback = &mut (*ptr).fallback.as_mut().unwrap();
+                if (*ptr).status == Some(Status::Failed) && fallback.on_failure.is_some() {
+                    // let steps = (*ptr).on_failure.as_mut().unwrap();
+                    for step in fallback.on_failure.as_mut().unwrap() {
+                        step.run(ptr);
+                    }
                 }
-            }
-            if (*ptr).status == Some(Status::Succeeded) && (*ptr).on_success.is_some() {
-                // let steps = (*ptr).on_failure.as_mut().unwrap();
-                for step in (*ptr).on_success.as_mut().unwrap() {
-                    step.run(ptr);
+                if (*ptr).status == Some(Status::Succeeded) && fallback.on_failure.is_some() {
+                    // let steps = (*ptr).on_failure.as_mut().unwrap();
+                    for step in fallback.on_success.as_mut().unwrap() {
+                        step.run(ptr);
+                    }
                 }
-            }
-            if (*ptr).status == Some(Status::Aborted) && (*ptr).on_success.is_some() {
-                // let steps = (*ptr).on_failure.as_mut().unwrap();
-                for step in (*ptr).on_abortion.as_mut().unwrap() {
-                    step.run(ptr);
+                if (*ptr).status == Some(Status::Aborted) && fallback.on_success.is_some() {
+                    // let steps = (*ptr).on_failure.as_mut().unwrap();
+                    for step in fallback.on_abortion.as_mut().unwrap() {
+                        step.run(ptr);
+                    }
                 }
             }
         }
@@ -113,6 +116,10 @@ impl StepOrParallel {
 
 impl Parallel {
     fn run(&mut self, ptr: *mut Pipeline) {
+        // Duration
+        let start = Instant::now();
+        let mut duration = start.elapsed();
+
         self.set_status(Some(Status::Running));
 
         // Pass wrapped pointer to threads
@@ -137,6 +144,10 @@ impl Parallel {
                 self.set_status(Some(Status::Succeeded));
             }
         }
+        // Duration
+        duration = start.elapsed();
+        self.duration = Some(duration);
+
         unsafe {
             (*ptr).log();
         }
@@ -153,6 +164,10 @@ impl Step {
         self.run(ptr);
     }
     fn run(&mut self, ptr: *mut Pipeline) {
+        // Duration
+        let start = Instant::now();
+        let mut duration = start.elapsed();
+
         self.set_status(Some(Status::Running));
 
         // Run commands
@@ -174,23 +189,31 @@ impl Step {
         } else {
             self.set_status(Some(Status::Failed))
         }
+
+        // Duration
+        duration = start.elapsed();
+        self.duration = Some(duration);
+
         unsafe {
             (*ptr).log();
         }
         // Execute post-run steps
-        if self.status == Some(Status::Failed) && self.on_failure.is_some() {
-            for step in self.on_failure.as_mut().unwrap() {
-                step.run(ptr);
+        if self.fallback.is_some() {
+            let fallback = &mut self.fallback.as_mut().unwrap();
+            if self.status == Some(Status::Failed) && fallback.on_failure.is_some() {
+                for step in fallback.on_failure.as_mut().unwrap() {
+                    step.run(ptr);
+                }
             }
-        }
-        if self.status == Some(Status::Succeeded) && self.on_success.is_some() {
-            for step in self.on_success.as_mut().unwrap() {
-                step.run(ptr);
+            if self.status == Some(Status::Succeeded) && fallback.on_success.is_some() {
+                for step in fallback.on_success.as_mut().unwrap() {
+                    step.run(ptr);
+                }
             }
-        }
-        if self.status == Some(Status::Aborted) && self.on_abortion.is_some() {
-            for step in self.on_success.as_mut().unwrap() {
-                step.run(ptr);
+            if self.status == Some(Status::Aborted) && fallback.on_abortion.is_some() {
+                for step in fallback.on_success.as_mut().unwrap() {
+                    step.run(ptr);
+                }
             }
         }
     }
