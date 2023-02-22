@@ -11,7 +11,7 @@ impl fmt::Display for Status {
         match *self {
             Status::Started => write!(f, "{} {}", icon, "Started"),
             Status::Succeeded => write!(f, "{} {}", icon.blue(), "Succeeded".bold()),
-            Status::Failed => write!(f, "{} {}", icon.red(), "Failed".bold()),
+            Status::Failed => write!(f, "{} {}", icon.red(), "Failed".normal().bold()),
             Status::Running => write!(f, "{} {}", icon.green(), "Running".bold()),
             Status::Aborted => write!(f, "{} {}", icon.yellow(), "Aborted".bold()),
         };

@@ -118,10 +118,13 @@ impl From<&cast::Step> for Step {
             .iter()
             .map(|e| Command::from(e))
             .collect::<Vec<Command>>();
+
+        // Convert fallback
         let mut fallback = None;
         if e.fallback.is_some() {
             fallback = Some(Fallback::from(e.fallback.as_ref().unwrap()));
         }
+
         let default_step = Step::new();
         Step {
             name: e.clone().name,
@@ -135,6 +138,7 @@ impl From<&cast::Step> for Step {
 }
 impl From<&cast::Parallel> for Parallel {
     fn from(e: &cast::Parallel) -> Self {
+        // Convert fallback
         let mut fallback = None;
         if e.fallback.is_some() {
             fallback = Some(Fallback::from(e.fallback.as_ref().unwrap()));
@@ -230,14 +234,15 @@ impl From<&Pipeline> for Node {
     fn from(e: &Pipeline) -> Self {
         let mut tag: String = "".to_owned();
         if e.status.is_some() {
-            let status = format!("{} - ", e.status.clone().unwrap());
+            let separator = format!("{}", " - ".white());
+            let status = format!("{}{}", e.status.clone().unwrap(), separator);
             tag.push_str(&status);
         }
         if e.event.is_some() {
             let event = String::from(&e.event.clone().unwrap());
-            tag.push_str(&event);
+            tag.push_str(&format!("{}", &event.white()))
         }
-        tag = format!("{}", tag.white());
+        tag = format!("{}", tag);
 
         let name = format!("pipeline: {}", e.name.clone());
         tag.push_str(&name);
@@ -247,15 +252,34 @@ impl From<&Pipeline> for Node {
         if e.fallback.is_some() {
             if e.fallback.clone().unwrap().on_failure.is_some() {
                 let on_failure = e.fallback.clone().unwrap().on_failure.unwrap();
-                let node: Vec<Node> = on_failure
-                    .iter()
-                    .map(|e| {
-                        let mut child = Node::from(e);
-                        child.value.as_mut().unwrap().insert_str(0, "on_failure: ");
-                        return child;
-                    })
-                    .collect();
-                children.extend(node);
+
+                let on_failure_children = on_failure.iter().map(|e| Node::from(e)).collect();
+                let node = Node {
+                    children: Some(on_failure_children),
+                    value: Some("on_failure".to_owned()),
+                    ..Node::default()
+                };
+                children.push(node);
+            }
+            if e.fallback.clone().unwrap().on_success.is_some() {
+                let on_success = e.fallback.clone().unwrap().on_success.unwrap();
+                let on_success_children = on_success.iter().map(|e| Node::from(e)).collect();
+                let node = Node {
+                    children: Some(on_success_children),
+                    value: Some("on_success".to_owned()),
+                    ..Node::default()
+                };
+                children.push(node);
+            }
+            if e.fallback.clone().unwrap().on_abortion.is_some() {
+                let on_abortion = e.fallback.clone().unwrap().on_abortion.unwrap();
+                let on_abortion_children = on_abortion.iter().map(|e| Node::from(e)).collect();
+                let node = Node {
+                    children: Some(on_abortion_children),
+                    value: Some("on_abortion".to_owned()),
+                    ..Node::default()
+                };
+                children.push(node);
             }
         }
 
@@ -280,46 +304,48 @@ impl From<&StepOrParallel> for Node {
 impl From<&Parallel> for Node {
     fn from(e: &Parallel) -> Self {
         let mut children: Vec<Node> = e.steps.iter().map(|el| Node::from(el)).collect();
+
+        // Fallback
         if e.fallback.is_some() {
-            let fallback = Node::from(&e.fallback.clone().unwrap());
-            children.push(fallback)
+            if e.fallback.clone().unwrap().on_failure.is_some() {
+                let on_failure = e.fallback.clone().unwrap().on_failure.unwrap();
+
+                let on_failure_children = on_failure.iter().map(|e| Node::from(e)).collect();
+                let node = Node {
+                    children: Some(on_failure_children),
+                    value: Some("on_failure".to_owned()),
+                    ..Node::default()
+                };
+                children.push(node);
+            }
+            if e.fallback.clone().unwrap().on_success.is_some() {
+                let on_success = e.fallback.clone().unwrap().on_success.unwrap();
+                let on_success_children = on_success.iter().map(|e| Node::from(e)).collect();
+                let node = Node {
+                    children: Some(on_success_children),
+                    value: Some("on_success".to_owned()),
+                    ..Node::default()
+                };
+                children.push(node);
+            }
+            if e.fallback.clone().unwrap().on_abortion.is_some() {
+                let on_abortion = e.fallback.clone().unwrap().on_abortion.unwrap();
+                let on_abortion_children = on_abortion.iter().map(|e| Node::from(e)).collect();
+                let node = Node {
+                    children: Some(on_abortion_children),
+                    value: Some("on_abortion".to_owned()),
+                    ..Node::default()
+                };
+                children.push(node);
+            }
         }
+
         let node = Node {
             value: Some("parallel".to_owned()),
             status: e.status.clone(),
             duration: e.duration,
             children: Some(children),
             level: LevelFilter::Warn,
-            ..Node::default()
-        };
-        return node;
-    }
-}
-impl From<&Fallback> for Node {
-    fn from(e: &Fallback) -> Self {
-        let mut value = None;
-        let mut children = None;
-
-        // On failure
-        if e.on_failure.is_some() {
-            let steps = e
-                .on_failure
-                .clone()
-                .unwrap()
-                .iter()
-                .map(|el| Node::from(el))
-                .collect();
-            let on_failure = Node {
-                value: Some("on_failure".to_owned()),
-                children: Some(steps),
-                ..Node::default()
-            };
-            children = Some(vec![on_failure]);
-            value = Some("fallback".to_owned());
-        }
-        let node = Node {
-            value: value,
-            children: children,
             ..Node::default()
         };
         return node;

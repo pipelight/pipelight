@@ -96,7 +96,7 @@ impl Node {
 pub fn format_duration(duration: std::time::Duration) -> Result<String, Box<dyn Error>> {
     let mut res: String;
     let computed = Duration::from_std(duration).unwrap();
-    let mut m: f64 = computed.num_minutes() as f64;
+    let m: f64 = computed.num_minutes() as f64;
     let mut s: f64 = computed.num_seconds() as f64;
     let mut ms: f64 = computed.num_milliseconds() as f64;
     res = "1".to_owned();
