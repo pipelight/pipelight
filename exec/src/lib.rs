@@ -2,10 +2,8 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
-use deno_core::FsModuleLoader;
 #[allow(dead_code)]
 // External Imports
-use deno_core::{Extension, JsRuntime, RuntimeOptions};
 use log::warn;
 use std::env;
 use std::path::Path;

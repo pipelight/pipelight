@@ -6,6 +6,7 @@ use colored::{ColoredString, Colorize};
 use exec::types::{Statuable, Status};
 use log::LevelFilter;
 use log::{debug, error, info, warn};
+use regex::Regex;
 use std::error::Error;
 use std::fmt;
 use utils::logger::logger;
@@ -49,11 +50,12 @@ impl Node {
     fn display(&self, prefix: String) {
         // Display node value
         if self.value.is_some() {
-            let mut value = self
-                .value
-                .clone()
-                .unwrap()
-                .replace("\n", &format!("\n{prefix:}", prefix = prefix.white()));
+            let mut value = self.value.clone().unwrap();
+            // Remove extra spaces
+            let big_spaces: Regex = Regex::new(r"\s\s+").unwrap();
+            value = big_spaces.replace_all(&value, "\n").to_string();
+            value = value.replace("\n", &format!("\n{prefix:}", prefix = prefix.white()));
+
             if self.duration.is_some() {
                 if logger.lock().unwrap().level >= LevelFilter::Info {
                     let duration = format_duration(self.duration.unwrap()).unwrap();

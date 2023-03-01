@@ -7,7 +7,12 @@ const config = {
       steps: [
         {
           name: "list files",
-          commands: ["ls -l"],
+          commands: [
+            "ls -l",
+            `ls  \
+            -al
+            `,
+          ],
         },
         {
           name: "get working directory",
