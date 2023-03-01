@@ -28,14 +28,16 @@ impl Config {
     pub fn get() -> Config {
         let em = "pipelight.config.mjs";
         let ts = "pipelight.config.ts";
-        let em = Config::load_from_file(&em);
-        let ts = Config::load_from_file(&ts);
         let res;
-        if ts.is_ok() {
-            res = ts;
+
+        if Config::exists(ts).unwrap() {
+            // println!("ts");
+            res = Config::load_from_file(&ts);
         } else {
-            res = em;
+            // println!("em");
+            res = Config::load_from_file(&em);
         }
+
         match res {
             Ok(res) => {
                 return res;
@@ -63,16 +65,19 @@ impl Config {
         let command = format!("{} {}", executable, script);
         let data = Exec::new().simple(&command)?;
         // println!("{:?}", data);
-        let res = serde_json::from_str::<Config>(&data.stdout.clone().unwrap());
+        let json = data.stdout.clone().unwrap();
+        let res = serde_json::from_str::<Config>(&json);
         match res {
             Ok(res) => {
                 return Ok(res);
             }
             Err(e) => {
                 println!("{:?}", e);
+                // println!("{}", json);
+                let span: SourceSpan = (e.line(), e.column()).into();
                 let json_err = JsonError {
-                    src: NamedSource::new(file, data.stdout.clone().unwrap()),
-                    bad_bit: (e.line(), e.column()).into(),
+                    src: NamedSource::new("config_json_output", json),
+                    bad_bit: span,
                 };
                 let me = Error::from(json_err);
                 println!("{:?}", me);

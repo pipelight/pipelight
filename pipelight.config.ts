@@ -20,7 +20,7 @@ const config = {
       steps: [
         {
           name: "commands with typo",
-          command: ["llls"],
+          commands: ["llls"],
           on_failure: [
             {
               name: "wait failure",

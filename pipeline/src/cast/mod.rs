@@ -17,8 +17,6 @@ pub struct Fallback {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
-    #[serde(skip)]
-    pub file: String,
     pub pipelines: Option<Vec<Pipeline>>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
