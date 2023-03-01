@@ -90,21 +90,22 @@ impl Pipeline {
     pub fn is_running(&mut self) -> bool {
         if Logs::get().is_err() {
             return false;
-        }
-        let pipelines = Logs::get_many_by_name(&self.name).unwrap();
-        let pipeline = pipelines.iter().next();
-        if pipeline.is_some() {
-            let event = &pipeline.clone().unwrap().event;
-            if event.is_some() {
-                let pid = &event.clone().unwrap().pid;
-                if pid.is_some() {
-                    let mut sys = System::new_all();
-                    sys.refresh_all();
-                    return sys.process(PidExt::from_u32(pid.unwrap())).is_some();
+        } else {
+            let pipelines = Logs::get_many_by_name(&self.name).unwrap();
+            let pipeline = pipelines.iter().next();
+            if pipeline.is_some() {
+                let event = &pipeline.clone().unwrap().event;
+                if event.is_some() {
+                    let pid = &event.clone().unwrap().pid;
+                    if pid.is_some() {
+                        let mut sys = System::new_all();
+                        sys.refresh_all();
+                        return sys.process(PidExt::from_u32(pid.unwrap())).is_some();
+                    }
                 }
             }
+            return false;
         }
-        return false;
     }
     /// Abort process execution
     pub fn stop(&mut self) {
