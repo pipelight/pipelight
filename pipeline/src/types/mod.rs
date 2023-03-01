@@ -40,7 +40,6 @@ pub struct Fallback {
 #[derive(Debug, Clone)]
 pub struct Config {
     pub pipelines: Option<Vec<Pipeline>>,
-    pub hooks: Option<Vec<Hook>>,
 }
 
 #[derive(Debug, Clone, PartialEq)]

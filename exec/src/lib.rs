@@ -2,17 +2,25 @@
 #![allow(unused_variables)]
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
+use deno_core::FsModuleLoader;
 #[allow(dead_code)]
 // External Imports
+use deno_core::{Extension, JsRuntime, RuntimeOptions};
 use log::warn;
 use std::env;
-use std::error::Error;
+use std::path::Path;
+use std::rc::Rc;
+use std::thread::Builder;
+use tokio;
 use types::StrOutput;
 // Internal Imports
 mod display;
 mod from;
 pub mod subprocess;
 pub mod types;
+// Error Handling
+use miette::{Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Exec {
@@ -43,11 +51,11 @@ impl Exec {
         };
     }
     /// Use for pipeline exewcution only
-    pub fn simple(&mut self, command: &str) -> Result<StrOutput, Box<dyn Error>> {
+    pub fn simple(&mut self, command: &str) -> Result<StrOutput> {
         let output = subprocess::simple(&self.shell(), command)?;
         Ok(output)
     }
-    pub fn detached(&mut self, command: &str) -> Result<(), Box<dyn Error>> {
+    pub fn detached(&mut self, command: &str) -> Result<()> {
         subprocess::detached(&self.shell, command)?;
         Ok(())
     }

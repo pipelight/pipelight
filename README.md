@@ -115,6 +115,8 @@ Pretty print the pipeline status
 pipelight logs
 ```
 
+/// Insert log screenshot
+
 Verbosity can be increased
 
 ```sh

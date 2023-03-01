@@ -1,7 +1,9 @@
+// import { Config } from "./typescript/src/mod.ts";
+// const config: Config = {
 const config = {
   pipelines: [
     {
-      name: "simple_example_em",
+      name: "simple_example_ts",
       steps: [
         {
           name: "list files",
@@ -18,7 +20,7 @@ const config = {
       steps: [
         {
           name: "commands with typo",
-          commands: ["llls"],
+          command: ["llls"],
           on_failure: [
             {
               name: "wait failure",
@@ -94,7 +96,7 @@ const config = {
       ],
       triggers: [
         {
-          branch: ["master", "dev"],
+          branches: ["master", "dev"],
           actions: ["pre-push", "manual"],
         },
       ],

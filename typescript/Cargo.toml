@@ -1,0 +1,4 @@
+[package]
+name = "typescript"
+version = "0.3.2"
+edition = "2021"

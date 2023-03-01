@@ -12,10 +12,7 @@ use uuid::Uuid;
 
 impl Default for Config {
     fn default() -> Self {
-        Config {
-            pipelines: None,
-            hooks: None,
-        }
+        Config { pipelines: None }
     }
 }
 impl Config {

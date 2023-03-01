@@ -4,48 +4,84 @@ use log::{debug, error, trace, warn};
 
 // standard lib
 use std::env::current_dir;
-use std::error::Error;
+// use std::error::Error;
+use std::fmt;
 use std::path::Path;
 use std::process::exit;
+use typescript::{main_script, TYPES};
+
+// Error Handling
+use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use thiserror::Error;
+
+#[derive(Error, Debug, Diagnostic)]
+#[error("js file syntax issue!")]
+#[diagnostic(code(json::error))]
+struct JsonError {
+    #[source_code]
+    src: NamedSource,
+    #[label("This bit here")]
+    bad_bit: SourceSpan,
+}
 
 impl Config {
-    pub fn load_from_string(js_object: &str) -> Result<Config, Box<dyn Error>> {
-        // Javascript with rust escape sequence (double curly braces)
-        let executable = "node -e";
-        let script = format!(
-            "\'
-            const stock = console;
-            console = {{}};
-            console = stock;
-            {};
-            const json = JSON.stringify(config, null, 2);
-            console.log(json);
-        \'",
-            js_object
-        );
-
-        let command = format!("{} {}", executable, script);
-        let data = Exec::new().simple(&command)?;
-        // trace!("Config json output:\n{}", &data.stdout.clone().unwrap());
-        let config = serde_json::from_str::<Config>(&data.stdout.clone().unwrap())?;
-        Ok(config)
-    }
     pub fn get() -> Config {
-        let file = "pipelight.config.mjs";
-        let res = Config::load_from_file(&file);
+        let em = "pipelight.config.mjs";
+        let ts = "pipelight.config.ts";
+        let em = Config::load_from_file(&em);
+        let ts = Config::load_from_file(&ts);
+        let res;
+        if ts.is_ok() {
+            res = ts;
+        } else {
+            res = em;
+        }
         match res {
             Ok(res) => {
                 return res;
             }
             Err(e) => {
-                let message = format!("From config file:\n{}", e);
-                error!("{}", message);
+                let message = format!("No config file provided");
+                println!("{}", message);
                 exit(1);
             }
-        };
+        }
+    }
+    /// Return the config from .mjs file inside the working dir.
+    fn load_from_file(file: &str) -> Result<Config> {
+        Config::exists(file)?;
+        Config::lint(file)?;
+        Config::check(file)?;
+
+        let pwd = current_dir().unwrap();
+        let string = format!("{}/{}", &pwd.display().to_string(), file);
+        let path = Path::new(&string);
+
+        let executable = "deno eval";
+        let script = main_script(file);
+
+        let command = format!("{} {}", executable, script);
+        let data = Exec::new().simple(&command)?;
+        // println!("{:?}", data);
+        let res = serde_json::from_str::<Config>(&data.stdout.clone().unwrap());
+        match res {
+            Ok(res) => {
+                return Ok(res);
+            }
+            Err(e) => {
+                println!("{:?}", e);
+                let json_err = JsonError {
+                    src: NamedSource::new(file, data.stdout.clone().unwrap()),
+                    bad_bit: (e.line(), e.column()).into(),
+                };
+                let me = Error::from(json_err);
+                println!("{:?}", me);
+                exit(1);
+            }
+        }
     }
     /// Ensure config file exists
-    fn exists(file: &str) -> Result<bool, Box<dyn Error>> {
+    fn exists(file: &str) -> Result<bool> {
         let pwd = current_dir().unwrap();
         let string = format!("{}/{}", &pwd.display().to_string(), file);
         let path = Path::new(&string);
@@ -60,60 +96,45 @@ impl Config {
     }
 
     /// Ensure that the node.js has no error
-    fn lint(file: &str) -> Result<(), Box<dyn Error>> {
+    fn lint(file: &str) -> Result<()> {
         // debug!("Linting config file");
-        let command = format!("node {}", file);
+        let command = format!("deno lint --quiet {}", file);
         let data = Exec::new().simple(&command)?;
         if data.stdout.is_none() {
             if data.stderr.is_none() {
                 Ok(())
             } else {
                 let message = format!("{}", data.stderr.unwrap());
-                Err(Box::from(message))
+                Err(Error::msg(message))
             }
         } else {
             if data.stderr.is_none() {
                 Ok(())
             } else {
                 let message = format!("{}", data.stderr.unwrap());
-                warn!("Node.js Output:\n{}", data.stdout.unwrap());
-                Err(Box::from(message))
+                Err(Error::msg(message))
             }
         }
     }
-    /// Return the config from .mjs file inside the working dir.
-    fn load_from_file(file: &str) -> Result<Config, Box<dyn Error>> {
-        Config::exists(file)?;
-        Config::lint(file)?;
-
-        let pwd = current_dir().unwrap();
-        let string = format!("{}/{}", &pwd.display().to_string(), file);
-        let path = Path::new(&string);
-
-        // Javascript with rust escape sequence (double curly braces)
-        let executable = "node -e";
-        let script = format!(
-            "\'
-            const stock = console;
-            console = {{}};
-            const promess = import(`{}`);
-            promess
-              .then((res) => {{ 
-                console = stock;
-                const config = res.default;
-                const json = JSON.stringify(config, null, 2);
-                console.log(json);
-              }})
-              .catch((err) => {{
-                console.log(err);
-              }});
-        \'",
-            path.display().to_string()
-        );
-        let command = format!("{} {}", executable, script);
+    /// Ensure Typescript typing
+    fn check(file: &str) -> Result<()> {
+        // debug!("Linting config file");
+        let command = format!("deno run --allow-read --check --quiet {}", file);
         let data = Exec::new().simple(&command)?;
-        // trace!("Config json output:\n{}", &data.stdout.clone().unwrap());
-        let config = serde_json::from_str::<Config>(&data.stdout.clone().unwrap())?;
-        Ok(config)
+        if data.stdout.is_none() {
+            if data.stderr.is_none() {
+                Ok(())
+            } else {
+                let message = format!("{}", data.stderr.unwrap());
+                Err(Error::msg(message))
+            }
+        } else {
+            if data.stderr.is_none() {
+                Ok(())
+            } else {
+                let message = format!("{}", data.stderr.unwrap());
+                Err(Error::msg(message))
+            }
+        }
     }
 }
