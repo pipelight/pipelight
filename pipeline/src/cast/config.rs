@@ -26,20 +26,14 @@ struct JsonError {
 
 impl Config {
     pub fn get() -> Config {
-        let em = "pipelight.config.mjs";
         let ts = "pipelight.config.ts";
-        let res;
-        if Config::exists(ts).unwrap() {
-            res = Config::load_from_file(&ts);
-        } else {
-            res = Config::load_from_file(&em);
-        }
+        let res = Config::load_from_file(&ts);
         match res {
             Ok(res) => {
                 return res;
             }
             Err(e) => {
-                let message = format!("No config file provided");
+                let message = format!("Error in config file:\n{}", e);
                 println!("{}", message);
                 exit(1);
             }
