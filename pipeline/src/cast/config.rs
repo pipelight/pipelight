@@ -29,15 +29,11 @@ impl Config {
         let em = "pipelight.config.mjs";
         let ts = "pipelight.config.ts";
         let res;
-
         if Config::exists(ts).unwrap() {
-            // println!("ts");
             res = Config::load_from_file(&ts);
         } else {
-            // println!("em");
             res = Config::load_from_file(&em);
         }
-
         match res {
             Ok(res) => {
                 return res;
@@ -93,8 +89,9 @@ impl Config {
         let exist = Path::new(path).exists();
         if !exist {
             let message = "Config file not found.";
-            error!("{}", message);
-            exit(1);
+            // error!("{}", message);
+            // exit(1);
+            return Err(Error::msg(message));
         } else {
             return Ok(exist);
         }

@@ -24,7 +24,13 @@ const config = {
           on_failure: [
             {
               name: "wait failure",
-              commands: [`echo \"On_failure fallback executed\"`],
+              commands: [
+                `echo 
+                  \"On_failure fallback executed
+                  yes
+                  \"
+                `,
+              ],
             },
           ],
         },
