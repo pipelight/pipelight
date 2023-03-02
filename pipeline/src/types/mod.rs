@@ -94,7 +94,9 @@ impl Pipeline {
             let res = Logs::get_many_by_name(&self.name);
             match res {
                 Ok(pipelines) => {
-                    let pipeline = pipelines.iter().next();
+                    let mut p = pipelines.clone();
+                    p.reverse();
+                    let pipeline = p.iter().next();
                     if pipeline.is_some() {
                         let event = &pipeline.clone().unwrap().event;
                         if event.is_some() {

@@ -16,7 +16,7 @@ const config = {
         },
         {
           name: "get working directory",
-          commands: ["pwd"],
+          commands: ["pwd", "sleep 5"],
         },
       ],
     },
@@ -128,5 +128,5 @@ const config = {
     },
   ],
 };
-console.log(JSON.stringify(config));
+// console.log(JSON.stringify(config));
 export default config;
