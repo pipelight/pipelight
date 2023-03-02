@@ -57,7 +57,7 @@ impl Node {
             value = value.replace("\n", &format!("\n{prefix:}", prefix = prefix.white()));
 
             if self.duration.is_some() {
-                if logger.lock().unwrap().level >= LevelFilter::Info {
+                if logger.lock().unwrap().level >= LevelFilter::Error {
                     let duration = format_duration(self.duration.unwrap()).unwrap();
                     let pretty = format!(" ({})", duration);
                     value.push_str(&format!("{}", pretty.white()));
