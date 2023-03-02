@@ -94,7 +94,7 @@ impl Config {
     /// Ensure that the node.js has no error
     fn lint(file: &str) -> Result<()> {
         // debug!("Linting config file");
-        let command = format!("deno lint --quiet {}", file);
+        let command = format!("deno lint --rules-exclude no-explicit-any --quiet {}", file);
         let data = Exec::new().simple(&command)?;
         if data.stdout.is_none() {
             if data.stderr.is_none() {

@@ -101,7 +101,7 @@ pub fn format_duration(duration: std::time::Duration) -> Result<String, Box<dyn 
     let m: f64 = computed.num_minutes() as f64;
     let mut s: f64 = computed.num_seconds() as f64;
     let mut ms: f64 = computed.num_milliseconds() as f64;
-    res = "1".to_owned();
+    res = "processing".to_owned();
     if m > 0 as f64 {
         res = format!("{:.2}m", m);
     } else {
