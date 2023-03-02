@@ -91,27 +91,20 @@ impl Pipeline {
         if Logs::get().is_err() {
             return false;
         } else {
-            let res = Logs::get_many_by_name(&self.name);
-            match res {
-                Ok(res) => {
-                    let pipeline = res.iter().next();
-                    if pipeline.is_some() {
-                        let event = &pipeline.clone().unwrap().event;
-                        if event.is_some() {
-                            let pid = &event.clone().unwrap().pid;
-                            if pid.is_some() {
-                                let mut sys = System::new_all();
-                                sys.refresh_all();
-                                return sys.process(PidExt::from_u32(pid.unwrap())).is_some();
-                            }
-                        }
+            let pipelines = Logs::get_many_by_name(&self.name).unwrap();
+            let pipeline = pipelines.iter().next();
+            if pipeline.is_some() {
+                let event = &pipeline.clone().unwrap().event;
+                if event.is_some() {
+                    let pid = &event.clone().unwrap().pid;
+                    if pid.is_some() {
+                        let mut sys = System::new_all();
+                        sys.refresh_all();
+                        return sys.process(PidExt::from_u32(pid.unwrap())).is_some();
                     }
-                    return false;
-                }
-                Err(e) => {
-                    return false;
                 }
             }
+            return false;
         }
     }
     /// Abort process execution

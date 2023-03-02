@@ -28,7 +28,7 @@ impl Logger {
     /// Set log level and logging file, and return handler to change logLevels at runtime
     pub fn file(&self, uuid: &Uuid) -> Self {
         let message = "Setting pipeline log file";
-        info!("{}", message);
+        // info!("{}", message);
         let level = self.level;
         let config = config::default_with_file(&self.directory, &level, uuid);
         self.handle.set_config(config);

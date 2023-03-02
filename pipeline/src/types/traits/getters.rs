@@ -19,22 +19,27 @@ impl Getters<Pipeline> for Logs {
         if !Path::new(dir).exists() {
             let message = "No log can be displayed. Log folder doesn't exist";
             return Err(Box::from(message));
+        } else {
+            let paths = fs::read_dir(dir).unwrap();
+            let n = paths.count();
+            if n == 0 {
+                let message = "No log can be displayed. Log folder doesn't exist";
+                return Err(Box::from(message));
+            } else {
+                let paths = fs::read_dir(dir).unwrap();
+                println!("{:?}", n);
+                let mut pipelines = vec![];
+                for path in paths {
+                    println!("{:?}", path);
+                    let dir_entry = path?;
+                    let json = utils::read_last_line(&dir_entry.path())?;
+                    let pipeline = serde_json::from_str::<Pipeline>(&json)?;
+                    pipelines.push(pipeline);
+                }
+                // pipelines = Logs::sanitize(pipelines)?;
+                Ok(pipelines)
+            }
         }
-        let paths = fs::read_dir(dir).unwrap();
-
-        // println!("{:?}", paths);
-
-        let mut pipelines = vec![];
-        for path in paths {
-            println!("{:?}", path);
-
-            let dir_entry = path?;
-            let json = utils::read_last_line(&dir_entry.path())?;
-            let pipeline = serde_json::from_str::<Pipeline>(&json)?;
-            pipelines.push(pipeline);
-        }
-        // pipelines = Logs::sanitize(pipelines)?;
-        Ok(pipelines)
     }
     fn get_by_name(name: &str) -> Result<Pipeline, Box<dyn Error>> {
         let pipelines = Logs::get()?;
