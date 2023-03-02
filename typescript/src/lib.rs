@@ -60,9 +60,9 @@ pub fn main_script(file_name: &str) -> String {
     const promess = import(`${{cwd}}/{}`);
     promess
       .then((res) => {{
-        console = stock;
         const config = res.default
         const json = JSON.stringify(config, null, 2);
+        console = stock;
         console.log(json);
       }})
       .catch((err) => {{
