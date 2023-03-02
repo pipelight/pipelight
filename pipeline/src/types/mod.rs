@@ -137,6 +137,12 @@ impl StepOrParallel {
             StepOrParallel::Parallel(res) => res.non_blocking,
         }
     }
+    pub fn duration(&self) -> Option<Duration> {
+        match self {
+            StepOrParallel::Step(res) => res.duration,
+            StepOrParallel::Parallel(res) => res.duration,
+        }
+    }
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Parallel {

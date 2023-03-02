@@ -416,6 +416,20 @@ const config = makeConfig(params);
 export default config;
 ```
 
+## Pipeline Duration computation
+
+While increasing log verbosity, you may encouter some duration for each pipeline step and commands
+
+This is the time it took for your command to process plus:
+
+- Commands subprocess/shell spawning time. (around 5ms on good/average machines)
+
+- and last but not least it takes into account the code that wraps those commands.
+
+  Pipelight code(logging, duration)
+  Your command
+  Pipelight code
+
 # CookBook / Deployement startegies
 
 In the end it's just JS, either it is functionnal programming or object oriented,

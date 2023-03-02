@@ -20,27 +20,22 @@ static mut PIPELINE: Lazy<Pipeline> = Lazy::new(|| Pipeline::new());
 impl Pipeline {
     /// Execute the pipeline
     pub fn run(&mut self) {
-        // Duration
-        let start = Instant::now();
-        let mut duration = start.elapsed();
-
         // Globals
         let mut ptr: *mut Pipeline;
         unsafe {
             ptr = &mut *PIPELINE;
             *ptr = self.to_owned();
         }
-
-        unsafe {
-            (*ptr).duration = Some(duration);
-        }
-
         // Guards
         unsafe {
             if (*ptr).is_running() {
                 return;
             }
         }
+
+        // Duration
+        let start = Instant::now();
+        let mut duration = start.elapsed();
 
         // Set Pid and Status and Duration
         unsafe {
@@ -53,6 +48,12 @@ impl Pipeline {
         unsafe {
             for step in &mut (*ptr).steps {
                 step.run(ptr);
+
+                // if step.duration().is_some() {
+                // Duration
+                // (*ptr).duration = Some((*ptr).duration.unwrap() + step.duration().unwrap());
+                // }
+
                 if step.get_status() != Some(Status::Succeeded)
                     && (step.non_blocking().is_none() || step.non_blocking() == Some(false))
                 {
@@ -71,6 +72,13 @@ impl Pipeline {
         unsafe {
             let last_step = (*ptr).steps.last().unwrap();
             if last_step.get_status().is_some() {
+                if last_step.non_blocking() == Some(true) {
+                    if last_step.get_status() == Some(Status::Failed) {
+                        (*ptr).set_status(Some(Status::Succeeded))
+                    } else {
+                        (*ptr).set_status(Some(last_step.get_status().clone().unwrap()))
+                    }
+                }
                 (*ptr).set_status(Some(last_step.get_status().clone().unwrap()))
             } else {
                 (*ptr).set_status(Some(Status::Failed))
@@ -100,6 +108,9 @@ impl Pipeline {
                         step.run(ptr);
                     }
                 }
+                // Duration
+                // duration = start.elapsed();
+                // (*ptr).duration = Some(duration);
             }
         }
     }
