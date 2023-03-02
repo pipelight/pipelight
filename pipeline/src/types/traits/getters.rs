@@ -27,10 +27,8 @@ impl Getters<Pipeline> for Logs {
                 return Err(Box::from(message));
             } else {
                 let paths = fs::read_dir(dir).unwrap();
-                println!("{:?}", n);
                 let mut pipelines = vec![];
                 for path in paths {
-                    println!("{:?}", path);
                     let dir_entry = path?;
                     let json = utils::read_last_line(&dir_entry.path())?;
                     let pipeline = serde_json::from_str::<Pipeline>(&json)?;
