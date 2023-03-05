@@ -1,4 +1,4 @@
-// import { Config } from "./typescript/src/mod.ts";
+import { Config } from "npm:pipelight";
 // const config: Config = {
 const config = {
   pipelines: [
