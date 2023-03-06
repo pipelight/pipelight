@@ -46,7 +46,6 @@ pub fn trigger_bin(attach: bool) -> Result<(), Box<dyn Error>> {
 pub fn trigger(attach: bool) -> Result<(), Box<dyn Error>> {
     let config = Config::new();
     let env = Trigger::env()?;
-    // Git::new().teleport();
     if config.pipelines.is_none() {
         let message = "No pipeline found";
         debug!("{}", message);
@@ -60,7 +59,10 @@ pub fn trigger(attach: bool) -> Result<(), Box<dyn Error>> {
             if pipeline.clone().triggers.unwrap().contains(&env) {
                 // println!("{:?}", env);
                 // run::run_bin(pipeline.clone().name, false);
+                let origin = env::current_dir().unwrap();
+                Git::new().teleport();
                 run::run_bin(pipeline.clone().name, attach);
+                env::set_current_dir(origin).unwrap();
             }
         }
     }
