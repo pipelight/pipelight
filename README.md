@@ -1,40 +1,13 @@
 # Pipelight
 
-A Lightweight CICD tool.
+A tiny automation tool.
 
-Write pipelines in Javascript.
-And trigger them automatically on git action.
+Wrap your bash script with Typescript.
+And trigger those pipelines automatically on git action.
 
-Define, Run pipe, check logs, without living your terminal.
+Define, Run pipe, check Logs, without living your terminal.
 
-[Full Documentation](https://doc.pipelight.areskul.com) in progress.
-
-## What it is.
-
-A Typescript bash wrapper.
-A Rust program that execute "js strings parsed as bash commands" on a git event.
-And return pretty logs.
-
-...tries to be the same kind of software as Jenkins,Drone.io,Gitlab CICD
-
-## Motivation
-
-### Lazy
-
-Config is written in Js so lots of loops and variables can be used
-to end the struggle with CI/CD pipelines written in configuration optimised languages.
-
-### Frugal Power User
-
-I've been working with quite small servers, that struggle to build docker images, forget about kubernetes, graphana and so on.
-But I have local powerful computers.
-Pipelight allows me to git-push from a machine, build on another, and send the result on my tiny server, so I don't have to spend much money in Cloud ressources.
-
-### Heavy work
-
-When I need to deploy a machine, install and configure everything to deploy my apps in different envs..
-I use it with docker, ansible, vagrant and others.
-It becomes pretty simple to share variables/env between tools and create a one click full deployment.
+[Full Documentation](https://doc.pipelight.areskul.com)
 
 ## Install
 
@@ -60,9 +33,9 @@ cp target/release/pipelight* /<my_bin_directory>/
 
 ## TL;DR
 
-If you're too "zero attention genZ tiktok user" to go further in the documentation.
-Just read the [USAGE](#USAGE) section and rush to the CLI.
-It will yell a few times until your config file is good to go.
+If you're too can not stand the suspens and go further in the documentation..
+Just read the [USAGE](#USAGE) section, install and try the Cli.
+It will yell a few times until your config file is good.
 But in the end it will run smooth.
 Enjoy!
 
@@ -98,6 +71,10 @@ const config = {
 };
 export default config;
 ```
+
+## Command Line Interface (Cli)
+
+In the same folder..
 
 List pipelines defined in config file
 
@@ -142,7 +119,7 @@ pipelight stop <pipeline_name>
 
 ## Triggers
 
-Works better in a Git repo.
+Only works in a Git repo.
 
 ```ts
 //pipelight.config.ts
@@ -179,7 +156,6 @@ rsync local_files to_my_remote_server
 ```
 
 But at some point, this method lakes verbosity, and automation...
-
 Just put your commands into a Pipeline object.
 
 ```ts
@@ -210,29 +186,3 @@ export default config;
 ```
 
 Add triggers, appreciate logs, and bettern your deployment scripts.
-
-## Why another CICD tool ?
-
-The need of something that keep it simple but allows for the great flexibility.
-
-Pipelight does not use neither secrets nor plugins.
-It directly loads your local environnement, so you can use your user ssh configuration, aliases and commands,
-so you can easily couple it with Ansible, docker, Vagrant...
-
-It takes Config as Code to another extend: Code as Config as Code!
-
-### The power of Javascript (Code as configuration)
-
-Javascrip is very good at writting object.
-You can write functions in javascript to create multiple pipelines in a breeze.
-Pipeline combines the speed and security of Rust with the easy scripting of Javascript.
-
-## Why so fast ?
-
-Pipelight is written in Rust and tightly coupled to linux and git.
-It doesn't reinvent the wheel by making cumbersom event listeners, secrets or plugins.
-Only git-hooks and bash commands with syntaxic sugar.
-
-### Terminal friendly
-
-Deploy, Backup, Restore... without living your terminal.
