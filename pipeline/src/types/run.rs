@@ -37,9 +37,11 @@ impl Pipeline {
         let start = Instant::now();
         let mut duration = start.elapsed();
 
+        //Event
+        let event = Event::new();
         // Set Pid and Status and Duration
         unsafe {
-            (*ptr).event = Some(Event::new());
+            (*ptr).event = Some(event);
             (*ptr).set_status(Some(Status::Running));
             (*ptr).duration = Some(duration);
             (*ptr).log();

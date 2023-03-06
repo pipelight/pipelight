@@ -22,7 +22,6 @@ impl Default for Logger {
             handle: handle,
             level: LevelFilter::Error,
         };
-
         return logger;
     }
 }

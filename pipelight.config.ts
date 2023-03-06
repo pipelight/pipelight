@@ -1,6 +1,5 @@
 import { Config } from "npm:pipelight";
-// const config: Config = {
-const config = {
+const config: Config = {
   pipelines: [
     {
       name: "simple_example_ts",

@@ -94,7 +94,6 @@ impl Hook {
             Ok(hook)
         } else {
             Ok(Flag::Manual)
-
             // let message = "Can't trigger hook outside of repository hook folder";
             // Err(Box::from(message))
         }

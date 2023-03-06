@@ -193,10 +193,12 @@ impl Trigger {
             branch = Some(Git::new().get_branch()?);
         }
         let action = Some(Hook::origin()?);
-        Ok(Trigger {
+        let res = Trigger {
             branch: branch,
             action: action,
-        })
+        };
+        // println!("{:?}", res);
+        Ok(res)
     }
 }
 
