@@ -21,7 +21,7 @@ fn handler() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-/// Get command line args and run pipeline
+// / Get command line args and run pipeline
 pub fn run() -> Result<(), Box<dyn Error>> {
     // Collect Args
     let args = env::args().collect::<Vec<String>>();

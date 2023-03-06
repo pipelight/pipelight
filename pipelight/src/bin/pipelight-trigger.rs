@@ -14,7 +14,8 @@ fn main() {
 
 /// Launch detached subprocess
 fn handler() -> Result<(), Box<dyn Error>> {
-    trigger()?;
+    // Detached process
+    trigger(false)?;
     Ok(())
 }
 
