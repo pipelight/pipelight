@@ -2,6 +2,7 @@
 // Pipeline is parsed as json into a log file
 
 #![allow(dead_code)]
+#![allow(unused_variables)]
 
 // Internal imports
 pub mod characters;

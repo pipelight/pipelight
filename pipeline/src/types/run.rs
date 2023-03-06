@@ -2,8 +2,10 @@ use super::{Command, Event, Parallel, Pipeline, Step, StepOrParallel};
 use exec::types::{Statuable, Status, StrOutput};
 use exec::Exec;
 use std::clone::Clone;
+use std::env;
 use std::error::Error;
 use std::thread;
+use utils::git::Git;
 
 // Global var
 use once_cell::sync::Lazy;
@@ -39,6 +41,8 @@ impl Pipeline {
 
         //Event
         let event = Event::new();
+        Git::new().teleport();
+
         // Set Pid and Status and Duration
         unsafe {
             (*ptr).event = Some(event);
@@ -63,6 +67,10 @@ impl Pipeline {
                 }
             }
         }
+
+        //Event
+        let origin = env::current_dir().unwrap();
+        env::set_current_dir(origin).unwrap();
 
         // Duration
         duration = start.elapsed();
