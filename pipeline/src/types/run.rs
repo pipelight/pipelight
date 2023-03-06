@@ -40,6 +40,7 @@ impl Pipeline {
         let mut duration = start.elapsed();
 
         //Event
+        let origin = env::current_dir().unwrap();
         let event = Event::new();
         Git::new().teleport();
 
@@ -69,7 +70,6 @@ impl Pipeline {
         }
 
         //Event
-        let origin = env::current_dir().unwrap();
         env::set_current_dir(origin).unwrap();
 
         // Duration
