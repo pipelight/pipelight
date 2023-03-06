@@ -60,9 +60,11 @@ pub fn trigger(attach: bool) -> Result<(), Box<dyn Error>> {
                 // println!("{:?}", env);
                 // run::run_bin(pipeline.clone().name, false);
                 let origin = env::current_dir().unwrap();
-                Git::new().teleport();
+                println!("{:?}", origin);
+
+                // Git::new().teleport();
                 run::run_bin(pipeline.clone().name, attach);
-                env::set_current_dir(origin).unwrap();
+                // env::set_current_dir(origin).unwrap();
             }
         }
     }
