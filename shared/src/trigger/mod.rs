@@ -31,7 +31,7 @@ pub fn trigger_bin(attach: bool) -> Result<(), Box<dyn Error>> {
     match attach {
         true => {
             // Lauch attach thread
-            trigger_in_thread()?;
+            trigger_in_thread(attach)?;
         }
         false => {
             // Lauch detached process
@@ -43,7 +43,7 @@ pub fn trigger_bin(attach: bool) -> Result<(), Box<dyn Error>> {
 }
 
 /// Filter pipeline by trigger and run
-pub fn trigger() -> Result<(), Box<dyn Error>> {
+pub fn trigger(attach: bool) -> Result<(), Box<dyn Error>> {
     let config = Config::new();
     let env = Trigger::env()?;
     // Git::new().teleport();
@@ -58,9 +58,9 @@ pub fn trigger() -> Result<(), Box<dyn Error>> {
             debug!("{}", message)
         } else {
             if pipeline.clone().triggers.unwrap().contains(&env) {
-                println!("{:?}", env);
+                // println!("{:?}", env);
                 // run::run_bin(pipeline.clone().name, false);
-                run::run_bin(pipeline.clone().name, true);
+                run::run_bin(pipeline.clone().name, attach);
             }
         }
     }
@@ -68,8 +68,8 @@ pub fn trigger() -> Result<(), Box<dyn Error>> {
 }
 
 /// Launch attached thread
-pub fn trigger_in_thread() -> Result<(), Box<dyn Error>> {
-    let thread = thread::spawn(|| trigger().unwrap());
+pub fn trigger_in_thread(attach: bool) -> Result<(), Box<dyn Error>> {
+    let thread = thread::spawn(move || trigger(attach).unwrap());
     thread.join().unwrap();
     Ok(())
 }
