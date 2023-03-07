@@ -1,29 +1,16 @@
 # Rust
 
-Format node value for multiline better indentation
-
-Add Clap-rs version feature flag
+Add Clap version feature flag
 
 Add signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
 
-Use miette for error report
+Better miette for error report
 
 Detect if node/ts-node is installed
 
-## Linting
-
-Lint config file with miette/ or else
-
 ## Unit Tests
 
-Add dutration computation
-Finish Performance crate.
 Test multiple bad config file.
-
-## Logging
-
-Print **wrapped lines** after error
-Hint in Ariadne/Miette source code
 
 Sanitize logs.
 if logs corrupted
@@ -37,4 +24,4 @@ Package app for RPM and Deb
 
 If pipelines have same pid, link them in logs
 
-Print Pipeline execution time
+Print Pipeline execution time while running

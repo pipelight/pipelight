@@ -21,21 +21,25 @@ impl From<&Event> for String {
         let mut string = "".to_owned();
         let mut date = e.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
         date = format!("{}\n", date);
+        string.push_str(&date);
+
         let header = "action: ";
         let action = format!(
             "{}{}\n",
             header.white(),
             String::from(&e.trigger.action.clone().unwrap()).white()
         );
-        let header = "branch: ";
-        let branch = format!(
-            "{}{}\n",
-            header.white(),
-            String::from(&e.trigger.branch.clone().unwrap()).white()
-        );
-        string.push_str(&date);
         string.push_str(&action);
-        string.push_str(&branch);
+
+        if e.trigger.branch.is_some() {
+            let header = "branch: ";
+            let branch = format!(
+                "{}{}\n",
+                header.white(),
+                String::from(&e.trigger.branch.clone().unwrap()).white()
+            );
+            string.push_str(&branch);
+        }
         return string;
     }
 }
