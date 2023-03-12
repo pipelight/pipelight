@@ -14,6 +14,7 @@ use std::path::Path;
 // Internal Imports
 pub mod git;
 pub mod logger;
+pub mod teleport;
 
 /// Return project root path as string
 pub fn get_root() -> Result<String, Box<dyn Error>> {

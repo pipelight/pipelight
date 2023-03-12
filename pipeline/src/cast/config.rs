@@ -9,6 +9,7 @@ use std::fmt;
 use std::path::Path;
 use std::process::exit;
 use typescript::{main_script, TYPES};
+use utils::teleport::Teleport;
 
 // Error Handling
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
@@ -25,32 +26,33 @@ struct JsonError {
 }
 
 impl Config {
-    pub fn get() -> Config {
-        let ts = "pipelight.config.ts";
-        let res = Config::load_from_file(&ts);
+    pub fn get() -> Result<Config> {
+        let file_name: String = "pipelight.config.ts".to_owned();
+        let pwd: String = current_dir().unwrap().display().to_string();
+
+        let path_str = Teleport::search(&file_name, &pwd)?;
+        let res = Config::load_from_file(&path_str);
         match res {
             Ok(res) => {
-                return res;
+                return Ok(res);
             }
             Err(e) => {
                 let message = format!("Error in config file:\n{}", e);
-                println!("{}", message);
-                exit(1);
+                return Err(Error::msg(message));
+                // println!("{}", message);
+                // exit(1);
             }
         }
     }
-    /// Return the config from .mjs file inside the working dir.
-    fn load_from_file(file: &str) -> Result<Config> {
-        Config::exists(file)?;
-        Config::lint(file)?;
-        Config::check(file)?;
 
-        let pwd = current_dir().unwrap();
-        let string = format!("{}/{}", &pwd.display().to_string(), file);
-        let path = Path::new(&string);
+    /// Return the config from given path
+    fn load_from_file(file_path: &str) -> Result<Config> {
+        // Fail safe guards
+        Config::lint(file_path)?;
+        Config::check(file_path)?;
 
         let executable = "deno eval";
-        let script = main_script(file);
+        let script = main_script(file_path);
 
         let command = format!("{} {}", executable, script);
         let data = Exec::new().simple(&command)?;
@@ -73,21 +75,6 @@ impl Config {
                 println!("{:?}", me);
                 exit(1);
             }
-        }
-    }
-    /// Ensure config file exists
-    fn exists(file: &str) -> Result<bool> {
-        let pwd = current_dir().unwrap();
-        let string = format!("{}/{}", &pwd.display().to_string(), file);
-        let path = Path::new(&string);
-        let exist = Path::new(path).exists();
-        if !exist {
-            let message = "Config file not found.";
-            // error!("{}", message);
-            // exit(1);
-            return Err(Error::msg(message));
-        } else {
-            return Ok(exist);
         }
     }
 

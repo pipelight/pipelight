@@ -57,7 +57,7 @@ pub fn main_script(file_name: &str) -> String {
     const stock = console;
     console = {{}};
     const cwd = Deno.cwd();
-    const promess = import(`${{cwd}}/{}`);
+    const promess = import(`{}`);
     promess
       .then((res) => {{
         const config = res.default

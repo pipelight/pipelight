@@ -41,7 +41,7 @@ impl Git {
             env::set_current_dir(wd).unwrap();
         }
     }
-    ///  Detect if there is a git repo in pwd
+    ///  Detect if inside a git repo
     pub fn exists(&mut self) -> bool {
         return self.repo.is_some();
     }

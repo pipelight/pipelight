@@ -1,12 +1,16 @@
 # Rust
 
-Add Clap version feature flag
+Load config:
+if in pwd,
+else if in git,
 
 Add signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
 
-Better miette for error report
+Add Clap version feature flag
 
-Detect if node/ts-node is installed
+Better miette diagnostics
+
+Detect if deno is installed
 
 ## Unit Tests
 
@@ -22,6 +26,8 @@ Package app for RPM and Deb
 
 ## Pretty
 
-If pipelines have same pid, link them in logs
+fix bug: multiline string ultra space
 
-Print Pipeline execution time while running
+If pipelines have same pid (--attach), link them in logs
+
+Print Pipeline execution time while running (instead of "processing")

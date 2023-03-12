@@ -17,12 +17,21 @@ impl Default for Config {
 }
 impl Config {
     pub fn new() -> Self {
-        let origin = env::current_dir().unwrap();
-        Git::new().teleport();
-        let json = cast::Config::get();
-        let mut config = Config::from(&json);
+        let mut config: Config;
+        // Get config from pwd
+        // if cast::Config::get().is_ok() {
+        let json = cast::Config::get().unwrap();
+        config = Config::from(&json);
+        // }
+        // Get config from git repo root
+        // else {
+        //     let origin = env::current_dir().unwrap();
+        //     Git::new().teleport();
+        //     let json = cast::Config::get().unwrap();
+        //     config = Config::from(&json);
+        //     env::set_current_dir(origin).unwrap();
+        // }
         config.dedup_pipelines();
-        env::set_current_dir(origin).unwrap();
         return config;
     }
     /// Remove pipelines with the same name

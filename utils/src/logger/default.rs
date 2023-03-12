@@ -3,14 +3,13 @@ use super::Logger;
 use crate::git::Git;
 pub use log::{error, trace, LevelFilter};
 use std::env;
-use std::env::current_dir;
 
 impl Default for Logger {
     fn default() -> Self {
         // Get Path With default values
         let level = LevelFilter::Error;
         let directory = ".pipelight/logs";
-        let pwd = current_dir().unwrap();
+        let pwd = env::current_dir().unwrap();
         let path_string = format!("{}/{}", &pwd.display().to_string(), directory);
 
         // Get default config
