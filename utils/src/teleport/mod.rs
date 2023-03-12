@@ -9,24 +9,29 @@ use thiserror::Error;
 
 #[derive(Debug, Clone)]
 pub struct Teleport {
-    pub root_path: Option<String>,
-    pub current_path: Option<String>,
+    pub root: Option<String>,
+    pub cwd: Option<String>,
 }
 
 impl Default for Teleport {
     fn default() -> Self {
-        let cwd = env::current_dir().unwrap().display().to_string();
-
+        let cwd = Some(env::current_dir().unwrap().display().to_string());
         let root: Option<String>;
-        let res = Teleport::search("pipelight.config.ts", &cwd);
+        let res = Teleport::search("pipelight.config.ts", &cwd.clone().unwrap());
         if res.is_ok() {
-            root = Some(res.unwrap());
+            root = Some(
+                Path::new(&res.unwrap())
+                    .parent()
+                    .unwrap()
+                    .display()
+                    .to_string(),
+            );
         } else {
             root = None;
         }
         return Teleport {
-            root_path: root,
-            current_path: None,
+            root: root,
+            cwd: cwd,
         };
     }
 }
@@ -37,8 +42,8 @@ impl Teleport {
     }
     pub fn teleport(&mut self) {
         let cwd = env::current_dir().unwrap().display().to_string();
-        let root = self.clone().root_path.unwrap();
-        let current = self.clone().current_path.unwrap();
+        let root = self.clone().root.unwrap();
+        let current = self.clone().cwd.unwrap();
         if cwd != root || cwd != root {
             return;
         }

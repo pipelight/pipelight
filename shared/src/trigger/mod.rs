@@ -57,14 +57,10 @@ pub fn trigger(attach: bool) -> Result<(), Box<dyn Error>> {
             debug!("{}", message)
         } else {
             if pipeline.clone().triggers.unwrap().contains(&env) {
-                // println!("{:?}", env);
-                // run::run_bin(pipeline.clone().name, false);
                 let origin = env::current_dir().unwrap();
-                println!("{:?}", origin);
-
-                // Git::new().teleport();
                 run::run_bin(pipeline.clone().name, attach);
-                // env::set_current_dir(origin).unwrap();
+                // println!("{:?}", origin);
+                // println!("{:?}", env);
             }
         }
     }

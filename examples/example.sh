@@ -1,3 +1,0 @@
-#example.sh
-ls
-pwd

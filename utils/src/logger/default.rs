@@ -1,16 +1,22 @@
+// Relative paths
 use super::config;
 use super::Logger;
+
+// Absolute paths
 use crate::git::Git;
-pub use log::{error, trace, LevelFilter};
+use crate::teleport::Teleport;
+
+use log::{error, trace, LevelFilter};
 use std::env;
 
 impl Default for Logger {
     fn default() -> Self {
         // Get Path With default values
         let level = LevelFilter::Error;
-        let directory = ".pipelight/logs";
-        let pwd = env::current_dir().unwrap();
-        let path_string = format!("{}/{}", &pwd.display().to_string(), directory);
+        let log_dir = ".pipelight/logs";
+
+        let root = Teleport::new().root.unwrap();
+        let path_string = format!("{}/{}", &root, log_dir);
 
         // Get default config
         let config = config::default(&level);
@@ -28,10 +34,11 @@ impl Logger {
     pub fn new() -> Self {
         let origin = env::current_dir().unwrap();
 
-        Git::new().teleport();
+        let mut portal = Teleport::new();
+        portal.teleport();
         let logger = Self::default();
+        portal.teleport();
 
-        env::set_current_dir(origin).unwrap();
         return logger;
     }
 }

@@ -18,19 +18,8 @@ impl Default for Config {
 impl Config {
     pub fn new() -> Self {
         let mut config: Config;
-        // Get config from pwd
-        // if cast::Config::get().is_ok() {
         let json = cast::Config::get().unwrap();
         config = Config::from(&json);
-        // }
-        // Get config from git repo root
-        // else {
-        //     let origin = env::current_dir().unwrap();
-        //     Git::new().teleport();
-        //     let json = cast::Config::get().unwrap();
-        //     config = Config::from(&json);
-        //     env::set_current_dir(origin).unwrap();
-        // }
         config.dedup_pipelines();
         return config;
     }
