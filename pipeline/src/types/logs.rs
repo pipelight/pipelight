@@ -4,6 +4,7 @@ use log::{info, warn};
 use std::error::Error;
 
 impl Logs {
+    /// If file unreadable, delete it.
     fn sanitize(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>, Box<dyn Error>> {
         let message = "Sanitizing log files";
         info!("{}", message);

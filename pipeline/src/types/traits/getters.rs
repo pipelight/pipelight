@@ -15,7 +15,7 @@ pub trait Getters<T> {
 impl Getters<Pipeline> for Logs {
     fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
         let dir = &logger.lock().unwrap().directory;
-        let message = "No log can be displayed. Log folder doesn't exist";
+        let message = "No logs to display.";
         // Safe exit if no log folder
         if !Path::new(dir).exists() {
             return Err(Box::from(message));
