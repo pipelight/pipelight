@@ -9,7 +9,7 @@ use std::fmt;
 use std::path::Path;
 use std::process::exit;
 use typescript::{main_script, TYPES};
-use utils::teleport::Teleport;
+use utils::teleport::{FileType, Teleport};
 
 // Error Handling
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
@@ -27,11 +27,12 @@ struct JsonError {
 
 impl Config {
     pub fn get() -> Result<Config> {
-        let file_name: String = "pipelight.config.ts".to_owned();
+        let file_names: Vec<String> = vec!["pipelight.ts".to_owned(), "pipelight.yml".to_owned()];
         let pwd: String = current_dir().unwrap().display().to_string();
 
-        let path_str = Teleport::search(&file_name, &pwd)?;
-        let res = Config::load_from_file(&path_str);
+        let file_path = Teleport::new().config_path.unwrap();
+        // println!("{}", file_path);
+        let res = Config::load_from_file(&file_path);
         match res {
             Ok(res) => {
                 return Ok(res);
@@ -45,8 +46,29 @@ impl Config {
         }
     }
 
-    /// Return the config from given path
     fn load_from_file(file_path: &str) -> Result<Config> {
+        // println!("extensiFileType::from(
+        let extension = &Path::new(file_path)
+            .extension()
+            .unwrap()
+            .to_str()
+            .unwrap()
+            .to_owned();
+        let file_type = FileType::from(extension);
+        println!("{:?}", file_type);
+        let config = match file_type {
+            FileType::Yaml | FileType::Yml => Config::load_from_file_yml(file_path),
+            FileType::TypeScript | FileType::JavaScript => Config::load_from_file_ts(file_path),
+            _ => {
+                let message = format!("Couldn't read config file format");
+                return Err(Error::msg(message));
+            }
+        };
+        Ok(config?)
+    }
+
+    /// Return the config from given path
+    fn load_from_file_ts(file_path: &str) -> Result<Config> {
         // Fail safe guards
         Config::lint(file_path)?;
         Config::check(file_path)?;
@@ -69,6 +91,36 @@ impl Config {
                 let span: SourceSpan = (e.line(), e.column()).into();
                 let json_err = JsonError {
                     src: NamedSource::new("config_json_output", json),
+                    bad_bit: span,
+                };
+                let me = Error::from(json_err);
+                println!("{:?}", me);
+                exit(1);
+            }
+        }
+    }
+    fn load_from_file_yml(file_path: &str) -> Result<Config> {
+        // Fail safe guards
+        Config::lint(file_path)?;
+        Config::check(file_path)?;
+
+        let executable = "cat";
+        let command = format!("{} {}", executable, file_path);
+        let data = Exec::new().simple(&command)?;
+        // println!("{:?}", data);
+        let yml = data.stdout.clone().unwrap();
+        let res = serde_yaml::from_str::<Config>(&yml);
+        match res {
+            Ok(res) => {
+                return Ok(res);
+            }
+            Err(e) => {
+                println!("{:?}", e);
+                // println!("{}", json);
+                let span: SourceSpan =
+                    (e.location().unwrap().line(), e.location().unwrap().column()).into();
+                let json_err = JsonError {
+                    src: NamedSource::new("config_json_output", yml),
                     bad_bit: span,
                 };
                 let me = Error::from(json_err);

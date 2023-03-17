@@ -1,5 +1,5 @@
 use log::Level;
-use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
+pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 use log4rs;
 use log4rs::Handle;
 use std::clone::Clone;

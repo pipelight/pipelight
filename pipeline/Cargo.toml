@@ -22,4 +22,5 @@ lock_api = "0.4.9"
 miette = { version = "5.5.0", features = ["fancy"] }
 thiserror = "1.0.38"
 regex = "1.7.1"
+serde_yaml = "0.9.19"
 

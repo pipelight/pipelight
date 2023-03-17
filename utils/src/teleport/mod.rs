@@ -3,34 +3,81 @@ use std::env;
 
 use super::git::Git;
 use std::path::Path;
+// Enum workaround
+use std::string::ToString;
+use strum::{EnumIter, IntoEnumIterator};
 // Error Handling
+use log::{debug, error, trace, warn};
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use std::process::exit;
 use thiserror::Error;
 
+#[derive(Debug, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
+pub enum FileType {
+    Yaml,
+    Yml,
+    Toml,
+    Tml,
+    TypeScript,
+    JavaScript,
+}
+
+impl From<&String> for FileType {
+    fn from(extension: &String) -> FileType {
+        let extension: &str = &extension;
+        match extension {
+            "yaml" => return FileType::Yaml,
+            "yml" => return FileType::Yml,
+            "toml" => return FileType::Toml,
+            "tml" => return FileType::Tml,
+            "ts" => return FileType::TypeScript,
+            "js" => return FileType::JavaScript,
+            _ => {
+                let message = format!("Couldn't parse config file with extension .{}", extension);
+                error!("{}", message);
+                exit(1);
+            }
+        };
+    }
+}
+impl From<&FileType> for String {
+    fn from(file_type: &FileType) -> String {
+        match file_type {
+            FileType::Yaml => return "yaml".to_owned(),
+            FileType::Yml => return "yml".to_owned(),
+            FileType::Toml => return "toml".to_owned(),
+            FileType::Tml => return "tml".to_owned(),
+            FileType::TypeScript => return "ts".to_owned(),
+            FileType::JavaScript => return "js".to_owned(),
+        }
+    }
+}
 #[derive(Debug, Clone)]
 pub struct Teleport {
     pub root: Option<String>,
+    pub config_path: Option<String>,
     pub cwd: Option<String>,
 }
 
 impl Default for Teleport {
     fn default() -> Self {
-        let cwd = Some(env::current_dir().unwrap().display().to_string());
+        let mut cwd = env::current_dir().unwrap().display().to_string();
+        let cwd = Some(cwd);
         let root: Option<String>;
-        let res = Teleport::search("pipelight.config.ts", &cwd.clone().unwrap());
+        let config_path: Option<String>;
+        let res = Teleport::search("pipelight", &cwd.clone().unwrap());
         if res.is_ok() {
-            root = Some(
-                Path::new(&res.unwrap())
-                    .parent()
-                    .unwrap()
-                    .display()
-                    .to_string(),
-            );
+            let path = res.unwrap().clone();
+            println!("{}", path);
+            root = Some(Path::new(&path).parent().unwrap().display().to_string());
+            config_path = Some(path);
         } else {
             root = None;
+            config_path = None;
         }
         return Teleport {
             root: root,
+            config_path: config_path,
             cwd: cwd,
         };
     }
@@ -44,7 +91,7 @@ impl Teleport {
         let cwd = env::current_dir().unwrap().display().to_string();
         let root = self.clone().root.unwrap();
         let current = self.clone().cwd.unwrap();
-        if cwd != root || cwd != root {
+        if cwd != root || cwd != current {
             return;
         }
         if cwd == root {
@@ -55,22 +102,41 @@ impl Teleport {
         }
     }
     /// Recursively search a file throught parent dir
-    pub fn search(file_name: &str, dir_str: &str) -> Result<String> {
-        // Convert args to path
-        let path_str = format!("{}/{}", dir_str, file_name);
-        let path = Path::new(&path_str);
-        let dir = Path::new(&dir_str);
-        let exists = Path::new(path).exists();
+    pub fn search(app_name: &str, cwd: &str) -> Result<String> {
+        let mut cwd = cwd.to_owned();
+        cwd.push('/');
 
+        let message = "Couldn't find a configuration file";
+
+        // Convert args to path
+        let mut exists = false;
+        let mut file_str: String = format!("{}{}", cwd, app_name).to_owned();
+        let binding = file_str.clone();
+        let mut file_path = Path::new(&binding);
+        let mut dir = Path::new(&cwd);
+
+        // println!("{}", &file_path.display());
+
+        for file_type in FileType::iter() {
+            let extension = String::from(&file_type);
+            let path_str = format!("{}{}.{}", cwd, app_name, extension).to_owned();
+            file_str = path_str.clone();
+            let path = Path::new(&path_str);
+            exists = path.clone().exists();
+            if exists {
+                println!("str: {}", &path_str);
+                break;
+            }
+        }
         // Config try get
         if exists {
-            Ok(path.display().to_string())
+            println!("f: {}", &file_str);
+            return Ok(file_str);
             // Load config from str -> Path
         } else {
-            let message = "Couldn't find a configuration file";
             // Reached git repo root
             if Git::new().exists() {
-                if dir_str
+                if cwd
                     == Git::new()
                         .repo
                         .unwrap()
@@ -79,16 +145,24 @@ impl Teleport {
                         .display()
                         .to_string()
                 {
-                    return Err(Error::msg(message));
+                    let message = format!("Couldn't find a config file");
+                    error!("{}", message);
+                    // println!("{}", message);
+                    exit(1);
+                    // return Err(Error::msg(message));
                 }
             }
             let parent = dir.parent();
+            println!("parent: {}", &parent.unwrap().display());
             if parent.is_some() {
-                let new_path = Teleport::search(file_name, &parent.unwrap().display().to_string())?;
-                Ok(new_path)
+                let new_path = Teleport::search(app_name, &parent.unwrap().display().to_string())?;
+                return Ok(new_path);
             } else {
                 // No more accessible parents
-                Err(Error::msg(message))
+                let message = format!("Couldn't find a config file");
+                error!("{}", message);
+                exit(1);
+                // return Err(Error::msg(message));
             }
         }
     }
