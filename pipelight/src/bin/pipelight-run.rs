@@ -41,10 +41,3 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         _ => return Ok(()),
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn internal() {}
-}

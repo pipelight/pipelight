@@ -36,7 +36,7 @@ pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<(), Box<dyn Error>> {
 /// Print a flatten list of pipelines present in config file
 pub fn list() -> Result<(), Box<dyn Error>> {
     let level = logger.lock().unwrap().level;
-    let config = Config::new();
+    let config = Config::new()?;
     // Print headers
     match level {
         LevelFilter::Warn => {

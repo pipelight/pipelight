@@ -18,10 +18,3 @@ fn handler() -> Result<(), Box<dyn Error>> {
     trigger(false)?;
     Ok(())
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn internal() {}
-}

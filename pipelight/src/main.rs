@@ -8,6 +8,10 @@ use shared::cli;
 use std::error::Error;
 use std::process::exit;
 
+// Error Handling
+// use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+// use thiserror::Error;
+
 fn main() {
     handler().unwrap_or_else(|e| {
         error!("{}", e);

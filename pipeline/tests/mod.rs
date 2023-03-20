@@ -1,66 +1,20 @@
 #[cfg(test)]
 mod tests {
-    use crate::src::types::*;
     use log::LevelFilter;
+    use pipeline::cast;
+    use pipeline::types;
     use utils::logger::logger;
 
     #[test]
-    /// Loads a js config with a simple pipeline
-    /// Required fields only
-    fn load_config_required() {
-        let js = r#"
-        const config = {
-          pipelines: [
-            {
-              name: "default",
-              steps: [
-                {
-                  name: "wait",
-                  commands: ["ls", "sleep 15", "pwd"],
-                },
-              ],
-            }
-        }"#;
+    /// Loads a Good ts config with a simple pipeline
+    fn load_good_config() {
+        cast::Config::load_from_file_ts("./tests/files/good-config.ts").unwrap();
     }
     #[test]
-    /// Loads a js config with a simple pipeline
-    /// Missing required fields
+    /// Loads a ts config with a simple pipeline
+    /// With missing required fields
     fn load_config_missing_required() {
-        let js = r##"
-        const config = {
-          pipelines: [
-            {
-              // name: "default",
-              steps: [
-                {
-                  // name: "wait",
-                  // commands: ["ls", "sleep 15", "pwd"],
-                },
-              ],
-            }
-        }"##;
-    }
-    #[test]
-    /// Loads a js config with parallel steps
-    fn load_config_parallel() {
-        let js = r##"
-        const config = {
-          pipelines: [
-            {
-              // name: "default_para",
-              steps: [{
-                parallel:[
-                    {
-                      name: "wait",
-                      commands: ["ls", "sleep 15", "pwd"],
-                    },
-                    {
-                      name: "wait2",
-                      commands: ["ls", "sleep 15", "pwd"],
-                    },
-                ]
-                }],
-            }]
-        }"##;
+        let res = cast::Config::load_from_file_ts("./tests/files/bad-config.ts");
+        assert!(res.is_err());
     }
 }

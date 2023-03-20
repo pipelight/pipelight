@@ -74,7 +74,7 @@ impl Config {
     }
 
     /// Return the config from given path
-    fn load_from_file_ts(file_path: &str) -> Result<Config> {
+    pub fn load_from_file_ts(file_path: &str) -> Result<Config> {
         // Fail safe guards
         Config::lint(file_path)?;
         Config::check(file_path)?;
@@ -100,8 +100,9 @@ impl Config {
                     bad_bit: span,
                 };
                 let me = Error::from(json_err);
-                println!("{:?}", me);
-                exit(1);
+                // println!("{:?}", me);
+                return Err(me);
+                // exit(1);
             }
         }
     }

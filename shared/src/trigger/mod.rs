@@ -44,7 +44,7 @@ pub fn trigger_bin(attach: bool) -> Result<(), Box<dyn Error>> {
 
 /// Filter pipeline by trigger and run
 pub fn trigger(attach: bool) -> Result<(), Box<dyn Error>> {
-    let config = Config::new();
+    let config = Config::new()?;
     let env = Trigger::env()?;
     if config.pipelines.is_none() {
         let message = "No pipeline found";

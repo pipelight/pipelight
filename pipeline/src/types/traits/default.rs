@@ -10,18 +10,22 @@ use std::process;
 use utils::git::Git;
 use uuid::Uuid;
 
+// Error Handling
+use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use thiserror::Error;
+
 impl Default for Config {
     fn default() -> Self {
         Config { pipelines: None }
     }
 }
 impl Config {
-    pub fn new() -> Self {
+    pub fn new() -> Result<Self> {
         let mut config: Config;
         let json = cast::Config::get().unwrap();
         config = Config::from(&json);
         config.dedup_pipelines();
-        return config;
+        Ok(config)
     }
     /// Remove pipelines with the same name
     pub fn dedup_pipelines(&mut self) -> Self {
