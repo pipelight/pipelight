@@ -33,7 +33,7 @@ impl From<&String> for FileType {
             "ts" => return FileType::TypeScript,
             "js" => return FileType::JavaScript,
             _ => {
-                let message = format!("Couldn't parse config file with extension .{}", extension);
+                let message = format!("Couldn't parse file with extension .{}", extension);
                 error!("{}", message);
                 exit(1);
             }
@@ -61,7 +61,7 @@ pub struct Teleport {
 
 impl Default for Teleport {
     fn default() -> Self {
-        let mut cwd = env::current_dir().unwrap().display().to_string();
+        let cwd = env::current_dir().unwrap().display().to_string();
         let cwd = Some(cwd);
         let root: Option<String>;
         let config_path: Option<String>;
@@ -114,8 +114,8 @@ impl Teleport {
         let mut exists = false;
         let mut file_str: String = format!("{}{}", cwd, app_name).to_owned();
         let binding = file_str.clone();
-        let mut file_path = Path::new(&binding);
-        let mut dir = Path::new(&cwd);
+        let file_path = Path::new(&binding);
+        let dir = Path::new(&cwd);
 
         // println!("{}", &file_path.display());
 

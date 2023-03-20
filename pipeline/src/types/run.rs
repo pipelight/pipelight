@@ -139,7 +139,7 @@ impl Parallel {
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
         let start = Instant::now();
-        let mut duration = start.elapsed();
+        let duration;
 
         self.set_status(Some(Status::Running));
 
@@ -187,7 +187,7 @@ impl Step {
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
         let start = Instant::now();
-        let mut duration = start.elapsed();
+        let duration;
 
         self.set_status(Some(Status::Running));
 
@@ -244,7 +244,7 @@ impl Command {
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
         let start = Instant::now();
-        let mut duration = start.elapsed();
+        let duration;
 
         self.status = Some(Status::Running);
         unsafe {

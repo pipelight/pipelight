@@ -69,10 +69,6 @@ impl Config {
             FileType::TypeScript | FileType::JavaScript => Config::load_from_file_ts(file_path),
             FileType::Toml | FileType::Tml => Config::load_from_file_tml(file_path),
             FileType::Yaml | FileType::Yml => Config::load_from_file_yml(file_path),
-            _ => {
-                let message = format!("Couldn't read config file format");
-                return Err(Error::msg(message));
-            }
         };
         Ok(config?)
     }
