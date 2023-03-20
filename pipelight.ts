@@ -6,9 +6,7 @@ const config: Config = {
       steps: [
         {
           name: "test",
-          commands: [
-            "cargo test --package pipeline -- --nocapture --test-threads=1",
-          ],
+          commands: ["cargo test --package pipeline -- --nocapture"],
         },
       ],
       triggers: [
