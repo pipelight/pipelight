@@ -27,10 +27,12 @@ Sanitize logs.
 ## Packaging
 
 Package app for RPM and Deb
+package versionning solutions
 
 ## Pretty logs
 
 fix bug: multiline string ultra space
+remove top \r and top \n
 
 If pipelines have same pid (--attach), link them in logs
 
