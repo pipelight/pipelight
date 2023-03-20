@@ -14,12 +14,12 @@ use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
 pub enum FileType {
-    Yaml,
-    Yml,
-    Toml,
-    Tml,
     TypeScript,
     JavaScript,
+    Toml,
+    Tml,
+    Yaml,
+    Yml,
 }
 
 impl From<&String> for FileType {
@@ -65,10 +65,12 @@ impl Default for Teleport {
         let cwd = Some(cwd);
         let root: Option<String>;
         let config_path: Option<String>;
+
+        // println!("new default teleport struct");
         let res = Teleport::search("pipelight", &cwd.clone().unwrap());
         if res.is_ok() {
             let path = res.unwrap().clone();
-            println!("{}", path);
+            // println!("{}", path);
             root = Some(Path::new(&path).parent().unwrap().display().to_string());
             config_path = Some(path);
         } else {
@@ -124,13 +126,13 @@ impl Teleport {
             let path = Path::new(&path_str);
             exists = path.clone().exists();
             if exists {
-                println!("str: {}", &path_str);
+                // println!("str: {}", &path_str);
                 break;
             }
         }
         // Config try get
         if exists {
-            println!("f: {}", &file_str);
+            // println!("f: {}", &file_str);
             return Ok(file_str);
             // Load config from str -> Path
         } else {
@@ -153,7 +155,7 @@ impl Teleport {
                 }
             }
             let parent = dir.parent();
-            println!("parent: {}", &parent.unwrap().display());
+            // println!("parent: {}", &parent.unwrap().display());
             if parent.is_some() {
                 let new_path = Teleport::search(app_name, &parent.unwrap().display().to_string())?;
                 return Ok(new_path);

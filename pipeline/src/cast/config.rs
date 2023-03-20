@@ -24,6 +24,15 @@ struct JsonError {
     #[label("This bit here")]
     bad_bit: SourceSpan,
 }
+#[derive(Error, Debug, Diagnostic)]
+#[error("yaml file syntax issue!")]
+#[diagnostic(code(yaml::error))]
+struct YamlError {
+    #[source_code]
+    src: NamedSource,
+    #[label("This bit here")]
+    bad_bit: SourceSpan,
+}
 
 impl Config {
     pub fn get() -> Result<Config> {
@@ -55,10 +64,11 @@ impl Config {
             .unwrap()
             .to_owned();
         let file_type = FileType::from(extension);
-        println!("{:?}", file_type);
+        // println!("{:?}", file_type);
         let config = match file_type {
-            FileType::Yaml | FileType::Yml => Config::load_from_file_yml(file_path),
             FileType::TypeScript | FileType::JavaScript => Config::load_from_file_ts(file_path),
+            FileType::Toml | FileType::Tml => Config::load_from_file_tml(file_path),
+            FileType::Yaml | FileType::Yml => Config::load_from_file_yml(file_path),
             _ => {
                 let message = format!("Couldn't read config file format");
                 return Err(Error::msg(message));
@@ -100,10 +110,6 @@ impl Config {
         }
     }
     fn load_from_file_yml(file_path: &str) -> Result<Config> {
-        // Fail safe guards
-        Config::lint(file_path)?;
-        Config::check(file_path)?;
-
         let executable = "cat";
         let command = format!("{} {}", executable, file_path);
         let data = Exec::new().simple(&command)?;
@@ -119,11 +125,36 @@ impl Config {
                 // println!("{}", json);
                 let span: SourceSpan =
                     (e.location().unwrap().line(), e.location().unwrap().column()).into();
-                let json_err = JsonError {
-                    src: NamedSource::new("config_json_output", yml),
+                let yaml_err = YamlError {
+                    src: NamedSource::new("config_yaml_output", yml),
                     bad_bit: span,
                 };
-                let me = Error::from(json_err);
+                let me = Error::from(yaml_err);
+                println!("{:?}", me);
+                exit(1);
+            }
+        }
+    }
+    fn load_from_file_tml(file_path: &str) -> Result<Config> {
+        let executable = "cat";
+        let command = format!("{} {}", executable, file_path);
+        let data = Exec::new().simple(&command)?;
+        // println!("{:?}", data);
+        let tml = data.stdout.clone().unwrap();
+        let res = toml::from_str::<Config>(&tml);
+        match res {
+            Ok(res) => {
+                return Ok(res);
+            }
+            Err(e) => {
+                println!("{:?}", e);
+                // println!("{}", json);
+                let span: SourceSpan = e.span().unwrap().into();
+                let toml_err = YamlError {
+                    src: NamedSource::new("config_yaml_output", tml),
+                    bad_bit: span,
+                };
+                let me = Error::from(toml_err);
                 println!("{:?}", me);
                 exit(1);
             }

@@ -47,9 +47,6 @@ impl Default for Logger {
 }
 impl Logger {
     pub fn new() -> Self {
-        // let mut portal = Teleport::new();
-        // portal.teleport();
         return Self::default();
-        // portal.teleport();
     }
 }

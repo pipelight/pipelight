@@ -1,6 +1,6 @@
 # Rust
 
-Read Yaml
+Add a on_started fallback
 
 Add signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
 
