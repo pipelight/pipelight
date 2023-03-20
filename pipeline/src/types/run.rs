@@ -56,10 +56,9 @@ impl Pipeline {
             for step in &mut (*ptr).steps {
                 step.run(ptr);
 
-                // if step.duration().is_some() {
                 // Duration
-                // (*ptr).duration = Some((*ptr).duration.unwrap() + step.duration().unwrap());
-                // }
+                duration = start.elapsed();
+                (*ptr).duration = Some(duration);
 
                 if step.get_status() != Some(Status::Succeeded)
                     && (step.non_blocking().is_none() || step.non_blocking() == Some(false))
