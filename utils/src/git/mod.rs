@@ -114,8 +114,10 @@ impl Hook {
             let script = format!("{}/{}", dot_d_dir, bin);
             let script_path = Path::new(&script);
 
-            Hook::create_script(&dot_d_dir_path, &script_path)?;
-            Hook::create_subscripts_caller(&caller_path, &hook)?;
+            if Git::new().repo.is_some() {
+                Hook::create_script(&dot_d_dir_path, &script_path)?;
+                Hook::create_subscripts_caller(&caller_path, &hook)?;
+            }
         }
         Ok(())
     }
