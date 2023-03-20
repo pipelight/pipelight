@@ -120,8 +120,9 @@ impl Pipeline {
                     }
                 }
                 // Duration
-                // duration = start.elapsed();
-                // (*ptr).duration = Some(duration);
+                duration = start.elapsed();
+                (*ptr).duration = Some(duration);
+                (*ptr).log();
             }
         }
     }
