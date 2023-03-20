@@ -88,8 +88,9 @@ impl Pipeline {
                     } else {
                         (*ptr).set_status(Some(last_step.get_status().clone().unwrap()))
                     }
+                } else {
+                    (*ptr).set_status(Some(last_step.get_status().clone().unwrap()))
                 }
-                (*ptr).set_status(Some(last_step.get_status().clone().unwrap()))
             } else {
                 (*ptr).set_status(Some(Status::Failed))
             }
