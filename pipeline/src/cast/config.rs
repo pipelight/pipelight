@@ -161,6 +161,10 @@ impl Config {
     /// Ensure that the node.js has no error
     fn lint(file: &str) -> Result<()> {
         // debug!("Linting config file");
+        //
+        // reload deno package
+        // Exec::new().simple("deno cache --reload npm:pipelight")?;
+
         let command = format!(
             "deno lint \
               --rules-exclude=no-explicit-any,no-unused-vars \
