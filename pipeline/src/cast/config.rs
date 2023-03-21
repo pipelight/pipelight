@@ -187,7 +187,13 @@ impl Config {
     /// Ensure Typescript typing
     fn check(file: &str) -> Result<()> {
         // debug!("Linting config file");
-        let command = format!("deno run --allow-read --check --quiet {}", file);
+        let command = format!(
+            "deno run \
+            --allow-read \
+            --allow-run \
+            --check --quiet {}",
+            file
+        );
         let data = Exec::new().simple(&command)?;
         if data.stdout.is_none() {
             if data.stderr.is_none() {

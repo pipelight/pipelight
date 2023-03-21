@@ -2,6 +2,8 @@
 
 Add a on_started fallback
 
+increase verbosity from 1 if no flag provided for "pipelight inspect pipeline" becomes
+
 Add signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
 
 Add Clap version feature flag
