@@ -1,11 +1,15 @@
-// Cli core
+//mods
 pub mod print;
+pub mod prompt;
 pub mod types;
+
+// Cli core
 use crate::run;
 use crate::stop;
 use crate::trigger;
 use clap::Parser;
 use log::info;
+
 // Logger
 use utils::logger::logger;
 
@@ -30,17 +34,32 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
                 print::list();
             }
         }
+        types::Commands::Inspect(list) => {
+            // info!("Listing piplines");
+            if list.name.is_some() {
+                let pipeline = Pipeline::get_by_name(&list.name.unwrap())?;
+                print::inspect(&pipeline, list.json)?;
+            } else {
+                prompt::inspect_prompt()?;
+            }
+        }
         types::Commands::Trigger(trigger) => {
             // info!("Triggering piplines");
             trigger::trigger_bin(trigger.attach)?;
         }
         types::Commands::Run(pipeline) => {
             // info!("Running pipline {:#?}", pipeline.name);
-            run::run_bin(pipeline.name, pipeline.attach)?;
+            if pipeline.name.is_some() {
+                run::run_bin(pipeline.name.unwrap(), pipeline.attach)?;
+            } else {
+                prompt::run_prompt()?;
+            }
         }
         types::Commands::Stop(pipeline) => {
             // info!("Stopping pipline {:#?}", pipeline.name);
-            stop::stop(&pipeline.name)?;
+            if pipeline.name.is_some() {
+                stop::stop(&pipeline.name.unwrap())?;
+            }
         }
         types::Commands::Logs(logs) => match logs.commands {
             None => {

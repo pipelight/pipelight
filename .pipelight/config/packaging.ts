@@ -1,3 +1,4 @@
+import type { Pipeline } from "npm:pipelight";
 import { exec } from "npm:pipelight";
 
 const tag = await exec("git describe --tags --abbrev=0 | sed s/v//");
@@ -13,7 +14,7 @@ const params = {
   },
 };
 
-// copy pipelight binaries to debian folder
+// Copy pipelight binaries to debian folder
 const makeDebianPackage = ({ packages }: any): string[] => {
   const files = ["pipelight", "pipelight-run", "pipelight-trigger"];
   const cmds = [];
@@ -23,7 +24,7 @@ const makeDebianPackage = ({ packages }: any): string[] => {
   return cmds;
 };
 
-const makePipeline = ({ packages }: any): Config => ({
+const makePipeline = ({ packages }: any): Pipeline => ({
   name: "create:packages",
   steps: [
     {
@@ -62,3 +63,5 @@ const makePipeline = ({ packages }: any): Config => ({
     },
   ],
 });
+const packagingPipeline = makePipeline(params);
+export { packagingPipeline };
