@@ -1,4 +1,4 @@
-import { Config } from "npm:pipelight";
+import type { Config } from "npm:pipelight";
 const config: Config = {
   pipelines: [
     {
@@ -18,5 +18,5 @@ const config: Config = {
     },
   ],
 };
-// console.log(JSON.stringify(config));
+
 export default config;
