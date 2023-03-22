@@ -28,7 +28,12 @@ const makePipeline = ({ packages }: any): Pipeline => ({
   name: "create:packages",
   steps: [
     {
-      name: "Delete old packages archives",
+      name: "build binaries",
+      commands: ["cargo build --release"],
+      non_blocking: true,
+    },
+    {
+      name: "delete old packages",
       commands: [
         "rm ../aur.pipelight/pipelight*.pkg.tar.zst",
         "rm ../deb.pipelight/pipelight*.deb",
@@ -37,22 +42,27 @@ const makePipeline = ({ packages }: any): Pipeline => ({
     },
     {
       name: "package for the AUR (.tar.zst archive)",
-      commands: ['sh -c "cd ../aur.pipelight && makepkg -fsr"'],
+      commands: [
+        'sh -c "cd ../aur.pipelight/pipelight && git pull"',
+        'sh -c "cd ../aur.pipelight && makepkg -fsr"',
+        'sh -c "cd ../aur.pipelight/ && makepkg --printsrcinfo > .SRCINFO"',
+        'sh -c "cd ../aur.pipelight/ && git push"',
+      ],
     },
     {
-      name: "make DEB package (.deb archive)",
+      name: "package for Debian (.deb archive)",
       commands: [
-        'sh -c "cd pipelight && cargo build --release"',
         ...makeDebianPackage(params),
-        'sh -c "cd deb.pipelight && dpkg --build pipelight"',
+        'sh -c "cd ../deb.pipelight && dpkg --build pipelight"',
+        `sh -c "cd ../deb.pipelight && mv ${packages.name}.deb ${packages.name}-${packages.version}-${packages.arch}.deb"`,
       ],
-      non_blocking: true,
     },
     {
       name: "Copy packages to website repo",
       commands: [
-        `cp aur.pipelight/pipelight*.pkg.tar.zst ${packages.out}/archlinux/`,
-        `cp deb.pipelight/pipelight.deb ${packages.out}/debian/${packages.name}-${packages.version}-${packages.arch}.deb`,
+        "rm ../doc.pipelight/public/packages/**/pipelight*",
+        `cp ../aur.pipelight/pipelight*.pkg.tar.zst ${packages.out}/archlinux/`,
+        `cp ../deb.pipelight/pipelight*.deb ${packages.out}/debian/`,
       ],
     },
   ],
