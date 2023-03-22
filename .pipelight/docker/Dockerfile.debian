@@ -1,29 +1,25 @@
 FROM debian:latest
-
+# Install dependencies
 RUN apt-get update
 RUN apt-get -y install git curl
 RUN apt-get -y install build-essential pkg-config libssl-dev
 
-# WORKDIR pipelight
+# Install make dependencies
 WORKDIR /root
-
+# Download rust latest
 RUN curl https://sh.rustup.rs | bash -s -- -y
+# Copy sources
 RUN git clone https://gitea.com/pipelight/pipelight
 COPY deb.pipelight ./deb.pipelight/
-
-RUN export PATH="/root/.cargo/bin/:$PATH"
-
+# Build sources
 WORKDIR /root/pipelight
 RUN ~/.cargo/bin/cargo build --release
 
+# Make package
 WORKDIR /root
-
 RUN cp pipelight/target/release/pipelight deb.pipelight/pipelight/usr/bin/
 RUN cp pipelight/target/release/pipelight-run deb.pipelight/pipelight/usr/bin/
 RUN cp pipelight/target/release/pipelight-trigger deb.pipelight/pipelight/usr/bin/
-
 WORKDIR /root/deb.pipelight
 RUN dpkg --build pipelight
 RUN dpkg -i pipelight.deb
-
-# RUN dpkg -i pipelight-0.4.25-any.deb
