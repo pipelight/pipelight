@@ -1,6 +1,10 @@
 use crate::run;
 use pipeline::types::{traits::getters::Getters, Node, Pipeline};
 
+// Logging and verbosity
+use log::{debug, error, info, warn, LevelFilter};
+use utils::logger::logger;
+
 // Prompt
 use dialoguer::{console::Term, theme::ColorfulTheme, Select};
 // Error Handling
@@ -17,6 +21,7 @@ pub fn inspect_prompt() -> Result<(), Box<dyn Error>> {
     match selection {
         Some(index) => {
             let node = Node::from(&pipelines[index]);
+            logger.lock().unwrap().level = LevelFilter::max();
             println!("{}", node);
         }
         None => println!("User did not select anything"),

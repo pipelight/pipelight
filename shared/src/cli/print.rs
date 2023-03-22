@@ -28,7 +28,6 @@ pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<(), Box<dyn Error>> {
         println!("{}", pipeline_json);
     } else {
         let node = Node::from(pipeline);
-        logger.lock().unwrap().level = LevelFilter::max();
         println!("{}", node);
     }
     Ok(())
