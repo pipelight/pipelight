@@ -1,36 +1,27 @@
 import type { Config, Pipeline, Step, Parallel } from "npm:pipelight";
 
-const params = {
-  distros: [
-    {
-      name: "debian",
-      prefix: "deb",
-      archive: "deb",
-    },
-    {
-      name: "archlinux",
-      prefix: "aur",
-      archive: "pkg.tar.zst",
-    },
-    // {
-    //   name: "fedora",
-    //   prefix: "rpm",
-    //   archive: "rpm",
-    // },
-  ],
-};
+const distros = [
+  {
+    name: "debian",
+    prefix: "deb",
+    format: "deb",
+  },
+  {
+    name: "archlinux",
+    prefix: "aur",
+    format: "pkg.tar.zst",
+  },
+  // {
+  //   name: "fedora",
+  //   prefix: "rpm",
+  //   archive: "rpm",
+  // },
+];
 
-const makePipeline = ({ distros }: any): Pipeline => {
+const makePipeline = ({ name, prefix, format }: any): Pipeline => {
   let pipeline: Pipeline = {
-    name: "make:packages",
-    steps: [],
-  };
-  let steps: Parallel = {
-    parallel: [],
-  };
-
-  for (const { name, prefix } of distros) {
-    steps.parallel.push(
+    name: `package:${name}`,
+    steps: [
       {
         name: `remove old ${name} container`,
         commands: [`docker container rm ${name}.latest `],
@@ -56,12 +47,35 @@ const makePipeline = ({ distros }: any): Pipeline => {
           ${name}.latest
         `,
         ],
-      }
-    );
-  }
-  pipeline.steps.push(steps);
+      },
+    ],
+  };
   return pipeline;
 };
 
-const packagingPipeline = makePipeline(params);
-export { packagingPipeline };
+const packagingPipelines: Pipeline[] = [];
+for (const params of distros) {
+  packagingPipelines.push(makePipeline(params));
+}
+
+const makeParallel = (distros: any[]): Pipeline => {
+  const pipeline: Pipeline = {
+    name: "make:packages",
+    steps: [],
+  };
+  const p: Parallel = {
+    parallel: [],
+  };
+  for (const { name } of distros) {
+    const step: Step = {
+      name: `package:${name}`,
+      commands: [` pipelight run package:${name} `],
+    };
+    p.parallel.push(step);
+  }
+  pipeline.steps.push(p);
+  return pipeline;
+};
+const parallelPackagingPipeline: Pipeline = makeParallel(distros);
+
+export { packagingPipelines, parallelPackagingPipeline };
