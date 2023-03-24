@@ -1,8 +1,8 @@
 FROM debian:latest
 # Install dependencies
-RUN apt-get update
-RUN apt-get -y install git curl
-RUN apt-get -y install build-essential pkg-config libssl-dev
+RUN apt-get install -y git curl
+RUN apt-get install -y build-essential pkg-config 
+RUN apt-get install -y libssl-dev
 
 # Install make dependencies
 WORKDIR /root
@@ -10,16 +10,20 @@ WORKDIR /root
 RUN curl https://sh.rustup.rs | bash -s -- -y
 # Copy sources
 RUN git clone https://gitea.com/pipelight/pipelight
-COPY deb.pipelight ./deb.pipelight/
 # Build sources
 WORKDIR /root/pipelight
 RUN ~/.cargo/bin/cargo build --release
 
 # Make package
 WORKDIR /root
+COPY deb.pipelight ./deb.pipelight/
 RUN cp pipelight/target/release/pipelight deb.pipelight/pipelight/usr/bin/
 RUN cp pipelight/target/release/pipelight-run deb.pipelight/pipelight/usr/bin/
 RUN cp pipelight/target/release/pipelight-trigger deb.pipelight/pipelight/usr/bin/
 WORKDIR /root/deb.pipelight
-RUN dpkg --build pipelight
+RUN dpkg --build pipelight 
 RUN dpkg -i pipelight.deb
+
+#Mouv to mounted
+RUN mkdir dist
+RUN cp deb.pipelight/pipelight.deb dist/

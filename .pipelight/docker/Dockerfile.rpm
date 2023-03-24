@@ -1,0 +1,31 @@
+FROM fedora:latest
+# Install dependencies
+RUN yum install -y git curl
+RUN yum install -y fedora-packager rpmdevtools gcc
+RUN yum install -y openssl-devel
+
+# Install make dependencies
+WORKDIR /root
+# Download rust latest
+RUN curl https://sh.rustup.rs | bash -s -- -y
+# Copy sources
+RUN git clone https://gitea.com/pipelight/pipelight
+# Build sources
+WORKDIR /root/pipelight
+RUN ~/.cargo/bin/cargo build --release
+
+# Make package
+WORKDIR /root
+RUN rpmdev-setuptree
+WORKDIR /root/rpmbuild/SOURCES
+
+RUN cp pipelight/target/release/pipelight deb.pipelight/pipelight/usr/bin/
+RUN cp pipelight/target/release/pipelight-run deb.pipelight/pipelight/usr/bin/
+RUN cp pipelight/target/release/pipelight-trigger deb.pipelight/pipelight/usr/bin/
+WORKDIR /root/deb.pipelight
+RUN dpkg --build pipelight 
+RUN dpkg -i pipelight.deb
+
+#Mouv to mounted
+RUN mkdir dist
+RUN cp deb.pipelight/pipelight.deb dist/

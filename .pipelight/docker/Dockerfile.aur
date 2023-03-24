@@ -1,0 +1,19 @@
+FROM archlinux:latest
+# Install dependencies
+RUN pacman -Sy base-devel git curl --needed
+RUN pacman -Sy install openssl-devel --needed
+
+# Install make dependencies
+WORKDIR /root
+# Download rust latest
+RUN curl https://sh.rustup.rs | bash -s -- -y
+# Copy sources
+RUN git clone https://aur.archlinux.org/pipelight-git.git
+# Build sources and Make package
+WORKDIR /root/pipelight
+RUN makefile -sfi
+
+#Mouv to mounted
+WORKDIR /root
+RUN mkdir dist
+RUN cp pipelight/pipelight*.pkg.tar.zst dist/
