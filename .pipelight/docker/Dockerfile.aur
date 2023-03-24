@@ -1,19 +1,28 @@
 FROM archlinux:latest
 # Install dependencies
-RUN pacman -Sy base-devel git curl --needed
-RUN pacman -Sy install openssl-devel --needed
+RUN pacman -Suy --noconfirm
+RUN pacman -Sy --noconfirm --needed curl git 
+RUN pacman -Sy --noconfirm --needed base-devel
+RUN pacman -Sy --noconfirm --needed deno rust
+# RUN pacman -Sy --noconfirm --needed install openssl-devel
 
 # Install make dependencies
-WORKDIR /root
-# Download rust latest
-RUN curl https://sh.rustup.rs | bash -s -- -y
-# Copy sources
-RUN git clone https://aur.archlinux.org/pipelight-git.git
-# Build sources and Make package
-WORKDIR /root/pipelight
-RUN makefile -sfi
+RUN useradd alarm -m -G wheel
+RUN echo "%wheel ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-#Mouv to mounted
+# Copy sources
+USER alarm
+WORKDIR /home/alarm
+RUN git clone https://aur.archlinux.org/pipelight-git.git
+
+# Build sources and Make package
+WORKDIR /home/alarm/pipelight-git
+# RUN cat PKGBUILD
+# RUN ls -al
+RUN makepkg -sfi --noconfirm
+
+# Mouv to mounted
+USER root
 WORKDIR /root
 RUN mkdir dist
-RUN cp pipelight/pipelight*.pkg.tar.zst dist/
+RUN mv /home/alarm/pipelight-git/pipelight*.pkg.tar.zst /root/dist/

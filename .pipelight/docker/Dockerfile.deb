@@ -1,29 +1,34 @@
 FROM debian:latest
 # Install dependencies
+RUN apt-get update
 RUN apt-get install -y git curl
+RUN apt-get install -y unzip
 RUN apt-get install -y build-essential pkg-config 
 RUN apt-get install -y libssl-dev
 
 # Install make dependencies
 WORKDIR /root
-# Download rust latest
-RUN curl https://sh.rustup.rs | bash -s -- -y
+# Download rust and deno latest
+RUN curl -fsSL https://deno.land/x/install/install.sh | sh
+RUN curl https://sh.rustup.rs | sh -s -- -y
 # Copy sources
 RUN git clone https://gitea.com/pipelight/pipelight
 # Build sources
 WORKDIR /root/pipelight
 RUN ~/.cargo/bin/cargo build --release
 
-# Make package
+# Make package file tree
 WORKDIR /root
 COPY deb.pipelight ./deb.pipelight/
 RUN cp pipelight/target/release/pipelight deb.pipelight/pipelight/usr/bin/
 RUN cp pipelight/target/release/pipelight-run deb.pipelight/pipelight/usr/bin/
 RUN cp pipelight/target/release/pipelight-trigger deb.pipelight/pipelight/usr/bin/
+# Build package
 WORKDIR /root/deb.pipelight
 RUN dpkg --build pipelight 
 RUN dpkg -i pipelight.deb
 
 #Mouv to mounted
+WORKDIR /root/
 RUN mkdir dist
-RUN cp deb.pipelight/pipelight.deb dist/
+RUN mv deb.pipelight/pipelight.deb /root/dist/
