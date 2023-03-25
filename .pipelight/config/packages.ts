@@ -69,7 +69,7 @@ const makeParallel = (distros: any[]): Pipeline => {
   for (const { name } of distros) {
     const step: Step = {
       name: `package:${name}`,
-      commands: [` pipelight run package:${name} `],
+      commands: [` pipelight run --attach package:${name} `],
     };
     p.parallel.push(step);
   }

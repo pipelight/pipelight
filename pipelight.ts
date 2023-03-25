@@ -1,11 +1,11 @@
-import type { Config } from "npm:pipelight";
+import type { Config, Pipeline } from "npm:pipelight";
 import {
   packagingPipelines,
   parallelPackagingPipeline,
 } from "./.pipelight/config/packages.ts";
 const config: Config = {
   pipelines: [
-    parallelPackagingPipeline,
+    parallelPackagingPipeline as Pipeline,
     ...packagingPipelines,
     {
       name: "test",
