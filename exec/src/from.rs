@@ -27,6 +27,7 @@ impl From<&Output> for StrOutput {
         if !stderr_str.is_empty() {
             stderr = Some(stderr_str);
         }
+        // println!("{:?}", s.status.code());
 
         let status = match s.status.success() {
             true => Status::Succeeded,

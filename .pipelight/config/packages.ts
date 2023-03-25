@@ -1,5 +1,6 @@
 import type { Config, Pipeline, Step, Parallel } from "npm:pipelight";
 
+const version = "git describe --tags --abbrev=0 | sed s/v//" + "-1";
 const distros = [
   {
     name: "debian",
@@ -63,6 +64,8 @@ const makeParallel = (distros: any[]): Pipeline => {
     name: "make:packages",
     steps: [],
   };
+
+  // Parallel pipeline execution
   const p: Parallel = {
     parallel: [],
   };
@@ -74,8 +77,16 @@ const makeParallel = (distros: any[]): Pipeline => {
     p.parallel.push(step);
   }
   pipeline.steps.push(p);
+
+  // Update documentation .env
+  const step: Step = {
+    name: `update documentation`,
+    commands: [`echo "VITE_GIT_VERSION=${version}" >> ../doc.pipelight/.env`],
+  };
+
   return pipeline;
 };
+
 const parallelPackagingPipeline: Pipeline = makeParallel(distros);
 
 export { packagingPipelines, parallelPackagingPipeline };

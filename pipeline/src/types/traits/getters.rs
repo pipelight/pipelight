@@ -1,36 +1,40 @@
 use crate::types::{Config, Logs, Pipeline, Trigger};
 use log::warn;
-use std::error::Error;
 use std::fs;
 use std::path::Path;
 use utils::logger::logger;
 
+// Error Handling
+use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use thiserror::Error;
+// use std::error::Error;
+
 pub trait Getters<T> {
     /// Return every instances of the struct.
-    fn get() -> Result<Vec<T>, Box<dyn Error>>;
+    fn get() -> Result<Vec<T>>;
     /// Return an instance of the struct.
-    fn get_by_name(name: &str) -> Result<T, Box<dyn Error>>;
+    fn get_by_name(name: &str) -> Result<T>;
 }
 
 impl Getters<Pipeline> for Logs {
-    fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
+    fn get() -> Result<Vec<Pipeline>> {
         let dir = &logger.lock().unwrap().directory;
         let message = "No logs to display.";
         // Safe exit if no log folder
         if !Path::new(dir).exists() {
-            return Err(Box::from(message));
+            return Err(Error::msg(message));
         } else {
             let paths = fs::read_dir(dir).unwrap();
             let n = paths.count();
             if n == 0 {
-                return Err(Box::from(message));
+                return Err(Error::msg(message));
             } else {
                 let paths = fs::read_dir(dir).unwrap();
                 let mut pipelines = vec![];
                 for path in paths {
-                    let dir_entry = path?;
+                    let dir_entry = path.into_diagnostic()?;
                     let json = utils::read_last_line(&dir_entry.path())?;
-                    let pipeline = serde_json::from_str::<Pipeline>(&json)?;
+                    let pipeline = serde_json::from_str::<Pipeline>(&json).into_diagnostic()?;
                     pipelines.push(pipeline);
                 }
                 // pipelines = Logs::sanitize(pipelines)?;
@@ -38,7 +42,7 @@ impl Getters<Pipeline> for Logs {
             }
         }
     }
-    fn get_by_name(name: &str) -> Result<Pipeline, Box<dyn Error>> {
+    fn get_by_name(name: &str) -> Result<Pipeline> {
         let pipelines = Logs::get()?;
         let pipeline;
         let mut pipelines = pipelines
@@ -52,12 +56,12 @@ impl Getters<Pipeline> for Logs {
             Ok(pipeline)
         } else {
             let message = format!("Couldn't find a pipeline named {:?}, in logs", name);
-            return Err(Box::from(message));
+            return Err(Error::msg(message));
         }
     }
 }
 impl Logs {
-    pub fn get_many_by_name(name: &str) -> Result<Vec<Pipeline>, Box<dyn Error>> {
+    pub fn get_many_by_name(name: &str) -> Result<Vec<Pipeline>> {
         let pipelines = Logs::get()?;
         let mut pipelines = pipelines
             .iter()
@@ -69,23 +73,23 @@ impl Logs {
             Ok(pipelines)
         } else {
             let message = format!("Couldn't find a pipeline named {:?}, in logs", name);
-            return Err(Box::from(message));
+            return Err(Error::msg(message));
         }
     }
 }
 impl Getters<Pipeline> for Pipeline {
-    fn get() -> Result<Vec<Pipeline>, Box<dyn Error>> {
+    fn get() -> Result<Vec<Pipeline>> {
         let config = Config::new()?;
         let optional = config.pipelines;
         match optional {
             Some(p) => return Ok(p),
             None => {
                 let message = "Couldn't retrieve pipelines";
-                return Err(Box::from(message));
+                return Err(Error::msg(message));
             }
         };
     }
-    fn get_by_name(name: &str) -> Result<Pipeline, Box<dyn Error>> {
+    fn get_by_name(name: &str) -> Result<Pipeline> {
         let pipelines = Pipeline::get()?;
         let optional = pipelines.iter().filter(|p| p.name == name).next();
         match optional {
@@ -93,14 +97,14 @@ impl Getters<Pipeline> for Pipeline {
             None => {
                 let message = format!("Couldn't find pipeline {:?}", name);
                 warn!("{}", message);
-                return Err(Box::from(message));
+                return Err(Error::msg(message));
             }
         };
     }
 }
 
 impl Getters<Trigger> for Trigger {
-    fn get() -> Result<Vec<Trigger>, Box<dyn Error>> {
+    fn get() -> Result<Vec<Trigger>> {
         let pipelines = Pipeline::get()?;
         let mut triggers = pipelines
             .iter()
@@ -113,7 +117,7 @@ impl Getters<Trigger> for Trigger {
         triggers.dedup();
         Ok(triggers)
     }
-    fn get_by_name(name: &str) -> Result<Trigger, Box<dyn Error>> {
+    fn get_by_name(name: &str) -> Result<Trigger> {
         let triggers = Trigger::get();
         let binding = triggers?;
         let trigger = binding.iter().next().unwrap();

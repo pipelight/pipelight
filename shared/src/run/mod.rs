@@ -1,15 +1,18 @@
 use exec::types::Status;
 use exec::Exec;
 use log::trace;
-use pipeline::types::{traits::getters::Getters, Pipeline};
+use pipeline::types::{traits::getters::Getters, Node, Pipeline};
 use std::env;
-use std::error::Error;
 use std::thread;
+// Error Handling
+use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use thiserror::Error;
+// use std::error::Error;
 
 /// To be called from the cli.
 /// Either spawn a detached new process or spawn an attached thread
 /// to run the pipeline
-pub fn run_bin(pipeline_name: String, attach: bool) -> Result<(), Box<dyn Error>> {
+pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
     let bin = "pipelight-run";
 
     let pipeline = Pipeline::get_by_name(&pipeline_name)?;
@@ -35,20 +38,21 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<(), Box<dyn Error>
 }
 
 /// Launch attached thread
-pub fn run_in_thread(name: &str) -> Result<(), Box<dyn Error>> {
+pub fn run_in_thread(name: &str) -> Result<()> {
     let name = name.to_owned();
-    let thread = thread::spawn(move || -> Result<(), Box<dyn Error + Send + Sync>> {
+    let thread = thread::spawn(move || -> Result<()> {
         let mut pipeline = Pipeline::get_by_name(&name).unwrap();
         pipeline.run();
+        // println!("{}", Node::from(&pipeline));
         match pipeline.status {
             Some(Status::Succeeded) => Ok(()),
             Some(Status::Failed) => {
-                let message = "Pipeline execution failed";
-                Err(Box::from(message))
+                let message = "Pipeline status: Failed";
+                Err(Error::msg(message))
             }
             _ => Ok(()),
         }
     });
-    thread.join().unwrap();
+    thread.join().unwrap()?;
     Ok(())
 }
