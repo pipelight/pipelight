@@ -25,4 +25,4 @@ RUN makepkg -sfi --noconfirm
 USER root
 WORKDIR /root
 RUN mkdir dist
-RUN mv /home/alarm/pipelight-git/pipelight*.pkg.tar.zst /root/dist/
+RUN cp /home/alarm/pipelight-git/pipelight*.pkg.tar.zst /root/dist/pipelight.pkg.tar.zst

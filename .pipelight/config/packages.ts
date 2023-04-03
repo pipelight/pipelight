@@ -43,9 +43,12 @@ const makePipeline = ({ name, prefix, format }: any): Pipeline => {
         name: `run ${name} container`,
         commands: [
           `docker run \
-          --mount type=bind,source=./packages,target=/root/dist \
           --name="${name}.latest" \
           ${name}.latest
+        `,
+          `docker cp \
+            ${name}.latest:/root/dist/pipelight.${format} \
+            ./packages/pipelight.${version}.${format}
         `,
         ],
       },
