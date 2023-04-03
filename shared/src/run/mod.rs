@@ -17,10 +17,9 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
 
     let pipeline = Pipeline::get_by_name(&pipeline_name)?;
 
-    #[cfg(debug_assertions)]
-    let command = format!("cargo run --bin {} {}", bin, pipeline_name);
-
-    #[cfg(not(debug_assertions))]
+    // #[cfg(debug_assertions)]
+    // let command = format!("cargo run --bin {} {}", bin, pipeline_name);
+    // #[cfg(not(debug_assertions))]
     let command = format!("{} {}", bin, pipeline_name);
 
     match attach {

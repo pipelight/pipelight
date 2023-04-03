@@ -7,6 +7,7 @@
 // Internal imports
 pub mod characters;
 mod logs;
+mod pipe;
 mod run;
 pub mod traits;
 mod tree;

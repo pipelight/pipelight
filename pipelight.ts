@@ -8,10 +8,19 @@ const config: Config = {
     parallelPackagingPipeline as Pipeline,
     ...packagingPipelines,
     {
+      name: "yes",
+      steps: [
+        {
+          name: "yes",
+          commands: ["yes"],
+        },
+      ],
+    },
+    {
       name: "test",
       steps: [
         {
-          name: "test",
+          name: "cargo test",
           commands: ["cargo test --package pipeline"],
         },
       ],

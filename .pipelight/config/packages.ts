@@ -33,8 +33,9 @@ const makePipeline = ({ name, prefix, format }: any): Pipeline => {
         commands: [
           `sh -c \
           "cd ../ && docker build \
-            --pull \
+            --progress=plain \
             --no-cache \
+            --pull \
             -f pipelight/.pipelight/docker/Dockerfile.${prefix} \
             -t ${name}.latest ."`,
         ],

@@ -424,7 +424,13 @@ impl From<&Command> for Node {
                     Some(Status::Failed) => e.output.clone().unwrap().stderr,
                     Some(Status::Started) => None,
                     Some(Status::Aborted) => None,
-                    Some(Status::Running) => None,
+                    Some(Status::Running) => {
+                        if e.output.clone().is_some() {
+                            e.output.clone().unwrap().stdout
+                        } else {
+                            None
+                        }
+                    }
                     None => None,
                 };
                 let child = Node {

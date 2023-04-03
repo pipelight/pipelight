@@ -10,10 +10,11 @@ use exec::types::{Statuable, Status, StrOutput};
 use exec::Exec;
 use std::clone::Clone;
 use std::env;
-use std::error::Error;
 use std::thread;
+use std::thread::sleep;
 use utils::git::Git;
 
+use std::io::{BufRead, BufReader};
 // Global var
 use once_cell::sync::Lazy;
 use std::ops::{Deref, DerefMut};
@@ -22,6 +23,10 @@ use std::sync::{Arc, Mutex, RwLock};
 use rayon::prelude::*;
 // Duraion
 use std::time::{Duration, Instant};
+// Error Handling
+use miette::{IntoDiagnostic, Result};
+// use std::error::Error;
+use std::io;
 
 // Global var
 static mut PIPELINE: Lazy<Pipeline> = Lazy::new(|| Pipeline::new());
@@ -259,24 +264,58 @@ impl Command {
         let duration;
 
         self.status = Some(Status::Running);
+        self.output = Some(StrOutput {
+            stdout: Some(String::new()),
+            stderr: Some(String::new()),
+            status: Some(Status::Running),
+        });
         unsafe {
             (*ptr).log();
         }
 
-        let output_res = Exec::new().simple(&self.stdin);
-        match output_res {
-            Ok(output) => {
-                self.output = Some(output.clone());
-                self.status = output.clone().status;
-                Ok(())
+        let mut child = Exec::new().simple_early(&self.stdin).unwrap();
+
+        let mut wait = child.try_wait();
+        let mut stdout_reader = BufReader::new(child.stdout.unwrap());
+        let mut stderr_reader = BufReader::new(child.stderr.unwrap());
+        let mut out_line = String::new();
+        let mut err_line = String::new();
+        loop {
+            // println!("exit: {:?}", &wait);
+            match wait {
+                Ok(Some(status)) => match status.success() {
+                    true => {
+                        self.output.as_mut().unwrap().status = Some(Status::Succeeded);
+                        self.status = self.output.clone().unwrap().status;
+                        break;
+                    }
+                    false => {
+                        self.output.as_mut().unwrap().status = Some(Status::Failed);
+                        self.status = self.output.clone().unwrap().status;
+                        break;
+                    }
+                },
+                Ok(None) => {
+                    let stdout_lines = stdout_reader.read_line(&mut out_line);
+
+                    self.output.as_mut().unwrap().stdout =
+                        Some(self.output.clone().unwrap().stdout.unwrap() + &out_line);
+                    println!("{:?}", &self.output.as_mut().unwrap().stdout);
+                    println!("{:?}", &out_line);
+
+                    let stderr_lines = stderr_reader.read_line(&mut err_line);
+
+                    self.output.as_mut().unwrap().stderr =
+                        Some(self.output.clone().unwrap().stderr.unwrap() + &err_line);
+                    println!("{:?}", &self.output.as_mut().unwrap().stderr);
+                    println!("{:?}", &err_line);
+                }
+                Err(_) => {
+                    println!("couldn't read process status");
+                }
             }
-            Err(e) => {
-                let mut output = StrOutput::new();
-                output.status = Some(Status::Aborted);
-                self.output = Some(output);
-                Err(e)
-            }
-        };
+            // wait = child.try_wait();
+        }
 
         // Duration
         duration = start.elapsed();

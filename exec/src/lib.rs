@@ -14,10 +14,13 @@ use types::StrOutput;
 // Internal Imports
 mod display;
 mod from;
-pub mod subprocess;
+pub mod sub_process;
 pub mod types;
+use std::process::{Child, Command, Stdio};
+// use subprocess::{Child, Communicator, Redirection};
 // Error Handling
 use miette::{Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use std::io;
 use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -50,11 +53,17 @@ impl Exec {
     }
     /// Use for pipeline exewcution only
     pub fn simple(&mut self, command: &str) -> Result<StrOutput> {
-        let output = subprocess::simple(&self.shell(), command)?;
+        let output = sub_process::simple(&self.shell(), command)?;
+        Ok(output)
+    }
+    /// Use for pipeline exewcution only
+    // pub fn simple_early(&mut self, command: &str) -> Result<Communicator> {
+    pub fn simple_early(&mut self, command: &str) -> Result<Child> {
+        let output = sub_process::simple_early(&self.shell(), command)?;
         Ok(output)
     }
     pub fn detached(&mut self, command: &str) -> Result<()> {
-        subprocess::detached(&self.shell, command)?;
+        sub_process::detached(&self.shell, command)?;
         Ok(())
     }
 }
