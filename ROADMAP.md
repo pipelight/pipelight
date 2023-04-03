@@ -12,15 +12,6 @@ Better miette diagnostics
 
 Detect if deno is installed
 
-## Command line
-
-ls
-
-inspect -> prompt pipeline list
-inspect <pipeline>
-
-prompt
-
 ## Unit Tests
 
 Test multiple bad config file.
@@ -28,11 +19,12 @@ Sanitize logs.
 
 ## Packaging
 
-Package app for RPM and Deb
-package versionning solutions
+Package app for RPM and CentOS
+Test inside docker container
 
 ## Pretty logs
 
+add colorful outupt when ls
 fix bug: multiline string ultra space
 remove top \r and top \n
 

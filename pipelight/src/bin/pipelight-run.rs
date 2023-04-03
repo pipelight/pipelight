@@ -5,8 +5,11 @@ use exec::types::Status;
 use log::error;
 use pipeline::types::{traits::getters::Getters, Pipeline};
 use std::env;
-use std::error::Error;
+
+// Error Handling
+use miette::{Error, Result};
 use std::process::exit;
+// use std::error::Error;
 
 fn main() {
     handler().unwrap_or_else(|e| {
@@ -16,13 +19,13 @@ fn main() {
 }
 
 /// Launch detached subprocess
-fn handler() -> Result<(), Box<dyn Error>> {
+fn handler() -> Result<()> {
     run()?;
     Ok(())
 }
 
 // / Get command line args and run pipeline
-pub fn run() -> Result<(), Box<dyn Error>> {
+pub fn run() -> Result<()> {
     // Collect Args
     let args = env::args().collect::<Vec<String>>();
     let pipeline_name: String = args[1].to_owned();
@@ -35,8 +38,12 @@ pub fn run() -> Result<(), Box<dyn Error>> {
             return Ok(());
         }
         Some(Status::Failed) => {
-            let message = "Pipeline execution failed";
-            return Err(Box::from(message));
+            let message = "Pipeline status: Failed";
+            return Err(Error::msg(message));
+        }
+        Some(Status::Aborted) => {
+            let message = "Pipeline status: Aborted";
+            return Err(Error::msg(message));
         }
         _ => return Ok(()),
     }

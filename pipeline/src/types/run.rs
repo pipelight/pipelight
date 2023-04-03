@@ -1,3 +1,10 @@
+// Disable warnings
+#![allow(unused_variables)]
+#![allow(unused_assignments)]
+#![allow(unused_imports)]
+#![allow(unused_must_use)]
+#[allow(dead_code)]
+//
 use super::{Command, Event, Parallel, Pipeline, Step, StepOrParallel};
 use exec::types::{Statuable, Status, StrOutput};
 use exec::Exec;
@@ -26,7 +33,7 @@ impl Pipeline {
         let mut ptr: *mut Pipeline;
         unsafe {
             ptr = &mut *PIPELINE;
-            *ptr = self.to_owned();
+            *ptr = self.clone().to_owned();
         }
         // Guards
         unsafe {
@@ -123,6 +130,10 @@ impl Pipeline {
                 (*ptr).duration = Some(duration);
                 (*ptr).log();
             }
+        }
+        unsafe {
+            let global_pipe = &mut (*ptr);
+            *self = global_pipe.to_owned();
         }
     }
 }

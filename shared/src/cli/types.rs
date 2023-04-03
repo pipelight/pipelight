@@ -19,7 +19,6 @@ pub struct Cli {
 #[derive(Debug, Subcommand)]
 pub enum Commands {
     /// Run a pipeline
-    #[command(arg_required_else_help = true)]
     Run(Pipeline),
     /// Stop the pipeline execution (kill subprocess)
     #[command(arg_required_else_help = true)]
@@ -28,7 +27,8 @@ pub enum Commands {
     Logs(Logs),
     /// List pipelines
     Ls(DisplayCommands),
-
+    /// List pipelines (intercative)
+    Inspect(DisplayCommands),
     /// Manualy Triggers Pipelines
     #[command(hide = true)]
     Trigger(Trigger),
@@ -40,7 +40,7 @@ pub struct Empty {}
 #[derive(Debug, Parser)]
 pub struct Pipeline {
     /// The pipeline name
-    pub name: String,
+    pub name: Option<String>,
     /// Attach command to standard I/O
     #[arg(long)]
     pub attach: bool,
