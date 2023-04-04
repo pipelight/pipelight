@@ -19,7 +19,7 @@ RUN ~/.cargo/bin/cargo build --release
 
 # Make package file tree
 WORKDIR /root
-COPY deb.pipelight ./deb.pipelight/
+COPY  ./packages.pipelight/deb.pipelight deb.pipelight/
 RUN cp pipelight/target/release/pipelight deb.pipelight/pipelight/usr/bin/
 RUN cp pipelight/target/release/pipelight-run deb.pipelight/pipelight/usr/bin/
 RUN cp pipelight/target/release/pipelight-trigger deb.pipelight/pipelight/usr/bin/

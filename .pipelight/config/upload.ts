@@ -11,7 +11,10 @@ const uploadPipeline: Pipeline = {
   steps: [
     {
       name: `upload packages to remote`,
-      commands: [`scp packages/* linode:~/Static/Perso/packages.pipelight.dev`],
+      commands: [
+        `scp packages/* linode:~/Static/Perso/packages.pipelight.dev`,
+        `scp ../packages.pipelight/install.sh linode:~/Static/Perso/packages.pipelight.dev/scripts/`,
+      ],
     },
     {
       name: `update remote nginx configuration`,
