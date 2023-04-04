@@ -1,6 +1,8 @@
 import type { Config, Pipeline, Step, Parallel } from "npm:pipelight";
+import { exec } from "npm:pipelight";
 
-const version = "git describe --tags --abbrev=0 | sed s/v//" + "-1";
+const version =
+  (await exec("git describe --tags --abbrev=0 | sed s/v//")) + "-1-any";
 const distros = [
   {
     name: "debian",
@@ -12,11 +14,11 @@ const distros = [
     prefix: "aur",
     format: "pkg.tar.zst",
   },
-  // {
-  //   name: "fedora",
-  //   prefix: "rpm",
-  //   archive: "rpm",
-  // },
+  {
+    name: "fedora",
+    prefix: "rpm",
+    format: "rpm",
+  },
 ];
 
 const makePipeline = ({ name, prefix, format }: any): Pipeline => {
@@ -48,7 +50,7 @@ const makePipeline = ({ name, prefix, format }: any): Pipeline => {
         `,
           `docker cp \
             ${name}.latest:/root/dist/pipelight.${format} \
-            ./packages/pipelight.${version}.${format}
+            ./packages/pipelight-${version}.${format}
         `,
         ],
       },
@@ -64,7 +66,7 @@ for (const params of distros) {
 
 const makeParallel = (distros: any[]): Pipeline => {
   const pipeline: Pipeline = {
-    name: "make:packages",
+    name: "package:all",
     steps: [],
   };
 
@@ -84,8 +86,12 @@ const makeParallel = (distros: any[]): Pipeline => {
   // Update documentation .env
   const step: Step = {
     name: `update documentation`,
-    commands: [`echo "VITE_GIT_VERSION=${version}" >> ../doc.pipelight/.env`],
+    commands: [
+      `echo "VITE_GIT_VERSION=${version}" >> ../doc.pipelight/.env`,
+      "cp packages/* ../doc.pipelight/public/packages/",
+    ],
   };
+  pipeline.steps.push(step);
 
   return pipeline;
 };
