@@ -27,6 +27,7 @@ RUN cp pipelight/target/release/pipelight-trigger deb.pipelight/pipelight/usr/bi
 WORKDIR /root/deb.pipelight
 RUN dpkg --build pipelight 
 RUN dpkg -i pipelight.deb
+RUN pipelight --help
 
 #Mouv to mounted
 WORKDIR /root/

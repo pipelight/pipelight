@@ -20,6 +20,7 @@ WORKDIR /home/alarm/pipelight-git
 # RUN cat PKGBUILD
 # RUN ls -al
 RUN makepkg -sfi --noconfirm
+RUN pipelight --help
 
 # Mouv to mounted
 USER root

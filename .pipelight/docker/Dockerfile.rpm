@@ -34,3 +34,7 @@ RUN rpmbuild -ba rpmbuild/SPECS/pipelight.spec
 RUN mkdir dist
 RUN ls -lR rpmbuild
 RUN mv rpmbuild/RPMS/x86_64/*.rpm dist/pipelight.rpm
+
+RUN rpm -ivh dist/pipelight.rpm
+RUN pipelight --help
+
