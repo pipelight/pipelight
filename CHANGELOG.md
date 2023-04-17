@@ -8,6 +8,7 @@
 
 # v0.4.28
 
+- [] feature: Add bash autocompletion
 - [] Bug fix: AUR conflicting packages.
 - [] Bug fix: branch check up not implemented for raw "pipelight trigger". (can be done in 20 minute)
 - [] Bug fix: Stop pipeline by pid, instead of name to stop attach pipelines.

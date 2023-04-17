@@ -12,7 +12,7 @@ WORKDIR /root
 RUN curl -fsSL https://deno.land/x/install/install.sh | sh
 RUN curl https://sh.rustup.rs | sh -s -- -y
 # Copy sources
-RUN git clone https://gitea.com/pipelight/pipelight
+RUN git clone https://gitea.com/pipelight/pipelight.git
 # Build sources
 WORKDIR /root/pipelight
 RUN ~/.cargo/bin/cargo build --release

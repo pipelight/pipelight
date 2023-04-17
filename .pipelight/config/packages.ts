@@ -83,15 +83,17 @@ const makeParallel = (distros: any[]): Pipeline => {
   }
   pipeline.steps.push(p);
 
-  // Update documentation .env
-  const step: Step = {
-    name: `update documentation`,
-    commands: [
-      `echo "VITE_GIT_VERSION=${version}" >> ../doc.pipelight/.env`,
-      "cp packages/* ../doc.pipelight/public/packages/",
-    ],
+  let uploadStep: Step = {
+    name: `upload packages`,
+    commands: [` pipelight run --attach package:upload `],
   };
-  pipeline.steps.push(step);
+  pipeline.steps.push(uploadStep);
+  // Update documentation .env
+  let docStep: Step = {
+    name: `update documentation`,
+    commands: ["cp packages/* ../doc.pipelight/public/packages/"],
+  };
+  pipeline.steps.push(docStep);
 
   return pipeline;
 };

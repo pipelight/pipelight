@@ -9,7 +9,7 @@ WORKDIR /root
 # Download rust latest
 RUN curl https://sh.rustup.rs | bash -s -- -y
 # Copy sources
-RUN git clone https://gitea.com/pipelight/pipelight
+RUN git clone https://gitea.com/pipelight/pipelight.git
 # Build sources
 WORKDIR /root/pipelight
 RUN ~/.cargo/bin/cargo build --release
