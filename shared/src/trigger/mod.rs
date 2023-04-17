@@ -56,9 +56,10 @@ pub fn trigger(attach: bool) -> Result<(), Box<dyn Error>> {
             let message = format!("No triggers defined for pipeline: {:?}", &pipeline.name);
             debug!("{}", message)
         } else {
-            if pipeline.clone().triggers.unwrap().contains(&env) {
-                let origin = env::current_dir().unwrap();
+            if pipeline.is_triggerable()? {
                 run::run_bin(pipeline.clone().name, attach);
+
+                // let origin = env::current_dir().unwrap();
                 // println!("{:?}", origin);
                 // println!("{:?}", env);
             }

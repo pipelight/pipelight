@@ -5,14 +5,18 @@
 #![allow(unused_must_use)]
 #[allow(dead_code)]
 //
-use super::{Command, Event, Parallel, Pipeline, Step, StepOrParallel};
+use super::{Command, Event, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 use exec::types::{Statuable, Status, StrOutput};
 use exec::Exec;
 use std::clone::Clone;
 use std::env;
-use std::error::Error;
 use std::thread;
 use utils::git::Git;
+
+// Error Handling
+use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use thiserror::Error;
+// use std::error::Error;
 
 // Global var
 use once_cell::sync::Lazy;
@@ -27,6 +31,19 @@ use std::time::{Duration, Instant};
 static mut PIPELINE: Lazy<Pipeline> = Lazy::new(|| Pipeline::new());
 
 impl Pipeline {
+    /// Verify if pipeline can be triggered
+    pub fn is_triggerable(&self) -> Result<bool> {
+        if self.triggers.is_none() {
+            Ok(true)
+        } else {
+            let env = Trigger::env()?;
+            if self.clone().triggers.unwrap().contains(&env) {
+                Ok(true)
+            } else {
+                Ok(false)
+            }
+        }
+    }
     /// Execute the pipeline
     pub fn run(&mut self) {
         // Globals
@@ -40,6 +57,7 @@ impl Pipeline {
             if (*ptr).is_running() {
                 return;
             }
+            if (*ptr).triggers.is_some() {}
         }
 
         // Duration

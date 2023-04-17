@@ -20,8 +20,23 @@ const config: Config = {
       ],
       triggers: [
         {
-          branches: ["master", "dev"],
-          actions: ["pre-push", "manual"],
+          branches: ["master"],
+          actions: ["pre-push"],
+        },
+      ],
+    },
+    {
+      name: "test dev",
+      steps: [
+        {
+          name: "test",
+          commands: ["cargo test"],
+        },
+      ],
+      triggers: [
+        {
+          branches: ["master, dev"],
+          actions: ["pre-push"],
         },
       ],
     },

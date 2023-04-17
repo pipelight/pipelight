@@ -12,12 +12,16 @@ pub mod traits;
 mod tree;
 use crate::types::traits::getters::Getters;
 
+// Error Handling
+use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use thiserror::Error;
+// use std::error::Error;
+
 // Standard libs
 use log::LevelFilter;
 use log::{info, warn};
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
-use std::error::Error;
 use std::fs;
 use std::path::Path;
 use std::process;
@@ -188,7 +192,7 @@ pub struct Trigger {
 }
 impl Trigger {
     /// Return actual triggering env
-    pub fn env() -> Result<Trigger, Box<dyn Error>> {
+    pub fn env() -> Result<Trigger> {
         let mut branch = None;
         if Git::new().exists() {
             branch = Some(Git::new().get_branch()?);
