@@ -179,12 +179,3 @@ impl Hook {
         Ok(())
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn internal() -> Result<(), Box<dyn Error>> {
-        Ok(())
-    }
-}

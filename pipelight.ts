@@ -26,7 +26,7 @@ const config: Config = {
       ],
     },
     {
-      name: "test dev",
+      name: "test-dev",
       steps: [
         {
           name: "test",
@@ -35,8 +35,8 @@ const config: Config = {
       ],
       triggers: [
         {
-          branches: ["master, dev"],
-          actions: ["pre-push"],
+          branches: ["dev"],
+          actions: ["pre-push", "manual"],
         },
       ],
     },

@@ -1,9 +1,10 @@
 use exec::types::Status;
 use exec::Exec;
-use log::trace;
 use pipeline::types::{traits::getters::Getters, Node, Pipeline};
 use std::env;
 use std::thread;
+// logger
+use log::{debug, error, info, trace, warn};
 // Error Handling
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 use thiserror::Error;
@@ -16,6 +17,14 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
     let bin = "pipelight-run";
 
     let pipeline = Pipeline::get_by_name(&pipeline_name)?;
+    if !pipeline.is_triggerable()? {
+        let message = "Pipeline can not be triggered in this environment";
+        let hint = "Either verify the triggers you set for this pipeline, \
+        checkout branch, \
+        or add actions like \"manual\" \n";
+        warn!(target:"nude", "{}", hint);
+        return Err(Error::msg(message));
+    }
 
     #[cfg(debug_assertions)]
     let command = format!("cargo run --bin {} {}", bin, pipeline_name);
