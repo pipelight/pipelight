@@ -12,6 +12,10 @@ RUN curl https://sh.rustup.rs | bash -s -- -y
 RUN git clone https://gitea.com/pipelight/pipelight.git
 # Build sources
 WORKDIR /root/pipelight
+
+# Checkout to latest_tag
+RUN git fetch --all --tags
+RUN latest_tag=$(git describe --tags --abbrev=0) && git checkout $latest_tag
 RUN ~/.cargo/bin/cargo build --release
 
 # Make package tree

@@ -11,14 +11,19 @@ RUN useradd alarm -m -G wheel
 RUN echo "%wheel ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # Copy sources
-USER alarm
 WORKDIR /home/alarm
-RUN git clone https://aur.archlinux.org/pipelight-git.git
+COPY  ./packages.pipelight/aur.pipelight/PKGBUILD ./aur.pipelight/PKGBUILD
+COPY  ./packages.pipelight/aur.pipelight/.SRCINFO ./aur.pipelight/.SRCINFO
+RUN chown -R alarm:alarm ./aur.pipelight
 
+USER alarm
 # Build sources and Make package
-WORKDIR /home/alarm/pipelight-git
-# RUN cat PKGBUILD
+WORKDIR /home/alarm/aur.pipelight
+
+# Instpect files
 # RUN ls -al
+# RUN cat PKGBUILD
+
 RUN makepkg -sfi --noconfirm
 RUN pipelight --help
 
@@ -26,4 +31,4 @@ RUN pipelight --help
 USER root
 WORKDIR /root
 RUN mkdir dist
-RUN cp /home/alarm/pipelight-git/pipelight*.pkg.tar.zst /root/dist/pipelight.pkg.tar.zst
+RUN cp /home/alarm/aur.pipelight/pipelight*.pkg.tar.zst /root/dist/pipelight.pkg.tar.zst
