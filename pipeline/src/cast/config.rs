@@ -167,8 +167,8 @@ impl Config {
 
         let command = format!(
             "deno lint \
-              --rules-exclude=no-explicit-any,no-unused-vars \
-              --quiet {}",
+            --rules-exclude=no-explicit-any,no-unused-vars \
+            --quiet {}",
             file
         );
         let data = Exec::new().simple(&command)?;
@@ -193,7 +193,9 @@ impl Config {
         // debug!("Linting config file");
         let command = format!(
             "deno run \
+            --allow-net \
             --allow-read \
+            --allow-env \
             --allow-run \
             --check --quiet {}",
             file
