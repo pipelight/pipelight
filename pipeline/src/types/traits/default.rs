@@ -1,6 +1,6 @@
 use crate::cast;
 use crate::types::{
-    Command, Config, Event, Logs, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
+    Command, Config, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
 };
 use chrono::Utc;
 use log::LevelFilter;
@@ -91,14 +91,7 @@ impl Pipeline {
 impl Default for StepOrParallel {
     fn default() -> Self {
         let commands = vec![Command::default()];
-        let step = Step {
-            name: "default".to_owned(),
-            status: None,
-            duration: None,
-            commands: commands,
-            non_blocking: None,
-            fallback: None,
-        };
+        let step = Step::default();
         StepOrParallel::Step(step)
     }
 }
@@ -114,7 +107,7 @@ impl Default for Parallel {
             status: None,
             duration: None,
             steps: vec![Step::default()],
-            non_blocking: None,
+            mode: Some(Mode::StopOnFailure),
             fallback: None,
         }
     }
@@ -132,7 +125,7 @@ impl Default for Step {
             status: None,
             duration: None,
             commands: commands,
-            non_blocking: None,
+            mode: Some(Mode::StopOnFailure),
             fallback: None,
         }
     }

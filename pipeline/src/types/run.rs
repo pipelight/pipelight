@@ -5,7 +5,7 @@
 #![allow(unused_must_use)]
 #[allow(dead_code)]
 //
-use super::{Command, Event, Parallel, Pipeline, Step, StepOrParallel, Trigger};
+use super::{Command, Event, Mode, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 use exec::types::{Statuable, Status, StrOutput};
 use exec::Exec;
 use std::clone::Clone;
@@ -85,8 +85,10 @@ impl Pipeline {
                 duration = start.elapsed();
                 (*ptr).duration = Some(duration);
 
-                if step.get_status() != Some(Status::Succeeded)
-                    && (step.non_blocking().is_none() || step.non_blocking() == Some(false))
+                if (step.get_status() != Some(Status::Succeeded))
+                    && (step.mode().is_none()
+                        || step.mode() == Some(Mode::StopOnFailure)
+                        || step.mode() == Some(Mode::JumpNextOnFailure))
                 {
                     break;
                 }
@@ -106,7 +108,7 @@ impl Pipeline {
         unsafe {
             let last_step = (*ptr).steps.last().unwrap();
             if last_step.get_status().is_some() {
-                if last_step.non_blocking() == Some(true) {
+                if last_step.mode() == Some(Mode::JumpNextOnFailure) {
                     if last_step.get_status() == Some(Status::Failed) {
                         (*ptr).set_status(Some(Status::Succeeded))
                     } else {
@@ -224,10 +226,13 @@ impl Step {
         // Run commands
         for command in &mut self.commands {
             command.run(ptr);
-            if command.status.is_none() {
-                break;
-            } else if command.status == Some(Status::Failed)
-                || command.status == Some(Status::Aborted)
+
+            if (command.status.is_none()
+                || command.status == Some(Status::Failed)
+                || command.status == Some(Status::Aborted))
+                && (self.mode.is_none()
+                    || self.mode == Some(Mode::StopOnFailure)
+                    || self.mode == Some(Mode::JumpNextOnFailure))
             {
                 break;
             }

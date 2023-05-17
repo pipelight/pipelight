@@ -1,8 +1,10 @@
 use crate::cast;
 use crate::types::characters::Characters;
+use crate::types::Mode::*;
 use crate::types::{
-    Command, Config, Event, Fallback, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
+    Command, Config, Event, Fallback, Mode, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
 };
+
 use chrono::Utc;
 use chrono::{DateTime, Local};
 use colored::{ColoredString, Colorize};
@@ -15,6 +17,8 @@ use utils::git::Flag;
 use utils::git::Hook;
 use utils::logger::logger;
 use uuid::Uuid;
+
+use log::error;
 
 impl From<&Event> for String {
     fn from(e: &Event) -> String {
@@ -129,10 +133,16 @@ impl From<&cast::Step> for Step {
             fallback = Some(Fallback::from(e.fallback.as_ref().unwrap()));
         }
 
+        // Convert mode
+        let mut mode = None;
+        if e.mode.is_some() {
+            mode = Some(Mode::from(e.mode.as_ref().unwrap()));
+        }
+
         let default_step = Step::new();
         Step {
             name: e.clone().name,
-            non_blocking: e.clone().non_blocking,
+            mode: mode,
             commands: commands,
             status: None,
             fallback: fallback,
@@ -173,6 +183,17 @@ impl From<&String> for Command {
 impl From<&cast::Fallback> for Fallback {
     fn from(e: &cast::Fallback) -> Self {
         // Convert post-run steps
+        let mut on_started = None;
+        if e.on_started.is_some() {
+            let binding = e.on_started.clone().unwrap();
+            on_started = Some(
+                binding
+                    .iter()
+                    .map(|e| StepOrParallel::from(e))
+                    .collect::<Vec<StepOrParallel>>(),
+            );
+        }
+        // Convert post-run steps
         let mut on_failure = None;
         if e.on_failure.is_some() {
             let binding = e.on_failure.clone().unwrap();
@@ -206,6 +227,7 @@ impl From<&cast::Fallback> for Fallback {
             );
         }
         return Fallback {
+            on_started: on_started,
             on_failure: on_failure,
             on_success: on_success,
             on_abortion: on_abortion,
@@ -231,6 +253,31 @@ impl Trigger {
             }
         }
         return tuplelist;
+    }
+}
+impl From<&String> for Mode {
+    fn from(mode: &String) -> Mode {
+        let cased: &str = &mode.to_case(Case::Snake);
+        // let cased: &str = &mode.to_case(Case::Kebab);
+        match cased {
+            "stop" => return Mode::StopOnFailure,
+            "jump_next" => return Mode::JumpNextOnFailure,
+            "continue" => return Mode::ContinueOnFailure,
+            _ => {
+                let message = format!("The step execution mode {} is not known", cased);
+                error!("{}", message);
+                exit(1);
+            }
+        };
+    }
+}
+impl From<&Mode> for String {
+    fn from(mode: &Mode) -> String {
+        match mode {
+            StopOnFailure => return "stop".to_owned(),
+            JumpNextOnFailure => return "jump_next".to_owned(),
+            ContinueOnFailure => return "continue".to_owned(),
+        };
     }
 }
 

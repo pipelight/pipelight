@@ -1017,6 +1017,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_yaml 0.9.19",
+ "strum",
  "sysinfo",
  "thiserror",
  "toml",

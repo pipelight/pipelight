@@ -9,6 +9,7 @@ mod default;
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Fallback {
+    pub on_started: Option<Vec<StepOrParallel>>,
     pub on_failure: Option<Vec<StepOrParallel>>,
     pub on_success: Option<Vec<StepOrParallel>>,
     pub on_abortion: Option<Vec<StepOrParallel>>,
@@ -33,15 +34,15 @@ pub struct Pipeline {
 pub struct Step {
     pub name: String,
     pub commands: Vec<String>,
-    pub non_blocking: Option<bool>,
+    pub mode: Option<String>,
     #[serde(flatten)]
     pub fallback: Option<Fallback>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Parallel {
-    pub non_blocking: Option<bool>,
     pub parallel: Vec<Step>,
+    pub mode: Option<String>,
     #[serde(flatten)]
     pub fallback: Option<Fallback>,
 }
