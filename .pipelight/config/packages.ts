@@ -28,7 +28,7 @@ const makePipeline = ({ name, prefix, format }: any): Pipeline => {
       {
         name: `remove old ${name} container`,
         commands: [`docker container rm ${name}.latest `],
-        non_blocking: true,
+        mode: "jump_next",
       },
       {
         name: `build ${name} container`,

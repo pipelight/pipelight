@@ -36,8 +36,13 @@ use utils;
 use utils::git::{Flag, Git, Hook};
 use utils::logger::logger;
 
+// Enum workaround
+use std::string::ToString;
+use strum::{EnumIter, IntoEnumIterator};
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Fallback {
+    pub on_started: Option<Vec<StepOrParallel>>,
     pub on_failure: Option<Vec<StepOrParallel>>,
     pub on_success: Option<Vec<StepOrParallel>>,
     pub on_abortion: Option<Vec<StepOrParallel>>,
@@ -145,10 +150,10 @@ pub enum StepOrParallel {
     Parallel(Parallel),
 }
 impl StepOrParallel {
-    pub fn non_blocking(&self) -> Option<bool> {
+    pub fn mode(&self) -> Option<Mode> {
         match self {
-            StepOrParallel::Step(res) => res.non_blocking,
-            StepOrParallel::Parallel(res) => res.non_blocking,
+            StepOrParallel::Step(res) => res.mode.clone(),
+            StepOrParallel::Parallel(res) => res.mode.clone(),
         }
     }
     pub fn duration(&self) -> Option<Duration> {
@@ -163,7 +168,8 @@ pub struct Parallel {
     pub status: Option<Status>,
     pub duration: Option<Duration>,
     pub steps: Vec<Step>,
-    pub non_blocking: Option<bool>,
+    // Failure Handling mode
+    pub mode: Option<Mode>,
     pub fallback: Option<Fallback>,
 }
 
@@ -173,8 +179,16 @@ pub struct Step {
     pub status: Option<Status>,
     pub duration: Option<Duration>,
     pub commands: Vec<Command>,
-    pub non_blocking: Option<bool>,
+    // Failure Handling mode
+    pub mode: Option<Mode>,
+    // Fallback Hook
     pub fallback: Option<Fallback>,
+}
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
+pub enum Mode {
+    StopOnFailure,
+    JumpNextOnFailure,
+    ContinueOnFailure,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

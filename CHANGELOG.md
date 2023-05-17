@@ -8,9 +8,10 @@
 
 # v0.4.28
 
+- [] feature: Add a -vvvv verbosity level to print commands stdout AND stderr
 - [] feature: Add bash autocompletion
-- [] Bug fix: AUR conflicting packages.
-- [] Bug fix: branch check up not implemented for raw "pipelight trigger". (can be done in 20 minute)
+- [x] Bug fix: AUR conflicting packages.
+- [x] Bug fix: branch check up not implemented for raw "pipelight trigger". (can be done in 20 minute)
 - [] Bug fix: Stop pipeline by pid, instead of name to stop attach pipelines.
 - [] feature: Add a on_started fallback hook
 - [] Bug fix: On "pipelight ls pipeline_name" increase verbosity by +1 if no flag provided
