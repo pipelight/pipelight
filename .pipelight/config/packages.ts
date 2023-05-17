@@ -3,15 +3,8 @@ import type {
   Pipeline,
   Step,
   Parallel,
-<<<<<<< HEAD
-  // } from "https://deno.land/x/pipelight@v0.1.3/mod.ts";
-} from "npm:pipelight";
-import { exec } from "npm:pipelight";
-// import { exec } from "https://deno.land/x/pipelight@v0.1.3/mod.ts";
-=======
 } from "https://deno.land/x/pipelight@v0.1.3/mod.ts";
 import { exec } from "https://deno.land/x/pipelight@v0.1.3/mod.ts";
->>>>>>> dev
 
 const version =
   (await exec("git describe --tags --abbrev=0 | sed s/v//")) + "-1-any";
@@ -40,12 +33,7 @@ const makePipeline = ({ name, prefix, format }: any): Pipeline => {
       {
         name: `remove old ${name} container`,
         commands: [`docker container rm ${name}.latest `],
-<<<<<<< HEAD
-        // mode: "jump_next",
-        non_blocking: true,
-=======
         mode: "jump_next",
->>>>>>> dev
       },
       {
         name: `build ${name} container`,
