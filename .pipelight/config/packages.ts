@@ -1,5 +1,10 @@
-import type { Config, Pipeline, Step, Parallel } from "npm:pipelight";
-import { exec } from "npm:pipelight";
+import type {
+  Config,
+  Pipeline,
+  Step,
+  Parallel,
+} from "https://deno.land/x/pipelight@v0.1.3/mod.ts";
+import { exec } from "https://deno.land/x/pipelight@v0.1.3/mod.ts";
 
 const version =
   (await exec("git describe --tags --abbrev=0 | sed s/v//")) + "-1-any";

@@ -16,23 +16,27 @@ impl From<&String> for Hook {
         // let cased: &str = &action.to_case(Case::Snake);
         let cased: &str = &action.to_case(Case::Kebab);
         match cased {
-            "applypatch-msg" => return ApplypatchMsg,
-            "pre-apply-patch" => return PreApplypatch,
-            "post-apply-patch" => return PostApplypatch,
+            // client hooks
             "pre-commit" => return PreCommit,
             "prepare-commit-msg" => return PrepareCommitMsg,
             "commit-msg" => return CommitMsg,
             "post-commit" => return PostCommit,
+            // mail hooks
+            "applypatch-msg" => return ApplypatchMsg,
+            "pre-applypatch" => return PreApplypatch,
+            "post-applypatch" => return PostApplypatch,
+            // other client hooks
             "pre-rebase" => return PreRebase,
+            "post-rewrite" => return PostRewrite,
             "post-checkout" => return PostCheckout,
             "post-merge" => return PostMerge,
+            "pre-push" => return PrePush,
+            "pre-auto-gc" => return PreAutoGc,
+            // server-side hooks
             "pre-receive" => return PreReceive,
             "update" => return Update,
-            "post-receive" => return PostReceive,
             "post-update" => return PostUpdate,
-            "pre-auto-gc" => return PreAutoGc,
-            "post-rewrite" => return PostRewrite,
-            "pre-push" => return PrePush,
+            "post-receive" => return PostReceive,
             _ => {
                 let message = format!("The hook {} is not known", cased);
                 error!("{}", message);

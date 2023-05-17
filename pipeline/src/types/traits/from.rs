@@ -257,8 +257,8 @@ impl Trigger {
 }
 impl From<&String> for Mode {
     fn from(mode: &String) -> Mode {
-        // let cased: &str = &action.to_case(Case::Snake);
-        let cased: &str = &mode.to_case(Case::Kebab);
+        let cased: &str = &mode.to_case(Case::Snake);
+        // let cased: &str = &mode.to_case(Case::Kebab);
         match cased {
             "stop" => return Mode::StopOnFailure,
             "jump_next" => return Mode::JumpNextOnFailure,
