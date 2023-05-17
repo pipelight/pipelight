@@ -1,5 +1,12 @@
-import type { Config, Pipeline, Step, Parallel } from "npm:pipelight";
+import type {
+  Config,
+  Pipeline,
+  Step,
+  Parallel,
+  // } from "https://deno.land/x/pipelight@v0.1.3/mod.ts";
+} from "npm:pipelight";
 import { exec } from "npm:pipelight";
+// import { exec } from "https://deno.land/x/pipelight@v0.1.3/mod.ts";
 
 const version =
   (await exec("git describe --tags --abbrev=0 | sed s/v//")) + "-1-any";
@@ -28,6 +35,7 @@ const makePipeline = ({ name, prefix, format }: any): Pipeline => {
       {
         name: `remove old ${name} container`,
         commands: [`docker container rm ${name}.latest `],
+        // mode: "jump_next",
         non_blocking: true,
       },
       {
@@ -91,7 +99,7 @@ const makeParallel = (distros: any[]): Pipeline => {
   // Update documentation .env
   let docStep: Step = {
     name: `update documentation`,
-    commands: ["cp packages/* ../doc.pipelight/public/packages/"],
+    commands: [`echo "VITE_GIT_VERSION=${version}" > ../doc.pipelight/.env`],
   };
   pipeline.steps.push(docStep);
 

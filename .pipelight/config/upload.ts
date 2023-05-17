@@ -1,4 +1,10 @@
-import type { Config, Pipeline, Step, Parallel } from "npm:pipelight";
+import type {
+  Config,
+  Pipeline,
+  Step,
+  Parallel,
+  // } from "https://deno.land/x/pipelight@v0.1.3/mod.ts";
+} from "npm:pipelight";
 
 const ssh = ({ host, cmd }: any) => {
   const params = "ssh -o TCPKeepAlive=no -C";
