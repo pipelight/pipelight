@@ -86,9 +86,7 @@ impl Pipeline {
                 (*ptr).duration = Some(duration);
 
                 if (step.get_status() != Some(Status::Succeeded))
-                    && (step.mode().is_none()
-                        || step.mode() == Some(Mode::StopOnFailure)
-                        || step.mode() == Some(Mode::JumpNextOnFailure))
+                    && (step.mode().is_none() || step.mode() == Some(Mode::StopOnFailure))
                 {
                     break;
                 }
@@ -227,12 +225,8 @@ impl Step {
         for command in &mut self.commands {
             command.run(ptr);
 
-            if (command.status.is_none()
-                || command.status == Some(Status::Failed)
-                || command.status == Some(Status::Aborted))
-                && (self.mode.is_none()
-                    || self.mode == Some(Mode::StopOnFailure)
-                    || self.mode == Some(Mode::JumpNextOnFailure))
+            if (command.status.is_none() || command.status != Some(Status::Succeeded))
+                && (self.mode.is_none() || self.mode != Some(Mode::ContinueOnFailure))
             {
                 break;
             }
