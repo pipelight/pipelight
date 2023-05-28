@@ -26,7 +26,7 @@
 
 # v0.4.30
 
-- [] bug fix: multiline string ultra space
+- [x] bug fix: multiline string ultra space
 - [] Sanitize logs before reading
 - [] test: test multiple bad config file.
 - [] feature: if pipelines have same pid (--attach), link them in logs tree.
