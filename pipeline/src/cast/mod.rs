@@ -55,7 +55,20 @@ pub enum StepOrParallel {
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
-pub struct Trigger {
+#[serde(untagged)]
+pub enum Trigger {
+    TriggerBranch(TriggerBranch),
+    TriggerTag(TriggerTag),
+}
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct TriggerBranch {
     pub actions: Option<Vec<String>>,
     pub branches: Vec<String>,
+}
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct TriggerTag {
+    pub actions: Option<Vec<String>>,
+    pub tags: Vec<String>,
 }

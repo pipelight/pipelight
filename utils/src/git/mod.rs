@@ -50,13 +50,25 @@ impl Git {
         return self.repo.is_some();
     }
     /// Return actual attached branch
-    pub fn get_branch(&self) -> Result<String> {
+    pub fn get_branch(&self) -> Result<Option<String>> {
         // Only tested on attached HEAD
         // No edge case when head is a commit or else...
         let repo = self.repo.as_ref().unwrap();
         let head = repo.head().into_diagnostic()?;
-        let name = head.shorthand().unwrap().to_owned();
+        let name = Some(head.shorthand().unwrap().to_owned());
         Ok(name)
+    }
+    /// Return tag if its is latest commit
+    pub fn get_tag(&self) -> Result<Option<String>> {
+        let tag;
+        let repo = self.repo.as_ref().unwrap();
+        let head = repo.head().into_diagnostic()?;
+        if head.is_tag() {
+            tag = Some(head.name().unwrap().to_string());
+        } else {
+            tag = None;
+        }
+        Ok(tag)
     }
 }
 

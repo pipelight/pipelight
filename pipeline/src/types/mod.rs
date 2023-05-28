@@ -200,25 +200,72 @@ pub struct Command {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
-pub struct Trigger {
-    pub action: Option<Flag>,
-    pub branch: Option<String>,
+pub enum Trigger {
+    TriggerBranch(TriggerBranch),
+    TriggerTag(TriggerTag),
 }
 impl Trigger {
     /// Return actual triggering env
     pub fn env() -> Result<Trigger> {
         let mut branch = None;
-        if Git::new().exists() {
-            branch = Some(Git::new().get_branch()?);
-        }
+        let mut tag = None;
+        let res;
+
         let action = Some(Hook::origin()?);
-        let res = Trigger {
-            branch: branch,
-            action: action,
-        };
-        // println!("{:?}", res);
-        Ok(res)
+        if Git::new().exists() {
+            branch = Git::new().get_branch()?;
+            tag = Git::new().get_tag()?;
+        }
+        if tag.is_some() {
+            res = Trigger::TriggerTag(TriggerTag {
+                action: action.clone(),
+                tag: tag,
+            });
+            Ok(res)
+        } else if branch.is_some() {
+            res = Trigger::TriggerBranch(TriggerBranch {
+                action: action.clone(),
+                branch: branch,
+            });
+            Ok(res)
+        } else {
+            res = Trigger::TriggerBranch(TriggerBranch {
+                action: action.clone(),
+                branch: None,
+            });
+            Ok(res)
+            // let message = "Couldn't get pipeline triggering environment";
+            // return Err(Error::msg(message));
+        }
     }
+    pub fn action(&self) -> Option<Flag> {
+        match self {
+            Trigger::TriggerBranch(res) => res.action.clone(),
+            Trigger::TriggerTag(res) => res.action.clone(),
+        }
+    }
+    pub fn branch(&self) -> Option<String> {
+        match self {
+            Trigger::TriggerBranch(res) => res.branch.clone(),
+            Trigger::TriggerTag(..) => None,
+        }
+    }
+    pub fn tag(&self) -> Option<String> {
+        match self {
+            Trigger::TriggerTag(res) => res.tag.clone(),
+            Trigger::TriggerBranch(..) => None,
+        }
+    }
+}
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
+pub struct TriggerBranch {
+    pub action: Option<Flag>,
+    pub branch: Option<String>,
+}
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
+pub struct TriggerTag {
+    pub action: Option<Flag>,
+    pub tag: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

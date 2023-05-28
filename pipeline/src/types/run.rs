@@ -26,6 +26,8 @@ use std::sync::{Arc, Mutex, RwLock};
 use rayon::prelude::*;
 // Duraion
 use std::time::{Duration, Instant};
+// Globbing
+use glob::Pattern;
 
 // Global var
 static mut PIPELINE: Lazy<Pipeline> = Lazy::new(|| Pipeline::new());
@@ -33,15 +35,41 @@ static mut PIPELINE: Lazy<Pipeline> = Lazy::new(|| Pipeline::new());
 impl Pipeline {
     /// Verify if pipeline can be triggered
     pub fn is_triggerable(&self) -> Result<bool> {
-        if self.triggers.is_none() {
-            Ok(true)
-        } else {
-            let env = Trigger::env()?;
-            if self.clone().triggers.unwrap().contains(&env) {
-                Ok(true)
-            } else {
+        if Git::new().exists() {
+            if self.triggers.is_some() {
+                let env = Trigger::env()?;
+                for trigger in self.clone().triggers.unwrap() {
+                    // println!("trigger={:#?}", &trigger);
+                    // println!("env={:#?}", &env);
+                    match &trigger {
+                        // Transform tag/branch into Globbing pattern
+                        Trigger::TriggerBranch(res) => {
+                            let glob =
+                                Pattern::new(&trigger.branch().unwrap()).into_diagnostic()?;
+                            if trigger.action() == env.action()
+                                && glob.matches(&env.branch().unwrap())
+                            {
+                                return Ok(true);
+                            }
+                        }
+                        Trigger::TriggerTag(res) => {
+                            let glob = Pattern::new(&trigger.tag().unwrap()).into_diagnostic()?;
+                            if trigger.tag().is_some() && env.tag().is_some() {
+                                if trigger.action() == env.action()
+                                    && glob.matches(&env.tag().unwrap())
+                                {
+                                    return Ok(true);
+                                }
+                            }
+                        }
+                    }
+                }
                 Ok(false)
+            } else {
+                Ok(true)
             }
+        } else {
+            Ok(true)
         }
     }
     /// Execute the pipeline

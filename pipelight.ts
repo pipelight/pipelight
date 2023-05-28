@@ -1,8 +1,4 @@
-import type {
-  Config,
-  Pipeline,
-  // } from "https://deno.land/x/pipelight@v0.1.3/mod.ts";
-} from "npm:pipelight";
+import type { Config, Pipeline } from "https://deno.land/x/pipelight/mod.ts";
 import {
   packagingPipelines,
   parallelPackagingPipeline,
@@ -24,8 +20,12 @@ const config: Config = {
       ],
       triggers: [
         {
-          branches: ["master"],
-          actions: ["pre-push"],
+          branches: ["feature/*"],
+          actions: ["manual"],
+        },
+        {
+          tags: ["*"],
+          actions: ["manual"],
         },
       ],
     },

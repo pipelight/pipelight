@@ -2,7 +2,8 @@ use crate::cast;
 use crate::types::characters::Characters;
 use crate::types::Mode::*;
 use crate::types::{
-    Command, Config, Event, Fallback, Mode, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
+    Command, Config, Event, Fallback, Mode, Node, Parallel, Pipeline, Step, StepOrParallel,
+    Trigger, TriggerBranch, TriggerTag,
 };
 
 use chrono::Utc;
@@ -31,16 +32,16 @@ impl From<&Event> for String {
         let action = format!(
             "{}{}\n",
             header.white(),
-            String::from(&e.trigger.action.clone().unwrap()).white()
+            String::from(&e.trigger.action().clone().unwrap()).white()
         );
         string.push_str(&action);
 
-        if e.trigger.branch.is_some() {
+        if e.trigger.branch().is_some() {
             let header = "branch: ";
             let branch = format!(
                 "{}{}\n",
                 header.white(),
-                String::from(&e.trigger.branch.clone().unwrap()).white()
+                String::from(&e.trigger.branch().clone().unwrap()).white()
             );
             string.push_str(&branch);
         }
@@ -237,19 +238,26 @@ impl From<&cast::Fallback> for Fallback {
 impl Trigger {
     pub fn flatten(e: &cast::Trigger) -> Vec<Trigger> {
         let mut tuplelist: Vec<Trigger> = vec![];
-        for branch in e.branches.clone() {
-            if e.actions.clone().is_some() {
-                for action in e.actions.clone().unwrap() {
-                    tuplelist.push(Trigger {
-                        branch: Some(branch.to_owned()),
-                        action: Some(Flag::from(&action)),
-                    })
+        match &e {
+            cast::Trigger::TriggerBranch(res) => {
+                for branch in res.branches.clone() {
+                    for action in res.actions.clone().unwrap() {
+                        tuplelist.push(Trigger::TriggerBranch(TriggerBranch {
+                            action: Some(Flag::from(&action)),
+                            branch: Some(branch.to_owned()),
+                        }))
+                    }
                 }
-            } else {
-                tuplelist.push(Trigger {
-                    branch: Some(branch.to_owned()),
-                    action: Some(Flag::Manual),
-                })
+            }
+            cast::Trigger::TriggerTag(res) => {
+                for tag in res.tags.clone() {
+                    for action in res.actions.clone().unwrap() {
+                        tuplelist.push(Trigger::TriggerTag(TriggerTag {
+                            action: Some(Flag::from(&action)),
+                            tag: Some(tag.to_owned()),
+                        }))
+                    }
+                }
             }
         }
         return tuplelist;
