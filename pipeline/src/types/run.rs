@@ -100,12 +100,15 @@ impl Pipeline {
         // Set Pid and Status and Duration
         unsafe {
             (*ptr).event = Some(event);
-            (*ptr).set_status(Some(Status::Running));
-            (*ptr).duration = Some(duration);
+            (*ptr).set_status(Some(Status::Started));
             (*ptr).log();
         }
 
         unsafe {
+            (*ptr).set_status(Some(Status::Running));
+            (*ptr).duration = Some(duration);
+            (*ptr).log();
+
             for step in &mut (*ptr).steps {
                 step.run(ptr);
 
@@ -293,6 +296,9 @@ impl Step {
                     step.run(ptr);
                 }
             }
+            unsafe {
+                (*ptr).log();
+            }
         }
     }
 }
@@ -303,12 +309,14 @@ impl Command {
         let start = Instant::now();
         let duration;
 
+        let output_res = Exec::new().simple(&self.stdin);
+
         self.status = Some(Status::Running);
+
         unsafe {
             (*ptr).log();
         }
 
-        let output_res = Exec::new().simple(&self.stdin);
         match output_res {
             Ok(output) => {
                 self.output = Some(output.clone());

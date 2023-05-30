@@ -35,8 +35,15 @@ impl From<&Event> for String {
             String::from(&e.trigger.action().clone().unwrap()).white()
         );
         string.push_str(&action);
-
-        if e.trigger.branch().is_some() {
+        if e.trigger.tag().is_some() {
+            let header = "branch: ";
+            let tag = format!(
+                "{}{}\n",
+                header.white(),
+                String::from(&e.trigger.tag().clone().unwrap()).white()
+            );
+            string.push_str(&tag);
+        } else if e.trigger.branch().is_some() {
             let header = "branch: ";
             let branch = format!(
                 "{}{}\n",
@@ -291,20 +298,20 @@ impl From<&Mode> for String {
 
 impl From<&Pipeline> for Node {
     fn from(e: &Pipeline) -> Self {
-        let mut tag: String = "".to_owned();
+        let mut head: String = "".to_owned();
         if e.status.is_some() {
             let separator = format!("{}", " - ".white());
             let status = format!("{}{}", e.status.clone().unwrap(), separator);
-            tag.push_str(&status);
+            head.push_str(&status);
         }
         if e.event.is_some() {
             let event = String::from(&e.event.clone().unwrap());
-            tag.push_str(&format!("{}", &event.white()))
+            head.push_str(&format!("{}", &event.white()))
         }
-        tag = format!("{}", tag);
+        head = format!("{}", head);
 
         let name = format!("pipeline: {}", e.name.clone());
-        tag.push_str(&name);
+        head.push_str(&name);
         let mut children: Vec<Node> = e.steps.iter().map(|e| Node::from(e)).collect();
 
         // Fallback
@@ -343,7 +350,7 @@ impl From<&Pipeline> for Node {
         }
 
         let node = Node {
-            value: Some(tag),
+            value: Some(head),
             status: e.status.clone(),
             duration: e.duration,
             children: Some(children),
@@ -412,7 +419,7 @@ impl From<&Parallel> for Node {
 }
 impl From<&Step> for Node {
     fn from(e: &Step) -> Self {
-        let tag = format!("step: {}", e.name.clone());
+        let head = format!("step: {}", e.name.clone());
         let mut children: Vec<Node> = e.commands.iter().map(|el| Node::from(el)).collect();
 
         // Fallback
@@ -449,9 +456,8 @@ impl From<&Step> for Node {
                 children.push(node);
             }
         }
-
         let node = Node {
-            value: Some(tag),
+            value: Some(head),
             status: e.status.clone(),
             duration: e.duration,
             children: Some(children),
