@@ -23,10 +23,10 @@ const config: Config = {
           branches: ["feature/*"],
           actions: ["manual"],
         },
-        {
-          tags: ["*"],
-          actions: ["manual"],
-        },
+        // {
+        //   tags: ["*"],
+        //   actions: ["manual"],
+        // },
       ],
     },
     {
