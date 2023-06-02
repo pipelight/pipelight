@@ -8,7 +8,6 @@ use std::env::current_dir;
 use std::fmt;
 use std::path::Path;
 use std::process::exit;
-use typescript::{main_script, TYPES};
 use utils::teleport::{FileType, Teleport};
 
 // Error Handling
@@ -189,7 +188,7 @@ impl Config {
         }
     }
     /// Ensure Typescript typing
-    fn check(file: &str) -> Result<()> {
+    fn check(file: &str, args: Option<&str>) -> Result<()> {
         // debug!("Linting config file");
         let command = format!(
             "deno run \
@@ -197,9 +196,14 @@ impl Config {
             --allow-read \
             --allow-env \
             --allow-run \
-            --check --quiet {}",
-            file
+            --check \
+            --quiet \
+            {}",
+            file,
         );
+        if args.is_some() {
+            command = format!("{} {}", command, args.unwrap())
+        }
         let data = Exec::new().simple(&command)?;
         if data.stdout.is_none() {
             if data.stderr.is_none() {
