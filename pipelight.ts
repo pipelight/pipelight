@@ -5,16 +5,21 @@ import {
 } from "./.pipelight/config/packages.ts";
 import { uploadPipeline } from "./.pipelight/config/upload.ts";
 
+import { parse } from "https://deno.land/std/flags/mod.ts";
+const flags = parse(Deno.args, {
+  string: ["host"],
+});
+
 const config: Config = {
   pipelines: [
     parallelPackagingPipeline as Pipeline,
     ...packagingPipelines,
     uploadPipeline,
     {
-      name: "test",
+      name: "test:host",
       steps: [
         {
-          name: "test",
+          name: `test`,
           commands: ["cargo test --package pipeline"],
         },
       ],

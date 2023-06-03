@@ -14,18 +14,32 @@ use uuid::Uuid;
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 use thiserror::Error;
 
+// Global var
+use once_cell::sync::Lazy;
+use std::ops::{Deref, DerefMut};
+use std::sync::{Arc, Mutex, RwLock};
+
+// Global var
+static mut CONFIG: Lazy<Config> = Lazy::new(|| Config::default());
+
 impl Default for Config {
     fn default() -> Self {
         Config { pipelines: None }
     }
 }
 impl Config {
-    pub fn new() -> Result<Self> {
-        let mut config: Config;
-        let json = cast::Config::get().unwrap();
-        config = Config::from(&json);
-        config.dedup_pipelines();
-        Ok(config)
+    pub fn new(args: Option<Vec<String>>) -> Result<Self> {
+        unsafe {
+            if *CONFIG == Config::default() {
+                let mut config: Config;
+                let json = cast::Config::get(args).unwrap();
+                config = Config::from(&json);
+                config.dedup_pipelines();
+                *CONFIG = config;
+            }
+            let ptr = (*CONFIG).clone().to_owned();
+            return Ok(ptr);
+        }
     }
     /// Remove pipelines with the same name
     pub fn dedup_pipelines(&mut self) -> Self {

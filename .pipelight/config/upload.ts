@@ -2,14 +2,9 @@ import type {
   Config,
   Pipeline,
   Step,
-  Parallel,
-  // } from "https://deno.land/x/pipelight@v0.1.3/mod.ts";
-} from "npm:pipelight";
+} from "https://deno.land/x/pipelight/mod.ts";
+import { ssh } from "https://deno.land/x/pipelight/mod.ts";
 
-const ssh = ({ host, cmd }: any) => {
-  const params = "ssh -o TCPKeepAlive=no -C";
-  return `${params} ${host} "${cmd}"`;
-};
 const host = "linode";
 
 const uploadPipeline: Pipeline = {
@@ -26,14 +21,7 @@ const uploadPipeline: Pipeline = {
       name: `update remote nginx configuration`,
       commands: [
         `scp ./.pipelight/public/packages.pipelight.nginx.conf ${host}:/etc/nginx/sites-enabled/packages.pipelight.conf`,
-        ssh({
-          host: host,
-          cmd: "sudo nginx -t",
-        }),
-        ssh({
-          host: host,
-          cmd: "sudo systemctl restart nginx",
-        }),
+        ...ssh([host], ["sudo nginx -t", "sudo systemctl restart nginx"]),
       ],
     },
   ],

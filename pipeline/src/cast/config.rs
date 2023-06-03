@@ -8,6 +8,7 @@ use std::env::current_dir;
 use std::fmt;
 use std::path::Path;
 use std::process::exit;
+use typescript::main_script;
 use utils::teleport::{FileType, Teleport};
 
 // Error Handling
@@ -34,13 +35,13 @@ struct YamlError {
 }
 
 impl Config {
-    pub fn get() -> Result<Config> {
+    pub fn get(args: Option<Vec<String>>) -> Result<Config> {
         let file_names: Vec<String> = vec!["pipelight.ts".to_owned(), "pipelight.yml".to_owned()];
         let pwd: String = current_dir().unwrap().display().to_string();
 
         let file_path = Teleport::new().config_path.unwrap();
         // println!("{}", file_path);
-        let res = Config::load_from_file(&file_path);
+        let res = Config::load_from_file(&file_path, args);
         match res {
             Ok(res) => {
                 return Ok(res);
@@ -54,7 +55,7 @@ impl Config {
         }
     }
 
-    fn load_from_file(file_path: &str) -> Result<Config> {
+    fn load_from_file(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
         // println!("extensiFileType::from(
         let extension = &Path::new(file_path)
             .extension()
@@ -65,7 +66,9 @@ impl Config {
         let file_type = FileType::from(extension);
         // println!("{:?}", file_type);
         let config = match file_type {
-            FileType::TypeScript | FileType::JavaScript => Config::load_from_file_ts(file_path),
+            FileType::TypeScript | FileType::JavaScript => {
+                Config::load_from_file_ts(file_path, args)
+            }
             FileType::Toml | FileType::Tml => Config::load_from_file_tml(file_path),
             FileType::Yaml | FileType::Yml => Config::load_from_file_yml(file_path),
         };
@@ -73,17 +76,20 @@ impl Config {
     }
 
     /// Return the config from given path
-    pub fn load_from_file_ts(file_path: &str) -> Result<Config> {
+    pub fn load_from_file_ts(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
         // Fail safe guards
         Config::lint(file_path)?;
-        Config::check(file_path)?;
+        Config::check(file_path, args.clone())?;
 
         let executable = "deno eval";
         let script = main_script(file_path);
-
-        let command = format!("{} {}", executable, script);
+        let command;
+        if args.is_some() {
+            command = format!("{} {} -- {}", executable, script, args.unwrap().join(" "));
+        } else {
+            command = format!("{} {}", executable, script);
+        }
         let data = Exec::new().simple(&command)?;
-        // println!("{:?}", data);
         let json = data.stdout.clone().unwrap();
         let res = serde_json::from_str::<Config>(&json);
         match res {
@@ -188,9 +194,9 @@ impl Config {
         }
     }
     /// Ensure Typescript typing
-    fn check(file: &str, args: Option<&str>) -> Result<()> {
+    fn check(file: &str, args: Option<Vec<String>>) -> Result<()> {
         // debug!("Linting config file");
-        let command = format!(
+        let mut command = format!(
             "deno run \
             --allow-net \
             --allow-read \
@@ -202,7 +208,7 @@ impl Config {
             file,
         );
         if args.is_some() {
-            command = format!("{} {}", command, args.unwrap())
+            command = format!("{} {}", command, args.unwrap().join(" "));
         }
         let data = Exec::new().simple(&command)?;
         if data.stdout.is_none() {

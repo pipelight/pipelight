@@ -3,11 +3,12 @@ import type {
   Pipeline,
   Step,
   Parallel,
-} from "https://deno.land/x/pipelight@v0.1.3/mod.ts";
-import { exec } from "https://deno.land/x/pipelight@v0.1.3/mod.ts";
+} from "https://deno.land/x/pipelight/mod.ts";
+import { exec } from "https://deno.land/x/pipelight/mod.ts";
 
 const version =
   (await exec("git describe --tags --abbrev=0 | sed s/v//")) + "-1-any";
+
 const distros = [
   {
     name: "debian",

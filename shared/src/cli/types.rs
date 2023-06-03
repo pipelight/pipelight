@@ -1,12 +1,9 @@
 // Cli commands structure
-
 use clap::{Args, Parser, Subcommand};
 use clap_verbosity_flag::Verbosity;
 
 #[derive(Debug, Parser)]
-#[command(author, 
-          //version,
-           about, long_about = None)]
+#[command(author, about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
     pub commands: Commands,
@@ -14,6 +11,10 @@ pub struct Cli {
     #[clap(flatten)]
     /// Set verbosity level
     pub verbose: Verbosity,
+
+    #[arg(global = true)]
+    /// Pass to deno
+    pub raw: Option<Vec<String>>,
 }
 
 #[derive(Debug, Subcommand)]
@@ -65,7 +66,6 @@ pub struct DisplayCommands {
 #[derive(Debug, Args)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct List {
-
     /// Display logs in json format
     #[command(flatten)]
     pub display: DisplayCommands,

@@ -8,7 +8,7 @@ exec = {path = "../exec" }
 pipeline = {path = "../pipeline" }
 utils = {path = "../utils" }
 chrono = "0.4.23"
-clap = { version = "4.1.6", features = ["derive","wrap_help"]}
+clap = { version = "4.3.1", features = ["derive","wrap_help"]}
 clap-verbosity-flag = "2.0.0"
 git2 = "0.16.1"
 log = "0.4.17"

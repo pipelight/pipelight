@@ -79,7 +79,7 @@ impl Logs {
 }
 impl Getters<Pipeline> for Pipeline {
     fn get() -> Result<Vec<Pipeline>> {
-        let config = Config::new()?;
+        let config = Config::new(None)?;
         let optional = config.pipelines;
         match optional {
             Some(p) => return Ok(p),

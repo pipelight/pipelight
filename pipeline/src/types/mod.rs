@@ -47,7 +47,7 @@ pub struct Fallback {
     pub on_success: Option<Vec<StepOrParallel>>,
     pub on_abortion: Option<Vec<StepOrParallel>>,
 }
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Config {
     pub pipelines: Option<Vec<Pipeline>>,
 }

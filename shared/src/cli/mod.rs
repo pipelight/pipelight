@@ -24,6 +24,8 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
     let verbosity = args.verbose.log_level_filter();
     logger.lock().unwrap().level(&verbosity);
 
+    Config::new(args.raw)?;
+
     match args.commands {
         types::Commands::Ls(list) => {
             // info!("Listing piplines");
