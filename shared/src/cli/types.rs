@@ -12,7 +12,7 @@ pub struct Cli {
     /// Set verbosity level
     pub verbose: Verbosity,
 
-    #[arg(global = true)]
+    #[arg(global = true, last = true, allow_hyphen_values = true)]
     /// Pass to deno
     pub raw: Option<Vec<String>>,
 }

@@ -309,13 +309,12 @@ impl Command {
         let start = Instant::now();
         let duration;
 
-        let output_res = Exec::new().simple(&self.stdin);
-
         self.status = Some(Status::Running);
-
         unsafe {
             (*ptr).log();
         }
+
+        let output_res = Exec::new().simple(&self.stdin);
 
         match output_res {
             Ok(output) => {
