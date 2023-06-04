@@ -1,10 +1,10 @@
-# Pipelight - Self-hosted automation pipelines!
-
 <p align="center">
-<img width="400px" alt="ferris" src="https://pipelight.dev/images/ferris_playing_pipelight.png"/>
+<img width="200px" alt="pipelight logo" src="https://pipelight.dev/images/pipelight.png"/>
 </p>
+<h1 align="center">Pipelight - Self-hosted automation pipelines!</h1>
+## Documentation
 
-[Full Documentation](https://pipelight.dev)
+**Checkout the [Full Documentation](https://pipelight.dev)**
 
 ## Define pipelines
 
@@ -70,14 +70,5 @@ pipelight logs
 
 <img width="500px" alt="pretty logs" src="https://pipelight.dev/images/example_log_level_4.png"/>
 
-## Documentation
-
-Checkout the
-[Full Documentation](https://pipelight.dev)
-
-<p align="center">
-<img width="200px" alt="pipelight logo" src="https://pipelight.dev/images/pipelight.png"/>
-</p>
-
-Licensed under GNU GPLv2
-Copyright (C) 2023 Areskul
+<p align="center">Licensed under GNU GPLv2</p>
+<p align="center">Copyright (C) 2023 Areskul</p>
