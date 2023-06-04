@@ -13,7 +13,8 @@ use thiserror::Error;
 /// To be called from the cli.
 /// Either spawn a detached new process or spawn an attached thread
 /// to run the pipeline
-pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
+pub fn run_bin(pipeline_name: String, attach: bool, args: Option<Vec<String>>) -> Result<()> {
+    //Pass args vec<sting>
     let bin = "pipelight-run";
 
     let pipeline = Pipeline::get_by_name(&pipeline_name)?;
@@ -27,10 +28,14 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
     }
 
     #[cfg(debug_assertions)]
-    let command = format!("cargo run --bin {} {}", bin, pipeline_name);
+    let mut command = format!("cargo run --bin {} {}", bin, pipeline_name);
 
     #[cfg(not(debug_assertions))]
-    let command = format!("{} {}", bin, pipeline_name);
+    let mut command = format!("{} {}", bin, pipeline_name);
+
+    if args.is_some() {
+        command = format!("{} {}", command, args.unwrap().join(" "))
+    }
 
     match attach {
         true => {
@@ -49,10 +54,10 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
 /// Launch attached thread
 pub fn run_in_thread(name: &str) -> Result<()> {
     let name = name.to_owned();
-    let thread = thread::spawn(move || -> Result<()> {
+    let thread = thread::spawn(move || {
         let mut pipeline = Pipeline::get_by_name(&name).unwrap();
         pipeline.run();
-        // println!("{}", Node::from(&pipeline));
+        println!("{}", Node::from(&pipeline));
         match pipeline.status {
             Some(Status::Succeeded) => Ok(()),
             Some(Status::Failed) => {

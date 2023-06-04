@@ -18,7 +18,7 @@ use utils::{
     logger::Logger,
 };
 
-pub fn trigger_bin(attach: bool) -> Result<(), Box<dyn Error>> {
+pub fn trigger_bin(attach: bool, args: Option<Vec<String>>) -> Result<(), Box<dyn Error>> {
     trace!("Create detached subprocess");
     let bin = "pipelight-trigger";
 
@@ -31,7 +31,7 @@ pub fn trigger_bin(attach: bool) -> Result<(), Box<dyn Error>> {
     match attach {
         true => {
             // Lauch attach thread
-            trigger_in_thread(attach)?;
+            trigger_in_thread(attach, args)?;
         }
         false => {
             // Lauch detached process
@@ -43,8 +43,8 @@ pub fn trigger_bin(attach: bool) -> Result<(), Box<dyn Error>> {
 }
 
 /// Filter pipeline by trigger and run
-pub fn trigger(attach: bool) -> Result<(), Box<dyn Error>> {
-    let config = Config::new(None)?;
+pub fn trigger(attach: bool, args: Option<Vec<String>>) -> Result<(), Box<dyn Error>> {
+    let config = Config::new(args.clone())?;
     let env = Trigger::env()?;
     if config.pipelines.is_none() {
         let message = "No pipeline found";
@@ -57,7 +57,7 @@ pub fn trigger(attach: bool) -> Result<(), Box<dyn Error>> {
             debug!("{}", message)
         } else {
             if pipeline.is_triggerable()? {
-                run::run_bin(pipeline.clone().name, attach);
+                run::run_bin(pipeline.clone().name, attach, args.clone());
 
                 // let origin = env::current_dir().unwrap();
                 // println!("{:?}", origin);
@@ -69,8 +69,8 @@ pub fn trigger(attach: bool) -> Result<(), Box<dyn Error>> {
 }
 
 /// Launch attached thread
-pub fn trigger_in_thread(attach: bool) -> Result<(), Box<dyn Error>> {
-    let thread = thread::spawn(move || trigger(attach).unwrap());
+pub fn trigger_in_thread(attach: bool, args: Option<Vec<String>>) -> Result<(), Box<dyn Error>> {
+    let thread = thread::spawn(move || trigger(attach, args).unwrap());
     thread.join().unwrap();
     Ok(())
 }

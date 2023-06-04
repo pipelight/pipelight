@@ -24,7 +24,7 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
     let verbosity = args.verbose.log_level_filter();
     logger.lock().unwrap().level(&verbosity);
 
-    Config::new(args.raw)?;
+    Config::new(args.raw.clone())?;
 
     match args.commands {
         types::Commands::Ls(list) => {
@@ -47,14 +47,14 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
         }
         types::Commands::Trigger(trigger) => {
             // info!("Triggering piplines");
-            trigger::trigger_bin(trigger.attach)?;
+            trigger::trigger_bin(trigger.attach, args.raw.clone())?;
         }
         types::Commands::Run(pipeline) => {
             // info!("Running pipline {:#?}", pipeline.name);
             if pipeline.name.is_some() {
-                run::run_bin(pipeline.name.unwrap(), pipeline.attach)?;
+                run::run_bin(pipeline.name.unwrap(), pipeline.attach, args.raw.clone())?;
             } else {
-                prompt::run_prompt()?;
+                prompt::run_prompt(args.raw)?;
             }
         }
         types::Commands::Stop(pipeline) => {

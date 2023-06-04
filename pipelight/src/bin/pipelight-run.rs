@@ -3,6 +3,7 @@
 use exec::types::Status;
 #[allow(dead_code)]
 use log::error;
+use pipeline::types::Config;
 use pipeline::types::{traits::getters::Getters, Pipeline};
 use std::env;
 
@@ -27,8 +28,12 @@ fn handler() -> Result<()> {
 // / Get command line args and run pipeline
 pub fn run() -> Result<()> {
     // Collect Args
-    let args = env::args().collect::<Vec<String>>();
-    let pipeline_name: String = args[1].to_owned();
+    let mut args = env::args().collect::<Vec<String>>();
+    args.remove(0);
+    let pipeline_name: String = args[0].to_owned();
+    args.remove(0);
+
+    Config::new(Some(args));
 
     let mut pipeline = Pipeline::get_by_name(&pipeline_name)?;
     pipeline.run();

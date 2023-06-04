@@ -19,13 +19,13 @@ const config: Config = {
       name: "test:host",
       steps: [
         {
-          name: `test`,
+          name: `test:${flags.host}`,
           commands: ["cargo test --package pipeline"],
         },
       ],
       triggers: [
         {
-          branches: ["feature/*"],
+          branches: ["dev", "feature/*"],
           actions: ["manual"],
         },
         // {
