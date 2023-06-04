@@ -2,11 +2,13 @@
 
 Self-hosted automation pipelines!
 
+<img width="100px", alt="ferris", src="https://pipelight.dev/images/ferris_playing_pipelight.png"/>
+
 ## Define pipelines
 
 Alongside your code in a `pipelight.ts` file.
 
-Simple and Complex pipeline definition thanks to Typescript.
+Simple and complex pipeline definition.
 
 ### Enjoy the declarative Object syntax.
 
@@ -61,9 +63,13 @@ Pretty logs
 pipelight logs
 ```
 
+<img width="400px", alt="pretty logs", src="https://pipelight.dev/images/example_log_level_4.png"/>
+
 And more to come in the Cookbook.
 
 [Full Documentation](https://pipelight.dev)
+
+<img width="200px", alt="pipelight logo", src="https://pipelight.dev/images/pipelight.png"/>
 
 Licensed under GNU GPLv2
 Copyright (C) 2023 Areskul
