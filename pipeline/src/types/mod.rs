@@ -273,6 +273,7 @@ pub struct Event {
     pub trigger: Trigger,
     pub date: String,
     pub pid: Option<u32>,
+    pub sid: Option<u32>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]

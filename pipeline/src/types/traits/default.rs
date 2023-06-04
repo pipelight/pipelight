@@ -14,6 +14,9 @@ use uuid::Uuid;
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 use thiserror::Error;
 
+// sys
+use sysinfo::{Pid, PidExt, ProcessExt, System, SystemExt};
+
 // Global var
 use once_cell::sync::Lazy;
 use std::ops::{Deref, DerefMut};
@@ -177,11 +180,20 @@ impl Logs {
 
 impl Default for Event {
     fn default() -> Self {
+        // Get process pid
         let pid = process::id();
+        // Get current process info
+        let mut sys = System::new_all();
+        sys.refresh_all();
+        let current_process = sys.process(PidExt::from_u32(pid)).unwrap();
+        // Get process spid
+        let sid = current_process.session_id().unwrap();
+
         Event {
             trigger: Trigger::env().unwrap(),
             date: Utc::now().to_string(),
             pid: Some(pid),
+            sid: Some(sid.as_u32()),
         }
     }
 }

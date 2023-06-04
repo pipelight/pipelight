@@ -3,6 +3,8 @@ use log::warn;
 use std::fs;
 use std::path::Path;
 use utils::logger::logger;
+// date
+use chrono::{DateTime, Local};
 
 // Error Handling
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
@@ -38,6 +40,24 @@ impl Getters<Pipeline> for Logs {
                     pipelines.push(pipeline);
                 }
                 // pipelines = Logs::sanitize(pipelines)?;
+                pipelines.sort_by(|a, b| {
+                    let a_date = a
+                        .clone()
+                        .event
+                        .unwrap()
+                        .date
+                        .parse::<DateTime<Local>>()
+                        .unwrap();
+
+                    let b_date = &b
+                        .clone()
+                        .event
+                        .unwrap()
+                        .date
+                        .parse::<DateTime<Local>>()
+                        .unwrap();
+                    return a_date.cmp(b_date);
+                });
                 Ok(pipelines)
             }
         }
@@ -73,6 +93,28 @@ impl Logs {
             Ok(pipelines)
         } else {
             let message = format!("Couldn't find a pipeline named {:?}, in logs", name);
+            return Err(Error::msg(message));
+        }
+    }
+    pub fn get_many_by_sid(sid: &u32) -> Result<Vec<Pipeline>> {
+        let pipelines = Logs::get()?;
+        let mut pipelines = pipelines
+            .iter()
+            .filter(|p| {
+                if p.event.clone().unwrap().sid.is_some() {
+                    let p_sid = p.event.clone().unwrap().sid.unwrap();
+                    return &p_sid == sid;
+                } else {
+                    return false;
+                }
+            })
+            .cloned()
+            .collect::<Vec<Pipeline>>();
+        if !pipelines.is_empty() {
+            pipelines.sort_by_key(|e| e.clone().event.unwrap().date);
+            Ok(pipelines)
+        } else {
+            let message = format!("Couldn't find a pipeline with sid {:?}, in logs", sid);
             return Err(Error::msg(message));
         }
     }
