@@ -2,13 +2,13 @@
 
 Self-hosted automation pipelines!
 
-# Define pipelines
+## Define pipelines
 
 Alongside your code in a `pipelight.ts` file.
 
 Simple and Complex pipeline definition thanks to Typescript.
 
-Enjoy the declarative Object syntax.
+### Enjoy the declarative Object syntax.
 
 ```ts
 const pipeline: Pipeline = {
@@ -26,7 +26,7 @@ const pipeline: Pipeline = {
 };
 ```
 
-Taste a bunch of Typescript Helpers.
+### Taste a bunch of Typescript Helpers.
 
 ```ts
 pipeline("deploy_to_remote", () => [
@@ -36,6 +36,8 @@ pipeline("deploy_to_remote", () => [
 ]);
 ```
 
+## Add Triggers
+
 Automatic triggers in git repo.
 
 ```ts
@@ -44,6 +46,8 @@ pipeline.add_trigger({
   action: "pre-push",
 });
 ```
+
+## Enjoy the Cli
 
 Manual triggers via the CLI
 
