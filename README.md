@@ -1,14 +1,17 @@
-# Pipelight
+# Pipelight - Self-hosted automation pipelines!
 
-Self-hosted automation pipelines!
+<p align="center">
+<img width="400px" alt="ferris" src="https://pipelight.dev/images/ferris_playing_pipelight.png"/>
+</p>
 
-<img width="100px" alt="ferris" src="https://pipelight.dev/images/ferris_playing_pipelight.png"/>
+[Full Documentation](https://pipelight.dev)
 
 ## Define pipelines
 
 Alongside your code in a `pipelight.ts` file.
 
-Simple and complex pipeline definition.
+Simple pipelines with Toml and Yaml.
+Complex pipelines with Typescript.
 
 ### Enjoy the declarative Object syntax.
 
@@ -38,7 +41,9 @@ pipeline("deploy_to_remote", () => [
 ]);
 ```
 
-## Add Triggers
+And much more to come in the Cookbook.
+
+## Add triggers
 
 Automatic triggers in git repo.
 
@@ -49,7 +54,7 @@ pipeline.add_trigger({
 });
 ```
 
-## Enjoy the Cli
+## Enjoy the CLI
 
 Manual triggers via the CLI
 
@@ -57,19 +62,22 @@ Manual triggers via the CLI
 pipelight run
 ```
 
-Pretty logs
+## Pretty logs
 
 ```sh
 pipelight logs
 ```
 
-<img width="400px" alt="pretty logs" src="https://pipelight.dev/images/example_log_level_4.png"/>
+<img width="500px" alt="pretty logs" src="https://pipelight.dev/images/example_log_level_4.png"/>
 
-And more to come in the Cookbook.
+## Documentation
 
+Checkout the
 [Full Documentation](https://pipelight.dev)
 
+<p align="center">
 <img width="200px" alt="pipelight logo" src="https://pipelight.dev/images/pipelight.png"/>
+</p>
 
 Licensed under GNU GPLv2
 Copyright (C) 2023 Areskul
