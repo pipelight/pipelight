@@ -1,10 +1,14 @@
 <p align="center">
 <img width="200px" alt="pipelight logo" src="https://pipelight.dev/images/pipelight.png"/>
 </p>
-<h1 align="center">Pipelight - Self-hosted automation pipelines!</h1>
+<h1 align="center">
+<p>Pipelight</p>
+<p>Self-hosted automation pipelines!</p>
+</h1>
+
 ## Documentation
 
-**Checkout the [Full Documentation](https://pipelight.dev)**
+Checkout the [Full Documentation](https://pipelight.dev)
 
 ## Define pipelines
 
