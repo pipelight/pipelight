@@ -90,6 +90,24 @@ impl Logs {
             .collect::<Vec<Pipeline>>();
         if !pipelines.is_empty() {
             pipelines.sort_by_key(|e| e.clone().event.unwrap().date);
+            pipelines.sort_by(|a, b| {
+                let a_date = a
+                    .clone()
+                    .event
+                    .unwrap()
+                    .date
+                    .parse::<DateTime<Local>>()
+                    .unwrap();
+
+                let b_date = &b
+                    .clone()
+                    .event
+                    .unwrap()
+                    .date
+                    .parse::<DateTime<Local>>()
+                    .unwrap();
+                return a_date.cmp(b_date);
+            });
             Ok(pipelines)
         } else {
             let message = format!("Couldn't find a pipeline named {:?}, in logs", name);
@@ -111,7 +129,24 @@ impl Logs {
             .cloned()
             .collect::<Vec<Pipeline>>();
         if !pipelines.is_empty() {
-            pipelines.sort_by_key(|e| e.clone().event.unwrap().date);
+            pipelines.sort_by(|a, b| {
+                let a_date = a
+                    .clone()
+                    .event
+                    .unwrap()
+                    .date
+                    .parse::<DateTime<Local>>()
+                    .unwrap();
+
+                let b_date = &b
+                    .clone()
+                    .event
+                    .unwrap()
+                    .date
+                    .parse::<DateTime<Local>>()
+                    .unwrap();
+                return a_date.cmp(b_date);
+            });
             Ok(pipelines)
         } else {
             let message = format!("Couldn't find a pipeline with sid {:?}, in logs", sid);
