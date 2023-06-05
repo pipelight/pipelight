@@ -23,19 +23,23 @@ pub fn trigger_bin(attach: bool, args: Option<Vec<String>>) -> Result<(), Box<dy
     let bin = "pipelight-trigger";
 
     #[cfg(debug_assertions)]
-    let command = format!("cargo run --bin {}", bin);
+    let mut command = format!("cargo run --bin {}", bin);
 
     #[cfg(not(debug_assertions))]
-    let command = format!("{}", bin);
+    let mut command = format!("{}", bin);
+
+    if args.is_some() {
+        command = format!("{} {}", command, args.unwrap().join(" "))
+    }
 
     match attach {
         true => {
             // Lauch attach thread
-            trigger_in_thread(attach, args)?;
+            trigger_in_thread(attach)?;
         }
         false => {
             // Lauch detached process
-            trace!("Create detached subprocess");
+            // trace!("Create detached subprocess");
             Exec::new().detached(&command)?;
         }
     }
@@ -43,8 +47,8 @@ pub fn trigger_bin(attach: bool, args: Option<Vec<String>>) -> Result<(), Box<dy
 }
 
 /// Filter pipeline by trigger and run
-pub fn trigger(attach: bool, args: Option<Vec<String>>) -> Result<(), Box<dyn Error>> {
-    let config = Config::new(args.clone())?;
+pub fn trigger(attach: bool) -> Result<(), Box<dyn Error>> {
+    let config = Config::new(None)?;
     let env = Trigger::env()?;
     if config.pipelines.is_none() {
         let message = "No pipeline found";
@@ -57,7 +61,7 @@ pub fn trigger(attach: bool, args: Option<Vec<String>>) -> Result<(), Box<dyn Er
             debug!("{}", message)
         } else {
             if pipeline.is_triggerable()? {
-                run::run_bin(pipeline.clone().name, attach, args.clone());
+                run::run_bin(pipeline.clone().name, attach, None);
 
                 // let origin = env::current_dir().unwrap();
                 // println!("{:?}", origin);
@@ -69,8 +73,8 @@ pub fn trigger(attach: bool, args: Option<Vec<String>>) -> Result<(), Box<dyn Er
 }
 
 /// Launch attached thread
-pub fn trigger_in_thread(attach: bool, args: Option<Vec<String>>) -> Result<(), Box<dyn Error>> {
-    let thread = thread::spawn(move || trigger(attach, args).unwrap());
+pub fn trigger_in_thread(attach: bool) -> Result<(), Box<dyn Error>> {
+    let thread = thread::spawn(move || trigger(attach).unwrap());
     thread.join().unwrap();
     Ok(())
 }
