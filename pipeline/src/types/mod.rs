@@ -170,6 +170,7 @@ pub struct Parallel {
     pub steps: Vec<Step>,
     // Failure Handling mode
     pub mode: Option<Mode>,
+    // Fallback Hooks
     pub fallback: Option<Fallback>,
 }
 
@@ -181,7 +182,7 @@ pub struct Step {
     pub commands: Vec<Command>,
     // Failure Handling mode
     pub mode: Option<Mode>,
-    // Fallback Hook
+    // Fallback Hooks
     pub fallback: Option<Fallback>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
