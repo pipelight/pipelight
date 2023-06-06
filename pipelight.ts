@@ -49,6 +49,29 @@ const config: Config = {
         },
       ],
     },
+    {
+      name: "test-para-mode",
+      steps: [
+        {
+          parallel: [
+            {
+              name: "test",
+              commands: ["llls"],
+              mode: "continue",
+            },
+          ],
+          mode: "continue",
+        },
+        {
+          parallel: [
+            {
+              name: "test",
+              commands: ["ls"],
+            },
+          ],
+        },
+      ],
+    },
   ],
 };
 

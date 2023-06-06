@@ -165,11 +165,20 @@ impl From<&cast::Parallel> for Parallel {
         if e.fallback.is_some() {
             fallback = Some(Fallback::from(e.fallback.as_ref().unwrap()));
         }
+
+        // Convert mode
+        let mut mode = None;
+        if e.mode.is_some() {
+            mode = Some(Mode::from(e.mode.as_ref().unwrap()));
+        }
+
         let mut res = Parallel {
+            mode: mode,
             fallback: fallback,
             steps: vec![],
             ..Parallel::new()
         };
+
         for step in &e.parallel {
             res.steps.push(Step::from(step));
         }
