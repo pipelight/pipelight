@@ -13,7 +13,7 @@ const uploadPipeline: Pipeline = {
     {
       name: `upload packages to remote`,
       commands: [
-        `scp packages/* linode:~/Static/Perso/packages.pipelight.dev`,
+        `scp packages/* linode:~/Static/Perso/packages.pipelight.dev/`,
         `scp ../packages.pipelight/install.sh linode:~/Static/Perso/packages.pipelight.dev/scripts/`,
       ],
     },
