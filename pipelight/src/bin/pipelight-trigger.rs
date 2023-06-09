@@ -4,7 +4,9 @@ use log::error;
 use pipeline::types::Config;
 use shared::trigger::trigger;
 use std::env;
-use std::error::Error;
+
+// Error Handling
+use miette::Result;
 use std::process::exit;
 
 fn main() {
@@ -15,15 +17,33 @@ fn main() {
 }
 
 /// Launch detached subprocess
-fn handler() -> Result<(), Box<dyn Error>> {
+fn handler() -> Result<()> {
+    run()?;
+    Ok(())
+}
+
+// Get command line args and triggers pipelines
+pub fn run() -> Result<()> {
+    let mut attach: Option<&String> = None;
+
     let mut args = env::args().collect::<Vec<String>>();
     args.remove(0);
-    let pipeline_name: String = args[0].to_owned();
-    args.remove(0);
 
-    Config::new(Some(args));
+    let binding = args.clone();
+    if args.clone().first().is_some() {
+        attach = binding.first();
+        args.remove(0);
+    }
 
-    // Detached process
-    trigger(false)?;
+    Config::new(Some(args.clone()));
+
+    if attach.is_some() {
+        if attach.unwrap() == "--attach" {
+            trigger(true)?;
+        }
+    } else {
+        // Run pipelines in detached process
+        trigger(false)?;
+    }
     Ok(())
 }
