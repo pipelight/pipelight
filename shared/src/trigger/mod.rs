@@ -9,7 +9,7 @@ use pipeline::types::{Config, Pipeline, Trigger};
 use project_root::get_project_root;
 use std::env;
 use std::env::current_dir;
-use std::error::Error;
+
 use std::path::Path;
 use std::process::exit;
 use std::thread;
@@ -18,7 +18,11 @@ use utils::{
     logger::Logger,
 };
 
-pub fn trigger_bin(attach: bool, args: Option<Vec<String>>) -> Result<(), Box<dyn Error>> {
+// Error Handling
+use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use thiserror::Error;
+
+pub fn trigger_bin(attach: bool, args: Option<Vec<String>>) -> Result<()> {
     trace!("Create detached subprocess");
     let bin = "pipelight-trigger";
 
@@ -47,7 +51,7 @@ pub fn trigger_bin(attach: bool, args: Option<Vec<String>>) -> Result<(), Box<dy
 }
 
 /// Filter pipeline by trigger and run
-pub fn trigger(attach: bool) -> Result<(), Box<dyn Error>> {
+pub fn trigger(attach: bool) -> Result<()> {
     let config = Config::new(None)?;
     let env = Trigger::env()?;
     if config.pipelines.is_none() {
@@ -73,7 +77,7 @@ pub fn trigger(attach: bool) -> Result<(), Box<dyn Error>> {
 }
 
 /// Launch attached thread
-pub fn trigger_in_thread(attach: bool) -> Result<(), Box<dyn Error>> {
+pub fn trigger_in_thread(attach: bool) -> Result<()> {
     let thread = thread::spawn(move || trigger(attach).unwrap());
     thread.join().unwrap();
     Ok(())
