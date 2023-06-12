@@ -25,7 +25,7 @@ fn handler() -> Result<()> {
     Ok(())
 }
 
-// / Get command line args and run pipeline
+// Get command line args and run pipeline
 pub fn run() -> Result<()> {
     // Collect Args
     let mut args = env::args().collect::<Vec<String>>();

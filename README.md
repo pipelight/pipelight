@@ -6,7 +6,13 @@
 <p>Self-hosted automation pipelines!</p>
 </h1>
 
-## Documentation
+## Join the Community
+
+### Contacts
+
+Join the **[Discord server](https://discord.gg/swNRD3Xysz)**
+
+### Documentation
 
 Checkout the [Full Documentation](https://pipelight.dev)
 
