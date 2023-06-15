@@ -1,9 +1,14 @@
 use crate::types::{Config, Logs, Pipeline, Trigger};
-use log::warn;
+
+// File storage
 use std::fs;
 use std::path::Path;
+
+// Logger
+use log::warn;
 use utils::logger::logger;
-// date
+
+// Date and Time
 use chrono::{DateTime, Local};
 
 // Error Handling
@@ -11,11 +16,29 @@ use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Res
 use thiserror::Error;
 // use std::error::Error;
 
+// Import global config
+use super::default::CONFIG;
+
 pub trait Getters<T> {
     /// Return every instances of the struct.
     fn get() -> Result<Vec<T>>;
     /// Return an instance of the struct.
     fn get_by_name(name: &str) -> Result<T>;
+}
+
+impl Config {
+    pub fn get() -> Result<Self> {
+        unsafe {
+            if *CONFIG == Config::default() {
+                let message = "Tried to get a Config that hasn't been initialized yet";
+                warn!("{}", message);
+                return Err(Error::msg(message));
+            } else {
+                let ptr = (*CONFIG).clone().to_owned();
+                return Ok(ptr);
+            }
+        }
+    }
 }
 
 impl Getters<Pipeline> for Logs {
@@ -156,7 +179,7 @@ impl Logs {
 }
 impl Getters<Pipeline> for Pipeline {
     fn get() -> Result<Vec<Pipeline>> {
-        let config = Config::new(None)?;
+        let config = Config::get()?;
         let optional = config.pipelines;
         match optional {
             Some(p) => return Ok(p),

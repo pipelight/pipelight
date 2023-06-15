@@ -35,8 +35,7 @@ struct YamlError {
 }
 
 impl Config {
-    pub fn get(args: Option<Vec<String>>) -> Result<Config> {
-        let file_names: Vec<String> = vec!["pipelight.ts".to_owned(), "pipelight.yml".to_owned()];
+    pub fn get(file: Option<String>, args: Option<Vec<String>>) -> Result<Config> {
         let pwd: String = current_dir().unwrap().display().to_string();
 
         let file_path = Teleport::new().config_path.unwrap();
@@ -54,7 +53,6 @@ impl Config {
             }
         }
     }
-
     fn load_from_file(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
         // println!("extensiFileType::from(
         let extension = &Path::new(file_path)
@@ -124,7 +122,6 @@ impl Config {
             }
             Err(e) => {
                 println!("{:?}", e);
-                // println!("{}", json);
                 let span: SourceSpan =
                     (e.location().unwrap().line(), e.location().unwrap().column()).into();
                 let yaml_err = YamlError {
@@ -165,11 +162,7 @@ impl Config {
 
     /// Ensure that the node.js has no error
     fn lint(file: &str) -> Result<()> {
-        // debug!("Linting config file");
-        //
-        // reload deno package
-        // Exec::new().simple("deno cache --reload npm:pipelight")?;
-
+        debug!("Linting config file");
         let command = format!(
             "deno lint \
             --rules-exclude=no-explicit-any,no-unused-vars \

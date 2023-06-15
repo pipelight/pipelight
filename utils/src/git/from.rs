@@ -71,10 +71,10 @@ impl From<&Hook> for String {
 impl From<&String> for Flag {
     fn from(action: &String) -> Flag {
         let cased: &str = &action.to_case(Case::Kebab);
-        if cased == "manual" {
-            return Flag::Manual;
-        } else {
-            return Flag::Hook(Hook::from(action));
+        match cased {
+            "manual" => return Flag::Manual,
+            "watch" => return Flag::Watch,
+            _ => return Flag::Hook(Hook::from(action)),
         }
     }
 }
@@ -82,6 +82,7 @@ impl From<&Flag> for String {
     fn from(action: &Flag) -> String {
         match action {
             Flag::Manual => return "manual".to_owned(),
+            Flag::Watch => return "watch".to_owned(),
             Flag::Hook(hook) => return String::from(hook),
         };
     }

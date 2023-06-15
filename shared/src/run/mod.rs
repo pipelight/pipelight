@@ -1,21 +1,22 @@
 use exec::types::Status;
 use exec::Exec;
 use pipeline::types::{traits::getters::Getters, Node, Pipeline};
-use std::env;
 use std::thread;
-// logger
+
+// Logger
 use log::{debug, error, info, trace, warn};
+
 // Error Handling
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-use thiserror::Error;
-// use std::error::Error;
+
+// Globals
+use super::cli::ARGS;
 
 /// To be called from the cli.
 /// Either spawn a detached new process or spawn an attached thread
 /// to run the pipeline
-pub fn run_bin(pipeline_name: String, attach: bool, args: Option<Vec<String>>) -> Result<()> {
-    //Pass args vec<sting>
-    let bin = "pipelight-run";
+pub fn run_bin(pipeline_name: String, attach: bool, deno_args: Option<Vec<String>>) -> Result<()> {
+    let bin = "pipelight run --attach";
 
     let pipeline = Pipeline::get_by_name(&pipeline_name)?;
     if !pipeline.is_triggerable()? {
@@ -33,8 +34,12 @@ pub fn run_bin(pipeline_name: String, attach: bool, args: Option<Vec<String>>) -
     #[cfg(not(debug_assertions))]
     let mut command = format!("{} {}", bin, pipeline_name);
 
-    if args.is_some() {
-        command = format!("{} {}", command, args.unwrap().join(" "))
+    unsafe {
+        command = format!("{} {}", command, *ARGS);
+    }
+
+    if deno_args.is_some() {
+        command = format!("{} {}", command, deno_args.unwrap().join(" "))
     }
 
     match attach {

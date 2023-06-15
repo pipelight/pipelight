@@ -1,16 +1,20 @@
 #![allow(unused_variables)]
 // #![allow(unused_imports)]
 #![allow(unused_must_use)]
-// use performance::*;
-use log::error;
-use shared::cli;
 #[allow(dead_code)]
-use std::error::Error;
+// use performance::*;
+
+// Logger
+use log::error;
+
+// Command Line
+use shared::cli;
+use std::env;
+
 use std::process::exit;
 
 // Error Handling
-// use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-// use thiserror::Error;
+use miette::Result;
 
 fn main() {
     handler().unwrap_or_else(|e| {
@@ -18,7 +22,11 @@ fn main() {
         exit(1)
     })
 }
-fn handler() -> Result<(), Box<dyn Error>> {
-    cli::get_args()?;
+fn handler() -> Result<()> {
+    let mut raw_args = env::args().collect::<Vec<String>>();
+    raw_args.remove(0);
+
+    cli::get_args(Some(raw_args))?;
+
     Ok(())
 }

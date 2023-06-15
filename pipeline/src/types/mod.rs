@@ -203,6 +203,7 @@ pub struct Command {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
 pub enum Trigger {
     TriggerBranch(TriggerBranch),
+
     TriggerTag(TriggerTag),
 }
 impl Trigger {

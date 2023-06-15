@@ -10,21 +10,38 @@ use crate::trigger;
 use clap::Parser;
 use log::info;
 
+// Error Handling
+use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+// use std::error::Error;
+
 // Logger
 use utils::logger::logger;
 
-use pipeline::types::{traits::getters::Getters, Config, Logs, Pipeline};
-use std::error::Error;
+// Global var
+use once_cell::sync::Lazy;
+use std::ops::{Deref, DerefMut};
+use std::sync::{Arc, Mutex, RwLock};
 
-/// Execute the Command Line Tool (cli)
-/// Initialize Logger and program global vars
-pub fn get_args() -> Result<(), Box<dyn Error>> {
+use pipeline::types::{traits::getters::Getters, Config, Logs, Pipeline};
+
+// Global var
+pub static mut ARGS: Lazy<String> = Lazy::new(|| String::new());
+
+/// Launch the cli
+// Initialize Logger and program global vars (Config, Args)
+pub fn get_args(raw_args: Option<Vec<String>>) -> Result<()> {
+    // Set globals
+    unsafe {
+        *ARGS = raw_args.unwrap().join(" ");
+        // println!("{:?}", raw_args);
+    }
+
     let args = types::Cli::parse();
     // Set verbosity
     let verbosity = args.verbose.log_level_filter();
     logger.lock().unwrap().level(&verbosity);
 
-    Config::new(args.raw.clone())?;
+    Config::new(args.config.clone(), args.raw.clone())?;
 
     match args.commands {
         types::Commands::Ls(list) => {
@@ -45,9 +62,13 @@ pub fn get_args() -> Result<(), Box<dyn Error>> {
                 prompt::inspect_prompt()?;
             }
         }
+        types::Commands::Watch(trigger) => {
+            // info!("Triggering piplines");
+            // trigger::trigger_bin(trigger.attach, raw_args, args.raw.clone())?;
+        }
         types::Commands::Trigger(trigger) => {
             // info!("Triggering piplines");
-            trigger::trigger_bin(trigger.attach, args.raw.clone())?;
+            // trigger::trigger_bin(trigger.attach, raw_args, args.raw.clone())?;
         }
         types::Commands::Run(pipeline) => {
             // info!("Running pipline {:#?}", pipeline.name);

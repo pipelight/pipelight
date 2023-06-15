@@ -1,11 +1,16 @@
 use chrono::{DateTime, Local};
 use log::{debug, error, info, warn, LevelFilter};
 use pipeline::types::{traits::getters::Getters, Config, Logs, Node, Pipeline};
-use std::error::Error;
+
+// Error Handling
+use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+// use std::error::Error;
+//
+//Logger
 use utils::logger::logger;
 
 /// Pretty print logs from json log file
-pub fn pretty(pipelines: &Vec<Pipeline>) -> Result<(), Box<dyn Error>> {
+pub fn pretty(pipelines: &Vec<Pipeline>) -> Result<()> {
     for pipeline in pipelines {
         let node = Node::from(pipeline);
         println!("{}", node);
@@ -14,17 +19,18 @@ pub fn pretty(pipelines: &Vec<Pipeline>) -> Result<(), Box<dyn Error>> {
 }
 
 /// Print pipeline from json log file
-pub fn json(pipelines: &Vec<Pipeline>) -> Result<(), Box<dyn Error>> {
+pub fn json(pipelines: &Vec<Pipeline>) -> Result<()> {
     for pipeline in pipelines {
-        let pipeline_json = serde_json::to_string_pretty::<Pipeline>(&pipeline)?;
+        let pipeline_json =
+            serde_json::to_string_pretty::<Pipeline>(&pipeline).into_diagnostic()?;
         println!("{}", pipeline_json);
     }
     Ok(())
 }
 /// Print pipeline from config file
-pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<(), Box<dyn Error>> {
+pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<()> {
     if json {
-        let pipeline_json = serde_json::to_string_pretty::<Pipeline>(pipeline)?;
+        let pipeline_json = serde_json::to_string_pretty::<Pipeline>(pipeline).into_diagnostic()?;
         println!("{}", pipeline_json);
     } else {
         let node = Node::from(pipeline);
@@ -34,9 +40,9 @@ pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<(), Box<dyn Error>> {
 }
 
 /// Print a flatten list of pipelines present in config file
-pub fn list() -> Result<(), Box<dyn Error>> {
+pub fn list() -> Result<()> {
     let level = logger.lock().unwrap().level;
-    let config = Config::new(None)?;
+    let config = Config::get()?;
     // Print headers
     match level {
         LevelFilter::Warn => {

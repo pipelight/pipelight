@@ -8,12 +8,16 @@ pub struct Cli {
     #[command(subcommand)]
     pub commands: Commands,
 
+    #[arg(global = true)]
+    /// Set a config file
+    pub config: Option<String>,
+
     #[clap(flatten)]
     /// Set verbosity level
     pub verbose: Verbosity,
 
     #[arg(global = true, last = true, allow_hyphen_values = true)]
-    /// Pass to deno
+    /// Pass those arguments to deno
     pub raw: Option<Vec<String>>,
 }
 
@@ -33,6 +37,9 @@ pub enum Commands {
     /// Manualy Triggers Pipelines
     #[command(hide = true)]
     Trigger(Trigger),
+    /// Launch a watcher on directory
+    #[command(hide = true)]
+    Watch(Trigger),
 }
 
 #[derive(Debug, Parser)]
@@ -52,6 +59,9 @@ pub struct Trigger {
     /// Attach command to standard I/O
     #[arg(long)]
     pub attach: bool,
+    /// Manualy set a flag/action to bypass environment computation
+    #[arg(long)]
+    pub flag: Option<String>,
 }
 
 #[derive(Debug, Args)]

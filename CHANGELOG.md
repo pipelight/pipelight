@@ -14,6 +14,11 @@
 - [ ] rewrite test for multiple bad config file.
 - [ ] feature: if pipelines have same pid (--attach), link them in logs tree.
 
+## v0.5.6
+
+- [x] Add tag to triggers
+- [x] Add globbing patterns for triggers definition
+
 ## v0.5.4
 
 - [x] Bug fix: Stop pipeline by pid, instead of name to stop attach pipelines.

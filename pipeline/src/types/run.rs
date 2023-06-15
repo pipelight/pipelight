@@ -61,7 +61,7 @@ impl Pipeline {
                                     return Ok(true);
                                 }
                             }
-                        }
+                        } // Watch Trigger
                     }
                 }
                 Ok(false)

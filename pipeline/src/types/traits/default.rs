@@ -23,7 +23,7 @@ use std::ops::{Deref, DerefMut};
 use std::sync::{Arc, Mutex, RwLock};
 
 // Global var
-static mut CONFIG: Lazy<Config> = Lazy::new(|| Config::default());
+pub static mut CONFIG: Lazy<Config> = Lazy::new(|| Config::default());
 
 impl Default for Config {
     fn default() -> Self {
@@ -31,11 +31,11 @@ impl Default for Config {
     }
 }
 impl Config {
-    pub fn new(args: Option<Vec<String>>) -> Result<Self> {
+    pub fn new(file: Option<String>, args: Option<Vec<String>>) -> Result<Self> {
         unsafe {
             if *CONFIG == Config::default() {
                 let mut config: Config;
-                let json = cast::Config::get(args).unwrap();
+                let json = cast::Config::get(file, args).unwrap();
                 config = Config::from(&json);
                 config.dedup_pipelines();
                 *CONFIG = config;
@@ -45,7 +45,7 @@ impl Config {
         }
     }
     /// Remove pipelines with the same name
-    pub fn dedup_pipelines(&mut self) -> Self {
+    fn dedup_pipelines(&mut self) -> Self {
         if self.pipelines.is_some() {
             let init_length = &self.pipelines.clone().unwrap().len();
             &self

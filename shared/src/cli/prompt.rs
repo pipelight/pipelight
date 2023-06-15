@@ -7,16 +7,19 @@ use utils::logger::logger;
 
 // Prompt
 use dialoguer::{console::Term, theme::ColorfulTheme, Select};
-// Error Handling
-use std::error::Error;
 
-pub fn inspect_prompt() -> Result<(), Box<dyn Error>> {
+// Error Handling
+use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+// use std::error::Error;
+
+pub fn inspect_prompt() -> Result<()> {
     let pipelines = Pipeline::get()?;
     let items = pipelines.iter().map(|e| &e.name).collect::<Vec<&String>>();
     let selection = Select::with_theme(&ColorfulTheme::default())
         .items(&items)
         .default(0)
-        .interact_on_opt(&Term::stderr())?;
+        .interact_on_opt(&Term::stderr())
+        .into_diagnostic()?;
 
     match selection {
         Some(index) => {
@@ -28,13 +31,14 @@ pub fn inspect_prompt() -> Result<(), Box<dyn Error>> {
     }
     Ok(())
 }
-pub fn run_prompt(args: Option<Vec<String>>) -> Result<(), Box<dyn Error>> {
+pub fn run_prompt(args: Option<Vec<String>>) -> Result<()> {
     let pipelines = Pipeline::get()?;
     let items = pipelines.iter().map(|e| &e.name).collect::<Vec<&String>>();
     let selection = Select::with_theme(&ColorfulTheme::default())
         .items(&items)
         .default(0)
-        .interact_on_opt(&Term::stderr())?;
+        .interact_on_opt(&Term::stderr())
+        .into_diagnostic()?;
 
     match selection {
         Some(index) => {

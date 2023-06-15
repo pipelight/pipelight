@@ -96,6 +96,7 @@ pub enum Hook {
 pub enum Flag {
     Hook(Hook),
     Manual,
+    Watch,
 }
 
 impl Hook {

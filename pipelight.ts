@@ -16,10 +16,10 @@ const config: Config = {
     ...packagingPipelines,
     uploadPipeline,
     {
-      name: "test:host",
+      name: "test_flags",
       steps: [
         {
-          name: `test:${flags.host}`,
+          name: `host -> ${flags.host}`,
           commands: ["cargo test --package pipeline"],
         },
       ],
