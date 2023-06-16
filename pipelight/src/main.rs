@@ -25,8 +25,7 @@ fn main() {
 fn handler() -> Result<()> {
     let mut raw_args = env::args().collect::<Vec<String>>();
     raw_args.remove(0);
-
-    cli::get_args(Some(raw_args))?;
+    cli::get_args(raw_args)?;
 
     Ok(())
 }

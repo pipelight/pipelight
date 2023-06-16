@@ -31,7 +31,7 @@ pub fn inspect_prompt() -> Result<()> {
     }
     Ok(())
 }
-pub fn run_prompt(args: Option<Vec<String>>) -> Result<()> {
+pub fn run_prompt(attach: bool) -> Result<()> {
     let pipelines = Pipeline::get()?;
     let items = pipelines.iter().map(|e| &e.name).collect::<Vec<&String>>();
     let selection = Select::with_theme(&ColorfulTheme::default())
@@ -43,7 +43,7 @@ pub fn run_prompt(args: Option<Vec<String>>) -> Result<()> {
     match selection {
         Some(index) => {
             let name = &pipelines[index].name;
-            run::run_bin(name.to_owned(), false, args)?;
+            run::run_bin(name.to_owned(), attach)?;
         }
         None => println!("User did not select anything"),
     }

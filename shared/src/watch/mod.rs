@@ -22,9 +22,9 @@ use utils::{
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 use thiserror::Error;
 
-pub fn watch_bin(attach: bool, args: Option<Vec<String>>) -> Result<()> {
+pub fn trigger_bin(attach: bool, args: Option<Vec<String>>) -> Result<()> {
     trace!("Create detached subprocess");
-    let bin = "pipelight-trigger";
+    let bin = "pipelight trigger --attach";
 
     #[cfg(debug_assertions)]
     let mut command = format!("cargo run --bin {}", bin);
@@ -51,8 +51,8 @@ pub fn watch_bin(attach: bool, args: Option<Vec<String>>) -> Result<()> {
 }
 
 /// Filter pipeline by trigger and run
-pub fn watch(attach: bool) -> Result<()> {
-    let config = Config::new(None)?;
+pub fn trigger(attach: bool) -> Result<()> {
+    let config = Config::get()?;
     let env = Trigger::env()?;
     if config.pipelines.is_none() {
         let message = "No pipeline found";
@@ -77,7 +77,7 @@ pub fn watch(attach: bool) -> Result<()> {
 }
 
 /// Launch attached thread
-pub fn watch_in_thread(attach: bool) -> Result<()> {
+pub fn trigger_in_thread(attach: bool) -> Result<()> {
     let thread = thread::spawn(move || trigger(attach).unwrap());
     thread.join().unwrap();
     Ok(())

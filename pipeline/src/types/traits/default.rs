@@ -35,7 +35,7 @@ impl Config {
         unsafe {
             if *CONFIG == Config::default() {
                 let mut config: Config;
-                let json = cast::Config::get(file, args).unwrap();
+                let json = cast::Config::get(file, args)?;
                 config = Config::from(&json);
                 config.dedup_pipelines();
                 *CONFIG = config;

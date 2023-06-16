@@ -38,9 +38,26 @@ impl Config {
     pub fn get(file: Option<String>, args: Option<Vec<String>>) -> Result<Config> {
         let pwd: String = current_dir().unwrap().display().to_string();
 
-        let file_path = Teleport::new().config_path.unwrap();
-        // println!("{}", file_path);
-        let res = Config::load_from_file(&file_path, args);
+        let default_file_path: String = Teleport::new().config.file_path.unwrap();
+
+        let res: Result<Config>;
+        if file.is_some() {
+            // Canonicalize file path
+            if Path::new(&file.clone().unwrap()).exists() {
+                let file_path: String = Path::new(&file.unwrap())
+                    .canonicalize()
+                    .into_diagnostic()?
+                    .display()
+                    .to_string();
+                res = Config::load_from_file(&file_path, args);
+            } else {
+                let message = format!("Couldn't find a config file: {}", &file.unwrap());
+                return Err(Error::msg(message));
+            }
+        } else {
+            res = Config::load_from_file(&default_file_path, args);
+        }
+
         match res {
             Ok(res) => {
                 return Ok(res);
@@ -61,6 +78,9 @@ impl Config {
             .to_str()
             .unwrap()
             .to_owned();
+
+        // println!("{}", extension);
+
         let file_type = FileType::from(extension);
         // println!("{:?}", file_type);
         let config = match file_type {
@@ -162,7 +182,7 @@ impl Config {
 
     /// Ensure that the node.js has no error
     fn lint(file: &str) -> Result<()> {
-        debug!("Linting config file");
+        // debug!("Linting config file");
         let command = format!(
             "deno lint \
             --rules-exclude=no-explicit-any,no-unused-vars \

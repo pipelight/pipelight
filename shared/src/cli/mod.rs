@@ -25,22 +25,23 @@ use std::sync::{Arc, Mutex, RwLock};
 use pipeline::types::{traits::getters::Getters, Config, Logs, Pipeline};
 
 // Global var
-pub static mut ARGS: Lazy<String> = Lazy::new(|| String::new());
+pub static mut ARGS: Lazy<Vec<String>> = Lazy::new(|| vec![]);
 
 /// Launch the cli
 // Initialize Logger and program global vars (Config, Args)
-pub fn get_args(raw_args: Option<Vec<String>>) -> Result<()> {
-    // Set globals
+pub fn get_args(raw_args: Vec<String>) -> Result<()> {
+    let args = types::Cli::parse();
+
+    // Set globals args
     unsafe {
-        *ARGS = raw_args.unwrap().join(" ");
-        // println!("{:?}", raw_args);
+        *ARGS = raw_args;
     }
 
-    let args = types::Cli::parse();
-    // Set verbosity
+    // Set verbosity level
     let verbosity = args.verbose.log_level_filter();
     logger.lock().unwrap().level(&verbosity);
 
+    // Set global config
     Config::new(args.config.clone(), args.raw.clone())?;
 
     match args.commands {
@@ -64,7 +65,7 @@ pub fn get_args(raw_args: Option<Vec<String>>) -> Result<()> {
         }
         types::Commands::Watch(trigger) => {
             // info!("Triggering piplines");
-            // trigger::trigger_bin(trigger.attach, raw_args, args.raw.clone())?;
+            trigger::trigger_bin(trigger.attach)?;
         }
         types::Commands::Trigger(trigger) => {
             // info!("Triggering piplines");
@@ -73,9 +74,9 @@ pub fn get_args(raw_args: Option<Vec<String>>) -> Result<()> {
         types::Commands::Run(pipeline) => {
             // info!("Running pipline {:#?}", pipeline.name);
             if pipeline.name.is_some() {
-                run::run_bin(pipeline.name.unwrap(), pipeline.attach, args.raw.clone())?;
+                run::run_bin(pipeline.name.unwrap(), pipeline.attach)?;
             } else {
-                prompt::run_prompt(args.raw)?;
+                prompt::run_prompt(pipeline.attach)?;
             }
         }
         types::Commands::Stop(pipeline) => {

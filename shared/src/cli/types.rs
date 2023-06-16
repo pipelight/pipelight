@@ -8,7 +8,7 @@ pub struct Cli {
     #[command(subcommand)]
     pub commands: Commands,
 
-    #[arg(global = true)]
+    #[arg(long, global = true)]
     /// Set a config file
     pub config: Option<String>,
 

@@ -15,8 +15,8 @@ use super::cli::ARGS;
 /// To be called from the cli.
 /// Either spawn a detached new process or spawn an attached thread
 /// to run the pipeline
-pub fn run_bin(pipeline_name: String, attach: bool, deno_args: Option<Vec<String>>) -> Result<()> {
-    let bin = "pipelight run --attach";
+pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
+    let bin = "pipelight";
 
     let pipeline = Pipeline::get_by_name(&pipeline_name)?;
     if !pipeline.is_triggerable()? {
@@ -28,19 +28,16 @@ pub fn run_bin(pipeline_name: String, attach: bool, deno_args: Option<Vec<String
         return Err(Error::msg(message));
     }
 
+    let args: String;
+    unsafe {
+        args = (*ARGS).join(" ");
+    }
+
     #[cfg(debug_assertions)]
-    let mut command = format!("cargo run --bin {} {}", bin, pipeline_name);
+    let command = format!("cargo run --bin {} {} --attach", &bin, &args);
 
     #[cfg(not(debug_assertions))]
-    let mut command = format!("{} {}", bin, pipeline_name);
-
-    unsafe {
-        command = format!("{} {}", command, *ARGS);
-    }
-
-    if deno_args.is_some() {
-        command = format!("{} {}", command, deno_args.unwrap().join(" "))
-    }
+    let command = format!("{} {} --attach", &bin, &args);
 
     match attach {
         true => {

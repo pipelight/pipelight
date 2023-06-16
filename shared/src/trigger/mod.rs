@@ -22,19 +22,23 @@ use utils::{
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 use thiserror::Error;
 
-pub fn trigger_bin(attach: bool, args: Option<Vec<String>>) -> Result<()> {
+// Globals
+use super::cli::ARGS;
+
+pub fn trigger_bin(attach: bool) -> Result<()> {
     trace!("Create detached subprocess");
-    let bin = "pipelight trigger --attach";
+    let bin = "pipelight";
+
+    let args: String;
+    unsafe {
+        args = (*ARGS).join(" ");
+    }
 
     #[cfg(debug_assertions)]
-    let mut command = format!("cargo run --bin {}", bin);
+    let command = format!("cargo run --bin {} {} --attach", &bin, &args);
 
     #[cfg(not(debug_assertions))]
-    let mut command = format!("{}", bin);
-
-    if args.is_some() {
-        command = format!("{} {}", command, args.unwrap().join(" "))
-    }
+    let command = format!("{} {} --attach", &bin, &args);
 
     match attach {
         true => {
@@ -65,7 +69,7 @@ pub fn trigger(attach: bool) -> Result<()> {
             debug!("{}", message)
         } else {
             if pipeline.is_triggerable()? {
-                run::run_bin(pipeline.clone().name, attach, None);
+                run::run_bin(pipeline.clone().name, attach);
 
                 // let origin = env::current_dir().unwrap();
                 // println!("{:?}", origin);

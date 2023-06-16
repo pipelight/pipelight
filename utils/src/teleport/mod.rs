@@ -53,35 +53,40 @@ impl From<&FileType> for String {
     }
 }
 #[derive(Debug, Clone)]
+pub struct Config {
+    pub preffix: String,
+    pub directory_path: Option<String>,
+    pub file_path: Option<String>,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Config {
+            preffix: "pipelight".to_owned(),
+            directory_path: None,
+            file_path: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 pub struct Teleport {
-    pub root: Option<String>,
-    pub config_path: Option<String>,
-    pub cwd: Option<String>,
+    pub config: Config,
+    // Path from which process triggerd (cwd)
+    pub origin: String,
+    // Cwd
+    pub current: String,
 }
 
 impl Default for Teleport {
     fn default() -> Self {
-        let cwd = env::current_dir().unwrap().display().to_string();
-        let cwd = Some(cwd);
-        let root: Option<String>;
-        let config_path: Option<String>;
-
-        // println!("new default teleport struct");
-        let res = Teleport::search("pipelight", &cwd.clone().unwrap());
-        if res.is_ok() {
-            let path = res.unwrap().clone();
-            // println!("{}", path);
-            root = Some(Path::new(&path).parent().unwrap().display().to_string());
-            config_path = Some(path);
-        } else {
-            root = None;
-            config_path = None;
-        }
-        return Teleport {
-            root: root,
-            config_path: config_path,
-            cwd: cwd,
+        let mut teleport = Teleport {
+            origin: env::current_dir().unwrap().display().to_string(),
+            current: env::current_dir().unwrap().display().to_string(),
+            config: Config::default(),
         };
+        teleport.search();
+        return teleport;
     }
 }
 
@@ -89,54 +94,44 @@ impl Teleport {
     pub fn new() -> Self {
         Teleport::default()
     }
-    pub fn teleport(&mut self) {
+    pub fn teleport(&mut self) -> Self {
         let cwd = env::current_dir().unwrap().display().to_string();
-        let root = self.clone().root.unwrap();
-        let current = self.clone().cwd.unwrap();
-        if cwd != root || cwd != current {
-            return;
+        if cwd == self.origin {
+            env::set_current_dir(self.config.clone().directory_path.unwrap()).unwrap();
         }
-        if cwd == root {
-            env::set_current_dir(&current).unwrap();
+        if cwd == self.config.clone().directory_path.unwrap() {
+            env::set_current_dir(self.origin.clone()).unwrap();
         }
-        if cwd == current {
-            env::set_current_dir(&root).unwrap();
-        }
+        return self.to_owned();
     }
-    /// Recursively search a file throught parent dir
-    pub fn search(app_name: &str, cwd: &str) -> Result<String> {
-        let mut cwd = cwd.to_owned();
+    /// Recursively search a file throught parent dir and return path if exists
+    pub fn search(&mut self) -> Self {
+        let mut cwd = self.current.clone();
         cwd.push('/');
 
+        let cwd_path = Path::new(&cwd);
         let message = "Couldn't find a configuration file";
 
-        // Convert args to path
+        // Loop through file types
         let mut exists = false;
-        let mut file_str: String = format!("{}{}", cwd, app_name).to_owned();
-        let binding = file_str.clone();
-        let file_path = Path::new(&binding);
-        let dir = Path::new(&cwd);
-
-        // println!("{}", &file_path.display());
-
         for file_type in FileType::iter() {
             let extension = String::from(&file_type);
-            let path_str = format!("{}{}.{}", cwd, app_name, extension).to_owned();
-            file_str = path_str.clone();
-            let path = Path::new(&path_str);
+            let file_str = format!("{}{}.{}", cwd, self.config.preffix, extension).to_owned();
+            let path = Path::new(&file_str);
             exists = path.clone().exists();
             if exists {
-                // println!("str: {}", &path_str);
+                self.config.file_path = Some(path.display().to_string());
+                self.config.directory_path = Some(path.parent().unwrap().display().to_string());
                 break;
             }
         }
-        // Config try get
+
+        // If config file exist break
+        // Else recursively call this function in a parent dir
         if exists {
-            // println!("f: {}", &file_str);
-            return Ok(file_str);
-            // Load config from str -> Path
+            return self.to_owned();
         } else {
-            // Reached git repo root
+            // if reached git repo root
             if Git::new().exists() {
                 if cwd
                     == Git::new()
@@ -154,11 +149,11 @@ impl Teleport {
                     // return Err(Error::msg(message));
                 }
             }
-            let parent = dir.parent();
+            let parent = cwd_path.parent();
             // println!("parent: {}", &parent.unwrap().display());
             if parent.is_some() {
-                let new_path = Teleport::search(app_name, &parent.unwrap().display().to_string())?;
-                return Ok(new_path);
+                self.current = parent.unwrap().display().to_string();
+                self.search();
             } else {
                 // No more accessible parents
                 let message = format!("Couldn't find a config file");
@@ -167,5 +162,6 @@ impl Teleport {
                 // return Err(Error::msg(message));
             }
         }
+        return self.to_owned();
     }
 }

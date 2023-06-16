@@ -26,22 +26,14 @@ impl Default for Logger {
                 level: LevelFilter::Error,
             };
         } else {
-            if Teleport::new().root.is_some() {
-                let root = Teleport::new().root.unwrap();
-                let path_string = format!("{}/{}", &root, log_dir);
-                // Get default config
-                return Logger {
-                    directory: path_string.clone(),
-                    handle: handle,
-                    level: LevelFilter::Error,
-                };
-            } else {
-                return Logger {
-                    directory: log_dir,
-                    handle: handle,
-                    level: LevelFilter::Error,
-                };
-            }
+            let root = Teleport::new().origin;
+            let path_string = format!("{}/{}", &root, log_dir);
+            // Get default config
+            return Logger {
+                directory: path_string.clone(),
+                handle: handle,
+                level: LevelFilter::Error,
+            };
         }
     }
 }
