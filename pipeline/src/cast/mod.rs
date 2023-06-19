@@ -63,12 +63,12 @@ pub enum Trigger {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct TriggerBranch {
-    pub branches: Vec<String>,
+    pub branches: Option<Vec<String>>,
     pub actions: Option<Vec<String>>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct TriggerTag {
-    pub tags: Vec<String>,
+    pub tags: Option<Vec<String>>,
     pub actions: Option<Vec<String>>,
 }

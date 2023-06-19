@@ -8,7 +8,9 @@ colored = "2.0.0"
 convert_case = "0.6.0"
 log = "0.4.17"
 miette = { version = "5.5.0", features = ["fancy"] }
+rustix = "0.37.20"
 serde = { version = "1.0.152" ,features = ["derive"] }
+sysinfo = "0.29.2"
 thiserror = "1.0.38"
 tokio = { version = "1", features = ["full"] }
 

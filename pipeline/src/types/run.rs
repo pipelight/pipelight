@@ -32,39 +32,44 @@ use glob::Pattern;
 // Global var
 static mut PIPELINE: Lazy<Pipeline> = Lazy::new(|| Pipeline::new());
 
+impl Trigger {
+    pub fn is_match(&self, list: Vec<Trigger>) -> Result<bool> {
+        for trigger in list {
+            // println!("trigger={:#?}", &trigger);
+            // println!("env={:#?}", &env);
+            match &trigger {
+                // Transform tag/branch into Globbing pattern
+                Trigger::TriggerBranch(res) => {
+                    let glob: Pattern;
+                    if trigger.branch().is_some() {
+                        glob = Pattern::new(&trigger.branch().unwrap()).into_diagnostic()?;
+                    }
+                    // if trigger.action() == self.action() && glob.matches(&self.branch().unwrap()) {
+                    //     return Ok(true);
+                    // }
+                }
+                Trigger::TriggerTag(res) => {
+                    let glob = Pattern::new(&trigger.tag().unwrap()).into_diagnostic()?;
+                    if trigger.tag().is_some() && self.tag().is_some() {
+                        if trigger.action() == self.action() && glob.matches(&self.tag().unwrap()) {
+                            return Ok(true);
+                        }
+                    }
+                }
+            }
+        }
+        Ok(false)
+    }
+}
 impl Pipeline {
     /// Verify if pipeline can be triggered
     pub fn is_triggerable(&self) -> Result<bool> {
+        let env = Trigger::env()?;
+
+        // If in git repo
         if Git::new().exists() {
             if self.triggers.is_some() {
-                let env = Trigger::env()?;
-                for trigger in self.clone().triggers.unwrap() {
-                    // println!("trigger={:#?}", &trigger);
-                    // println!("env={:#?}", &env);
-                    match &trigger {
-                        // Transform tag/branch into Globbing pattern
-                        Trigger::TriggerBranch(res) => {
-                            let glob =
-                                Pattern::new(&trigger.branch().unwrap()).into_diagnostic()?;
-                            if trigger.action() == env.action()
-                                && glob.matches(&env.branch().unwrap())
-                            {
-                                return Ok(true);
-                            }
-                        }
-                        Trigger::TriggerTag(res) => {
-                            let glob = Pattern::new(&trigger.tag().unwrap()).into_diagnostic()?;
-                            if trigger.tag().is_some() && env.tag().is_some() {
-                                if trigger.action() == env.action()
-                                    && glob.matches(&env.tag().unwrap())
-                                {
-                                    return Ok(true);
-                                }
-                            }
-                        } // Watch Trigger
-                    }
-                }
-                Ok(false)
+                env.is_match(self.triggers.clone().unwrap())
             } else {
                 Ok(true)
             }

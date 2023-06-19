@@ -15,7 +15,7 @@ use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Res
 use thiserror::Error;
 
 // sys
-use sysinfo::{Pid, PidExt, ProcessExt, System, SystemExt};
+use rustix::process::{getpgid, getpid, getsid, Pid, RawPid};
 
 // Global var
 use once_cell::sync::Lazy;
@@ -180,20 +180,17 @@ impl Logs {
 
 impl Default for Event {
     fn default() -> Self {
-        // Get process pid
-        let pid = process::id();
-        // Get current process info
-        let mut sys = System::new_all();
-        sys.refresh_all();
-        let current_process = sys.process(PidExt::from_u32(pid)).unwrap();
-        // Get process spid
-        let sid = current_process.session_id().unwrap();
+        // Get process info
+        let pid = getpid();
+        let pgid = getpgid(Some(pid)).unwrap();
+        let sid = getsid(Some(pid)).unwrap();
 
         Event {
             trigger: Trigger::env().unwrap(),
             date: Utc::now().to_string(),
-            pid: Some(pid),
-            sid: Some(sid.as_u32()),
+            pid: Some(Pid::as_raw(Some(pid))),
+            pgid: Some(Pid::as_raw(Some(pgid))),
+            sid: Some(Pid::as_raw(Some(sid))),
         }
     }
 }

@@ -8,7 +8,7 @@ pub struct Cli {
     #[command(subcommand)]
     pub commands: Commands,
 
-    #[arg(long, global = true)]
+    #[arg(long, global = true, hide = true)]
     /// Set a config file
     pub config: Option<String>,
 
@@ -39,7 +39,7 @@ pub enum Commands {
     Trigger(Trigger),
     /// Launch a watcher on directory
     #[command(hide = true)]
-    Watch(Trigger),
+    Watch(Watch),
 }
 
 #[derive(Debug, Parser)]
@@ -55,12 +55,19 @@ pub struct Pipeline {
 }
 
 #[derive(Debug, Parser)]
+pub struct Watch {
+    /// Attach command to standard I/O
+    #[arg(long)]
+    pub attach: bool,
+}
+
+#[derive(Debug, Parser)]
 pub struct Trigger {
     /// Attach command to standard I/O
     #[arg(long)]
     pub attach: bool,
     /// Manualy set a flag/action to bypass environment computation
-    #[arg(long)]
+    #[arg(long, hide = true)]
     pub flag: Option<String>,
 }
 

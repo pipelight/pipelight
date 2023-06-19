@@ -26,4 +26,5 @@ serde_yaml = "0.9.19"
 toml = "0.7.3"
 strum = { version = "0.24.1", features = ["derive"] }
 glob = "0.3.1"
+rustix = { version = "0.37.20", features = ["process"] }
 

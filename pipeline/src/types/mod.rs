@@ -26,8 +26,10 @@ use std::fs;
 use std::path::Path;
 use std::process;
 use std::time::{Duration, Instant};
-use sysinfo::{Pid, PidExt, ProcessExt, System, SystemExt};
 use uuid::Uuid;
+
+//sys
+use rustix::process::{kill_process_group, test_kill_process, Pid, Signal};
 
 // External imports
 use exec::types::{Status, StrOutput};
@@ -82,18 +84,19 @@ impl Pipeline {
     /// Compares if log_pid is in system pid list.
     /// If not, the program has been aborted
     pub fn is_aborted(&mut self) -> bool {
-        if self.event.is_none() {
+        if self.event.is_some()
+            && (self.status == Some(Status::Running) || self.status == Some(Status::Running))
+        {
+            unsafe {
+                let pid = Pid::from_raw(self.event.clone().unwrap().pid.unwrap());
+                match test_kill_process(pid.unwrap()) {
+                    Ok(_) => return false,
+                    Err(_) => return true,
+                }
+            }
+        } else {
             return false;
         }
-        // if self.clone().event.unwrap().pid.is_none() {
-        if self.clone().status.is_none() {
-            return false;
-        }
-        let mut sys = System::new_all();
-        sys.refresh_all();
-        return !sys
-            .process(PidExt::from_u32(self.clone().event.unwrap().pid.unwrap()))
-            .is_some();
     }
     /// If the pid (extracted from logs) exists it means the pipeline is running
     /// (improvement: need to add process name comparision to harden func)
@@ -111,10 +114,12 @@ impl Pipeline {
                         let event = &pipeline.clone().unwrap().event;
                         if event.is_some() {
                             let pid = &event.clone().unwrap().pid;
-                            if pid.is_some() {
-                                let mut sys = System::new_all();
-                                sys.refresh_all();
-                                return sys.process(PidExt::from_u32(pid.unwrap())).is_some();
+                            unsafe {
+                                let pid = Pid::from_raw(pid.unwrap());
+                                match test_kill_process(pid.unwrap()) {
+                                    Ok(_) => return true,
+                                    Err(_) => return false,
+                                }
                             }
                         }
                     }
@@ -128,18 +133,17 @@ impl Pipeline {
     }
     /// Abort process execution
     pub fn stop(&mut self) {
-        if self.event.is_some() {
-            if self.event.clone().unwrap().pid.is_some() {
-                let pid = self.clone().event.unwrap().pid.unwrap();
-                let mut sys = System::new_all();
-                sys.refresh_all();
-                let process = sys.process(PidExt::from_u32(pid));
-                if process.clone().is_some() {
-                    process.unwrap().kill();
-                    self.status = Some(Status::Aborted);
-                    self.log();
-                }
+        if self.event.is_some() && self.status == Some(Status::Running) {
+            let pid = self.clone().event.unwrap().pid.unwrap();
+            unsafe {
+                let pgid_raw = self.event.clone().unwrap().pgid.unwrap();
+                let pgid = Pid::from_raw(pgid_raw).unwrap();
+                kill_process_group(pgid, Signal::Term)
+                    .into_diagnostic()
+                    .unwrap();
             }
+            self.status = Some(Status::Aborted);
+            self.log();
         }
     }
 }
@@ -203,7 +207,6 @@ pub struct Command {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
 pub enum Trigger {
     TriggerBranch(TriggerBranch),
-
     TriggerTag(TriggerTag),
 }
 impl Trigger {
@@ -214,6 +217,7 @@ impl Trigger {
         let res;
 
         let action = Some(Hook::origin()?);
+
         if Git::new().exists() {
             branch = Git::new().get_branch()?;
             tag = Git::new().get_tag()?;
@@ -239,6 +243,14 @@ impl Trigger {
             // let message = "Couldn't get pipeline triggering environment";
             // return Err(Error::msg(message));
         }
+    }
+    pub fn set_action(&mut self, flag: Option<String>) -> Self {
+        let flag = Some(Flag::from(&flag.unwrap()));
+        match self {
+            Trigger::TriggerBranch(res) => res.action = flag,
+            Trigger::TriggerTag(res) => res.action = flag,
+        }
+        return self.to_owned();
     }
     pub fn action(&self) -> Option<Flag> {
         match self {
@@ -275,6 +287,7 @@ pub struct Event {
     pub trigger: Trigger,
     pub date: String,
     pub pid: Option<u32>,
+    pub pgid: Option<u32>,
     pub sid: Option<u32>,
 }
 

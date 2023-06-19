@@ -22,16 +22,25 @@ use utils::{
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 use thiserror::Error;
 
+// CLI
+use super::cli::types::{Cli, Commands};
+use clap::{Command, Parser};
+
 // Globals
 use super::cli::ARGS;
 
-pub fn trigger_bin(attach: bool) -> Result<()> {
-    trace!("Create detached subprocess");
+pub fn trigger_bin(attach: bool, flag: Option<String>) -> Result<()> {
     let bin = "pipelight";
 
+    trace!("Create detached subprocess");
+
     let args: String;
+    // let parsed;
     unsafe {
-        args = (*ARGS).join(" ");
+        // parsed = Cli::try_parse_from((*ARGS).clone()).into_diagnostic()?;
+        let mut args_vec = (*ARGS).clone();
+        args_vec.remove(0);
+        args = args_vec.join(" ").to_owned();
     }
 
     #[cfg(debug_assertions)]
@@ -43,7 +52,7 @@ pub fn trigger_bin(attach: bool) -> Result<()> {
     match attach {
         true => {
             // Lauch attach thread
-            trigger_in_thread(attach)?;
+            trigger_in_thread(attach, flag)?;
         }
         false => {
             // Lauch detached process
@@ -55,9 +64,14 @@ pub fn trigger_bin(attach: bool) -> Result<()> {
 }
 
 /// Filter pipeline by trigger and run
-pub fn trigger(attach: bool) -> Result<()> {
+pub fn trigger(attach: bool, flag: Option<String>) -> Result<()> {
     let config = Config::get()?;
-    let env = Trigger::env()?;
+    let mut env = Trigger::env()?;
+
+    if flag.is_some() {
+        env.set_action(flag);
+    }
+
     if config.pipelines.is_none() {
         let message = "No pipeline found";
         debug!("{}", message);
@@ -81,8 +95,8 @@ pub fn trigger(attach: bool) -> Result<()> {
 }
 
 /// Launch attached thread
-pub fn trigger_in_thread(attach: bool) -> Result<()> {
-    let thread = thread::spawn(move || trigger(attach).unwrap());
+pub fn trigger_in_thread(attach: bool, flag: Option<String>) -> Result<()> {
+    let thread = thread::spawn(move || trigger(attach, flag).unwrap());
     thread.join().unwrap();
     Ok(())
 }

@@ -15,12 +15,7 @@ const config: Config = {
       steps: [
         {
           name: `kill decendent subprocess`,
-          commands: [
-            "sleep 10",
-            "cargo run --bin pipelight run test_kill \
-            --config ./test.pipelight.ts \
-            --attach",
-          ],
+          commands: ["sleep 40", "pwd"],
         },
       ],
     },

@@ -7,6 +7,7 @@ pub mod types;
 use crate::run;
 use crate::stop;
 use crate::trigger;
+use crate::watch;
 use clap::Parser;
 use log::info;
 
@@ -63,13 +64,13 @@ pub fn get_args(raw_args: Vec<String>) -> Result<()> {
                 prompt::inspect_prompt()?;
             }
         }
-        types::Commands::Watch(trigger) => {
+        types::Commands::Watch(watch) => {
             // info!("Triggering piplines");
-            trigger::trigger_bin(trigger.attach)?;
+            watch::watch_bin(watch.attach)?;
         }
         types::Commands::Trigger(trigger) => {
             // info!("Triggering piplines");
-            // trigger::trigger_bin(trigger.attach, raw_args, args.raw.clone())?;
+            trigger::trigger_bin(trigger.attach, trigger.flag)?;
         }
         types::Commands::Run(pipeline) => {
             // info!("Running pipline {:#?}", pipeline.name);

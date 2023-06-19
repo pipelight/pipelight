@@ -6,3 +6,4 @@ pub mod cli;
 pub mod run;
 pub mod stop;
 pub mod trigger;
+pub mod watch;

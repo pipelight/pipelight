@@ -256,22 +256,58 @@ impl Trigger {
         let mut tuplelist: Vec<Trigger> = vec![];
         match &e {
             cast::Trigger::TriggerBranch(res) => {
-                for branch in res.branches.clone() {
+                if res.branches.is_none() {
                     for action in res.actions.clone().unwrap() {
                         tuplelist.push(Trigger::TriggerBranch(TriggerBranch {
                             action: Some(Flag::from(&action)),
+                            branch: None,
+                        }))
+                    }
+                }
+                if res.actions.is_none() {
+                    for branch in res.branches.clone().unwrap() {
+                        tuplelist.push(Trigger::TriggerBranch(TriggerBranch {
+                            action: None,
                             branch: Some(branch.to_owned()),
                         }))
                     }
                 }
+                if res.branches.is_some() && res.actions.is_some() {
+                    for branch in res.branches.clone().unwrap() {
+                        for action in res.actions.clone().unwrap() {
+                            tuplelist.push(Trigger::TriggerBranch(TriggerBranch {
+                                action: Some(Flag::from(&action)),
+                                branch: Some(branch.to_owned()),
+                            }))
+                        }
+                    }
+                }
             }
             cast::Trigger::TriggerTag(res) => {
-                for tag in res.tags.clone() {
+                if res.tags.is_none() {
                     for action in res.actions.clone().unwrap() {
                         tuplelist.push(Trigger::TriggerTag(TriggerTag {
                             action: Some(Flag::from(&action)),
+                            tag: None,
+                        }))
+                    }
+                }
+                if res.actions.is_none() {
+                    for tag in res.tags.clone().unwrap() {
+                        tuplelist.push(Trigger::TriggerTag(TriggerTag {
+                            action: None,
                             tag: Some(tag.to_owned()),
                         }))
+                    }
+                }
+                if res.tags.is_some() && res.actions.is_some() {
+                    for tag in res.tags.clone().unwrap() {
+                        for action in res.actions.clone().unwrap() {
+                            tuplelist.push(Trigger::TriggerTag(TriggerTag {
+                                action: Some(Flag::from(&action)),
+                                tag: Some(tag.to_owned()),
+                            }))
+                        }
                     }
                 }
             }

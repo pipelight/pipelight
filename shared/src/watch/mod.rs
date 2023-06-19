@@ -22,24 +22,28 @@ use utils::{
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 use thiserror::Error;
 
-pub fn trigger_bin(attach: bool, args: Option<Vec<String>>) -> Result<()> {
+// Globals
+use super::cli::ARGS;
+
+pub fn watch_bin(attach: bool) -> Result<()> {
     trace!("Create detached subprocess");
-    let bin = "pipelight trigger --attach";
+    let bin = "pipelight";
+
+    let args: String;
+    unsafe {
+        args = (*ARGS).join(" ");
+    }
 
     #[cfg(debug_assertions)]
-    let mut command = format!("cargo run --bin {}", bin);
+    let command = format!("cargo run --bin {} {} --attach", &bin, &args);
 
     #[cfg(not(debug_assertions))]
-    let mut command = format!("{}", bin);
-
-    if args.is_some() {
-        command = format!("{} {}", command, args.unwrap().join(" "))
-    }
+    let command = format!("{} {} --attach", &bin, &args);
 
     match attach {
         true => {
             // Lauch attach thread
-            trigger_in_thread(attach)?;
+            watch_in_thread(attach)?;
         }
         false => {
             // Lauch detached process
@@ -51,7 +55,7 @@ pub fn trigger_bin(attach: bool, args: Option<Vec<String>>) -> Result<()> {
 }
 
 /// Filter pipeline by trigger and run
-pub fn trigger(attach: bool) -> Result<()> {
+pub fn watch(attach: bool) -> Result<()> {
     let config = Config::get()?;
     let env = Trigger::env()?;
     if config.pipelines.is_none() {
@@ -65,7 +69,7 @@ pub fn trigger(attach: bool) -> Result<()> {
             debug!("{}", message)
         } else {
             if pipeline.is_triggerable()? {
-                run::run_bin(pipeline.clone().name, attach, None);
+                run::run_bin(pipeline.clone().name, attach);
 
                 // let origin = env::current_dir().unwrap();
                 // println!("{:?}", origin);
@@ -77,8 +81,8 @@ pub fn trigger(attach: bool) -> Result<()> {
 }
 
 /// Launch attached thread
-pub fn trigger_in_thread(attach: bool) -> Result<()> {
-    let thread = thread::spawn(move || trigger(attach).unwrap());
+pub fn watch_in_thread(attach: bool) -> Result<()> {
+    let thread = thread::spawn(move || watch(attach).unwrap());
     thread.join().unwrap();
     Ok(())
 }

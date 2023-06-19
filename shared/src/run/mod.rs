@@ -3,6 +3,10 @@ use exec::Exec;
 use pipeline::types::{traits::getters::Getters, Node, Pipeline};
 use std::thread;
 
+// CLI
+use super::cli::types::{Cli, Commands};
+use clap::{Command, Parser};
+
 // Logger
 use log::{debug, error, info, trace, warn};
 
@@ -17,8 +21,7 @@ use super::cli::ARGS;
 /// to run the pipeline
 pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
     let bin = "pipelight";
-
-    let pipeline = Pipeline::get_by_name(&pipeline_name)?;
+    let pipeline = Pipeline::get_by_name(&pipeline_name.clone())?;
     if !pipeline.is_triggerable()? {
         let message = "Pipeline can not be triggered in this environment";
         let hint = "Either verify the triggers you set for this pipeline, \
@@ -28,9 +31,25 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
         return Err(Error::msg(message));
     }
 
-    let args: String;
+    let mut args: String;
+    let parsed;
     unsafe {
-        args = (*ARGS).join(" ");
+        parsed = Cli::try_parse_from((*ARGS).clone()).into_diagnostic()?;
+        let mut args_vec = (*ARGS).clone();
+        args_vec.remove(0);
+        args = args_vec.join(" ").to_owned();
+    }
+
+    match parsed.commands {
+        Commands::Run(pipeline) => {
+            if pipeline.name.is_none() {
+                args = args.replace("run", &format!("run {}", &pipeline_name));
+            }
+        }
+        _ => {
+            let message = "Missunderstood commandline argument";
+            return Err(Error::msg(message));
+        }
     }
 
     #[cfg(debug_assertions)]
@@ -38,6 +57,8 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
 
     #[cfg(not(debug_assertions))]
     let command = format!("{} {} --attach", &bin, &args);
+
+    println!("{}", command);
 
     match attach {
         true => {
