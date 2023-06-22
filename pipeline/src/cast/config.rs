@@ -170,7 +170,7 @@ impl Config {
                 // println!("{}", json);
                 let span: SourceSpan = e.span().unwrap().into();
                 let toml_err = YamlError {
-                    src: NamedSource::new("config_yaml_output", tml),
+                    src: NamedSource::new("config_toml_output", tml),
                     bad_bit: span,
                 };
                 let me = Error::from(toml_err);

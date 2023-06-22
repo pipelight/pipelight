@@ -1,9 +1,16 @@
-// Cli commands structure
-use clap::{Args, Parser, Subcommand};
-use clap_verbosity_flag::Verbosity;
+#![allow(dead_code)]
 
-#[derive(Debug, Parser)]
+// Cli commands structure
+use super::verbosity::Verbosity;
+use clap::{Args, Parser, Subcommand};
+
+//Serde
+use serde::{Deserialize, Serialize};
+use std::cmp::PartialEq;
+
+#[derive(Debug, Serialize, Deserialize, Clone, Parser)]
 #[command(author, about, long_about = None)]
+#[serde(deny_unknown_fields)]
 pub struct Cli {
     #[command(subcommand)]
     pub commands: Commands,
@@ -13,6 +20,7 @@ pub struct Cli {
     pub config: Option<String>,
 
     #[clap(flatten)]
+    // #[serde(flatten)]
     /// Set verbosity level
     pub verbose: Verbosity,
 
@@ -21,8 +29,11 @@ pub struct Cli {
     pub raw: Option<Vec<String>>,
 }
 
-#[derive(Debug, Subcommand)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Subcommand)]
+#[serde(deny_unknown_fields)]
 pub enum Commands {
+    /// Get args as json
+    Raw(Raw),
     /// Run a pipeline
     Run(Pipeline),
     /// Stop the pipeline execution (kill subprocess)
@@ -42,26 +53,37 @@ pub enum Commands {
     Watch(Watch),
 }
 
-#[derive(Debug, Parser)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Parser)]
+#[serde(deny_unknown_fields)]
 pub struct Empty {}
 
-#[derive(Debug, Parser)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Parser)]
+#[serde(deny_unknown_fields)]
+pub struct Raw {
+    /// The pipeline name
+    pub string: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Parser)]
+#[serde(deny_unknown_fields)]
 pub struct Pipeline {
     /// The pipeline name
     pub name: Option<String>,
     /// Attach command to standard I/O
-    #[arg(long)]
-    pub attach: bool,
+    #[command(flatten)]
+    pub trigger: Trigger,
 }
 
-#[derive(Debug, Parser)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Parser)]
+#[serde(deny_unknown_fields)]
 pub struct Watch {
     /// Attach command to standard I/O
     #[arg(long)]
     pub attach: bool,
 }
 
-#[derive(Debug, Parser)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Parser)]
+#[serde(deny_unknown_fields)]
 pub struct Trigger {
     /// Attach command to standard I/O
     #[arg(long)]
@@ -71,16 +93,8 @@ pub struct Trigger {
     pub flag: Option<String>,
 }
 
-#[derive(Debug, Args)]
-pub struct DisplayCommands {
-    /// The pipeline name
-    pub name: Option<String>,
-    /// Display logs in json format
-    #[arg(long)]
-    pub json: bool,
-}
-
-#[derive(Debug, Args)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Parser)]
+#[serde(deny_unknown_fields)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct List {
     /// Display logs in json format
@@ -88,7 +102,8 @@ pub struct List {
     pub display: DisplayCommands,
 }
 
-#[derive(Debug, Args)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Parser)]
+#[serde(deny_unknown_fields)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct Logs {
     #[command(subcommand)]
@@ -98,8 +113,18 @@ pub struct Logs {
     #[command(flatten)]
     pub display: DisplayCommands,
 }
-#[derive(Debug, Subcommand)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Parser)]
+#[serde(deny_unknown_fields)]
+pub struct DisplayCommands {
+    /// The pipeline name
+    pub name: Option<String>,
+    /// Display logs in json format
+    #[arg(long)]
+    pub json: bool,
+}
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Parser)]
+#[serde(deny_unknown_fields)]
 pub enum LogsCommands {
     /// Clear logs
-    Rm(Empty),
+    Rm,
 }

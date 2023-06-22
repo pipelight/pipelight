@@ -53,6 +53,10 @@ impl Exec {
         let output = subprocess::simple(&self.shell(), command)?;
         Ok(output)
     }
+    pub fn os(&mut self, command: &str) -> Result<StrOutput> {
+        let output = subprocess::os(&self.shell(), command)?;
+        Ok(output)
+    }
     pub fn detached(&mut self, command: &str) -> Result<()> {
         subprocess::detached(&self.shell, command)?;
         Ok(())

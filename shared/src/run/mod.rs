@@ -16,11 +16,14 @@ use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Res
 // Globals
 use super::cli::ARGS;
 
+// Daemonize - run process in background
+use nix::unistd::daemon;
+
 /// To be called from the cli.
 /// Either spawn a detached new process or spawn an attached thread
 /// to run the pipeline
 pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
-    let bin = "pipelight";
+    let bin = "pipelight raw";
     let pipeline = Pipeline::get_by_name(&pipeline_name.clone())?;
     if !pipeline.is_triggerable()? {
         let message = "Pipeline can not be triggered in this environment";
@@ -35,28 +38,19 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
     let parsed;
     unsafe {
         parsed = Cli::try_parse_from((*ARGS).clone()).into_diagnostic()?;
+        let json = serde_json::to_string::<Cli>(&parsed).into_diagnostic()?;
+        // println!("{}", json);
+
         let mut args_vec = (*ARGS).clone();
         args_vec.remove(0);
         args = args_vec.join(" ").to_owned();
     }
 
-    match parsed.commands {
-        Commands::Run(pipeline) => {
-            if pipeline.name.is_none() {
-                args = args.replace("run", &format!("run {}", &pipeline_name));
-            }
-        }
-        _ => {
-            let message = "Missunderstood commandline argument";
-            return Err(Error::msg(message));
-        }
-    }
-
     #[cfg(debug_assertions)]
-    let command = format!("cargo run --bin {} {} --attach", &bin, &args);
+    let command = format!("cargo run --bin {} {}", &bin, &args);
 
     #[cfg(not(debug_assertions))]
-    let command = format!("{} {} --attach", &bin, &args);
+    let command = format!("{} {}", &bin, &args);
 
     println!("{}", command);
 
@@ -68,6 +62,7 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
         false => {
             // Lauch detached process
             // trace!("Create detached subprocess");
+
             Exec::new().detached(&command)?;
         }
     }

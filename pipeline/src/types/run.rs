@@ -319,7 +319,7 @@ impl Command {
             (*ptr).log();
         }
 
-        let output_res = Exec::new().simple(&self.stdin);
+        let output_res = Exec::new().os(&self.stdin);
 
         match output_res {
             Ok(output) => {

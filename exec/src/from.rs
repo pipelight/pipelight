@@ -4,7 +4,10 @@ use convert_case::{Case, Casing};
 use log::{error, warn};
 use std::convert::From;
 use std::process::exit;
+
+// Process Types
 pub use std::process::Output;
+pub use subprocess::CaptureData;
 
 impl From<&Output> for StrOutput {
     fn from(s: &Output) -> Self {
@@ -30,6 +33,40 @@ impl From<&Output> for StrOutput {
         // println!("{:?}", s.status.code());
 
         let status = match s.status.success() {
+            true => Status::Succeeded,
+            false => Status::Failed,
+        };
+        return StrOutput {
+            status: Some(status),
+            stdout: stdout,
+            stderr: stderr,
+        };
+    }
+}
+impl From<&CaptureData> for StrOutput {
+    fn from(s: &CaptureData) -> Self {
+        let mut stdout = None;
+        let mut stderr = None;
+        let stdout_str = String::from_utf8(s.stdout.clone())
+            .unwrap()
+            // .strip_suffix("\r\n")
+            // .unwrap()
+            .to_owned();
+        let stderr_str = String::from_utf8(s.stderr.clone())
+            .unwrap()
+            // .strip_suffix("\r\n")
+            // .unwrap()
+            .to_owned();
+
+        if !stdout_str.is_empty() {
+            stdout = Some(stdout_str);
+        }
+        if !stderr_str.is_empty() {
+            stderr = Some(stderr_str);
+        }
+        // println!("{:?}", s.status.code());
+
+        let status = match s.exit_status.success() {
             true => Status::Succeeded,
             false => Status::Failed,
         };

@@ -9,8 +9,9 @@ use log::error;
 
 // Command Line
 use shared::cli;
-use std::env;
+// use shared::cli::types::Cli;
 
+// use exec::Exec;
 use std::process::exit;
 
 // Error Handling
@@ -23,8 +24,10 @@ fn main() {
     })
 }
 fn handler() -> Result<()> {
-    let raw_args = env::args().collect::<Vec<String>>();
-    cli::get_args(raw_args)?;
-
+    // let args = cli::get_raw()?;
+    // if args.is_some() {
+    // } else {
+    //     cli::get_args(None)?;
+    // }
     Ok(())
 }
