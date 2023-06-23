@@ -1,18 +1,19 @@
+// import tests
+mod test;
+
 use crate::cli::types::{
-    Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, Trigger, Watch,
+    Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, Trigger, Verbosity, Watch,
 };
+// use crate::cli::verbosity::ErrorLevel;
+use log::LevelFilter;
+
 use std::fmt;
 
-impl From<&Commands> for String {
-    fn from(e: &Commands) -> String {
-        let string = format!("{}", e);
-        return string;
-    }
-}
-impl From<&Cli> for String {
-    fn from(e: &Cli) -> String {
-        let string = format!("{}", e.commands);
-        return string;
+impl fmt::Display for Cli {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut string = format!("{}", self.commands);
+        string += &format!("{}", self.verbose);
+        write!(f, "{}", string)
     }
 }
 
@@ -80,6 +81,27 @@ impl fmt::Display for Trigger {
     }
 }
 
+impl fmt::Display for Verbosity {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut string = "".to_owned();
+        if self.is_silent() {
+            string += " ";
+            string += "-q";
+        }
+
+        println!("log_level = {}", self.log_level_filter());
+        println!("log_level = {:#?}", self);
+
+        if self.log_level_filter() > LevelFilter::Error {
+            let n = self.log_level_filter() as usize;
+            string += " ";
+            string += "-";
+            string += &"v".repeat(n);
+        }
+        write!(f, "{}", string)
+    }
+}
+
 impl fmt::Display for Watch {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut string = "".to_owned();
@@ -117,74 +139,5 @@ impl fmt::Display for Commands {
             Commands::Watch(_) => string = "watch".to_owned(),
         }
         write!(f, "{}", string)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use crate::cli::types::{
-        Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, Trigger,
-    };
-    use crate::cli::verbosity::Verbosity;
-    // Convert cli into string then print
-    #[test]
-    fn run() {
-        // Define a cli struct
-        let cli = Cli {
-            commands: Commands::Run(Pipeline {
-                name: Some("test".to_owned()),
-                trigger: Trigger {
-                    attach: false,
-                    flag: None,
-                },
-            }),
-            raw: None,
-            config: None,
-            verbose: Verbosity::new(1, 0),
-        };
-        // print it
-        let result = String::from(&cli);
-        // println!("{}", result);
-        assert_eq!(result, "run test");
-    }
-    #[test]
-    fn logs() {
-        // Define a cli struct
-        let cli = Cli {
-            commands: Commands::Logs(Logs {
-                commands: Some(LogsCommands::Rm),
-                display: DisplayCommands {
-                    json: false,
-                    name: None,
-                },
-            }),
-            raw: None,
-            config: None,
-            verbose: Verbosity::new(1, 0),
-        };
-        // print it
-        let result = String::from(&cli);
-        // println!("{}", result);
-        assert_eq!(result, "logs rm");
-    }
-    #[test]
-    fn verbosity() {
-        // Define a cli struct
-        let cli = Cli {
-            commands: Commands::Logs(Logs {
-                commands: Some(LogsCommands::Rm),
-                display: DisplayCommands {
-                    json: false,
-                    name: None,
-                },
-            }),
-            raw: None,
-            config: None,
-            verbose: Verbosity::new(1, 0),
-        };
-        // print it
-        let result = String::from(&cli);
-        // println!("{}", result);
-        assert_eq!(result, "logs rm");
     }
 }

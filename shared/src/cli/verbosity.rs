@@ -91,13 +91,13 @@ fn level_enum(verbosity: i8) -> Option<log::Level> {
     }
 }
 
-use std::fmt;
+// use std::fmt;
 
-impl<L: LogLevel> fmt::Display for Verbosity<L> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.verbosity())
-    }
-}
+// impl<L: LogLevel> fmt::Display for Verbosity<L> {
+//     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+//         write!(f, "{}", self.verbosity())
+//     }
+// }
 
 pub trait LogLevel {
     fn default() -> Option<log::Level>;

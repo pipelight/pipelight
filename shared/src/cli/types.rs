@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 // Cli commands structure
-use super::verbosity::Verbosity;
+pub use super::verbosity::Verbosity;
 use clap::{Args, Parser, Subcommand};
 
 //Serde
