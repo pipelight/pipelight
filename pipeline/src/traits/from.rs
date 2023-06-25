@@ -9,7 +9,7 @@ use chrono::{DateTime, Local};
 use colored::{ColoredString, Colorize};
 use convert_case::{Case, Casing};
 
-use exec::types::Status;
+use exec::Status;
 
 use std::convert::From;
 use std::process::exit;
@@ -190,9 +190,7 @@ impl From<&cast::Parallel> for Parallel {
 impl From<&String> for Command {
     fn from(s: &String) -> Self {
         Command {
-            status: None,
-            stdin: s.to_owned(),
-            output: None,
+            process: Process::new(s),
             ..Command::default()
         }
     }
@@ -526,7 +524,7 @@ impl From<&Command> for Node {
             if e.output.clone().unwrap().stdout.is_some()
                 | e.output.clone().unwrap().stderr.is_some()
             {
-                let out = match e.status {
+                let out = match e.get_status() {
                     Some(Status::Succeeded) => e.output.clone().unwrap().stdout,
                     Some(Status::Failed) => e.output.clone().unwrap().stderr,
                     Some(Status::Started) => None,

@@ -34,7 +34,7 @@ impl Process {
     }
 
     /// Execute in detached child subprocess
-    pub fn detached(&self) -> Result<()> {
+    pub fn detached(&self) -> Result<Self> {
         Command::new(self.env.shell.clone())
             .arg("-c")
             .arg(self.state.stdin.clone().unwrap())
@@ -44,6 +44,6 @@ impl Process {
             .spawn()
             .expect("Failed to spawn subprocess");
 
-        Ok(())
+        Ok(self.to_owned())
     }
 }

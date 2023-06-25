@@ -8,7 +8,7 @@
 // Types
 use super::{Command, Event, Mode, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 // Traits
-use super::{Getters, Statuable};
+use super::Getters;
 
 use exec::{Process, Statuable, Status};
 use std::clone::Clone;

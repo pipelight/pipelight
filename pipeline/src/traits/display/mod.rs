@@ -1,5 +1,8 @@
-use super::characters::Characters;
 use crate::types::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger};
+
+// Caracteres
+mod characters;
+use characters::Characters;
 
 use chrono::Utc;
 use chrono::{DateTime, Duration, Local};

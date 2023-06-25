@@ -1,13 +1,12 @@
 use crate::types::{Command, Parallel, Pipeline, Step, StepOrParallel};
-use crate::Statuable;
-use exec::Status;
+use exec::{Statuable, Status};
 
 impl Statuable for Command {
     fn get_status(&self) -> Option<Status> {
-        return self.status.clone();
+        return self.process.get_status();
     }
     fn set_status(&mut self, status: Option<Status>) {
-        self.status = status;
+        self.process.set_status(status);
     }
 }
 impl Statuable for Step {
