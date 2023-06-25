@@ -1,9 +1,9 @@
 // Disable warnings
-#![allow(unused_variables)]
-#![allow(unused_assignments)]
-#![allow(unused_imports)]
-#![allow(unused_must_use)]
-#[allow(dead_code)]
+// #![allow(unused_variables)]
+// #![allow(unused_assignments)]
+// #![allow(unused_imports)]
+// #![allow(unused_must_use)]
+// #[allow(dead_code)]
 //
 use super::{Command, Event, Mode, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 use exec::types::{Statuable, Status, StrOutput};
@@ -319,7 +319,7 @@ impl Command {
             (*ptr).log();
         }
 
-        let output_res = Exec::new().os(&self.stdin);
+        let output_res = Exec::new().simple(&self.stdin);
 
         match output_res {
             Ok(output) => {

@@ -1,38 +1,21 @@
+// Logger
+use log::{debug, error, trace, warn};
+
 use super::Config;
 use exec::Exec;
-use log::{debug, error, trace, warn};
 
 // standard lib
 use std::env::current_dir;
-// use std::error::Error;
-use std::fmt;
 use std::path::Path;
 use std::process::exit;
+
+use std::fmt;
 use typescript::main_script;
 use utils::teleport::{FileType, Teleport};
 
 // Error Handling
+use crate::cast::error::{JsonError, TomlError, YamlError};
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-use thiserror::Error;
-
-#[derive(Error, Debug, Diagnostic)]
-#[error("js file syntax issue!")]
-#[diagnostic(code(json::error))]
-struct JsonError {
-    #[source_code]
-    src: NamedSource,
-    #[label("This bit here")]
-    bad_bit: SourceSpan,
-}
-#[derive(Error, Debug, Diagnostic)]
-#[error("yaml file syntax issue!")]
-#[diagnostic(code(yaml::error))]
-struct YamlError {
-    #[source_code]
-    src: NamedSource,
-    #[label("This bit here")]
-    bad_bit: SourceSpan,
-}
 
 impl Config {
     pub fn get(file: Option<String>, args: Option<Vec<String>>) -> Result<Config> {
@@ -93,7 +76,7 @@ impl Config {
         Ok(config?)
     }
 
-    /// Return the config from given path
+    /// Return a Config struct from a provided typescript file path
     pub fn load_from_file_ts(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
         // Fail safe guards
         Config::lint(file_path)?;
@@ -129,6 +112,33 @@ impl Config {
             }
         }
     }
+    /// Return a Config struct from a provided toml file path
+    fn load_from_file_tml(file_path: &str) -> Result<Config> {
+        let executable = "cat";
+        let command = format!("{} {}", executable, file_path);
+        let data = Exec::new().simple(&command)?;
+        // println!("{:?}", data);
+        let tml = data.stdout.clone().unwrap();
+        let res = toml::from_str::<Config>(&tml);
+        match res {
+            Ok(res) => {
+                return Ok(res);
+            }
+            Err(e) => {
+                println!("{:?}", e);
+                // println!("{}", json);
+                let span: SourceSpan = e.span().unwrap().into();
+                let toml_err = TomlError {
+                    src: NamedSource::new("config_toml_output", tml),
+                    bad_bit: span,
+                };
+                let me = Error::from(toml_err);
+                println!("{:?}", me);
+                exit(1);
+            }
+        }
+    }
+    /// Return a Config struct from a provided yaml file path
     fn load_from_file_yml(file_path: &str) -> Result<Config> {
         let executable = "cat";
         let command = format!("{} {}", executable, file_path);
@@ -154,33 +164,8 @@ impl Config {
             }
         }
     }
-    fn load_from_file_tml(file_path: &str) -> Result<Config> {
-        let executable = "cat";
-        let command = format!("{} {}", executable, file_path);
-        let data = Exec::new().simple(&command)?;
-        // println!("{:?}", data);
-        let tml = data.stdout.clone().unwrap();
-        let res = toml::from_str::<Config>(&tml);
-        match res {
-            Ok(res) => {
-                return Ok(res);
-            }
-            Err(e) => {
-                println!("{:?}", e);
-                // println!("{}", json);
-                let span: SourceSpan = e.span().unwrap().into();
-                let toml_err = YamlError {
-                    src: NamedSource::new("config_toml_output", tml),
-                    bad_bit: span,
-                };
-                let me = Error::from(toml_err);
-                println!("{:?}", me);
-                exit(1);
-            }
-        }
-    }
 
-    /// Ensure that the node.js has no error
+    /// Check if the deno script contains syntax errors
     fn lint(file: &str) -> Result<()> {
         // debug!("Linting config file");
         let command = format!(
@@ -206,7 +191,7 @@ impl Config {
             }
         }
     }
-    /// Ensure Typescript typing
+    /// Run the script to detect runtime errors
     fn check(file: &str, args: Option<Vec<String>>) -> Result<()> {
         // debug!("Linting config file");
         let mut command = format!(

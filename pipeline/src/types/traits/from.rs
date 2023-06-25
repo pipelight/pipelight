@@ -11,7 +11,6 @@ use chrono::{DateTime, Local};
 use colored::{ColoredString, Colorize};
 use convert_case::{Case, Casing};
 use exec::types::Status;
-use log::LevelFilter;
 use std::convert::From;
 use std::process::exit;
 use utils::git::Flag;
@@ -19,7 +18,9 @@ use utils::git::Hook;
 use utils::logger::logger;
 use uuid::Uuid;
 
+// Logger
 use log::error;
+use log::LevelFilter;
 
 impl From<&Event> for String {
     fn from(e: &Event) -> String {

@@ -2,43 +2,32 @@
 use miette::{Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 use thiserror::Error;
 
-pub struct BoxedError(pub Box<dyn Error + Send + Sync>);
-impl fmt::Debug for BoxedError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Debug::fmt(&self.0, f)
-    }
-}
-impl fmt::Display for BoxedError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        fmt::Display::fmt(&self.0, f)
-    }
-}
-impl Error for BoxedError {
-    fn source(&self) -> Option<&(dyn Error + 'static)> {
-        self.0.source()
-    }
-    #[allow(deprecated)]
-    fn description(&self) -> &str {
-        self.0.description()
-    }
-    #[allow(deprecated)]
-    fn cause(&self) -> Option<&dyn Error> {
-        self.0.cause()
-    }
-}
-
-#[derive(Debug, Error, Diagnostic)]
-pub enum MyError<ErrType: 'static + Error = BoxedError> {
-    #[error("Error containing another error")]
-    AnError(#[source] ErrType),
+#[derive(Error, Debug, Diagnostic)]
+#[error("js file syntax issue!")]
+#[diagnostic(code(json::error))]
+pub struct JsonError {
+    #[source_code]
+    pub src: NamedSource,
+    #[label("This bit here")]
+    pub bad_bit: SourceSpan,
 }
 
 #[derive(Error, Debug, Diagnostic)]
-#[error("js file syntax issue!")]
-#[diagnostic(code(js::error))]
-struct JsError {
+#[error("yaml file syntax issue!")]
+#[diagnostic(code(yaml::error))]
+pub struct YamlError {
     #[source_code]
-    src: NamedSource,
+    pub src: NamedSource,
     #[label("This bit here")]
-    bad_bit: SourceSpan,
+    pub bad_bit: SourceSpan,
+}
+
+#[derive(Error, Debug, Diagnostic)]
+#[error("toml file syntax issue!")]
+#[diagnostic(code(yaml::error))]
+pub struct TomlError {
+    #[source_code]
+    pub src: NamedSource,
+    #[label("This bit here")]
+    pub bad_bit: SourceSpan,
 }

@@ -11,20 +11,11 @@ const flags = parse(Deno.args, {
 const config: Config = {
   pipelines: [
     {
-      name: "test_rw",
-      steps: [
-        {
-          name: `kill decendent subprocess`,
-          commands: ["pwd", "ls", "sleep 120", "pwd"],
-        },
-      ],
-    },
-    {
       name: "test_kill",
       steps: [
         {
           name: `kill decendent subprocess`,
-          commands: ["pwd", "ls", "sleep 120", "pwd"],
+          commands: ["pwd", "sleep 10", "pwd"],
         },
       ],
     },

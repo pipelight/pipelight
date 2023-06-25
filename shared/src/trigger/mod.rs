@@ -27,34 +27,35 @@ use super::cli::types::{Cli, Commands};
 use clap::{Command, Parser};
 
 // Globals
-use super::cli::ARGS;
+use super::cli::CLI;
 
+/// To be called from the cli.
+/// Either spawn detached new processes or spawn attached threads
+/// to run the triggerable pipelines
 pub fn trigger_bin(attach: bool, flag: Option<String>) -> Result<()> {
-    let bin = "pipelight";
-
     trace!("Create detached subprocess");
-
-    let args: String;
-    // let parsed;
-    unsafe {
-        // parsed = Cli::try_parse_from((*ARGS).clone()).into_diagnostic()?;
-        let mut args_vec = (*ARGS).clone();
-        args_vec.remove(0);
-        args = args_vec.join(" ").to_owned();
-    }
-
-    #[cfg(debug_assertions)]
-    let command = format!("cargo run --bin {} {} --attach", &bin, &args);
-
-    #[cfg(not(debug_assertions))]
-    let command = format!("{} {} --attach", &bin, &args);
 
     match attach {
         true => {
-            // Lauch attach thread
+            // Lauch in attached thread
             trigger_in_thread(attach, flag)?;
         }
         false => {
+            // Run a detached subprocess
+            trace!("Create detached subprocess");
+            let bin = "pipelight";
+            let mut args;
+            unsafe {
+                args = (*CLI).clone();
+            }
+            args.attach = true;
+
+            #[cfg(debug_assertions)]
+            let command = format!("cargo run --bin {} {}", &bin, &args);
+
+            #[cfg(not(debug_assertions))]
+            let command = format!("{} {}", &bin, &args);
+
             // Lauch detached process
             // trace!("Create detached subprocess");
             Exec::new().detached(&command)?;

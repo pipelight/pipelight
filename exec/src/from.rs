@@ -1,3 +1,5 @@
+// Convert subprocess and process crate output to pipelighyt internal type
+
 use crate::types::Status::*;
 use crate::types::{Status, StrOutput};
 use convert_case::{Case, Casing};

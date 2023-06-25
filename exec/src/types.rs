@@ -15,21 +15,24 @@ pub enum Status {
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct StrOutput {
     pub status: Option<Status>,
+    pub stdin: Option<String>,
     pub stdout: Option<String>,
     pub stderr: Option<String>,
 }
 impl Default for StrOutput {
     fn default() -> Self {
         StrOutput {
-            status: Some(Status::Started),
+            status: None,
+            stdin: None,
             stdout: None,
             stderr: None,
         }
     }
 }
 impl StrOutput {
-    pub fn new() -> StrOutput {
-        Self::default()
+    pub fn new(stdin: &str) -> StrOutput {
+        stdin: Some(stdin),
+        ..Self::default()
     }
 }
 

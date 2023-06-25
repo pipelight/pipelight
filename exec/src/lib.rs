@@ -16,24 +16,34 @@ mod display;
 mod from;
 pub mod subprocess;
 pub mod types;
+
+// Export statuable trait definitions
+mod traits;
+pub use traits::statuable;
+
 // Error Handling
 use miette::{Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 use thiserror::Error;
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Exec {
+pub struct Command {
     shell: String,
+    attached: bool,
+    pid: Option<u32>,
+    output:
+
 }
-impl Default for Exec {
+impl Default for Command {
     fn default() -> Self {
         return Self {
             shell: "sh".to_owned(),
+            attached: true,
         };
     }
 }
-impl Exec {
+impl Command {
     pub fn new() -> Self {
-        return Exec::default();
+        return Command::default();
     }
     /// Return user session shell if possible
     fn shell(&mut self) -> String {
@@ -51,10 +61,6 @@ impl Exec {
     /// Use for pipeline exewcution only
     pub fn simple(&mut self, command: &str) -> Result<StrOutput> {
         let output = subprocess::simple(&self.shell(), command)?;
-        Ok(output)
-    }
-    pub fn os(&mut self, command: &str) -> Result<StrOutput> {
-        let output = subprocess::os(&self.shell(), command)?;
         Ok(output)
     }
     pub fn detached(&mut self, command: &str) -> Result<()> {

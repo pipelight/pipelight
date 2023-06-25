@@ -23,15 +23,15 @@ use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Res
 use thiserror::Error;
 
 // Globals
-use super::cli::ARGS;
+use super::cli::CLI;
 
 pub fn watch_bin(attach: bool) -> Result<()> {
     trace!("Create detached subprocess");
     let bin = "pipelight";
 
-    let args: String;
+    let mut args;
     unsafe {
-        args = (*ARGS).join(" ");
+        args = (*CLI).clone();
     }
 
     #[cfg(debug_assertions)]
