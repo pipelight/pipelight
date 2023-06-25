@@ -2,12 +2,15 @@
 
 use crate::types::Status::*;
 use crate::types::{Status, StrOutput};
+// Casing
 use convert_case::{Case, Casing};
+// Logger
 use log::{error, warn};
+
 use std::convert::From;
-use std::process::exit;
 
 // Process Types
+use std::process::exit;
 pub use std::process::Output;
 pub use subprocess::CaptureData;
 

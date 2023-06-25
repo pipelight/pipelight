@@ -1,16 +1,16 @@
-use crate::cast;
-use crate::types::characters::Characters;
-use crate::types::Mode::*;
-use crate::types::{
+use crate::{
     Command, Config, Event, Fallback, Mode, Node, Parallel, Pipeline, Step, StepOrParallel,
     Trigger, TriggerBranch, TriggerTag,
 };
+use cast;
 
 use chrono::Utc;
 use chrono::{DateTime, Local};
 use colored::{ColoredString, Colorize};
 use convert_case::{Case, Casing};
+
 use exec::types::Status;
+
 use std::convert::From;
 use std::process::exit;
 use utils::git::Flag;

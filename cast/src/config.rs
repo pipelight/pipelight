@@ -1,20 +1,22 @@
+use super::Config;
+
 // Logger
 use log::{debug, error, trace, warn};
 
-use super::Config;
-use exec::Exec;
+// Exec
+use exec::Process;
 
-// standard lib
+// Standard lib
 use std::env::current_dir;
 use std::path::Path;
 use std::process::exit;
 
+use super::typescript::main_script;
 use std::fmt;
-use typescript::main_script;
 use utils::teleport::{FileType, Teleport};
 
 // Error Handling
-use crate::cast::error::{JsonError, TomlError, YamlError};
+use crate::error::{JsonError, TomlError, YamlError};
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 
 impl Config {
@@ -90,8 +92,8 @@ impl Config {
         } else {
             command = format!("{} {}", executable, script);
         }
-        let data = Exec::new().simple(&command)?;
-        let json = data.stdout.clone().unwrap();
+        let p = Process::new(&command).simple()?;
+        let json = p.state.stdout.clone().unwrap();
         let res = serde_json::from_str::<Config>(&json);
         match res {
             Ok(res) => {
@@ -116,9 +118,9 @@ impl Config {
     fn load_from_file_tml(file_path: &str) -> Result<Config> {
         let executable = "cat";
         let command = format!("{} {}", executable, file_path);
-        let data = Exec::new().simple(&command)?;
-        // println!("{:?}", data);
-        let tml = data.stdout.clone().unwrap();
+        let p = Process::new(&command).simple()?;
+
+        let tml = p.state.stdout.clone().unwrap();
         let res = toml::from_str::<Config>(&tml);
         match res {
             Ok(res) => {
@@ -142,9 +144,9 @@ impl Config {
     fn load_from_file_yml(file_path: &str) -> Result<Config> {
         let executable = "cat";
         let command = format!("{} {}", executable, file_path);
-        let data = Exec::new().simple(&command)?;
-        // println!("{:?}", data);
-        let yml = data.stdout.clone().unwrap();
+        let p = Process::new(&command).simple()?;
+
+        let yml = p.state.stdout.clone().unwrap();
         let res = serde_yaml::from_str::<Config>(&yml);
         match res {
             Ok(res) => {
@@ -174,19 +176,19 @@ impl Config {
             --quiet {}",
             file
         );
-        let data = Exec::new().simple(&command)?;
-        if data.stdout.is_none() {
-            if data.stderr.is_none() {
+        let p = Process::new(&command).simple()?;
+        if p.state.stdout.is_none() {
+            if p.state.stderr.is_none() {
                 Ok(())
             } else {
-                let message = format!("{}", data.stderr.unwrap());
+                let message = format!("{}", p.state.stderr.unwrap());
                 Err(Error::msg(message))
             }
         } else {
-            if data.stderr.is_none() {
+            if p.state.stderr.is_none() {
                 Ok(())
             } else {
-                let message = format!("{}", data.stderr.unwrap());
+                let message = format!("{}", p.state.stderr.unwrap());
                 Err(Error::msg(message))
             }
         }
@@ -208,19 +210,21 @@ impl Config {
         if args.is_some() {
             command = format!("{} {}", command, args.unwrap().join(" "));
         }
-        let data = Exec::new().simple(&command)?;
-        if data.stdout.is_none() {
-            if data.stderr.is_none() {
+
+        let p = Process::new(&command).simple()?;
+
+        if p.state.stdout.is_none() {
+            if p.state.stderr.is_none() {
                 Ok(())
             } else {
-                let message = format!("{}", data.stderr.unwrap());
+                let message = format!("{}", p.state.stderr.unwrap());
                 Err(Error::msg(message))
             }
         } else {
-            if data.stderr.is_none() {
+            if p.state.stderr.is_none() {
                 Ok(())
             } else {
-                let message = format!("{}", data.stderr.unwrap());
+                let message = format!("{}", p.state.stderr.unwrap());
                 Err(Error::msg(message))
             }
         }

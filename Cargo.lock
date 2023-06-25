@@ -167,6 +167,25 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "89b2fd2a0dcf38d7971e2194b6b6eebab45ae01067456a7fd93d5547a61b70be"
 
 [[package]]
+name = "cast"
+version = "0.5.8"
+dependencies = [
+ "convert_case",
+ "exec",
+ "glob",
+ "log",
+ "miette",
+ "regex",
+ "serde",
+ "serde_json",
+ "serde_yaml 0.9.19",
+ "strum",
+ "thiserror",
+ "toml",
+ "utils",
+]
+
+[[package]]
 name = "cc"
 version = "1.0.79"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1051,6 +1070,7 @@ name = "pipeline"
 version = "0.3.0"
 dependencies = [
  "arc-swap",
+ "cast",
  "chrono",
  "colored",
  "convert_case",
@@ -1070,7 +1090,6 @@ dependencies = [
  "sysinfo 0.28.4",
  "thiserror",
  "toml",
- "typescript",
  "utils",
  "uuid",
 ]
@@ -1695,10 +1714,6 @@ checksum = "a68c24b707f02dd18f1e4ccceb9d49f2058c2fb86384ef9972592904d7a28867"
 dependencies = [
  "unsafe-any-ors",
 ]
-
-[[package]]
-name = "typescript"
-version = "0.3.2"
 
 [[package]]
 name = "unicode-bidi"

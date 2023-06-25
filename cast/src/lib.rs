@@ -13,6 +13,7 @@
 mod config;
 mod default;
 mod error;
+mod typescript;
 
 use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;

@@ -4,10 +4,13 @@
 // #![allow(unused_imports)]
 // #![allow(unused_must_use)]
 // #[allow(dead_code)]
-//
+
+// Types
 use super::{Command, Event, Mode, Parallel, Pipeline, Step, StepOrParallel, Trigger};
-use exec::types::{Statuable, Status, StrOutput};
-use exec::Exec;
+// Traits
+use super::{Getters, Statuable};
+
+use exec::{Process, Statuable, Status};
 use std::clone::Clone;
 use std::env;
 use std::thread;
@@ -319,7 +322,7 @@ impl Command {
             (*ptr).log();
         }
 
-        let output_res = Exec::new().simple(&self.stdin);
+        let output_res = Process::new(&self.stdin).simple();
 
         match output_res {
             Ok(output) => {

@@ -4,7 +4,7 @@ members=[
   "utils",
   "exec",
   "pipeline",
+  "cast",
   "shared",
   "pipelight",
-  "typescript"
 ]

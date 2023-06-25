@@ -1,55 +1,49 @@
-use super::types::StrOutput;
-use std::os::unix::process::CommandExt;
-
 // sys
+use std::os::unix::process::CommandExt;
 use std::process;
 use std::process::{Command, Stdio};
-use sysinfo::{Pid, PidExt, ProcessExt, System, SystemExt};
+use sysinfo::{PidExt, ProcessExt, System, SystemExt};
+
+// Types
+use super::types::Process;
 
 // Error Handling
-use miette::{Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-use thiserror::Error;
+use miette::{IntoDiagnostic, Result};
 
 /// Execute in same process
-pub fn simple<'a>(shell: &str, command: &str) -> Result<StrOutput> {
-    // retrieve PGID
-    let current_pid = process::id();
-    let mut sys = System::new_all();
-    sys.refresh_all();
-    let current_process = sys.process(PidExt::from_u32(current_pid)).unwrap();
-    let pgid = current_process.group_id().unwrap();
+impl Process {
+    pub fn simple(&self) -> Result<Self> {
+        // retrieve PGID and link every subprocess to
+        let current_pid = process::id();
+        let mut sys = System::new_all();
+        sys.refresh_all();
+        let current_process = sys.process(PidExt::from_u32(current_pid)).unwrap();
+        let pgid = current_process.group_id().unwrap();
 
-    let child = Command::new(shell)
-        .gid(*pgid)
-        .arg("-c")
-        .arg(command)
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .into_diagnostic()?;
+        let child = Command::new(self.env.shell.clone())
+            .gid(*pgid)
+            .arg("-c")
+            .arg(self.state.stdin.clone().unwrap())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .into_diagnostic()?;
 
-    let output = child.wait_with_output().into_diagnostic()?;
-    Ok(StrOutput::from(&output))
-}
+        let output = child.wait_with_output().into_diagnostic()?;
+        Ok(self.to_owned())
+    }
 
-/// Execute in detached child subprocess
-pub fn detached(shell: &str, command: &str) -> Result<()> {
-    // retrieve PGID
-    // let current_pid = process::id();
-    // let mut sys = System::new_all();
-    // sys.refresh_all();
-    // let current_process = sys.process(PidExt::from_u32(current_pid)).unwrap();
-    // let pgid = current_process.group_id().unwrap();
+    /// Execute in detached child subprocess
+    pub fn detached(&self) -> Result<()> {
+        Command::new(self.env.shell.clone())
+            .arg("-c")
+            .arg(self.state.stdin.clone().unwrap())
+            .stdin(Stdio::null())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("Failed to spawn subprocess");
 
-    Command::new(shell)
-        // .gid(*pgid)
-        .arg("-c")
-        .arg(command)
-        .stdin(Stdio::null())
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .spawn()
-        .expect("Failed to spawn subprocess");
-
-    Ok(())
+        Ok(())
+    }
 }

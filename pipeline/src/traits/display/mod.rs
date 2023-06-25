@@ -1,15 +1,19 @@
-use crate::types::characters::Characters;
+use super::characters::Characters;
 use crate::types::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger};
+
 use chrono::Utc;
 use chrono::{DateTime, Duration, Local};
 use colored::{ColoredString, Colorize};
-use exec::types::{Statuable, Status};
+use exec::{Statuable, Status};
 use log::LevelFilter;
 use log::{debug, error, info, warn};
 use regex::Regex;
-use std::error::Error;
 use std::fmt;
 use utils::logger::logger;
+
+// Error Handling
+use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use thiserror::Error;
 
 static INDENT: &str = "  ";
 
@@ -95,7 +99,7 @@ impl Node {
     }
 }
 
-pub fn format_duration(duration: std::time::Duration) -> Result<String, Box<dyn Error>> {
+pub fn format_duration(duration: std::time::Duration) -> Result<String> {
     let mut res: String;
     let computed = Duration::from_std(duration).unwrap();
     let m: f64 = computed.num_minutes() as f64;

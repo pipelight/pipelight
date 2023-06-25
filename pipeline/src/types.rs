@@ -5,12 +5,7 @@
 #![allow(unused_variables)]
 
 // Internal imports
-pub mod characters;
-mod logs;
-mod run;
-pub mod traits;
-mod tree;
-use crate::types::traits::getters::Getters;
+// use super::traits::getters::Getters;
 
 // Error Handling
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
@@ -32,8 +27,7 @@ use uuid::Uuid;
 use rustix::process::{kill_process_group, test_kill_process, Pid, Signal};
 
 // External imports
-use exec::types::{Status, StrOutput};
-use exec::Exec;
+use exec::{Process, Statuable, Status};
 use utils;
 use utils::git::{Flag, Git, Hook};
 use utils::logger::logger;

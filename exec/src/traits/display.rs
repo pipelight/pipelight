@@ -1,7 +1,6 @@
 use crate::types::Status;
-use crate::types::Status::*;
 use colored::Colorize;
-use convert_case::{Case, Casing};
+// use convert_case::{Case, Casing};
 use std::fmt;
 pub use std::process::Output;
 
