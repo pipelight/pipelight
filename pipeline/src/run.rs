@@ -264,7 +264,7 @@ impl Step {
         for command in &mut self.commands {
             command.run(ptr);
 
-            if (command.status.is_none() || command.status != Some(Status::Succeeded))
+            if (command.get_status().is_none() || command.get_status() != Some(Status::Succeeded))
                 && (self.mode.is_none() || self.mode != Some(Mode::ContinueOnFailure))
             {
                 break;
@@ -272,7 +272,7 @@ impl Step {
         }
 
         // Set global status after run
-        let final_status = &self.commands.last().unwrap().status;
+        let final_status = &self.commands.last().unwrap().get_status();
         if final_status.is_some() {
             self.status = final_status.clone();
         } else {
@@ -317,7 +317,7 @@ impl Command {
         let start = Instant::now();
         let duration;
 
-        self.status = Some(Status::Running);
+        self.get_status() = Some(Status::Running);
         unsafe {
             (*ptr).log();
         }

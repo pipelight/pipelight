@@ -3,6 +3,7 @@ use crate::{
     Trigger, TriggerBranch, TriggerTag,
 };
 use cast;
+use exec::{Process, Statuable};
 
 use chrono::Utc;
 use chrono::{DateTime, Local};
@@ -520,30 +521,26 @@ impl From<&Command> for Node {
             ..Node::default()
         };
         // Convert command output as child node
-        if e.output.is_some() {
-            if e.output.clone().unwrap().stdout.is_some()
-                | e.output.clone().unwrap().stderr.is_some()
-            {
-                let out = match e.get_status() {
-                    Some(Status::Succeeded) => e.output.clone().unwrap().stdout,
-                    Some(Status::Failed) => e.output.clone().unwrap().stderr,
-                    Some(Status::Started) => None,
-                    Some(Status::Aborted) => None,
-                    Some(Status::Running) => None,
-                    None => None,
-                };
-                let child = Node {
-                    value: out,
-                    status: e.clone().status,
-                    children: None,
-                    level: LevelFilter::Debug,
-                    ..Node::new()
-                };
-                node.children = Some(vec![child]);
-            }
+        if e.process.state.stdout.is_some() | e.process.state.stderr.is_some() {
+            let out = match e.get_status() {
+                Some(Status::Succeeded) => e.process.state.stdout,
+                Some(Status::Failed) => e.process.state.stderr,
+                Some(Status::Started) => None,
+                Some(Status::Aborted) => None,
+                Some(Status::Running) => None,
+                None => None,
+            };
+            let child = Node {
+                value: out,
+                status: e.get_status(),
+                children: None,
+                level: LevelFilter::Debug,
+                ..Node::new()
+            };
+            node.children = Some(vec![child]);
         }
-        node.value = Some(e.stdin.clone());
-        node.status = e.status.clone();
+        node.value = Some(e.process.state.stdin.unwrap());
+        node.status = e.get_status();
         return node;
     }
 }
