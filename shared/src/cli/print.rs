@@ -1,9 +1,9 @@
 use chrono::{DateTime, Local};
-use log::{debug, error, info, warn, LevelFilter};
-use pipeline::types::{traits::getters::Getters, Config, Logs, Node, Pipeline};
+use log::{error, info, warn, LevelFilter};
+use pipeline::{Config, Getters, Logs, Node, Pipeline};
 
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use miette::{IntoDiagnostic, Result};
 // use std::error::Error;
 //
 //Logger

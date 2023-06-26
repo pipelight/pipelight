@@ -1,15 +1,14 @@
-use exec::types::Status;
-use exec::Exec;
+use exec::{Process, Status};
 use log::trace;
-use pipeline::types::Logs;
+use pipeline::Logs;
 use std::env;
 
-//sys
+// sys
+// linux process manipulation
 use rustix::process::{kill_process_group, Pid, Signal};
 
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-use thiserror::Error;
+use miette::Result;
 
 /// Stop pipeline and attached pipelines/subprocesses
 pub fn stop(pipeline_name: &String) -> Result<()> {

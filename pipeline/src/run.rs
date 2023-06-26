@@ -317,26 +317,27 @@ impl Command {
         let start = Instant::now();
         let duration;
 
-        self.get_status() = Some(Status::Running);
+        self.set_status(Some(Status::Running));
         unsafe {
             (*ptr).log();
         }
 
-        let output_res = Process::new(&self.stdin).simple();
+        let (popen, pid) = &self.process.create().unwrap();
+        println!("pid:{}", pid);
 
-        match output_res {
-            Ok(output) => {
-                self.output = Some(output.clone());
-                self.status = output.clone().status;
-                Ok(())
-            }
-            Err(e) => {
-                let mut output = StrOutput::new();
-                output.status = Some(Status::Aborted);
-                self.output = Some(output);
-                Err(e)
-            }
-        };
+        // match output_res {
+        //     Ok(output) => {
+        //         self.output = Some(output.clone());
+        //         self.status = output.clone().status;
+        //         Ok(())
+        //     }
+        //     Err(e) => {
+        //         let mut output = StrOutput::new();
+        //         output.status = Some(Status::Aborted);
+        //         self.output = Some(output);
+        //         Err(e)
+        //     }
+        // };
 
         // Duration
         duration = start.elapsed();

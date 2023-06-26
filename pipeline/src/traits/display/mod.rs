@@ -1,8 +1,11 @@
-use crate::types::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger};
+use crate::types::Node;
 
 // Caracteres
 mod characters;
 use characters::Characters;
+
+// From - Convert types to Node
+mod from;
 
 use chrono::Utc;
 use chrono::{DateTime, Duration, Local};
@@ -15,8 +18,7 @@ use std::fmt;
 use utils::logger::logger;
 
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-use thiserror::Error;
+use miette::{IntoDiagnostic, Result};
 
 static INDENT: &str = "  ";
 

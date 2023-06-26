@@ -1,23 +1,23 @@
-//mods
+//modules
 pub mod print;
 pub mod prompt;
 pub mod traits;
 pub mod types;
 
+use pipeline::{Config, Getters, Logs, Pipeline};
+
 // Clap - command line lib
 use clap::Parser;
-use clap_verbosity_flag::Verbosity;
 use types::{Cli, Commands};
 
 // Cli core functions
 use crate::run;
 use crate::stop;
-use crate::trigger;
-use crate::watch;
+// use crate::trigger;
+// use crate::watch;
 
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-// use std::error::Error;
+use miette::Result;
 
 // Logger
 use log::info;
@@ -25,10 +25,6 @@ use utils::logger::logger;
 
 // Global vars
 use once_cell::sync::Lazy;
-use std::ops::{Deref, DerefMut};
-use std::sync::{Arc, Mutex, RwLock};
-
-use pipeline::types::{traits::getters::Getters, Config, Logs, Pipeline};
 
 pub static mut CLI: Lazy<Cli> = Lazy::new(|| Cli::new());
 

@@ -1,16 +1,15 @@
 use crate::run;
-use pipeline::types::{traits::getters::Getters, Node, Pipeline};
+use pipeline::{Getters, Node, Pipeline};
 
 // Logging and verbosity
-use log::{debug, error, info, warn, LevelFilter};
+use log::LevelFilter;
 use utils::logger::logger;
 
 // Prompt
 use dialoguer::{console::Term, theme::ColorfulTheme, Select};
 
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-// use std::error::Error;
+use miette::{IntoDiagnostic, Result};
 
 pub fn inspect_prompt() -> Result<()> {
     let pipelines = Pipeline::get()?;

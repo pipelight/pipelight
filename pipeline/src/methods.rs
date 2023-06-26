@@ -4,38 +4,22 @@
 // Internal imports
 use super::traits::Getters;
 
-use super::types::{
-    Command, Config, Event, Fallback, Mode, Node, Parallel, Pipeline, Step, StepOrParallel,
-    Trigger, TriggerBranch, TriggerTag,
-};
+use super::types::{Logs, Mode, Pipeline, StepOrParallel, Trigger, TriggerBranch, TriggerTag};
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-use thiserror::Error;
-// use std::error::Error;
+use miette::{IntoDiagnostic, Result};
 
 // Standard libs
-use log::LevelFilter;
-use log::{info, warn};
-use serde::{Deserialize, Serialize};
-use std::clone::Clone;
-use std::fs;
-use std::path::Path;
-use std::process;
-use std::time::{Duration, Instant};
-use uuid::Uuid;
+use log::info;
+use std::time::Duration;
 
 //sys
 use rustix::process::{kill_process_group, test_kill_process, Pid, Signal};
 
 // External imports
-use exec::{Process, Statuable, Status};
+use exec::Status;
 use utils;
 use utils::git::{Flag, Git, Hook};
 use utils::logger::logger;
-
-// Enum workaround
-use std::string::ToString;
-use strum::{EnumIter, IntoEnumIterator};
 
 impl Pipeline {
     pub fn log(&self) {

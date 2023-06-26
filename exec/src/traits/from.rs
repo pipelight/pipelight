@@ -1,7 +1,6 @@
 // Convert subprocess and process crate output to pipelighyt internal type
 
-use crate::types::Status::*;
-use crate::types::{Status, StrOutput};
+use crate::types::{State, Status};
 // Casing
 use convert_case::{Case, Casing};
 // Logger
@@ -14,7 +13,7 @@ use std::process::exit;
 pub use std::process::Output;
 pub use subprocess::CaptureData;
 
-impl From<&Output> for StrOutput {
+impl From<&Output> for State {
     fn from(s: &Output) -> Self {
         let mut stdout = None;
         let mut stderr = None;
@@ -41,14 +40,15 @@ impl From<&Output> for StrOutput {
             true => Status::Succeeded,
             false => Status::Failed,
         };
-        return StrOutput {
+        return State {
             status: Some(status),
+            stdin: None,
             stdout: stdout,
             stderr: stderr,
         };
     }
 }
-impl From<&CaptureData> for StrOutput {
+impl From<&CaptureData> for State {
     fn from(s: &CaptureData) -> Self {
         let mut stdout = None;
         let mut stderr = None;
@@ -75,8 +75,9 @@ impl From<&CaptureData> for StrOutput {
             true => Status::Succeeded,
             false => Status::Failed,
         };
-        return StrOutput {
+        return State {
             status: Some(status),
+            stdin: None,
             stdout: stdout,
             stderr: stderr,
         };
@@ -86,11 +87,11 @@ impl From<&String> for Status {
     fn from(status: &String) -> Status {
         let cased: &str = &status.to_case(Case::Snake);
         match cased {
-            "started" => return Started,
-            "succeeded" => return Succeeded,
-            "failed" => return Failed,
-            "running" => return Running,
-            "aborted" => return Aborted,
+            "started" => return Status::Started,
+            "succeeded" => return Status::Succeeded,
+            "failed" => return Status::Failed,
+            "running" => return Status::Running,
+            "aborted" => return Status::Aborted,
             _ => {
                 let message = format!("The pipeline status {} is not known", cased);
                 error!("{}", message);

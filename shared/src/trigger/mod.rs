@@ -2,9 +2,9 @@
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
 use crate::run;
-use exec::Exec;
+use exec::Process;
 use log::{debug, error, info, trace, warn};
-use pipeline::types::{Config, Pipeline, Trigger};
+use pipeline::{Config, Pipeline, Trigger};
 #[allow(dead_code)]
 use project_root::get_project_root;
 use std::env;
@@ -58,7 +58,7 @@ pub fn trigger_bin(attach: bool, flag: Option<String>) -> Result<()> {
 
             // Lauch detached process
             // trace!("Create detached subprocess");
-            Exec::new().detached(&command)?;
+            Process::new(&command).detached()?;
         }
     }
     Ok(())

@@ -2,6 +2,8 @@ use crate::types::{
     Command, Config, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
 };
 use cast;
+use exec::Process;
+
 use chrono::Utc;
 use log::LevelFilter;
 use log::{info, trace, warn};
@@ -155,16 +157,17 @@ impl Step {
 impl Default for Command {
     fn default() -> Self {
         Command {
-            status: None,
             duration: None,
-            stdin: "".to_owned(),
-            output: None,
+            process: Process::default(),
         }
     }
 }
 impl Command {
-    pub fn new() -> Command {
-        Self::default()
+    pub fn new(stdin: &str) -> Command {
+        Command {
+            process: Process::new(stdin),
+            ..Command::default()
+        }
     }
 }
 impl Default for Logs {

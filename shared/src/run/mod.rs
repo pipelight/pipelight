@@ -1,17 +1,12 @@
-use exec::types::Status;
-use exec::Exec;
-use pipeline::types::{traits::getters::Getters, Node, Pipeline};
+use exec::{Process, Status};
+use pipeline::{Getters, Node, Pipeline};
 use std::thread;
 
-// CLI
-use super::cli::types::{Cli, Commands};
-use clap::{Command, Parser};
-
 // Logger
-use log::{debug, error, info, trace, warn};
+use log::{info, trace};
 
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use miette::{Error, Result};
 
 // Globals
 use super::cli::CLI;
@@ -56,7 +51,7 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
 
             println!("{}", command);
 
-            Exec::new().detached(&command)?;
+            Process::new(&command).detached()?;
         }
     }
     Ok(())
