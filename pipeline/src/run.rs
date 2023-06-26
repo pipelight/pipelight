@@ -322,22 +322,26 @@ impl Command {
             (*ptr).log();
         }
 
-        let (popen, pid) = &self.process.create().unwrap();
-        println!("pid:{}", pid);
+        let (mut process, mut popen, pid) = self.process.create().unwrap();
+        self.process.env.pid = Some(pid);
 
-        // match output_res {
-        //     Ok(output) => {
-        //         self.output = Some(output.clone());
-        //         self.status = output.clone().status;
-        //         Ok(())
-        //     }
-        //     Err(e) => {
-        //         let mut output = StrOutput::new();
-        //         output.status = Some(Status::Aborted);
-        //         self.output = Some(output);
-        //         Err(e)
-        //     }
-        // };
+        unsafe {
+            (*ptr).log();
+        }
+
+        let output_res = process.run(popen);
+        // println!("{:?}", output_res);
+
+        match output_res {
+            Ok(process) => {
+                self.process = process;
+                Ok(())
+            }
+            Err(e) => {
+                self.set_status(Some(Status::Aborted));
+                Err(e)
+            }
+        };
 
         // Duration
         duration = start.elapsed();

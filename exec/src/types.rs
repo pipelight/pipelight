@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
 use std::cmp::PartialEq;
+use subprocess::Popen;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum Status {

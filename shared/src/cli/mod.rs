@@ -70,8 +70,8 @@ pub fn get_args() -> Result<()> {
             // trigger::trigger_bin(trigger.flag)?;
         }
         Commands::Run(pipeline) => {
-            info!("Running pipeline {:#?}", pipeline.name);
             if pipeline.name.is_some() {
+                info!("Running pipeline {:#?}", pipeline.name.clone().unwrap());
                 run::run_bin(pipeline.name.unwrap(), args.attach)?;
             } else {
                 prompt::run_prompt(args.attach)?;
