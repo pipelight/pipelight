@@ -1,11 +1,13 @@
 use crate::types::{Environment, Process, State};
 use std::env;
+use uuid::Uuid;
 
 impl Default for Process {
     fn default() -> Self {
         Process {
+            uuid: Uuid::new_v4(),
             state: State::default(),
-            env: Environment::default(),
+            os: Environment::default(),
         }
     }
 }
@@ -24,6 +26,7 @@ impl Process {
 impl Default for Environment {
     fn default() -> Self {
         Environment {
+            directory: "/var/log/pipelight".to_owned(),
             shell: "sh".to_owned(),
             attached: true,
             pid: None,

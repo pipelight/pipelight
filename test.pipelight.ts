@@ -15,7 +15,12 @@ const config: Config = {
       steps: [
         {
           name: `kill decendent subprocess`,
-          commands: ["pwd", "ls", "sleep 120", "pwd"],
+          commands: ["ppwd", "ls"],
+          mode: "jump_next",
+        },
+        {
+          name: `kill decendent subprocess`,
+          commands: ["pwd", "ls", "sleep 10"],
         },
       ],
     },

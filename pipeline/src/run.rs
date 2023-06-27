@@ -322,21 +322,10 @@ impl Command {
             (*ptr).log();
         }
 
-        let (mut process, mut popen, pid) = self.process.create().unwrap();
-        self.process.env.pid = Some(pid);
-
-        unsafe {
-            (*ptr).log();
-        }
-
-        let output_res = process.run(popen);
-        // println!("{:?}", output_res);
-
-        match output_res {
-            Ok(process) => {
-                self.process = process;
-                Ok(())
-            }
+        // Run process
+        let res = self.process.run();
+        match res {
+            Ok(_) => Ok(()),
             Err(e) => {
                 self.set_status(Some(Status::Aborted));
                 Err(e)

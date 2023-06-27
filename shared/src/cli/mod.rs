@@ -88,7 +88,7 @@ pub fn get_args() -> Result<()> {
         }
         Commands::Logs(logs) => match logs.commands {
             None => {
-                let pipelines;
+                let mut pipelines;
                 if logs.display.name.is_some() {
                     pipelines = Logs::get_many_by_name(&logs.display.name.unwrap())?;
                 } else {
@@ -97,7 +97,7 @@ pub fn get_args() -> Result<()> {
                 if logs.display.json {
                     print::json(&pipelines)?;
                 } else {
-                    print::pretty(&pipelines)?;
+                    print::pretty(&mut pipelines)?;
                 }
             }
             Some(logs_cmd) => match logs_cmd {

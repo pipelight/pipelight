@@ -16,7 +16,7 @@ use std::time::Duration;
 use rustix::process::{kill_process_group, test_kill_process, Pid, Signal};
 
 // External imports
-use exec::Status;
+use exec::{Statuable, Status};
 use utils;
 use utils::git::{Flag, Git, Hook};
 use utils::logger::logger;
@@ -26,6 +26,28 @@ impl Pipeline {
         logger.lock().unwrap().file(&self.uuid);
         let json = serde_json::to_string(&self).unwrap();
         info!(target: "pipeline_json","{}", json);
+    }
+    pub fn hydrate(&mut self) {
+        for step_or_parallel in &mut self.steps {
+            match step_or_parallel {
+                StepOrParallel::Step(step) => {
+                    for command in &mut step.commands {
+                        if command.get_status() == Some(Status::Running) {
+                            command.process.read();
+                        }
+                    }
+                }
+                StepOrParallel::Parallel(parallel) => {
+                    for step in &mut parallel.steps {
+                        for command in &mut step.commands {
+                            if command.get_status() == Some(Status::Running) {
+                                command.process.read();
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     /// Compares if log_pid is in system pid list.
     /// If not, the program has been aborted

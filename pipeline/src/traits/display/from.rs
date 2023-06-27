@@ -1,6 +1,7 @@
 use crate::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel};
 use exec::{Statuable, Status};
 use log::LevelFilter;
+use utils::logger::logger;
 
 // Colorize
 use chrono::{DateTime, Local};
@@ -222,6 +223,9 @@ impl From<&Command> for Node {
         };
         // Convert command output as child node
         if e.process.state.stdout.is_some() | e.process.state.stderr.is_some() {
+            let stdout = format!("stdout: {}", e.process.state.stdout.clone().unwrap());
+            let stderr = format!("stderr: {}", e.process.state.stderr.clone().unwrap());
+
             let out = match e.get_status() {
                 Some(Status::Succeeded) => e.process.state.stdout.clone(),
                 Some(Status::Failed) => e.process.state.stderr.clone(),
@@ -230,14 +234,32 @@ impl From<&Command> for Node {
                 Some(Status::Running) => None,
                 None => None,
             };
-            let child = Node {
+            let out = Node {
                 value: out,
                 status: e.get_status(),
                 children: None,
                 level: LevelFilter::Debug,
                 ..Node::new()
             };
-            node.children = Some(vec![child]);
+            let stdout = Node {
+                value: Some(stdout),
+                status: e.get_status(),
+                children: None,
+                level: LevelFilter::Trace,
+                ..Node::new()
+            };
+            let stderr = Node {
+                value: Some(stderr),
+                status: e.get_status(),
+                children: None,
+                level: LevelFilter::Trace,
+                ..Node::new()
+            };
+            if logger.lock().unwrap().level == LevelFilter::Debug {
+                node.children = Some(vec![out]);
+            } else {
+                node.children = Some(vec![stdout, stderr]);
+            }
         }
         node.value = e.process.state.stdin.clone();
         node.status = e.get_status();

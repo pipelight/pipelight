@@ -88,7 +88,9 @@ pub enum Mode {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Command {
+    // Pretty computatoin (Time, duration...)
     pub duration: Option<Duration>,
+    // Things relevant to unix process
     pub process: Process,
 }
 

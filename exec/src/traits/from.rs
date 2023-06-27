@@ -103,11 +103,11 @@ impl From<&String> for Status {
 impl From<&Status> for String {
     fn from(action: &Status) -> String {
         match action {
-            Started => return "started".to_owned(),
-            Succeeded => return "succeeded".to_owned(),
-            Failed => return "failed".to_owned(),
-            Running => return "running".to_owned(),
-            Aborted => return "aborted".to_owned(),
+            Status::Started => return "started".to_owned(),
+            Status::Succeeded => return "succeeded".to_owned(),
+            Status::Failed => return "failed".to_owned(),
+            Status::Running => return "running".to_owned(),
+            Status::Aborted => return "aborted".to_owned(),
         };
     }
 }

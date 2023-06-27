@@ -1,4 +1,5 @@
 use chrono::{DateTime, Local};
+use exec::{Statuable, Status};
 use log::{error, info, warn, LevelFilter};
 use pipeline::{Config, Getters, Logs, Node, Pipeline};
 
@@ -10,9 +11,12 @@ use miette::{IntoDiagnostic, Result};
 use utils::logger::logger;
 
 /// Pretty print logs from json log file
-pub fn pretty(pipelines: &Vec<Pipeline>) -> Result<()> {
+pub fn pretty(pipelines: &mut Vec<Pipeline>) -> Result<()> {
     for pipeline in pipelines {
-        let node = Node::from(pipeline);
+        if pipeline.get_status() == Some(Status::Running) {
+            pipeline.hydrate();
+        }
+        let node = Node::from(&pipeline.clone());
         println!("{}", node);
     }
     Ok(())

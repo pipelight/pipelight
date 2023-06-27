@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
 use std::cmp::PartialEq;
-use subprocess::Popen;
+use std::os::unix::io::RawFd;
+use uuid::Uuid;
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum Status {
@@ -14,15 +15,17 @@ pub enum Status {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Process {
+    pub uuid: Uuid,
     pub state: State,
-    pub env: Environment,
+    pub os: Environment,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub struct Environment {
     pub shell: String,
-    pub attached: bool,
     pub pid: Option<u32>,
+    pub directory: String,
+    pub attached: bool,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
