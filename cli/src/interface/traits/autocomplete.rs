@@ -1,16 +1,13 @@
-use crate::{Cli, Commands, DisplayCommands, LogsCommands};
-use clap::{CommandFactory, Parser};
+use crate::{Cli, DisplayCommands, LogsCommands};
+use clap::CommandFactory;
 use clap_autocomplete;
 // use clap_complete::{generate_to, shell::Zsh, shells::Bash};
 
 // Error Handling
-use miette::{IntoDiagnostic, Result};
+use miette::Result;
 
 pub fn make_completion() -> Result<()> {
-    let mut command = clap::command!();
-    println!("{:#?}", Cli::command());
-    command = clap_autocomplete::add_subcommand(Cli::command());
-
+    let command = clap_autocomplete::add_subcommand(Cli::command());
     let command_copy = command.clone();
     let matches = command.get_matches();
     if let Some(result) = clap_autocomplete::test_subcommand(&matches, command_copy) {

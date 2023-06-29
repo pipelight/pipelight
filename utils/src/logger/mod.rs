@@ -34,14 +34,14 @@ impl Logger {
         let level = self.level;
         let config = config::default_with_file(&self.directory, &level, uuid);
         self.handle.set_config(config);
-        return self.to_owned();
+        self.to_owned()
     }
 
     pub fn level(&mut self, level: &LevelFilter) -> Self {
         let config = config::default(level);
         self.handle.set_config(config);
         self.level = level.to_owned();
-        return self.to_owned();
+        self.to_owned()
     }
 
     /// Get handler to change logLevel at runtime

@@ -45,7 +45,7 @@ impl Trigger {
                 Trigger::TriggerBranch(res) => {
                     let glob: Pattern;
                     if trigger.branch().is_some() {
-                        glob = Pattern::new(&trigger.branch().unwrap()).into_diagnostic()?;
+                        // glob = Pattern::new(&trigger.branch().unwrap()).into_diagnostic()?;
                     }
                     // if trigger.action() == self.action() && glob.matches(&self.branch().unwrap()) {
                     //     return Ok(true);

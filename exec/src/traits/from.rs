@@ -17,16 +17,12 @@ impl From<&Output> for State {
     fn from(s: &Output) -> Self {
         let mut stdout = None;
         let mut stderr = None;
-        let stdout_str = String::from_utf8(s.clone().stdout)
-            .unwrap()
-            // .strip_suffix("\r\n")
-            // .unwrap()
-            .to_owned();
-        let stderr_str = String::from_utf8(s.clone().stderr)
-            .unwrap()
-            // .strip_suffix("\r\n")
-            // .unwrap()
-            .to_owned();
+        let stdout_str = String::from_utf8(s.clone().stdout).unwrap();
+        // .strip_suffix("\r\n")
+        // .unwrap()
+        let stderr_str = String::from_utf8(s.clone().stderr).unwrap();
+        // .strip_suffix("\r\n")
+        // .unwrap()
 
         if !stdout_str.is_empty() {
             stdout = Some(stdout_str);
@@ -40,28 +36,24 @@ impl From<&Output> for State {
             true => Status::Succeeded,
             false => Status::Failed,
         };
-        return State {
+        State {
             status: Some(status),
             stdin: None,
-            stdout: stdout,
-            stderr: stderr,
-        };
+            stdout,
+            stderr,
+        }
     }
 }
 impl From<&CaptureData> for State {
     fn from(s: &CaptureData) -> Self {
         let mut stdout = None;
         let mut stderr = None;
-        let stdout_str = String::from_utf8(s.stdout.clone())
-            .unwrap()
-            // .strip_suffix("\r\n")
-            // .unwrap()
-            .to_owned();
-        let stderr_str = String::from_utf8(s.stderr.clone())
-            .unwrap()
-            // .strip_suffix("\r\n")
-            // .unwrap()
-            .to_owned();
+        let stdout_str = String::from_utf8(s.stdout.clone()).unwrap();
+        // .strip_suffix("\r\n")
+        // .unwrap()
+        let stderr_str = String::from_utf8(s.stderr.clone()).unwrap();
+        // .strip_suffix("\r\n")
+        // .unwrap()
 
         if !stdout_str.is_empty() {
             stdout = Some(stdout_str);
@@ -75,12 +67,12 @@ impl From<&CaptureData> for State {
             true => Status::Succeeded,
             false => Status::Failed,
         };
-        return State {
+        State {
             status: Some(status),
             stdin: None,
-            stdout: stdout,
-            stderr: stderr,
-        };
+            stdout,
+            stderr,
+        }
     }
 }
 impl From<&String> for Status {

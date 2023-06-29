@@ -49,7 +49,6 @@ impl Process {
             stdin: self.state.stdin.clone(),
             stdout: Some(stdout),
             stderr: Some(stderr),
-            ..State::default()
         };
         self.state = output;
         Ok(())

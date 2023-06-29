@@ -25,8 +25,7 @@ pub fn pretty(pipelines: &mut Vec<Pipeline>) -> Result<()> {
 /// Print pipeline from json log file
 pub fn json(pipelines: &Vec<Pipeline>) -> Result<()> {
     for pipeline in pipelines {
-        let pipeline_json =
-            serde_json::to_string_pretty::<Pipeline>(&pipeline).into_diagnostic()?;
+        let pipeline_json = serde_json::to_string_pretty::<Pipeline>(pipeline).into_diagnostic()?;
         println!("{}", pipeline_json);
     }
     Ok(())
@@ -71,8 +70,7 @@ pub fn list() -> Result<()> {
         // Retrieve logs data if any
         if Logs::get().is_ok() {
             let last_log = Logs::get_by_name(&pipeline.name);
-            if last_log.is_ok() {
-                let last_log = last_log.unwrap();
+            if let Ok(last_log) = last_log {
                 status = String::from(&last_log.status.clone().unwrap());
                 let event = last_log.event.clone().unwrap();
                 if event.trigger.branch().is_some() {

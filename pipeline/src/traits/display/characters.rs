@@ -49,7 +49,6 @@ impl Characters {
             underline: '─',
         }
     }
-
     pub fn ascii() -> Self {
         Self {
             hbar: '-',

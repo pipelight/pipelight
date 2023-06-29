@@ -37,7 +37,7 @@ impl Environment {
     pub fn new() -> Environment {
         let mut os_env = Environment { ..Self::default() };
         os_env.get_shell();
-        return os_env;
+        os_env
     }
     /// Return user session shell when possible
     fn get_shell(&mut self) -> String {
@@ -45,25 +45,13 @@ impl Environment {
         match shell_result {
             Ok(res) => {
                 self.shell = res;
-                return self.shell.clone();
+                self.shell.clone()
             }
-            Err(_) => {
-                return self.shell.clone();
-            }
-        };
-    }
-}
-
-impl Default for State {
-    fn default() -> Self {
-        State {
-            status: None,
-            stdin: None,
-            stdout: None,
-            stderr: None,
+            Err(_) => self.shell.clone(),
         }
     }
 }
+
 impl State {
     pub fn new() -> State {
         Self::default()

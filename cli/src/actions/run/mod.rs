@@ -15,7 +15,7 @@ use miette::{Error, Result};
 pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
     // Ensure
     // Check if pipeline exists and give hints
-    let pipeline = Pipeline::get_by_name(&pipeline_name.clone())?;
+    let pipeline = Pipeline::get_by_name(&pipeline_name)?;
     if !pipeline.is_triggerable()? {
         let message = "Pipeline can not be triggered in this environment";
         let hint = "Either verify the triggers you set for this pipeline, \

@@ -20,25 +20,25 @@ impl Default for Logger {
 
         let exists = Path::new(&log_dir).exists();
         if exists {
-            return Logger {
+            Logger {
                 directory: log_dir,
-                handle: handle,
+                handle,
                 level: LevelFilter::Error,
-            };
+            }
         } else {
             let root = Teleport::new().origin;
             let path_string = format!("{}/{}", &root, log_dir);
             // Get default config
-            return Logger {
-                directory: path_string.clone(),
-                handle: handle,
+            Logger {
+                directory: path_string,
+                handle,
                 level: LevelFilter::Error,
-            };
+            }
         }
     }
 }
 impl Logger {
     pub fn new() -> Self {
-        return Self::default();
+        Self::default()
     }
 }

@@ -28,7 +28,7 @@ pub struct Environment {
     pub attached: bool,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Default)]
 pub struct State {
     pub status: Option<Status>,
     pub stdin: Option<String>,

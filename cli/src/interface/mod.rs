@@ -16,4 +16,4 @@ use super::Cli;
 // Global vars
 use once_cell::sync::Lazy;
 
-pub static mut CLI: Lazy<Cli> = Lazy::new(|| Cli::new());
+pub static mut CLI: Lazy<Cli> = Lazy::new(Cli::new);
