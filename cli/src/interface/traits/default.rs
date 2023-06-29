@@ -1,4 +1,4 @@
-use crate::cli::types::{Cli, Commands, DisplayCommands, LogsCommands};
+use crate::interface::types::{Cli, Commands, DisplayCommands, LogsCommands};
 use clap_verbosity_flag::Verbosity;
 
 impl Cli {
@@ -9,7 +9,7 @@ impl Cli {
 
 impl Default for Cli {
     fn default() -> Self {
-        let cli = Cli {
+        Cli {
             commands: Commands::Ls(DisplayCommands {
                 json: false,
                 name: None,
@@ -18,7 +18,6 @@ impl Default for Cli {
             config: None,
             verbose: Verbosity::new(0, 0),
             attach: true,
-        };
-        return cli;
+        }
     }
 }

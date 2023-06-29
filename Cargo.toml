@@ -5,6 +5,6 @@ members=[
   "exec",
   "pipeline",
   "cast",
-  "shared",
-  "pipelight",
+  "cli",
+  "pipelight"
 ]

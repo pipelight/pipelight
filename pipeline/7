@@ -17,6 +17,7 @@ use rustix::process::{kill_process_group, test_kill_process, Pid, Signal};
 
 // External imports
 use exec::{Statuable, Status};
+use utils;
 use utils::git::{Flag, Git, Hook};
 use utils::logger::logger;
 
@@ -56,7 +57,10 @@ impl Pipeline {
         {
             unsafe {
                 let pid = Pid::from_raw(self.event.clone().unwrap().pid.unwrap());
-                test_kill_process(pid.unwrap()).is_err()
+                match test_kill_process(pid.unwrap()) {
+                    Ok(_) => false,
+                    Err(_) => true,
+                }
             }
         } else {
             false
@@ -66,16 +70,16 @@ impl Pipeline {
     /// (improvement: need to add process name comparision to harden func)
     pub fn is_running(&mut self) -> bool {
         if Logs::get().is_err() {
-            false
+            return false;
         } else {
             let res = Logs::get_many_by_name(&self.name);
             match res {
                 Ok(pipelines) => {
-                    let mut p = pipelines;
+                    let mut p = pipelines.clone();
                     p.reverse();
-                    let pipeline = p.first();
-                    if let Some(pipeline) = pipeline {
-                        let event = &pipeline.event;
+                    let pipeline = p.iter().next();
+                    if pipeline.is_some() {
+                        let event = &pipeline.unwrap().event;
                         if event.is_some() {
                             let pid = &event.clone().unwrap().pid;
                             unsafe {
@@ -138,10 +142,13 @@ impl Trigger {
             tag = Git::new().get_tag()?;
         }
         if tag.is_some() {
-            res = Trigger::TriggerTag(TriggerTag { action, tag });
+            res = Trigger::TriggerTag(TriggerTag { action, tag: tag });
             Ok(res)
         } else if branch.is_some() {
-            res = Trigger::TriggerBranch(TriggerBranch { action, branch });
+            res = Trigger::TriggerBranch(TriggerBranch {
+                action,
+                branch: branch,
+            });
             Ok(res)
         } else {
             res = Trigger::TriggerBranch(TriggerBranch {

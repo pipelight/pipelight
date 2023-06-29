@@ -237,6 +237,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "clap_autocomplete"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a8bb767f18822eb56424e07de4acfe134aa8739e7736ff30a4f4db08330e08b7"
+dependencies = [
+ "clap",
+ "clap_complete",
+ "query-shell",
+ "xdg",
+]
+
+[[package]]
 name = "clap_builder"
 version = "4.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -246,8 +258,18 @@ dependencies = [
  "anstyle",
  "bitflags",
  "clap_lex",
+ "once_cell",
  "strsim",
  "terminal_size 0.2.6",
+]
+
+[[package]]
+name = "clap_complete"
+version = "4.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f6b5c519bab3ea61843a7923d074b04245624bb84a64a8c150f5deb014e388b"
+dependencies = [
+ "clap",
 ]
 
 [[package]]
@@ -267,6 +289,34 @@ name = "clap_lex"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2da6da31387c7e4ef160ffab6d5e7f00c42626fe39aea70a7b0f1773f7dd6c1b"
+
+[[package]]
+name = "cli"
+version = "0.2.1"
+dependencies = [
+ "chrono",
+ "clap",
+ "clap-verbosity-flag",
+ "clap_autocomplete",
+ "clap_complete",
+ "dialoguer",
+ "exec",
+ "fork",
+ "git2",
+ "log",
+ "miette",
+ "nix",
+ "once_cell",
+ "pipeline",
+ "project-root",
+ "rustix",
+ "serde",
+ "serde_json",
+ "sysinfo 0.28.4",
+ "thiserror",
+ "utils",
+ "uuid",
+]
 
 [[package]]
 name = "codespan-reporting"
@@ -598,6 +648,15 @@ name = "hermit-abi"
 version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fed44880c466736ef9a5c5b5facefb5ed0785676d0c02d612db14e54f0d84286"
+
+[[package]]
+name = "home"
+version = "0.5.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5444c27eef6923071f7ebcc33e3444508466a76f7a2b93da00ed6e19f30c1ddb"
+dependencies = [
+ "windows-sys 0.48.0",
+]
 
 [[package]]
 name = "humantime"
@@ -1058,11 +1117,11 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 name = "pipelight"
 version = "0.3.0"
 dependencies = [
+ "cli",
  "exec",
  "log",
  "miette",
  "pipeline",
- "shared",
  "utils",
 ]
 
@@ -1121,6 +1180,16 @@ name = "project-root"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8bccbff07d5ed689c4087d20d7307a52ab6141edeedf487c3876a55b86cf63df"
+
+[[package]]
+name = "query-shell"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "300d1c86e9638eceb24568649d5ad0f31b949ff11ff1ffbacbe3e382a4dfee25"
+dependencies = [
+ "sysinfo 0.27.8",
+ "thiserror",
+]
 
 [[package]]
 name = "quote"
@@ -1347,32 +1416,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "shared"
-version = "0.2.0"
-dependencies = [
- "chrono",
- "clap",
- "clap-verbosity-flag",
- "dialoguer",
- "exec",
- "fork",
- "git2",
- "log",
- "miette",
- "nix",
- "once_cell",
- "pipeline",
- "project-root",
- "rustix",
- "serde",
- "serde_json",
- "sysinfo 0.28.4",
- "thiserror",
- "utils",
- "uuid",
-]
-
-[[package]]
 name = "shell-words"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1501,6 +1544,20 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "sysinfo"
+version = "0.27.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a902e9050fca0a5d6877550b769abd2bd1ce8c04634b941dbe2809735e1a1e33"
+dependencies = [
+ "cfg-if",
+ "core-foundation-sys",
+ "libc",
+ "ntapi",
+ "once_cell",
+ "winapi",
 ]
 
 [[package]]
@@ -2105,6 +2162,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ae8970b36c66498d8ff1d66685dc86b91b29db0c7739899012f63a63814b4b28"
 dependencies = [
  "memchr",
+]
+
+[[package]]
+name = "xdg"
+version = "2.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "688597db5a750e9cad4511cb94729a078e274308099a0382b5b8203bbc767fee"
+dependencies = [
+ "home",
 ]
 
 [[package]]

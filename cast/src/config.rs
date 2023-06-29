@@ -1,27 +1,23 @@
 use super::Config;
 
-// Logger
-use log::{debug, error, trace, warn};
-
 // Exec
 use exec::Process;
 
 // Standard lib
-use std::env::current_dir;
+// use std::env::current_dir;
 use std::path::Path;
 use std::process::exit;
 
 use super::typescript::main_script;
-use std::fmt;
 use utils::teleport::{FileType, Teleport};
 
 // Error Handling
 use crate::error::{JsonError, TomlError, YamlError};
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use miette::{Error, IntoDiagnostic, NamedSource, Result, SourceSpan};
 
 impl Config {
     pub fn get(file: Option<String>, args: Option<Vec<String>>) -> Result<Config> {
-        let pwd: String = current_dir().unwrap().display().to_string();
+        // let pwd: String = current_dir().unwrap().display().to_string();
 
         let default_file_path: String = Teleport::new().config.file_path.unwrap();
 
@@ -44,12 +40,10 @@ impl Config {
         }
 
         match res {
-            Ok(res) => {
-                return Ok(res);
-            }
+            Ok(res) => Ok(res),
             Err(e) => {
                 let message = format!("Error in config file:\n{}", e);
-                return Err(Error::msg(message));
+                Err(Error::msg(message))
                 // println!("{}", message);
                 // exit(1);
             }
@@ -68,14 +62,13 @@ impl Config {
 
         let file_type = FileType::from(extension);
         // println!("{:?}", file_type);
-        let config = match file_type {
+        match file_type {
             FileType::TypeScript | FileType::JavaScript => {
                 Config::load_from_file_ts(file_path, args)
             }
             FileType::Toml | FileType::Tml => Config::load_from_file_tml(file_path),
             FileType::Yaml | FileType::Yml => Config::load_from_file_yml(file_path),
-        };
-        Ok(config?)
+        }
     }
 
     /// Return a Config struct from a provided typescript file path
@@ -86,19 +79,16 @@ impl Config {
 
         let executable = "deno eval";
         let script = main_script(file_path);
-        let command;
-        if args.is_some() {
-            command = format!("{} {} -- {}", executable, script, args.unwrap().join(" "));
+        let command = if args.is_some() {
+            format!("{} {} -- {}", executable, script, args.unwrap().join(" "))
         } else {
-            command = format!("{} {}", executable, script);
-        }
+            format!("{} {}", executable, script)
+        };
         let p = Process::new(&command).simple()?;
-        let json = p.state.stdout.clone().unwrap();
+        let json = p.state.stdout.unwrap();
         let res = serde_json::from_str::<Config>(&json);
         match res {
-            Ok(res) => {
-                return Ok(res);
-            }
+            Ok(res) => Ok(res),
             Err(e) => {
                 println!("{:?}", e);
                 // println!("{}", json);
@@ -109,7 +99,7 @@ impl Config {
                 };
                 let me = Error::from(json_err);
                 // println!("{:?}", me);
-                return Err(me);
+                Err(me)
                 // exit(1);
             }
         }
@@ -120,12 +110,10 @@ impl Config {
         let command = format!("{} {}", executable, file_path);
         let p = Process::new(&command).simple()?;
 
-        let tml = p.state.stdout.clone().unwrap();
+        let tml = p.state.stdout.unwrap();
         let res = toml::from_str::<Config>(&tml);
         match res {
-            Ok(res) => {
-                return Ok(res);
-            }
+            Ok(res) => Ok(res),
             Err(e) => {
                 println!("{:?}", e);
                 // println!("{}", json);
@@ -146,12 +134,10 @@ impl Config {
         let command = format!("{} {}", executable, file_path);
         let p = Process::new(&command).simple()?;
 
-        let yml = p.state.stdout.clone().unwrap();
+        let yml = p.state.stdout.unwrap();
         let res = serde_yaml::from_str::<Config>(&yml);
         match res {
-            Ok(res) => {
-                return Ok(res);
-            }
+            Ok(res) => Ok(res),
             Err(e) => {
                 println!("{:?}", e);
                 let span: SourceSpan =
@@ -177,20 +163,11 @@ impl Config {
             file
         );
         let p = Process::new(&command).simple()?;
-        if p.state.stdout.is_none() {
-            if p.state.stderr.is_none() {
-                Ok(())
-            } else {
-                let message = format!("{}", p.state.stderr.unwrap());
-                Err(Error::msg(message))
-            }
+        if p.state.stderr.is_none() {
+            Ok(())
         } else {
-            if p.state.stderr.is_none() {
-                Ok(())
-            } else {
-                let message = format!("{}", p.state.stderr.unwrap());
-                Err(Error::msg(message))
-            }
+            let message = p.state.stderr.unwrap();
+            Err(Error::msg(message))
         }
     }
     /// Run the script to detect runtime errors
@@ -213,20 +190,11 @@ impl Config {
 
         let p = Process::new(&command).simple()?;
 
-        if p.state.stdout.is_none() {
-            if p.state.stderr.is_none() {
-                Ok(())
-            } else {
-                let message = format!("{}", p.state.stderr.unwrap());
-                Err(Error::msg(message))
-            }
+        if p.state.stderr.is_none() {
+            Ok(())
         } else {
-            if p.state.stderr.is_none() {
-                Ok(())
-            } else {
-                let message = format!("{}", p.state.stderr.unwrap());
-                Err(Error::msg(message))
-            }
+            let message = p.state.stderr.unwrap();
+            Err(Error::msg(message))
         }
     }
 }

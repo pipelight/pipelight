@@ -87,27 +87,27 @@ impl From<&String> for Status {
     fn from(status: &String) -> Status {
         let cased: &str = &status.to_case(Case::Snake);
         match cased {
-            "started" => return Status::Started,
-            "succeeded" => return Status::Succeeded,
-            "failed" => return Status::Failed,
-            "running" => return Status::Running,
-            "aborted" => return Status::Aborted,
+            "started" => Status::Started,
+            "succeeded" => Status::Succeeded,
+            "failed" => Status::Failed,
+            "running" => Status::Running,
+            "aborted" => Status::Aborted,
             _ => {
                 let message = format!("The pipeline status {} is not known", cased);
                 error!("{}", message);
                 exit(1);
             }
-        };
+        }
     }
 }
 impl From<&Status> for String {
     fn from(action: &Status) -> String {
         match action {
-            Status::Started => return "started".to_owned(),
-            Status::Succeeded => return "succeeded".to_owned(),
-            Status::Failed => return "failed".to_owned(),
-            Status::Running => return "running".to_owned(),
-            Status::Aborted => return "aborted".to_owned(),
-        };
+            Status::Started => "started".to_owned(),
+            Status::Succeeded => "succeeded".to_owned(),
+            Status::Failed => "failed".to_owned(),
+            Status::Running => "running".to_owned(),
+            Status::Aborted => "aborted".to_owned(),
+        }
     }
 }

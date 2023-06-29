@@ -1,20 +1,7 @@
-//modules
-pub mod print;
-pub mod prompt;
-pub mod traits;
-pub mod types;
-
-use pipeline::{Config, Getters, Logs, Pipeline};
-
-// Clap - command line lib
-use clap::Parser;
-use types::{Cli, Commands};
-
-// Cli core functions
-use crate::run;
-use crate::stop;
-// use crate::trigger;
-// use crate::watch;
+use super::print;
+use super::prompt;
+use super::types::LogsCommands;
+use super::CLI;
 
 // Error Handling
 use miette::Result;
@@ -23,15 +10,25 @@ use miette::Result;
 use log::info;
 use utils::logger::logger;
 
-// Global vars
-use once_cell::sync::Lazy;
+// Pipeline types
+use pipeline::{Config, Getters, Logs, Pipeline};
 
-pub static mut CLI: Lazy<Cli> = Lazy::new(|| Cli::new());
+// Clap - command line lib
+use super::types::{Cli, Commands};
+use clap::Parser;
+
+// Cli core functions
+use crate::actions::run;
+use crate::actions::stop;
+use crate::actions::trigger;
+// use crate::watch;
 
 /// Launch the cli
 pub fn get_args() -> Result<()> {
-    // Parse args from command line
-    // and hydrate global var
+    // Autocompletion
+    // traits::autocomplete::make_completion()?;
+
+    // Parse args from command line and hydrate globals
     let args = Cli::parse();
     unsafe { *CLI = args.clone() };
 
@@ -49,7 +46,7 @@ pub fn get_args() -> Result<()> {
                 let pipeline = Pipeline::get_by_name(&list.name.unwrap())?;
                 print::inspect(&pipeline, list.json)?;
             } else {
-                print::list();
+                print::list()?;
             }
         }
         Commands::Inspect(list) => {
@@ -67,7 +64,7 @@ pub fn get_args() -> Result<()> {
         }
         Commands::Trigger(trigger) => {
             info!("Triggering pipelines");
-            // trigger::trigger_bin(trigger.flag)?;
+            trigger::trigger_bin(args.attach, trigger.flag)?;
         }
         Commands::Run(pipeline) => {
             if pipeline.name.is_some() {
@@ -101,7 +98,7 @@ pub fn get_args() -> Result<()> {
                 }
             }
             Some(logs_cmd) => match logs_cmd {
-                types::LogsCommands::Rm => {
+                LogsCommands::Rm => {
                     logger.lock().unwrap().clear()?;
                 }
             },

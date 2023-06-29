@@ -1,7 +1,9 @@
 // import tests
 mod test;
 
-use crate::cli::types::{Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, Trigger};
+use crate::interface::types::{
+    Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, Trigger,
+};
 use clap_verbosity_flag::Verbosity;
 use log::LevelFilter;
 use std::convert::From;
@@ -103,33 +105,20 @@ fn from_verbosity_to_string(e: Verbosity) -> String {
         string += "-";
         string += &"v".repeat(n);
     }
-    return string;
+    string
 }
 
 impl fmt::Display for Commands {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let string;
-        match self {
-            Commands::Run(pipeline) => {
-                string = format!("run{}", pipeline);
-            }
-            Commands::Stop(pipeline) => {
-                string = format!("stop{}", pipeline);
-            }
-            Commands::Trigger(trigger) => {
-                string = format!("trigger{}", trigger);
-            }
-            Commands::Logs(logs) => {
-                string = format!("logs{}", logs);
-            }
-            Commands::Inspect(_) => string = "inspect".to_owned(),
-            Commands::Ls(list) => {
-                string = format!("ls{}", list);
-            }
-            Commands::Watch => {
-                string = format!("watch");
-            }
-        }
+        let string = match self {
+            Commands::Run(pipeline) => format!("run{}", pipeline),
+            Commands::Stop(pipeline) => format!("stop{}", pipeline),
+            Commands::Trigger(trigger) => format!("trigger{}", trigger),
+            Commands::Logs(logs) => format!("logs{}", logs),
+            Commands::Inspect(pipeline) => format!("inspect{}", pipeline),
+            Commands::Ls(list) => format!("ls{}", list),
+            Commands::Watch => "watch".to_owned(),
+        };
         write!(f, "{}", string)
     }
 }

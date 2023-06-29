@@ -22,40 +22,27 @@ use utils::{
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 use thiserror::Error;
 
-// CLI
-use super::cli::types::{Cli, Commands};
-use clap::{Command, Parser};
-
-// Globals
-use super::cli::CLI;
-
-/// To be called from the cli.
-/// Either spawn detached new processes or spawn attached threads
-/// to run the triggerable pipelines
-pub fn trigger_bin(attach: bool, flag: Option<String>) -> Result<()> {
+pub fn watch_bin(attach: bool) -> Result<()> {
     trace!("Create detached subprocess");
+    let bin = "pipelight";
+
+    let args;
+    unsafe {
+        args = (*CLI).clone();
+    }
+
+    #[cfg(debug_assertions)]
+    let command = format!("cargo run --bin {} {} --attach", &bin, &args);
+
+    #[cfg(not(debug_assertions))]
+    let command = format!("{} {} --attach", &bin, &args);
 
     match attach {
         true => {
-            // Lauch in attached thread
-            trigger_in_thread(attach, flag)?;
+            // Lauch attach thread
+            watch_in_thread(attach)?;
         }
         false => {
-            // Run a detached subprocess
-            trace!("Create detached subprocess");
-            let bin = "pipelight";
-            let mut args;
-            unsafe {
-                args = (*CLI).clone();
-            }
-            args.attach = true;
-
-            #[cfg(debug_assertions)]
-            let command = format!("cargo run --bin {} {}", &bin, &args);
-
-            #[cfg(not(debug_assertions))]
-            let command = format!("{} {}", &bin, &args);
-
             // Lauch detached process
             // trace!("Create detached subprocess");
             Process::new(&command).detached()?;
@@ -65,14 +52,9 @@ pub fn trigger_bin(attach: bool, flag: Option<String>) -> Result<()> {
 }
 
 /// Filter pipeline by trigger and run
-pub fn trigger(attach: bool, flag: Option<String>) -> Result<()> {
+pub fn watch(attach: bool) -> Result<()> {
     let config = Config::get()?;
-    let mut env = Trigger::env()?;
-
-    if flag.is_some() {
-        env.set_action(flag);
-    }
-
+    let env = Trigger::env()?;
     if config.pipelines.is_none() {
         let message = "No pipeline found";
         debug!("{}", message);
@@ -96,8 +78,8 @@ pub fn trigger(attach: bool, flag: Option<String>) -> Result<()> {
 }
 
 /// Launch attached thread
-pub fn trigger_in_thread(attach: bool, flag: Option<String>) -> Result<()> {
-    let thread = thread::spawn(move || trigger(attach, flag).unwrap());
+pub fn watch_in_thread(attach: bool) -> Result<()> {
+    let thread = thread::spawn(move || watch(attach).unwrap());
     thread.join().unwrap();
     Ok(())
 }

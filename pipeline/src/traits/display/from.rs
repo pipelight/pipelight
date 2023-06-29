@@ -18,7 +18,7 @@ impl From<&Event> for String {
         let action = format!(
             "{}{}\n",
             header.white(),
-            String::from(&e.trigger.action().clone().unwrap()).white()
+            String::from(&e.trigger.action().unwrap()).white()
         );
         string.push_str(&action);
         if e.trigger.tag().is_some() {
@@ -26,7 +26,7 @@ impl From<&Event> for String {
             let tag = format!(
                 "{}{}\n",
                 header.white(),
-                String::from(&e.trigger.tag().clone().unwrap()).white()
+                String::from(&e.trigger.tag().unwrap()).white()
             );
             string.push_str(&tag);
         } else if e.trigger.branch().is_some() {
@@ -34,11 +34,11 @@ impl From<&Event> for String {
             let branch = format!(
                 "{}{}\n",
                 header.white(),
-                String::from(&e.trigger.branch().clone().unwrap()).white()
+                String::from(&e.trigger.branch().unwrap()).white()
             );
             string.push_str(&branch);
         }
-        return string;
+        string
     }
 }
 
@@ -54,18 +54,18 @@ impl From<&Pipeline> for Node {
             let event = String::from(&e.event.clone().unwrap());
             head.push_str(&format!("{}", &event.white()))
         }
-        head = format!("{}", head);
+        head = head.to_owned();
 
         let name = format!("pipeline: {}", e.name.clone());
         head.push_str(&name);
-        let mut children: Vec<Node> = e.steps.iter().map(|e| Node::from(e)).collect();
+        let mut children: Vec<Node> = e.steps.iter().map(Node::from).collect();
 
         // Fallback
         if e.fallback.is_some() {
             if e.fallback.clone().unwrap().on_failure.is_some() {
                 let on_failure = e.fallback.clone().unwrap().on_failure.unwrap();
 
-                let on_failure_children = on_failure.iter().map(|e| Node::from(e)).collect();
+                let on_failure_children = on_failure.iter().map(Node::from).collect();
                 let node = Node {
                     children: Some(on_failure_children),
                     value: Some("on_failure".to_owned()),
@@ -75,7 +75,7 @@ impl From<&Pipeline> for Node {
             }
             if e.fallback.clone().unwrap().on_success.is_some() {
                 let on_success = e.fallback.clone().unwrap().on_success.unwrap();
-                let on_success_children = on_success.iter().map(|e| Node::from(e)).collect();
+                let on_success_children = on_success.iter().map(Node::from).collect();
                 let node = Node {
                     children: Some(on_success_children),
                     value: Some("on_success".to_owned()),
@@ -85,7 +85,7 @@ impl From<&Pipeline> for Node {
             }
             if e.fallback.clone().unwrap().on_abortion.is_some() {
                 let on_abortion = e.fallback.clone().unwrap().on_abortion.unwrap();
-                let on_abortion_children = on_abortion.iter().map(|e| Node::from(e)).collect();
+                let on_abortion_children = on_abortion.iter().map(Node::from).collect();
                 let node = Node {
                     children: Some(on_abortion_children),
                     value: Some("on_abortion".to_owned()),
@@ -94,15 +94,13 @@ impl From<&Pipeline> for Node {
                 children.push(node);
             }
         }
-
-        let node = Node {
+        Node {
             value: Some(head),
             status: e.status.clone(),
             duration: e.duration,
             children: Some(children),
             ..Node::default()
-        };
-        return node;
+        }
     }
 }
 impl From<&StepOrParallel> for Node {
@@ -115,14 +113,14 @@ impl From<&StepOrParallel> for Node {
 }
 impl From<&Parallel> for Node {
     fn from(e: &Parallel) -> Self {
-        let mut children: Vec<Node> = e.steps.iter().map(|el| Node::from(el)).collect();
+        let mut children: Vec<Node> = e.steps.iter().map(Node::from).collect();
 
         // Fallback
         if e.fallback.is_some() {
             if e.fallback.clone().unwrap().on_failure.is_some() {
                 let on_failure = e.fallback.clone().unwrap().on_failure.unwrap();
 
-                let on_failure_children = on_failure.iter().map(|e| Node::from(e)).collect();
+                let on_failure_children = on_failure.iter().map(Node::from).collect();
                 let node = Node {
                     children: Some(on_failure_children),
                     value: Some("on_failure".to_owned()),
@@ -132,7 +130,7 @@ impl From<&Parallel> for Node {
             }
             if e.fallback.clone().unwrap().on_success.is_some() {
                 let on_success = e.fallback.clone().unwrap().on_success.unwrap();
-                let on_success_children = on_success.iter().map(|e| Node::from(e)).collect();
+                let on_success_children = on_success.iter().map(Node::from).collect();
                 let node = Node {
                     children: Some(on_success_children),
                     value: Some("on_success".to_owned()),
@@ -142,7 +140,7 @@ impl From<&Parallel> for Node {
             }
             if e.fallback.clone().unwrap().on_abortion.is_some() {
                 let on_abortion = e.fallback.clone().unwrap().on_abortion.unwrap();
-                let on_abortion_children = on_abortion.iter().map(|e| Node::from(e)).collect();
+                let on_abortion_children = on_abortion.iter().map(Node::from).collect();
                 let node = Node {
                     children: Some(on_abortion_children),
                     value: Some("on_abortion".to_owned()),
@@ -151,29 +149,26 @@ impl From<&Parallel> for Node {
                 children.push(node);
             }
         }
-
-        let node = Node {
+        Node {
             value: Some("parallel".to_owned()),
             status: e.status.clone(),
             duration: e.duration,
             children: Some(children),
             level: LevelFilter::Warn,
-            ..Node::default()
-        };
-        return node;
+        }
     }
 }
 impl From<&Step> for Node {
     fn from(e: &Step) -> Self {
         let head = format!("step: {}", e.name.clone());
-        let mut children: Vec<Node> = e.commands.iter().map(|el| Node::from(el)).collect();
+        let mut children: Vec<Node> = e.commands.iter().map(Node::from).collect();
 
         // Fallback
         if e.fallback.is_some() {
             if e.fallback.clone().unwrap().on_failure.is_some() {
                 let on_failure = e.fallback.clone().unwrap().on_failure.unwrap();
 
-                let on_failure_children = on_failure.iter().map(|e| Node::from(e)).collect();
+                let on_failure_children = on_failure.iter().map(Node::from).collect();
                 let node = Node {
                     children: Some(on_failure_children),
                     value: Some("on_failure".to_owned()),
@@ -183,7 +178,7 @@ impl From<&Step> for Node {
             }
             if e.fallback.clone().unwrap().on_success.is_some() {
                 let on_success = e.fallback.clone().unwrap().on_success.unwrap();
-                let on_success_children = on_success.iter().map(|e| Node::from(e)).collect();
+                let on_success_children = on_success.iter().map(Node::from).collect();
                 let node = Node {
                     children: Some(on_success_children),
                     value: Some("on_success".to_owned()),
@@ -193,7 +188,7 @@ impl From<&Step> for Node {
             }
             if e.fallback.clone().unwrap().on_abortion.is_some() {
                 let on_abortion = e.fallback.clone().unwrap().on_abortion.unwrap();
-                let on_abortion_children = on_abortion.iter().map(|e| Node::from(e)).collect();
+                let on_abortion_children = on_abortion.iter().map(Node::from).collect();
                 let node = Node {
                     children: Some(on_abortion_children),
                     value: Some("on_abortion".to_owned()),
@@ -202,15 +197,13 @@ impl From<&Step> for Node {
                 children.push(node);
             }
         }
-        let node = Node {
+        Node {
             value: Some(head),
             status: e.status.clone(),
             duration: e.duration,
             children: Some(children),
             level: LevelFilter::Warn,
-            ..Node::default()
-        };
-        return node;
+        }
     }
 }
 
@@ -263,6 +256,6 @@ impl From<&Command> for Node {
         }
         node.value = e.process.state.stdin.clone();
         node.status = e.get_status();
-        return node;
+        node
     }
 }

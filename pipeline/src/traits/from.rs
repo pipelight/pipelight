@@ -2,7 +2,6 @@ use crate::{
     Command, Config, Fallback, Mode, Parallel, Pipeline, Step, StepOrParallel, Trigger,
     TriggerBranch, TriggerTag,
 };
-use cast;
 use exec::Process;
 
 use convert_case::{Case, Casing};
@@ -25,11 +24,11 @@ impl From<&cast::Config> for Config {
                 .pipelines
                 .unwrap()
                 .iter()
-                .map(|e| Pipeline::from(e))
+                .map(Pipeline::from)
                 .collect();
             config.pipelines = Some(pipelines);
         }
-        return config;
+        config
     }
 }
 
@@ -39,7 +38,7 @@ impl From<&cast::Pipeline> for Pipeline {
         let steps = &e
             .steps
             .iter()
-            .map(|e| StepOrParallel::from(e))
+            .map(StepOrParallel::from)
             .collect::<Vec<StepOrParallel>>();
 
         // Convert fallback
@@ -48,12 +47,11 @@ impl From<&cast::Pipeline> for Pipeline {
             fallback = Some(Fallback::from(e.fallback.as_ref().unwrap()));
         }
         // Flatten triggers
-        let triggers: Option<Vec<Trigger>>;
-        if e.triggers.is_none() {
-            triggers = None
+        let triggers: Option<Vec<Trigger>> = if e.triggers.is_none() {
+            None
         } else {
             Hook::new().unwrap();
-            triggers = Some(
+            Some(
                 e.clone()
                     .triggers
                     .unwrap()
@@ -64,18 +62,17 @@ impl From<&cast::Pipeline> for Pipeline {
                     .flatten()
                     .collect::<Vec<Trigger>>(),
             )
-        }
-        let p = Pipeline {
+        };
+        Pipeline {
             uuid: Uuid::new_v4(),
             name: e.name.to_owned(),
             duration: None,
             event: None,
             status: None,
-            triggers: triggers,
+            triggers,
             steps: steps.to_owned(),
-            fallback: fallback,
-        };
-        return p;
+            fallback,
+        }
     }
 }
 
@@ -93,7 +90,7 @@ impl From<&cast::Step> for Step {
         let commands = e
             .commands
             .iter()
-            .map(|e| Command::from(e))
+            .map(Command::from)
             .collect::<Vec<Command>>();
 
         // Convert fallback
@@ -111,10 +108,10 @@ impl From<&cast::Step> for Step {
         let default_step = Step::new();
         Step {
             name: e.clone().name,
-            mode: mode,
-            commands: commands,
+            mode,
+            commands,
             status: None,
-            fallback: fallback,
+            fallback,
             ..Step::default()
         }
     }
@@ -134,8 +131,8 @@ impl From<&cast::Parallel> for Parallel {
         }
 
         let mut res = Parallel {
-            mode: mode,
-            fallback: fallback,
+            mode,
+            fallback,
             steps: vec![],
             ..Parallel::new()
         };
@@ -143,7 +140,7 @@ impl From<&cast::Parallel> for Parallel {
         for step in &e.parallel {
             res.steps.push(Step::from(step));
         }
-        return res;
+        res
     }
 }
 
@@ -165,7 +162,7 @@ impl From<&cast::Fallback> for Fallback {
             on_started = Some(
                 binding
                     .iter()
-                    .map(|e| StepOrParallel::from(e))
+                    .map(StepOrParallel::from)
                     .collect::<Vec<StepOrParallel>>(),
             );
         }
@@ -176,7 +173,7 @@ impl From<&cast::Fallback> for Fallback {
             on_failure = Some(
                 binding
                     .iter()
-                    .map(|e| StepOrParallel::from(e))
+                    .map(StepOrParallel::from)
                     .collect::<Vec<StepOrParallel>>(),
             );
         }
@@ -187,7 +184,7 @@ impl From<&cast::Fallback> for Fallback {
             on_success = Some(
                 binding
                     .iter()
-                    .map(|e| StepOrParallel::from(e))
+                    .map(StepOrParallel::from)
                     .collect::<Vec<StepOrParallel>>(),
             );
         }
@@ -198,16 +195,16 @@ impl From<&cast::Fallback> for Fallback {
             on_abortion = Some(
                 binding
                     .iter()
-                    .map(|e| StepOrParallel::from(e))
+                    .map(StepOrParallel::from)
                     .collect::<Vec<StepOrParallel>>(),
             );
         }
-        return Fallback {
-            on_started: on_started,
-            on_failure: on_failure,
-            on_success: on_success,
-            on_abortion: on_abortion,
-        };
+        Fallback {
+            on_started,
+            on_failure,
+            on_success,
+            on_abortion,
+        }
     }
 }
 impl Trigger {
@@ -271,7 +268,7 @@ impl Trigger {
                 }
             }
         }
-        return tuplelist;
+        tuplelist
     }
 }
 impl From<&String> for Mode {
@@ -279,23 +276,23 @@ impl From<&String> for Mode {
         let cased: &str = &mode.to_case(Case::Snake);
         // let cased: &str = &mode.to_case(Case::Kebab);
         match cased {
-            "stop" => return Mode::StopOnFailure,
-            "jump_next" => return Mode::JumpNextOnFailure,
-            "continue" => return Mode::ContinueOnFailure,
+            "stop" => Mode::StopOnFailure,
+            "jump_next" => Mode::JumpNextOnFailure,
+            "continue" => Mode::ContinueOnFailure,
             _ => {
                 let message = format!("The step execution mode {} is not known", cased);
                 error!("{}", message);
                 exit(1);
             }
-        };
+        }
     }
 }
 impl From<&Mode> for String {
     fn from(mode: &Mode) -> String {
         match mode {
-            StopOnFailure => return "stop".to_owned(),
-            JumpNextOnFailure => return "jump_next".to_owned(),
-            ContinueOnFailure => return "continue".to_owned(),
-        };
+            Mode::StopOnFailure => "stop".to_owned(),
+            Mode::JumpNextOnFailure => "jump_next".to_owned(),
+            Mode::ContinueOnFailure => "continue".to_owned(),
+        }
     }
 }

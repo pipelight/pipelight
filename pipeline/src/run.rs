@@ -33,7 +33,7 @@ use std::time::{Duration, Instant};
 use glob::Pattern;
 
 // Global var
-static mut PIPELINE: Lazy<Pipeline> = Lazy::new(|| Pipeline::new());
+static mut PIPELINE: Lazy<Pipeline> = Lazy::new(Pipeline::new);
 
 impl Trigger {
     pub fn is_match(&self, list: Vec<Trigger>) -> Result<bool> {
@@ -53,10 +53,12 @@ impl Trigger {
                 }
                 Trigger::TriggerTag(res) => {
                     let glob = Pattern::new(&trigger.tag().unwrap()).into_diagnostic()?;
-                    if trigger.tag().is_some() && self.tag().is_some() {
-                        if trigger.action() == self.action() && glob.matches(&self.tag().unwrap()) {
-                            return Ok(true);
-                        }
+                    if trigger.tag().is_some()
+                        && self.tag().is_some()
+                        && trigger.action() == self.action()
+                        && glob.matches(&self.tag().unwrap())
+                    {
+                        return Ok(true);
                     }
                 }
             }
@@ -86,7 +88,7 @@ impl Pipeline {
         let mut ptr: *mut Pipeline;
         unsafe {
             ptr = &mut *PIPELINE;
-            *ptr = self.clone().to_owned();
+            *ptr = self.to_owned();
         }
         // Guards
         unsafe {
@@ -149,10 +151,10 @@ impl Pipeline {
                     if last_step.get_status() == Some(Status::Failed) {
                         (*ptr).set_status(Some(Status::Succeeded))
                     } else {
-                        (*ptr).set_status(Some(last_step.get_status().clone().unwrap()))
+                        (*ptr).set_status(last_step.get_status())
                     }
                 } else {
-                    (*ptr).set_status(Some(last_step.get_status().clone().unwrap()))
+                    (*ptr).set_status(last_step.get_status())
                 }
             } else {
                 (*ptr).set_status(Some(Status::Failed))
@@ -208,7 +210,6 @@ impl Parallel {
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
         let start = Instant::now();
-        let duration;
 
         self.set_status(Some(Status::Running));
 
@@ -227,15 +228,13 @@ impl Parallel {
 
         if steps_res.contains(&Status::Failed) {
             self.set_status(Some(Status::Failed));
+        } else if steps_res.contains(&Status::Aborted) {
+            self.set_status(Some(Status::Aborted));
         } else {
-            if steps_res.contains(&Status::Aborted) {
-                self.set_status(Some(Status::Aborted));
-            } else {
-                self.set_status(Some(Status::Succeeded));
-            }
+            self.set_status(Some(Status::Succeeded));
         }
         // Duration
-        duration = start.elapsed();
+        let duration = start.elapsed();
         self.duration = Some(duration);
 
         unsafe {
@@ -250,13 +249,12 @@ unsafe impl Sync for PtrWrapper {}
 unsafe impl Send for PtrWrapper {}
 impl Step {
     fn unsafe_run(&mut self, ptr: PtrWrapper) {
-        let ptr = ptr.0.clone();
+        let ptr = ptr.0;
         self.run(ptr);
     }
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
         let start = Instant::now();
-        let duration;
 
         self.set_status(Some(Status::Running));
 
@@ -280,7 +278,7 @@ impl Step {
         }
 
         // Duration
-        duration = start.elapsed();
+        let duration = start.elapsed();
         self.duration = Some(duration);
 
         unsafe {
@@ -315,7 +313,6 @@ impl Command {
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
         let start = Instant::now();
-        let duration;
 
         self.set_status(Some(Status::Running));
         unsafe {
@@ -333,7 +330,7 @@ impl Command {
         };
 
         // Duration
-        duration = start.elapsed();
+        let duration = start.elapsed();
         self.duration = Some(duration);
 
         unsafe {

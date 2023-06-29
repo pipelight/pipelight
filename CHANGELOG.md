@@ -13,6 +13,7 @@
 - [ ] Sanitize logs before reading
 - [ ] rewrite test for multiple bad config file.
 - [ ] feature: if pipelines have same pid (--attach), link them in logs tree.
+- [ ] add: internal dependencies array.
 
 ## v0.5.6
 

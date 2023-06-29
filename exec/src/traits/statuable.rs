@@ -6,7 +6,7 @@ pub trait Statuable {
 }
 impl Statuable for Process {
     fn get_status(&self) -> Option<Status> {
-        return self.state.status.clone();
+        self.state.status.to_owned()
     }
     fn set_status(&mut self, status: Option<Status>) {
         self.state.status = status;

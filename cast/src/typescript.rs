@@ -1,5 +1,5 @@
 pub fn main_script(file_name: &str) -> String {
-    let res = format!(
+    format!(
         r#"'
     const stock = console;
     console = {{}};
@@ -17,6 +17,5 @@ pub fn main_script(file_name: &str) -> String {
       }});
     '"#,
         file_name
-    );
-    return res;
+    )
 }

@@ -26,34 +26,34 @@ fn add_level(prefix: String) -> String {
     let leaf: String = format!("{}{INDENT:}", Characters::unicode().vbar, INDENT = INDENT);
     let mut prefix = prefix;
     prefix.push_str(&leaf);
-    return prefix.to_owned();
+    prefix.to_owned()
 }
 fn add_level_phantom(prefix: String) -> String {
     let leaf: String = format!("{}{INDENT:}", " ".to_owned());
     let mut prefix = prefix;
     prefix.push_str(&leaf);
-    return prefix.to_owned();
+    prefix.to_owned()
 }
 impl Node {
     /// Add a leaf to prefix T from inside [T] of nth element
     pub fn leaf(&self, prefix: String, index: usize, length: usize) -> ColoredString {
         let leaf: String;
-        if index == length {
-            leaf = format!(
+        let leaf: String = if index == length {
+            format!(
                 "{prefix:}{}\n{prefix:}{}{}",
                 Characters::unicode().vbar,
                 Characters::unicode().lbot,
                 Characters::unicode().hbar,
-            );
+            )
         } else {
-            leaf = format!(
+            format!(
                 "{prefix:}{}\n{prefix:}{}{}",
                 Characters::unicode().vbar,
                 Characters::unicode().lcross,
                 Characters::unicode().hbar,
-            );
-        }
-        return leaf.white();
+            )
+        };
+        leaf.white()
     }
     /// Display Node and color based on Node.status
     fn display(&self, prefix: String) {
@@ -63,25 +63,23 @@ impl Node {
             // Remove extra spaces
             let big_spaces: Regex = Regex::new(r"\s\s+").unwrap();
             value = big_spaces.replace_all(&value, "\n").to_string();
-            value = value.replace("\n", &format!("\n{prefix:}", prefix = prefix.white()));
+            value = value.replace('\n', &format!("\n{prefix:}", prefix = prefix.white()));
 
-            if self.duration.is_some() {
-                if logger.lock().unwrap().level >= LevelFilter::Error {
-                    let duration = format_duration(self.duration.unwrap()).unwrap();
-                    let pretty = format!(" ({})", duration);
-                    value.push_str(&format!("{}", pretty.white()));
-                }
+            if self.duration.is_some() && logger.lock().unwrap().level >= LevelFilter::Error {
+                let duration = format_duration(self.duration.unwrap()).unwrap();
+                let pretty = format!(" ({})", duration);
+                value.push_str(&format!("{}", pretty.white()));
             }
             if self.level <= LevelFilter::Error {
-                print!("{}\n", &value);
+                println!("{}", &value);
             } else {
                 match self.status {
-                    Some(Status::Started) => print!("{}\n", &value),
-                    Some(Status::Running) => print!("{}\n", &value.green()),
-                    Some(Status::Succeeded) => print!("{}\n", &value.blue()),
-                    Some(Status::Failed) => print!("{}\n", &value.red()),
-                    Some(Status::Aborted) => print!("{}\n", &value.yellow()),
-                    None => print!("{}\n", &value.white()),
+                    Some(Status::Started) => println!("{}", &value),
+                    Some(Status::Running) => println!("{}", &value.green()),
+                    Some(Status::Succeeded) => println!("{}", &value.blue()),
+                    Some(Status::Failed) => println!("{}", &value.red()),
+                    Some(Status::Aborted) => println!("{}", &value.yellow()),
+                    None => println!("{}", &value.white()),
                 }
             }
             // Iterate over childs
@@ -113,18 +111,14 @@ pub fn format_duration(duration: std::time::Duration) -> Result<String> {
     res = "processing".to_owned();
     if m > 0 as f64 {
         res = format!("{:.2}m", m);
-    } else {
-        if s > 0 as f64 {
-            s = (ms / 1000 as f64) as f64;
-            res = format!("{:.2}s", s);
-        } else {
-            if ms > 0 as f64 {
-                let ns = computed.num_nanoseconds();
-                if ns.is_some() {
-                    ms = (ns.unwrap() as f64 / (1000 * 1000) as f64) as f64;
-                    res = format!("{:.2}ms", ms);
-                }
-            }
+    } else if s > 0 as f64 {
+        s = ms / 1000_f64;
+        res = format!("{:.2}s", s);
+    } else if ms > 0 as f64 {
+        let ns = computed.num_nanoseconds();
+        if let Some(ns) = ns {
+            ms = (ns as f64 / (1000 * 1000) as f64) as f64;
+            res = format!("{:.2}ms", ms);
         }
     }
     Ok(res)

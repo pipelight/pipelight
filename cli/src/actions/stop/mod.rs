@@ -1,11 +1,4 @@
-use exec::{Process, Status};
-use log::trace;
 use pipeline::Logs;
-use std::env;
-
-// sys
-// linux process manipulation
-use rustix::process::{kill_process_group, Pid, Signal};
 
 // Error Handling
 use miette::Result;

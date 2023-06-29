@@ -3,7 +3,7 @@ use exec::{Statuable, Status};
 
 impl Statuable for Command {
     fn get_status(&self) -> Option<Status> {
-        return self.process.get_status();
+        self.process.get_status()
     }
     fn set_status(&mut self, status: Option<Status>) {
         self.process.set_status(status);
@@ -11,7 +11,7 @@ impl Statuable for Command {
 }
 impl Statuable for Step {
     fn get_status(&self) -> Option<Status> {
-        return self.status.clone();
+        self.status.to_owned()
     }
     fn set_status(&mut self, status: Option<Status>) {
         self.status = status;
@@ -33,7 +33,7 @@ impl Statuable for StepOrParallel {
 }
 impl Statuable for Parallel {
     fn get_status(&self) -> Option<Status> {
-        return self.status.clone();
+        self.status.to_owned()
     }
     fn set_status(&mut self, status: Option<Status>) {
         self.status = status;
@@ -41,7 +41,7 @@ impl Statuable for Parallel {
 }
 impl Statuable for Pipeline {
     fn get_status(&self) -> Option<Status> {
-        return self.status.clone();
+        self.status.to_owned()
     }
     fn set_status(&mut self, status: Option<Status>) {
         self.status = status;

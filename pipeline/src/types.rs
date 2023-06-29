@@ -13,25 +13,24 @@ use uuid::Uuid;
 
 // External imports
 use exec::{Process, Status};
-use utils;
 use utils::git::Flag;
 
 // Enum workaround
 use strum::EnumIter;
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Fallback {
     pub on_started: Option<Vec<StepOrParallel>>,
     pub on_failure: Option<Vec<StepOrParallel>>,
     pub on_success: Option<Vec<StepOrParallel>>,
     pub on_abortion: Option<Vec<StepOrParallel>>,
 }
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Default)]
 pub struct Config {
     pub pipelines: Option<Vec<Pipeline>>,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Node {
     pub value: Option<String>,
     pub duration: Option<Duration>,
@@ -40,7 +39,7 @@ pub struct Node {
     pub level: LevelFilter,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Pipeline {
     pub uuid: Uuid,
     pub name: String,
@@ -52,12 +51,12 @@ pub struct Pipeline {
     pub steps: Vec<StepOrParallel>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub enum StepOrParallel {
     Step(Step),
     Parallel(Parallel),
 }
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Parallel {
     pub status: Option<Status>,
     pub duration: Option<Duration>,
@@ -68,7 +67,7 @@ pub struct Parallel {
     pub fallback: Option<Fallback>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Step {
     pub name: String,
     pub status: Option<Status>,
@@ -86,7 +85,7 @@ pub enum Mode {
     ContinueOnFailure,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Default)]
 pub struct Command {
     // Pretty computatoin (Time, duration...)
     pub duration: Option<Duration>,
@@ -110,7 +109,7 @@ pub struct TriggerTag {
     pub tag: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Event {
     pub trigger: Trigger,
     pub date: String,

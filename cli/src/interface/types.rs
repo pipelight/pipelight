@@ -1,11 +1,11 @@
 #![allow(dead_code)]
 
+use crate::interface::traits::default;
 // Clap - command line lib
 use clap::{Args, Parser, Subcommand};
 use clap_verbosity_flag::Verbosity;
 
 //Serde
-use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;
 
 #[derive(Debug, Clone, Parser)]
@@ -32,7 +32,7 @@ pub struct Cli {
     pub raw: Option<Vec<String>>,
 }
 
-#[derive(Debug, Clone, PartialEq, Subcommand)]
+#[derive(Debug, Clone, Eq, PartialEq, Subcommand)]
 pub enum Commands {
     /// Run a pipeline
     Run(Pipeline),
@@ -53,7 +53,7 @@ pub enum Commands {
     Watch,
 }
 
-#[derive(Debug, Clone, PartialEq, Parser)]
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Pipeline {
     /// The pipeline name
     pub name: Option<String>,
@@ -62,14 +62,14 @@ pub struct Pipeline {
     pub trigger: Trigger,
 }
 
-#[derive(Debug, Clone, PartialEq, Parser)]
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Trigger {
     /// Manualy set a flag/action to bypass environment computation
     #[arg(long, hide = true)]
     pub flag: Option<String>,
 }
 
-#[derive(Debug, Clone, PartialEq, Parser)]
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct Logs {
     #[command(subcommand)]
@@ -79,7 +79,7 @@ pub struct Logs {
     #[command(flatten)]
     pub display: DisplayCommands,
 }
-#[derive(Debug, Clone, PartialEq, Parser)]
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct DisplayCommands {
     /// The pipeline name
     pub name: Option<String>,
@@ -87,7 +87,7 @@ pub struct DisplayCommands {
     #[arg(long)]
     pub json: bool,
 }
-#[derive(Debug, Clone, PartialEq, Parser)]
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub enum LogsCommands {
     /// Clear logs
     Rm,

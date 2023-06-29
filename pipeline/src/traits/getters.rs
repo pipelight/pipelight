@@ -32,10 +32,10 @@ impl Config {
             if *CONFIG == Config::default() {
                 let message = "Tried to get a Config that hasn't been initialized yet";
                 warn!("{}", message);
-                return Err(Error::msg(message));
+                Err(Error::msg(message))
             } else {
-                let ptr = (*CONFIG).clone().to_owned();
-                return Ok(ptr);
+                let ptr = (*CONFIG).to_owned();
+                Ok(ptr)
             }
         }
     }
@@ -47,12 +47,12 @@ impl Getters<Pipeline> for Logs {
         let message = "No logs to display.";
         // Safe exit if no log folder
         if !Path::new(dir).exists() {
-            return Err(Error::msg(message));
+            Err(Error::msg(message))
         } else {
             let paths = fs::read_dir(dir).unwrap();
             let n = paths.count();
             if n == 0 {
-                return Err(Error::msg(message));
+                Err(Error::msg(message))
             } else {
                 let paths = fs::read_dir(dir).unwrap();
                 let mut pipelines = vec![];
@@ -71,7 +71,6 @@ impl Getters<Pipeline> for Logs {
                         .date
                         .parse::<DateTime<Local>>()
                         .unwrap();
-
                     let b_date = &b
                         .clone()
                         .event
@@ -79,7 +78,7 @@ impl Getters<Pipeline> for Logs {
                         .date
                         .parse::<DateTime<Local>>()
                         .unwrap();
-                    return a_date.cmp(b_date);
+                    a_date.cmp(b_date)
                 });
                 Ok(pipelines)
             }
@@ -90,7 +89,7 @@ impl Getters<Pipeline> for Logs {
         let pipeline;
         let mut pipelines = pipelines
             .iter()
-            .filter(|p| &p.name == name)
+            .filter(|p| p.name == *name)
             .cloned()
             .collect::<Vec<Pipeline>>();
         if !pipelines.is_empty() {
@@ -99,7 +98,7 @@ impl Getters<Pipeline> for Logs {
             Ok(pipeline)
         } else {
             let message = format!("Couldn't find a pipeline named {:?}, in logs", name);
-            return Err(Error::msg(message));
+            Err(Error::msg(message))
         }
     }
 }
@@ -108,7 +107,7 @@ impl Logs {
         let pipelines = Logs::get()?;
         let mut pipelines = pipelines
             .iter()
-            .filter(|p| &p.name == name)
+            .filter(|p| p.name == *name)
             .cloned()
             .collect::<Vec<Pipeline>>();
         if !pipelines.is_empty() {
@@ -129,12 +128,12 @@ impl Logs {
                     .date
                     .parse::<DateTime<Local>>()
                     .unwrap();
-                return a_date.cmp(b_date);
+                a_date.cmp(b_date)
             });
             Ok(pipelines)
         } else {
             let message = format!("Couldn't find a pipeline named {:?}, in logs", name);
-            return Err(Error::msg(message));
+            Err(Error::msg(message))
         }
     }
     pub fn get_many_by_sid(sid: &u32) -> Result<Vec<Pipeline>> {
@@ -144,9 +143,9 @@ impl Logs {
             .filter(|p| {
                 if p.event.clone().unwrap().sid.is_some() {
                     let p_sid = p.event.clone().unwrap().sid.unwrap();
-                    return &p_sid == sid;
+                    &p_sid == sid
                 } else {
-                    return false;
+                    false
                 }
             })
             .cloned()
@@ -168,12 +167,12 @@ impl Logs {
                     .date
                     .parse::<DateTime<Local>>()
                     .unwrap();
-                return a_date.cmp(b_date);
+                a_date.cmp(b_date)
             });
             Ok(pipelines)
         } else {
             let message = format!("Couldn't find a pipeline with sid {:?}, in logs", sid);
-            return Err(Error::msg(message));
+            Err(Error::msg(message))
         }
     }
 }
@@ -182,24 +181,24 @@ impl Getters<Pipeline> for Pipeline {
         let config = Config::get()?;
         let optional = config.pipelines;
         match optional {
-            Some(p) => return Ok(p),
+            Some(p) => Ok(p),
             None => {
                 let message = "Couldn't retrieve pipelines";
-                return Err(Error::msg(message));
+                Err(Error::msg(message))
             }
-        };
+        }
     }
     fn get_by_name(name: &str) -> Result<Pipeline> {
         let pipelines = Pipeline::get()?;
-        let optional = pipelines.iter().filter(|p| p.name == name).next();
+        let optional = pipelines.iter().find(|p| p.name == name);
         match optional {
-            Some(res) => return Ok(res.to_owned()),
+            Some(res) => Ok(res.to_owned()),
             None => {
                 let message = format!("Couldn't find pipeline {:?}", name);
                 warn!("{}", message);
-                return Err(Error::msg(message));
+                Err(Error::msg(message))
             }
-        };
+        }
     }
 }
 
@@ -220,7 +219,7 @@ impl Getters<Trigger> for Trigger {
     fn get_by_name(name: &str) -> Result<Trigger> {
         let triggers = Trigger::get();
         let binding = triggers?;
-        let trigger = binding.iter().next().unwrap();
+        let trigger = binding.first().unwrap();
         Ok(trigger.to_owned())
     }
 }

@@ -1,10 +1,13 @@
 #![allow(unused_variables)]
 // #![allow(unused_imports)]
+// #![allow(dead_code)]
 #![allow(unused_must_use)]
+
 // use performance::*;
+
+use cli::get_args;
+
 use log::error;
-use shared::cli;
-#[allow(dead_code)]
 use std::process::exit;
 
 // Error Handling
@@ -18,6 +21,6 @@ fn main() {
     })
 }
 fn handler() -> Result<()> {
-    cli::get_args()?;
+    get_args()?;
     Ok(())
 }

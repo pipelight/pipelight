@@ -1,7 +1,7 @@
 use crate::types::{
     Command, Config, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
 };
-use cast;
+// use cast;
 use exec::Process;
 
 use chrono::Utc;
@@ -25,13 +25,13 @@ use std::ops::{Deref, DerefMut};
 use std::sync::{Arc, Mutex, RwLock};
 
 // Global var
-pub static mut CONFIG: Lazy<Config> = Lazy::new(|| Config::default());
+pub static mut CONFIG: Lazy<Config> = Lazy::new(Config::default);
 
-impl Default for Config {
-    fn default() -> Self {
-        Config { pipelines: None }
-    }
-}
+// impl Default for Config {
+//     fn default() -> Self {
+//         Config { pipelines: None }
+//     }
+// }
 impl Config {
     pub fn new(file: Option<String>, args: Option<Vec<String>>) -> Result<Self> {
         unsafe {
@@ -42,21 +42,19 @@ impl Config {
                 config.dedup_pipelines();
                 *CONFIG = config;
             }
-            let ptr = (*CONFIG).clone().to_owned();
-            return Ok(ptr);
+            let ptr = (*CONFIG).to_owned();
+            Ok(ptr)
         }
     }
     /// Remove pipelines with the same name
     fn dedup_pipelines(&mut self) -> Self {
         if self.pipelines.is_some() {
             let init_length = &self.pipelines.clone().unwrap().len();
-            &self
-                .pipelines
+            self.pipelines
                 .as_mut()
                 .unwrap()
                 .sort_by_key(|p| p.clone().name);
-            &self
-                .pipelines
+            self.pipelines
                 .as_mut()
                 .unwrap()
                 .dedup_by_key(|p| p.clone().name);
@@ -67,7 +65,7 @@ impl Config {
                 warn!("{}", message)
             }
         }
-        return self.to_owned();
+        self.to_owned()
     }
 }
 impl Default for Node {
@@ -97,7 +95,7 @@ impl Default for Pipeline {
             status: None,
             duration: None,
             triggers: None,
-            steps: steps,
+            steps,
             fallback: None,
         }
     }
@@ -143,7 +141,7 @@ impl Default for Step {
             name: "default".to_owned(),
             status: None,
             duration: None,
-            commands: commands,
+            commands,
             mode: Some(Mode::StopOnFailure),
             fallback: None,
         }
@@ -154,14 +152,14 @@ impl Step {
         Step::default()
     }
 }
-impl Default for Command {
-    fn default() -> Self {
-        Command {
-            duration: None,
-            process: Process::default(),
-        }
-    }
-}
+// impl Default for Command {
+//     fn default() -> Self {
+//         Command {
+//             duration: None,
+//             process: Process::default(),
+//         }
+//     }
+// }
 impl Command {
     pub fn new(stdin: &str) -> Command {
         Command {

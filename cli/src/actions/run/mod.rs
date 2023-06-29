@@ -1,4 +1,5 @@
-use exec::{Process, Status};
+use super::detach;
+use exec::Status;
 use pipeline::{Getters, Node, Pipeline};
 use std::thread;
 
@@ -8,13 +9,11 @@ use log::{info, trace};
 // Error Handling
 use miette::{Error, Result};
 
-// Globals
-use super::cli::CLI;
-
 /// To be called from the cli.
 /// Either spawn a detached new process or spawn an attached thread
 /// to run the pipeline
 pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
+    // Ensure
     // Check if pipeline exists and give hints
     let pipeline = Pipeline::get_by_name(&pipeline_name.clone())?;
     if !pipeline.is_triggerable()? {
@@ -33,26 +32,7 @@ pub fn run_bin(pipeline_name: String, attach: bool) -> Result<()> {
             trace!("Run pipeline in attached thread");
             run_in_thread(&pipeline)?;
         }
-        false => {
-            // Run a detached subprocess
-            trace!("Create detached subprocess");
-            let bin = "pipelight";
-            let mut args;
-            unsafe {
-                args = (*CLI).clone();
-            }
-            args.attach = true;
-
-            #[cfg(debug_assertions)]
-            let command = format!("cargo run --bin {} {}", &bin, &args);
-
-            #[cfg(not(debug_assertions))]
-            let command = format!("{} {}", &bin, &args);
-
-            println!("{}", command);
-
-            Process::new(&command).detached()?;
-        }
+        false => detach()?,
     }
     Ok(())
 }

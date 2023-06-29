@@ -118,7 +118,7 @@ impl Teleport {
             let extension = String::from(&file_type);
             let file_str = format!("{}{}.{}", cwd, self.config.preffix, extension).to_owned();
             let path = Path::new(&file_str);
-            exists = path.clone().exists();
+            exists = path.exists();
             if exists {
                 self.config.file_path = Some(path.display().to_string());
                 self.config.directory_path = Some(path.parent().unwrap().display().to_string());
@@ -142,7 +142,7 @@ impl Teleport {
                         .display()
                         .to_string()
                 {
-                    let message = format!("Couldn't find a config file");
+                    let message = "Couldn't find a config file".to_owned();
                     error!("{}", message);
                     // println!("{}", message);
                     exit(1);

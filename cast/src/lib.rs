@@ -9,7 +9,7 @@
 // They are only used here to cast config files
 // and are then converted into practical structs to be used outside the crate.
 
-//import modules
+// import modules
 mod config;
 mod default;
 mod error;
@@ -18,7 +18,7 @@ mod typescript;
 use serde::{Deserialize, Serialize};
 use std::cmp::PartialEq;
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Fallback {
     pub on_started: Option<Vec<StepOrParallel>>,
@@ -27,12 +27,12 @@ pub struct Fallback {
     pub on_abortion: Option<Vec<StepOrParallel>>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
     pub pipelines: Option<Vec<Pipeline>>,
 }
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Pipeline {
     pub name: String,
@@ -41,7 +41,7 @@ pub struct Pipeline {
     #[serde(flatten)]
     pub fallback: Option<Fallback>,
 }
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Step {
     pub name: String,
@@ -50,7 +50,7 @@ pub struct Step {
     #[serde(flatten)]
     pub fallback: Option<Fallback>,
 }
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct Parallel {
     pub parallel: Vec<Step>,
@@ -58,27 +58,27 @@ pub struct Parallel {
     #[serde(flatten)]
     pub fallback: Option<Fallback>,
 }
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
 #[serde(untagged)]
 pub enum StepOrParallel {
     Step(Step),
     Parallel(Parallel),
 }
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
 #[serde(untagged)]
 pub enum Trigger {
     TriggerBranch(TriggerBranch),
     TriggerTag(TriggerTag),
 }
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct TriggerBranch {
     pub branches: Option<Vec<String>>,
     pub actions: Option<Vec<String>>,
 }
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct TriggerTag {
     pub tags: Option<Vec<String>>,

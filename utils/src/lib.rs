@@ -3,7 +3,8 @@
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
 #![allow(non_upper_case_globals)]
-#[allow(dead_code)]
+// #![allow(dead_code)]
+
 // External Imports
 use project_root::get_project_root;
 use rev_buf_reader::RevBufReader;
