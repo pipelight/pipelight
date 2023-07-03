@@ -1,52 +1,33 @@
-#![allow(unused_variables)]
-#![allow(unused_imports)]
-#![allow(unused_must_use)]
-use crate::run;
+use super::detach;
 use exec::Process;
 use log::{debug, error, info, trace, warn};
-use pipeline::{Config, Pipeline, Trigger};
-#[allow(dead_code)]
-use project_root::get_project_root;
-use std::env;
-use std::env::current_dir;
-
-use std::path::Path;
-use std::process::exit;
+use pipeline::{Config, Trigger};
 use std::thread;
-use utils::{
-    git::{Git, Hook},
-    logger::Logger,
-};
+use utils::git::Flag;
+use utils::teleport::Teleport;
+
+// sys
+use clap::Parser;
+use rustix::process::{getpgid, getpid, getsid, Pid};
+use std::env;
+use sysinfo::{get_current_pid, PidExt, ProcessExt, System, SystemExt};
+
+// Global
+use crate::interface::types;
+use crate::CLI;
 
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-use thiserror::Error;
+use miette::{Error, IntoDiagnostic, Result};
 
-pub fn watch_bin(attach: bool) -> Result<()> {
+pub fn launch(attach: bool) -> Result<()> {
     trace!("Create detached subprocess");
-    let bin = "pipelight";
-
-    let args;
-    unsafe {
-        args = (*CLI).clone();
-    }
-
-    #[cfg(debug_assertions)]
-    let command = format!("cargo run --bin {} {} --attach", &bin, &args);
-
-    #[cfg(not(debug_assertions))]
-    let command = format!("{} {} --attach", &bin, &args);
-
     match attach {
         true => {
-            // Lauch attach thread
+            // Lauch in attached thread
+            trace!("Run pipeline in attached thread");
             watch_in_thread(attach)?;
         }
-        false => {
-            // Lauch detached process
-            // trace!("Create detached subprocess");
-            Process::new(&command).detached()?;
-        }
+        false => detach()?,
     }
     Ok(())
 }
@@ -54,32 +35,64 @@ pub fn watch_bin(attach: bool) -> Result<()> {
 /// Filter pipeline by trigger and run
 pub fn watch(attach: bool) -> Result<()> {
     let config = Config::get()?;
-    let env = Trigger::env()?;
+    let mut env = Trigger::env()?;
+
+    env.set_action(Some(Flag::Watch));
+
+    // Guard
     if config.pipelines.is_none() {
         let message = "No pipeline found";
         debug!("{}", message);
         return Ok(());
     }
-    for pipeline in &config.pipelines.unwrap() {
-        if pipeline.clone().triggers.is_none() {
-            let message = format!("No triggers defined for pipeline: {:?}", &pipeline.name);
-            debug!("{}", message)
-        } else {
-            if pipeline.is_triggerable()? {
-                run::run_bin(pipeline.clone().name, attach);
 
-                // let origin = env::current_dir().unwrap();
-                // println!("{:?}", origin);
-                // println!("{:?}", env);
+    // Set global triggering flag/action to "watch"
+    let env = Trigger::flag(Flag::Watch)?;
+    info!("{:#?}", env);
+    let bin = "pipelight";
+    let mut args;
+    unsafe {
+        args = (*CLI).clone();
+    }
+    args.attach = true;
+    args.commands = types::Commands::Trigger(types::Trigger {
+        flag: Some("watch".to_owned()),
+    });
+
+    #[cfg(debug_assertions)]
+    let action = format!("cargo run --bin {} {}", &bin, &args);
+
+    #[cfg(not(debug_assertions))]
+    let action = format!("{} {}", &bin, &args);
+
+    let command = format!("watchexec -w {} {}", Teleport::new().origin, &action);
+
+    let mut sys = System::new_all();
+    sys.refresh_all();
+    for (pid, process) in sys.processes() {
+        let parsed_cmd = types::Cli::try_parse_from(process.cmd());
+        if parsed_cmd.is_ok() {
+            if parsed_cmd.into_diagnostic()?.commands == types::Commands::Watch {
+                if process.cwd() == env::current_dir().into_diagnostic()?
+                    && process.pid() != get_current_pid().unwrap()
+                {
+                    let message = "a watcher is already running on this project";
+                    //     let hint = "no need to re run another watcher";
+                    return Err(Error::msg(message));
+                }
             }
         }
     }
+    Process::new(&command).simple()?;
     Ok(())
 }
 
 /// Launch attached thread
 pub fn watch_in_thread(attach: bool) -> Result<()> {
-    let thread = thread::spawn(move || watch(attach).unwrap());
+    let thread = thread::spawn(move || {
+        //Action
+        watch(attach).unwrap()
+    });
     thread.join().unwrap();
     Ok(())
 }

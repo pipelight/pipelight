@@ -8,8 +8,22 @@ const flags = parse(Deno.args, {
   },
 });
 
-const config: Config = {
+const config = {
   pipelines: [
+    {
+      name: "test_watch",
+      steps: [
+        {
+          name: `kill decendent subprocess`,
+          commands: ["pwd", "ls"],
+        },
+      ],
+      triggers: [
+        {
+          actions: ["watch"],
+        },
+      ],
+    },
     {
       name: "test_rw",
       steps: [

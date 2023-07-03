@@ -73,10 +73,10 @@ pub fn list() -> Result<()> {
             if let Ok(last_log) = last_log {
                 status = String::from(&last_log.status.clone().unwrap());
                 let event = last_log.event.clone().unwrap();
-                if event.trigger.branch().is_some() {
-                    branch = String::from(&event.trigger.branch().unwrap());
+                if event.trigger.get_branch().is_some() {
+                    branch = String::from(&event.trigger.get_branch().unwrap());
                 }
-                action = String::from(&event.trigger.action().unwrap());
+                action = String::from(&event.trigger.get_action().unwrap());
                 let str_date = &event.date;
                 date = str_date
                     .parse::<DateTime<Local>>()

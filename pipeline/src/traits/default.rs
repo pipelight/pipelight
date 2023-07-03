@@ -1,5 +1,6 @@
 use crate::types::{
     Command, Config, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
+    TriggerBranch, TriggerTag,
 };
 // use cast;
 use exec::Process;
@@ -7,31 +8,76 @@ use exec::Process;
 use chrono::Utc;
 use log::LevelFilter;
 use log::{info, trace, warn};
-use std::env;
-use std::process;
-use utils::git::Git;
 use uuid::Uuid;
 
+// External imports
+use utils::git::{Flag, Git, Hook};
+
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-use thiserror::Error;
+use miette::Result;
 
 // sys
-use rustix::process::{getpgid, getpid, getsid, Pid, RawPid};
+use rustix::process::{getpgid, getpid, getsid, Pid};
 
 // Global var
 use once_cell::sync::Lazy;
-use std::ops::{Deref, DerefMut};
-use std::sync::{Arc, Mutex, RwLock};
 
 // Global var
 pub static mut CONFIG: Lazy<Config> = Lazy::new(Config::default);
+pub static mut TRIGGER_ENV: Lazy<Option<Trigger>> = Lazy::new(|| None);
 
-// impl Default for Config {
-//     fn default() -> Self {
-//         Config { pipelines: None }
-//     }
-// }
+impl Trigger {
+    /// Return actual triggering env with a modified flag
+    pub fn flag(flag: Flag) -> Result<Trigger> {
+        // Get the gloabl env
+        let mut env = Trigger::env()?;
+        env.set_action(Some(flag));
+        unsafe {
+            // Set the gloabl env
+            *TRIGGER_ENV = Some(env.clone());
+        }
+        Ok(env)
+    }
+    /// Return actual triggering env
+    pub fn env() -> Result<Trigger> {
+        // Get the gloabl env
+        let global_env;
+        unsafe {
+            global_env = (*TRIGGER_ENV).clone();
+        }
+        let env: Trigger;
+
+        if global_env.is_some() {
+            env = global_env.unwrap();
+        } else {
+            // Default trigger values
+            let mut branch = None;
+            let mut tag = None;
+            let action = Some(Hook::origin()?);
+
+            if Git::new().exists() {
+                branch = Git::new().get_branch()?;
+                tag = Git::new().get_tag()?;
+            }
+            if tag.is_some() {
+                env = Trigger::TriggerTag(TriggerTag { action, tag });
+            } else if branch.is_some() {
+                env = Trigger::TriggerBranch(TriggerBranch { action, branch });
+            } else {
+                env = Trigger::TriggerBranch(TriggerBranch {
+                    action,
+                    branch: None,
+                });
+            }
+            unsafe {
+                // Set the gloabl env
+                *TRIGGER_ENV = Some(env.clone());
+            }
+        }
+        Ok(env)
+    }
+}
+
 impl Config {
     pub fn new(file: Option<String>, args: Option<Vec<String>>) -> Result<Self> {
         unsafe {

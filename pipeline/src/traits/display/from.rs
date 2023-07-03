@@ -18,23 +18,23 @@ impl From<&Event> for String {
         let action = format!(
             "{}{}\n",
             header.white(),
-            String::from(&e.trigger.action().unwrap()).white()
+            String::from(&e.trigger.get_action().unwrap()).white()
         );
         string.push_str(&action);
-        if e.trigger.tag().is_some() {
+        if e.trigger.get_tag().is_some() {
             let header = "branch: ";
             let tag = format!(
                 "{}{}\n",
                 header.white(),
-                String::from(&e.trigger.tag().unwrap()).white()
+                String::from(&e.trigger.get_tag().unwrap()).white()
             );
             string.push_str(&tag);
-        } else if e.trigger.branch().is_some() {
+        } else if e.trigger.get_branch().is_some() {
             let header = "branch: ";
             let branch = format!(
                 "{}{}\n",
                 header.white(),
-                String::from(&e.trigger.branch().unwrap()).white()
+                String::from(&e.trigger.get_branch().unwrap()).white()
             );
             string.push_str(&branch);
         }

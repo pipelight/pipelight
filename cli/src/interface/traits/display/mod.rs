@@ -103,7 +103,7 @@ fn from_verbosity_to_string(e: Verbosity) -> String {
         let n = e.log_level_filter() as usize;
         string += " ";
         string += "-";
-        string += &"v".repeat(n);
+        string += &"v".repeat(n - 1);
     }
     string
 }

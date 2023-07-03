@@ -27,8 +27,6 @@ pub fn detach() -> Result<()> {
     #[cfg(not(debug_assertions))]
     let command = format!("{} {}", &bin, &args);
 
-    println!("{}", command);
-
     Process::new(&command).detached()?;
     Ok(())
 }

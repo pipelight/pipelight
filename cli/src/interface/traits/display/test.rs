@@ -1,8 +1,6 @@
 #[cfg(test)]
 mod display {
-    use crate::cli::types::{
-        Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, Trigger,
-    };
+    use crate::{Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, Trigger};
     use clap_verbosity_flag::Verbosity;
 
     // Test Cli struct to bash string reversion
@@ -63,7 +61,7 @@ mod display {
         };
         // print it
         let result = format!("{}", cli);
-        assert_eq!(result, "ls -vvv");
+        assert_eq!(result, "ls -vv");
     }
     #[test]
     fn config_file() {

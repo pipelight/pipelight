@@ -4,7 +4,7 @@
 // Internal imports
 use super::traits::Getters;
 
-use super::types::{Logs, Mode, Pipeline, StepOrParallel, Trigger, TriggerBranch, TriggerTag};
+use super::types::{Logs, Mode, Pipeline, StepOrParallel, Trigger};
 // Error Handling
 use miette::{IntoDiagnostic, Result};
 
@@ -15,10 +15,16 @@ use std::time::Duration;
 //sys
 use rustix::process::{kill_process_group, test_kill_process, Pid, Signal};
 
+// Globbing
+use glob::Pattern;
+
 // External imports
 use exec::{Statuable, Status};
 use utils::git::{Flag, Git, Hook};
 use utils::logger::logger;
+
+// Tests
+mod test;
 
 impl Pipeline {
     pub fn log(&self) {
@@ -26,6 +32,8 @@ impl Pipeline {
         let json = serde_json::to_string(&self).unwrap();
         info!(target: "pipeline_json","{}", json);
     }
+    // Add process stdout/stderr to runnnig pipeline logs.
+    // Concurent std read/write while command is running
     pub fn hydrate(&mut self) {
         for step_or_parallel in &mut self.steps {
             match step_or_parallel {
@@ -46,6 +54,21 @@ impl Pipeline {
                     }
                 }
             }
+        }
+    }
+    /// Verify if pipeline can be triggered
+    pub fn is_triggerable(&self) -> Result<bool> {
+        let env = Trigger::env()?;
+
+        // If in git repo
+        if Git::new().exists() {
+            if self.triggers.is_some() {
+                env.is_match(self.triggers.clone().unwrap())
+            } else {
+                Ok(true)
+            }
+        } else {
+            Ok(true)
         }
     }
     /// Compares if log_pid is in system pid list.
@@ -125,58 +148,46 @@ impl StepOrParallel {
     }
 }
 impl Trigger {
-    /// Return actual triggering env
-    pub fn env() -> Result<Trigger> {
-        let mut branch = None;
-        let mut tag = None;
-        let res;
-
-        let action = Some(Hook::origin()?);
-
-        if Git::new().exists() {
-            branch = Git::new().get_branch()?;
-            tag = Git::new().get_tag()?;
-        }
-        if tag.is_some() {
-            res = Trigger::TriggerTag(TriggerTag { action, tag });
-            Ok(res)
-        } else if branch.is_some() {
-            res = Trigger::TriggerBranch(TriggerBranch { action, branch });
-            Ok(res)
+    pub fn is_action_match(&self, trigger: Trigger) -> Result<bool> {
+        if trigger.get_action().is_some() {
+            if self.get_action() == trigger.get_action() {
+                Ok(true)
+            } else {
+                Ok(false)
+            }
+        // No action defined
         } else {
-            res = Trigger::TriggerBranch(TriggerBranch {
-                action,
-                branch: None,
-            });
-            Ok(res)
-            // let message = "Couldn't get pipeline triggering environment";
-            // return Err(Error::msg(message));
+            Ok(true)
         }
     }
-    pub fn set_action(&mut self, flag: Option<String>) -> Self {
-        let flag = Some(Flag::from(&flag.unwrap()));
-        match self {
-            Trigger::TriggerBranch(res) => res.action = flag,
-            Trigger::TriggerTag(res) => res.action = flag,
-        }
-        self.to_owned()
-    }
-    pub fn action(&self) -> Option<Flag> {
-        match self {
-            Trigger::TriggerBranch(res) => res.action.clone(),
-            Trigger::TriggerTag(res) => res.action.clone(),
+    pub fn is_branch_match(&self, trigger: Trigger) -> Result<bool> {
+        if trigger.get_branch().is_some() {
+            let glob = Pattern::new(&trigger.get_branch().unwrap()).into_diagnostic()?;
+            return Ok(glob.matches(&self.get_branch().unwrap()));
+        // No branch defined
+        } else {
+            Ok(true)
         }
     }
-    pub fn branch(&self) -> Option<String> {
-        match self {
-            Trigger::TriggerBranch(res) => res.branch.clone(),
-            Trigger::TriggerTag(..) => None,
+    pub fn is_tag_match(&self, trigger: Trigger) -> Result<bool> {
+        if trigger.get_tag().is_some() {
+            let glob = Pattern::new(&trigger.get_tag().unwrap()).into_diagnostic()?;
+            return Ok(glob.matches(&self.get_tag().unwrap()));
+        // No tag defined
+        } else {
+            Ok(true)
         }
     }
-    pub fn tag(&self) -> Option<String> {
-        match self {
-            Trigger::TriggerTag(res) => res.tag.clone(),
-            Trigger::TriggerBranch(..) => None,
+    pub fn is_match(&self, list: Vec<Trigger>) -> Result<bool> {
+        for trigger in list {
+            // if defined action
+            if self.is_action_match(trigger.clone())? {
+                if self.is_branch_match(trigger.clone())? && self.is_tag_match(trigger)? {
+                    return Ok(true);
+                }
+            }
+            return Ok(false);
         }
+        Ok(false)
     }
 }

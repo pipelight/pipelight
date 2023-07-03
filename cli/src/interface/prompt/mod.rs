@@ -3,6 +3,7 @@ use pipeline::{Getters, Node, Pipeline};
 
 // Logging and verbosity
 use log::LevelFilter;
+use utils::git::Flag;
 use utils::logger::logger;
 
 // Prompt
@@ -30,7 +31,7 @@ pub fn inspect_prompt() -> Result<()> {
     }
     Ok(())
 }
-pub fn run_prompt(attach: bool) -> Result<()> {
+pub fn run_prompt(attach: bool, flag: Option<String>) -> Result<()> {
     let pipelines = Pipeline::get()?;
     let items = pipelines.iter().map(|e| &e.name).collect::<Vec<&String>>();
     let selection = Select::with_theme(&ColorfulTheme::default())
@@ -42,7 +43,7 @@ pub fn run_prompt(attach: bool) -> Result<()> {
     match selection {
         Some(index) => {
             let name = &pipelines[index].name;
-            run::run_bin(name.to_owned(), attach)?;
+            run::launch(name.to_owned(), attach, flag)?;
         }
         None => println!("User did not select anything"),
     }

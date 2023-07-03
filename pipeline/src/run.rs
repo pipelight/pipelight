@@ -1,87 +1,29 @@
-// Disable warnings
-// #![allow(unused_variables)]
-// #![allow(unused_assignments)]
-// #![allow(unused_imports)]
-// #![allow(unused_must_use)]
-// #[allow(dead_code)]
-
 // Types
 use super::{Command, Event, Mode, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 // Traits
-use super::Getters;
+// use super::Getters;
 
-use exec::{Process, Statuable, Status};
+use exec::{Statuable, Status};
 use std::clone::Clone;
 use std::env;
-use std::thread;
 use utils::git::Git;
 
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-use thiserror::Error;
+use miette::{IntoDiagnostic, Result};
 // use std::error::Error;
 
 // Global var
 use once_cell::sync::Lazy;
-use std::ops::{Deref, DerefMut};
-use std::sync::{Arc, Mutex, RwLock};
+
 // Parallelism
 use rayon::prelude::*;
 // Duraion
-use std::time::{Duration, Instant};
-// Globbing
-use glob::Pattern;
+use std::time::Instant;
 
 // Global var
 static mut PIPELINE: Lazy<Pipeline> = Lazy::new(Pipeline::new);
 
-impl Trigger {
-    pub fn is_match(&self, list: Vec<Trigger>) -> Result<bool> {
-        for trigger in list {
-            // println!("trigger={:#?}", &trigger);
-            // println!("env={:#?}", &env);
-            match &trigger {
-                // Transform tag/branch into Globbing pattern
-                Trigger::TriggerBranch(res) => {
-                    let glob: Pattern;
-                    if trigger.branch().is_some() {
-                        // glob = Pattern::new(&trigger.branch().unwrap()).into_diagnostic()?;
-                    }
-                    // if trigger.action() == self.action() && glob.matches(&self.branch().unwrap()) {
-                    //     return Ok(true);
-                    // }
-                }
-                Trigger::TriggerTag(res) => {
-                    let glob = Pattern::new(&trigger.tag().unwrap()).into_diagnostic()?;
-                    if trigger.tag().is_some()
-                        && self.tag().is_some()
-                        && trigger.action() == self.action()
-                        && glob.matches(&self.tag().unwrap())
-                    {
-                        return Ok(true);
-                    }
-                }
-            }
-        }
-        Ok(false)
-    }
-}
 impl Pipeline {
-    /// Verify if pipeline can be triggered
-    pub fn is_triggerable(&self) -> Result<bool> {
-        let env = Trigger::env()?;
-
-        // If in git repo
-        if Git::new().exists() {
-            if self.triggers.is_some() {
-                env.is_match(self.triggers.clone().unwrap())
-            } else {
-                Ok(true)
-            }
-        } else {
-            Ok(true)
-        }
-    }
     /// Execute the pipeline
     pub fn run(&mut self) {
         // Globals

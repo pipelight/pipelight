@@ -21,7 +21,7 @@ use clap::Parser;
 use crate::actions::run;
 use crate::actions::stop;
 use crate::actions::trigger;
-// use crate::watch;
+use crate::actions::watch;
 
 /// Launch the cli
 pub fn get_args() -> Result<()> {
@@ -60,18 +60,18 @@ pub fn get_args() -> Result<()> {
         }
         Commands::Watch => {
             info!("Watching for changes");
-            // watch::watch_bin()?;
+            watch::launch(args.attach)?;
         }
         Commands::Trigger(trigger) => {
             info!("Triggering pipelines");
-            trigger::trigger_bin(args.attach, trigger.flag)?;
+            trigger::launch(args.attach, trigger.flag)?;
         }
         Commands::Run(pipeline) => {
             if pipeline.name.is_some() {
                 info!("Running pipeline {:#?}", pipeline.name.clone().unwrap());
-                run::run_bin(pipeline.name.unwrap(), args.attach)?;
+                run::launch(pipeline.name.unwrap(), args.attach, pipeline.trigger.flag)?;
             } else {
-                prompt::run_prompt(args.attach)?;
+                prompt::run_prompt(args.attach, pipeline.trigger.flag)?;
             }
         }
         Commands::Stop(pipeline) => {
