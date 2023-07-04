@@ -8,7 +8,7 @@ use utils::teleport::Teleport;
 
 // sys
 use clap::Parser;
-use rustix::process::{getpgid, getpid, getsid, Pid};
+use rustix::process::{getpgid, kill_process_group, test_kill_process_group, Pid, Signal};
 use std::env;
 use sysinfo::{get_current_pid, PidExt, ProcessExt, System, SystemExt};
 
@@ -29,6 +29,42 @@ pub fn launch(attach: bool) -> Result<()> {
         }
         false => detach()?,
     }
+    Ok(())
+}
+
+/// Filter pipeline by trigger and run
+pub fn create_watcher() -> Result<()> {
+    let config = Config::get()?;
+    let mut env = Trigger::env()?;
+
+    env.set_action(Some(Flag::Watch));
+
+    // Guard
+    if config.pipelines.is_none() {
+        let message = "No pipeline found";
+        debug!("{}", message);
+        return Ok(());
+    }
+
+    // Set global triggering flag/action to "watch"
+    let env = Trigger::flag(Flag::Watch)?;
+    info!("{:#?}", env);
+    let bin = "pipelight";
+    let mut args;
+    unsafe {
+        args = (*CLI).clone();
+    }
+    args.attach = true;
+    args.commands = types::Commands::Watch;
+
+    unsafe {
+        (*CLI) = args;
+    }
+
+    if can_watch().is_ok() {
+        detach()?;
+    }
+
     Ok(())
 }
 
@@ -67,6 +103,15 @@ pub fn watch(attach: bool) -> Result<()> {
 
     let command = format!("watchexec -w {} {}", Teleport::new().origin, &action);
 
+    if can_watch().is_ok() {
+        Process::new(&command).simple()?;
+    }
+    Ok(())
+}
+
+// Test if an instance of (pipelight watch /watchexec is already
+// watching the current working directory
+pub fn can_watch() -> Result<()> {
     let mut sys = System::new_all();
     sys.refresh_all();
     for (pid, process) in sys.processes() {
@@ -83,7 +128,31 @@ pub fn watch(attach: bool) -> Result<()> {
             }
         }
     }
-    Process::new(&command).simple()?;
+    Ok(())
+}
+/// Remove the running watcher instance
+pub fn destroy_watcher() -> Result<()> {
+    let mut sys = System::new_all();
+    sys.refresh_all();
+    for (pid, process) in sys.processes() {
+        let parsed_cmd = types::Cli::try_parse_from(process.cmd());
+        if parsed_cmd.is_ok() {
+            if parsed_cmd.into_diagnostic()?.commands == types::Commands::Watch {
+                if process.cwd() == env::current_dir().into_diagnostic()?
+                    && process.pid() != get_current_pid().unwrap()
+                {
+                    // Kill watcher and subprocesses
+                    let pid = process.pid().as_u32();
+                    unsafe {
+                        let pgid = getpgid(Pid::from_raw(pid)).into_diagnostic()?;
+                        kill_process_group(pgid, Signal::Term)
+                            .into_diagnostic()
+                            .unwrap();
+                    }
+                }
+            }
+        }
+    }
     Ok(())
 }
 

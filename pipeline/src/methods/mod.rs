@@ -3,10 +3,10 @@
 
 // Internal imports
 use super::traits::Getters;
+use crate::{Config, Logs, Mode, Pipeline, StepOrParallel, Trigger};
 
-use super::types::{Logs, Mode, Pipeline, StepOrParallel, Trigger};
 // Error Handling
-use miette::{IntoDiagnostic, Result};
+use miette::{Error, IntoDiagnostic, Result};
 
 // Standard libs
 use log::info;
@@ -25,6 +25,18 @@ use utils::logger::logger;
 
 // Tests
 mod test;
+
+impl Config {
+    pub fn has_watch_flag(&self) -> Result<()> {
+        for pipeline in self.pipelines.clone().unwrap() {
+            if pipeline.is_watchable().is_ok() {
+                return Ok(());
+            }
+        }
+        let message = "no watchable pipelines";
+        Err(Error::msg(message))
+    }
+}
 
 impl Pipeline {
     pub fn log(&self) {
@@ -70,6 +82,18 @@ impl Pipeline {
         } else {
             Ok(true)
         }
+    }
+    /// Verify if pipeline can be watched
+    pub fn is_watchable(&self) -> Result<()> {
+        if self.triggers.is_some() {
+            for trigger in self.triggers.clone().unwrap() {
+                if trigger.get_action() == Some(Flag::Watch) {
+                    return Ok(());
+                }
+            }
+        }
+        let message = "no watchable pipelines";
+        Err(Error::msg(message))
     }
     /// Compares if log_pid is in system pid list.
     /// If not, the program has been aborted
@@ -163,7 +187,7 @@ impl Trigger {
     pub fn is_branch_match(&self, trigger: Trigger) -> Result<bool> {
         if trigger.get_branch().is_some() {
             let glob = Pattern::new(&trigger.get_branch().unwrap()).into_diagnostic()?;
-            return Ok(glob.matches(&self.get_branch().unwrap()));
+            Ok(glob.matches(&self.get_branch().unwrap()))
         // No branch defined
         } else {
             Ok(true)
@@ -172,7 +196,7 @@ impl Trigger {
     pub fn is_tag_match(&self, trigger: Trigger) -> Result<bool> {
         if trigger.get_tag().is_some() {
             let glob = Pattern::new(&trigger.get_tag().unwrap()).into_diagnostic()?;
-            return Ok(glob.matches(&self.get_tag().unwrap()));
+            Ok(glob.matches(&self.get_tag().unwrap()))
         // No tag defined
         } else {
             Ok(true)
@@ -186,7 +210,6 @@ impl Trigger {
                     return Ok(true);
                 }
             }
-            return Ok(false);
         }
         Ok(false)
     }

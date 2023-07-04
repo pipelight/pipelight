@@ -42,6 +42,12 @@ pub fn get_args() -> Result<()> {
     match args.commands {
         Commands::Ls(list) => {
             // info!("Listing piplines");
+            // Launch watcher
+            if Config::get()?.has_watch_flag().is_ok() {
+                watch::create_watcher()?;
+            } else {
+                watch::destroy_watcher()?;
+            }
             if list.name.is_some() {
                 let pipeline = Pipeline::get_by_name(&list.name.unwrap())?;
                 print::inspect(&pipeline, list.json)?;

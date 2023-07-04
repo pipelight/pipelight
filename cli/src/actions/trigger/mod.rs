@@ -31,7 +31,7 @@ pub fn trigger(attach: bool, flag: Option<String>) -> Result<()> {
     let mut env = Trigger::env()?;
 
     if flag.is_some() {
-        env.set_action(Some(Flag::from(&flag.clone().unwrap())));
+        env = Trigger::flag(Flag::from(&flag.clone().unwrap()))?;
     }
 
     if config.pipelines.is_none() {
