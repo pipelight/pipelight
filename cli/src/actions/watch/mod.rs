@@ -145,9 +145,9 @@ pub fn destroy_watcher() -> Result<()> {
                     let pid = process.pid().as_u32();
                     unsafe {
                         let pgid = getpgid(Pid::from_raw(pid)).into_diagnostic()?;
-                        kill_process_group(pgid, Signal::Term)
-                            .into_diagnostic()
-                            .unwrap();
+                        if test_kill_process_group(pgid).is_ok() {
+                            kill_process_group(pgid, Signal::Term).into_diagnostic()?;
+                        }
                     }
                 }
             }
