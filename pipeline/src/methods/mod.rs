@@ -75,7 +75,7 @@ impl Pipeline {
         // If in git repo
         if Git::new().exists() {
             if self.triggers.is_some() {
-                env.is_match(self.triggers.clone().unwrap())
+                Ok(env.is_match(self.triggers.clone().unwrap()).is_ok())
             } else {
                 Ok(true)
             }
@@ -172,45 +172,68 @@ impl StepOrParallel {
     }
 }
 impl Trigger {
-    pub fn is_action_match(&self, trigger: Trigger) -> Result<bool> {
-        if trigger.get_action().is_some() {
-            if self.get_action() == trigger.get_action() {
-                Ok(true)
-            } else {
-                Ok(false)
-            }
-        // No action defined
+    // Success if trigger has same action or None
+    pub fn is_action_match(&self, trigger: Trigger) -> Result<()> {
+        if trigger.get_action().is_none() {
+            Ok(())
+        } else if trigger.get_action() == self.get_action() {
+            Ok(())
         } else {
-            Ok(true)
+            let message = "no action match";
+            Err(Error::msg(message))
         }
     }
-    pub fn is_branch_match(&self, trigger: Trigger) -> Result<bool> {
-        if trigger.get_branch().is_some() {
+    pub fn is_branch_match(&self, trigger: Trigger) -> Result<()> {
+        if trigger.get_branch().is_none() {
+            return Ok(());
+        } else {
+            // Globbing pattern matching
             let glob = Pattern::new(&trigger.get_branch().unwrap()).into_diagnostic()?;
-            Ok(glob.matches(&self.get_branch().unwrap()))
-        // No branch defined
-        } else {
-            Ok(true)
+            let glob_match = glob.matches(&self.get_branch().unwrap());
+            if glob_match {
+                return Ok(());
+            } else {
+                let message = "no branch match";
+                return Err(Error::msg(message));
+            }
         }
     }
-    pub fn is_tag_match(&self, trigger: Trigger) -> Result<bool> {
-        if trigger.get_tag().is_some() {
+    pub fn is_tag_match(&self, trigger: Trigger) -> Result<()> {
+        if trigger.get_tag().is_none() {
+            return Ok(());
+        } else {
+            // Globbing pattern matching
             let glob = Pattern::new(&trigger.get_tag().unwrap()).into_diagnostic()?;
-            Ok(glob.matches(&self.get_tag().unwrap()))
-        // No tag defined
-        } else {
-            Ok(true)
+            let glob_match = glob.matches(&self.get_tag().unwrap());
+            if glob_match {
+                return Ok(());
+            } else {
+                let message = "no tag match";
+                return Err(Error::msg(message));
+            }
         }
     }
-    pub fn is_match(&self, list: Vec<Trigger>) -> Result<bool> {
+    pub fn is_match(&self, list: Vec<Trigger>) -> Result<()> {
         for trigger in list {
-            // if defined action
-            if self.is_action_match(trigger.clone())? {
-                if self.is_branch_match(trigger.clone())? && self.is_tag_match(trigger)? {
-                    return Ok(true);
+            let binding = trigger.clone();
+            match trigger {
+                Trigger::TriggerBranch(res) => {
+                    if self.is_action_match(binding.clone()).is_ok()
+                        && self.is_branch_match(binding).is_ok()
+                    {
+                        return Ok(());
+                    }
+                }
+                Trigger::TriggerTag(res) => {
+                    if self.is_action_match(binding.clone()).is_ok()
+                        && self.is_tag_match(binding).is_ok()
+                    {
+                        return Ok(());
+                    }
                 }
             }
         }
-        Ok(false)
+        let message = "no match";
+        return Err(Error::msg(message));
     }
 }

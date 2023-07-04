@@ -1,6 +1,6 @@
 use super::print;
 use super::prompt;
-use super::types::LogsCommands;
+use super::types::{LogsCommands, WatchCommands};
 use super::CLI;
 
 // Error Handling
@@ -48,6 +48,7 @@ pub fn get_args() -> Result<()> {
             } else {
                 watch::destroy_watcher()?;
             }
+
             if list.name.is_some() {
                 let pipeline = Pipeline::get_by_name(&list.name.unwrap())?;
                 print::inspect(&pipeline, list.json)?;
@@ -64,10 +65,17 @@ pub fn get_args() -> Result<()> {
                 prompt::inspect_prompt()?;
             }
         }
-        Commands::Watch => {
-            info!("Watching for changes");
-            watch::launch(args.attach)?;
-        }
+        Commands::Watch(watch) => match watch.commands {
+            None => {
+                info!("Watching for changes");
+                watch::launch(args.attach)?;
+            }
+            Some(watch_cmd) => match watch_cmd {
+                WatchCommands::Kill => {
+                    watch::destroy_watcher();
+                }
+            },
+        },
         Commands::Trigger(trigger) => {
             info!("Triggering pipelines");
             trigger::launch(args.attach, trigger.flag)?;

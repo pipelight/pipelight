@@ -46,11 +46,22 @@ pub enum Commands {
     /// List pipelines (intercative)
     Inspect(DisplayCommands),
     /// Manualy Triggers Pipelines
-    #[command(hide = true)]
+    // #[command(hide = true)]
     Trigger(Trigger),
     /// Launch a watcher on directory
-    #[command(hide = true)]
-    Watch,
+    // #[command(hide = true)]
+    Watch(Watch),
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+#[command(args_conflicts_with_subcommands = true)]
+pub struct Watch {
+    #[command(subcommand)]
+    pub commands: Option<WatchCommands>,
+}
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+pub enum WatchCommands {
+    Kill,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]

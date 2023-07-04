@@ -55,7 +55,9 @@ pub fn create_watcher() -> Result<()> {
         args = (*CLI).clone();
     }
     args.attach = true;
-    args.commands = types::Commands::Watch;
+    args.commands = types::Commands::Watch(types::Watch {
+        commands: Some(types::WatchCommands::Kill),
+    });
 
     unsafe {
         (*CLI) = args;
@@ -117,7 +119,11 @@ pub fn can_watch() -> Result<()> {
     for (pid, process) in sys.processes() {
         let parsed_cmd = types::Cli::try_parse_from(process.cmd());
         if parsed_cmd.is_ok() {
-            if parsed_cmd.into_diagnostic()?.commands == types::Commands::Watch {
+            if parsed_cmd.into_diagnostic()?.commands
+                == types::Commands::Watch(types::Watch {
+                    commands: Some(types::WatchCommands::Kill),
+                })
+            {
                 if process.cwd() == env::current_dir().into_diagnostic()?
                     && process.pid() != get_current_pid().unwrap()
                 {
@@ -137,7 +143,11 @@ pub fn destroy_watcher() -> Result<()> {
     for (pid, process) in sys.processes() {
         let parsed_cmd = types::Cli::try_parse_from(process.cmd());
         if parsed_cmd.is_ok() {
-            if parsed_cmd.into_diagnostic()?.commands == types::Commands::Watch {
+            if parsed_cmd.into_diagnostic()?.commands
+                == types::Commands::Watch(types::Watch {
+                    commands: Some(types::WatchCommands::Kill),
+                })
+            {
                 if process.cwd() == env::current_dir().into_diagnostic()?
                     && process.pid() != get_current_pid().unwrap()
                 {

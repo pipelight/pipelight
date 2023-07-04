@@ -117,7 +117,7 @@ impl fmt::Display for Commands {
             Commands::Logs(logs) => format!("logs{}", logs),
             Commands::Inspect(pipeline) => format!("inspect{}", pipeline),
             Commands::Ls(list) => format!("ls{}", list),
-            Commands::Watch => "watch".to_owned(),
+            Commands::Watch(_) => "watch".to_owned(),
         };
         write!(f, "{}", string)
     }
