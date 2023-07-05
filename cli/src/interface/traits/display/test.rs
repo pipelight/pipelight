@@ -34,6 +34,7 @@ mod display {
                 display: DisplayCommands {
                     json: false,
                     name: None,
+                    color: None,
                 },
             }),
             attach: false,
@@ -52,6 +53,7 @@ mod display {
             commands: Commands::Ls(DisplayCommands {
                 json: false,
                 name: None,
+                color: None,
             }),
             attach: false,
             raw: None,
@@ -70,6 +72,7 @@ mod display {
             commands: Commands::Ls(DisplayCommands {
                 json: false,
                 name: None,
+                color: None,
             }),
             attach: false,
             raw: None,
@@ -88,6 +91,7 @@ mod display {
             commands: Commands::Ls(DisplayCommands {
                 json: false,
                 name: None,
+                color: None,
             }),
             attach: false,
             raw: Some(vec!["--host".to_owned(), "linode".to_owned()]),
