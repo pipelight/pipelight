@@ -1,13 +1,13 @@
+// Types
 use chrono::{DateTime, Local};
 use exec::{Statuable, Status};
-use log::{error, info, warn, LevelFilter};
 use pipeline::{Config, Getters, Logs, Node, Pipeline};
 
 // Error Handling
 use miette::{IntoDiagnostic, Result};
-// use std::error::Error;
-//
+
 //Logger
+use log::{error, info, warn, LevelFilter};
 use utils::logger::logger;
 
 /// Pretty print logs from json log file

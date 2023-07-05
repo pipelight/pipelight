@@ -1,5 +1,5 @@
 mod default;
-mod display;
+pub mod display;
 mod from;
 mod getters;
 mod statuable;

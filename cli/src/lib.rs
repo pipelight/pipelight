@@ -7,5 +7,6 @@ pub mod actions;
 pub mod interface;
 pub use crate::interface::CLI;
 
+// Re-export
 pub use crate::interface::get_args;
 pub use crate::interface::types::*;

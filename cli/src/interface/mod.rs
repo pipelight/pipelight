@@ -1,6 +1,5 @@
 //modules
 mod case;
-pub mod print;
 pub mod prompt;
 pub mod traits;
 pub mod types;

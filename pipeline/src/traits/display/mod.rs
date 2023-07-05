@@ -7,9 +7,12 @@ use characters::Characters;
 // From - Convert types to Node
 mod from;
 
+// Colors
+pub use colored::control::set_override;
+use colored::{ColoredString, Colorize};
+
 use chrono::Utc;
 use chrono::{DateTime, Duration, Local};
-use colored::{ColoredString, Colorize};
 use exec::{Statuable, Status};
 use log::LevelFilter;
 use log::{debug, error, info, warn};
@@ -126,6 +129,7 @@ pub fn format_duration(duration: std::time::Duration) -> Result<String> {
 
 impl fmt::Display for Node {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        // set_override(true);
         let prefix = "".to_owned();
         self.clone().display(prefix);
         Ok(())

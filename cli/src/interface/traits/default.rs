@@ -13,6 +13,7 @@ impl Default for Cli {
             commands: Commands::Ls(DisplayCommands {
                 json: false,
                 name: None,
+                color: None,
             }),
             raw: None,
             config: None,

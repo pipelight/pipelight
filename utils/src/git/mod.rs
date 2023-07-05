@@ -5,9 +5,7 @@ use std::cmp::PartialEq;
 use std::env;
 
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-use thiserror::Error;
-// use std::error::Error;
+use miette::{Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 
 // File systeme crates
 use std::fs;

@@ -299,6 +299,7 @@ dependencies = [
  "clap-verbosity-flag",
  "clap_autocomplete",
  "clap_complete",
+ "convert_case",
  "dialoguer",
  "exec",
  "fork",

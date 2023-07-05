@@ -1,4 +1,3 @@
-use super::print;
 use super::prompt;
 use super::types::{LogsCommands, WatchCommands};
 use super::CLI;
@@ -10,14 +9,18 @@ use miette::Result;
 use log::info;
 use utils::logger::logger;
 
+// Colors
+use pipeline::display::set_override;
+
 // Pipeline types
 use pipeline::{Config, Getters, Logs, Pipeline};
 
 // Clap - command line lib
-use super::types::{Cli, Commands};
+use crate::{Cli, ColoredOutput, Commands};
 use clap::Parser;
 
 // Cli core functions
+use crate::actions::print;
 use crate::actions::run;
 use crate::actions::stop;
 use crate::actions::trigger;
@@ -97,26 +100,36 @@ pub fn get_args() -> Result<()> {
                 stop::stop(&pipeline.name.unwrap())?;
             }
         }
-        Commands::Logs(logs) => match logs.commands {
-            None => {
-                let mut pipelines;
-                if logs.display.name.is_some() {
-                    pipelines = Logs::get_many_by_name(&logs.display.name.unwrap())?;
-                } else {
-                    pipelines = Logs::get()?;
-                }
-                if logs.display.json {
-                    print::json(&pipelines)?;
-                } else {
-                    print::pretty(&mut pipelines)?;
+        Commands::Logs(logs) => {
+            // Set colors
+            if logs.display.color.is_some() {
+                match ColoredOutput::from(&logs.display.color.unwrap()) {
+                    ColoredOutput::Always => set_override(true),
+                    ColoredOutput::Never => set_override(false),
                 }
             }
-            Some(logs_cmd) => match logs_cmd {
-                LogsCommands::Rm => {
-                    logger.lock().unwrap().clear()?;
+
+            let res = match logs.commands {
+                None => {
+                    let mut pipelines;
+                    if logs.display.name.is_some() {
+                        pipelines = Logs::get_many_by_name(&logs.display.name.unwrap())?;
+                    } else {
+                        pipelines = Logs::get()?;
+                    }
+                    if logs.display.json {
+                        print::json(&pipelines)?;
+                    } else {
+                        print::pretty(&mut pipelines)?;
+                    }
                 }
-            },
-        },
+                Some(logs_cmd) => match logs_cmd {
+                    LogsCommands::Rm => {
+                        logger.lock().unwrap().clear()?;
+                    }
+                },
+            };
+        }
     }
     Ok(())
 }

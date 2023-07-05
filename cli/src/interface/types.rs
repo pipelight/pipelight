@@ -14,21 +14,21 @@ pub struct Cli {
     #[command(subcommand)]
     pub commands: Commands,
 
-    #[arg(long, global = true, hide = true)]
     /// Set a config file
+    #[arg(long, global = true, hide = true)]
     pub config: Option<String>,
 
     #[arg(global = true, long)]
     /// Attach command to standard I/O
     pub attach: bool,
 
+    /// Set verbosity level
     #[clap(flatten)]
     // #[serde(flatten)]
-    /// Set verbosity level
     pub verbose: Verbosity,
 
-    #[arg(global = true, last = true, allow_hyphen_values = true)]
     /// Pass those arguments to deno
+    #[arg(global = true, last = true, allow_hyphen_values = true)]
     pub raw: Option<Vec<String>>,
 }
 
@@ -94,12 +94,23 @@ pub struct Logs {
 pub struct DisplayCommands {
     /// The pipeline name
     pub name: Option<String>,
+
     /// Display logs in json format
     #[arg(long)]
     pub json: bool,
+
+    /// Ignore the environment and enforce/disable colored output
+    #[arg(long)]
+    pub color: Option<String>,
 }
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub enum LogsCommands {
     /// Clear logs
     Rm,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq)]
+pub enum ColoredOutput {
+    Always,
+    Never,
 }
