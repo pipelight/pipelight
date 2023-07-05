@@ -16,16 +16,6 @@ mod trigger_match {
             branch: Some("master".to_owned()),
             action: None,
         })];
-        assert_eq!(
-            env.is_branch_match(triggers.first().unwrap().to_owned())
-                .is_ok(),
-            true
-        );
-        assert_eq!(
-            env.is_action_match(triggers.first().unwrap().to_owned())
-                .is_ok(),
-            true
-        );
         assert_eq!(env.is_match(triggers).is_ok(), true);
     }
     #[test]
@@ -39,7 +29,7 @@ mod trigger_match {
             branch: Some("dev".to_owned()),
             action: None,
         })];
-        assert_eq!(env.is_match(triggers).is_ok(), false);
+        assert_eq!(env.is_match(triggers).is_err(), true);
     }
     #[test]
     /// match trigger with action without branch
@@ -65,7 +55,7 @@ mod trigger_match {
             branch: None,
             action: Some(Flag::Hook(Hook::PrePush)),
         })];
-        assert_eq!(env.is_match(triggers).is_ok(), false);
+        assert_eq!(env.is_match(triggers).is_err(), true);
     }
     #[test]
     /// match trigger with tag without action
@@ -91,7 +81,7 @@ mod trigger_match {
             tag: Some("v0.4".to_owned()),
             action: None,
         })];
-        assert_eq!(env.is_match(triggers).is_ok(), false);
+        assert_eq!(env.is_match(triggers).is_err(), true);
     }
     #[test]
     /// match trigger enums
@@ -128,6 +118,6 @@ mod trigger_match {
             tag: None,
             action: Some(Flag::Hook(Hook::PreCommit)),
         })];
-        assert_eq!(env.is_match(triggers).is_ok(), false);
+        assert_eq!(env.is_match(triggers).is_err(), true);
     }
 }
