@@ -1,6 +1,8 @@
 // Error Handling
 use miette::Result;
 
+use crate::interface::types::Commands;
+
 // sys
 use exec::Process;
 
@@ -11,7 +13,7 @@ use log::trace;
 use crate::case::CLI;
 
 /// Run the command in a detached subprocess
-pub fn detach() -> Result<()> {
+pub fn detach(subcommand: Option<Commands>) -> Result<()> {
     // Run a detached subprocess
     trace!("Create detached subprocess");
     let bin = "pipelight";
@@ -19,7 +21,11 @@ pub fn detach() -> Result<()> {
     unsafe {
         args = (*CLI).clone();
     }
+
     args.attach = true;
+    if let Some(subcommand) = subcommand {
+        args.commands = subcommand
+    }
 
     #[cfg(debug_assertions)]
     let command = format!("cargo run --bin {} {}", &bin, &args);

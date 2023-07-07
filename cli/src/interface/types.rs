@@ -93,7 +93,7 @@ pub struct DisplayCommands {
     pub json: bool,
 
     /// Ignore the environment and enforce/disable colored output
-    #[arg(long)]
+    #[arg(long, default_missing_value("always"))]
     pub color: Option<String>,
 }
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]

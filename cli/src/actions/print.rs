@@ -32,6 +32,7 @@ pub fn json(pipelines: &Vec<Pipeline>) -> Result<()> {
 }
 /// Print pipeline from config file
 pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<()> {
+    logger.lock().unwrap().level = LevelFilter::max();
     if json {
         let pipeline_json = serde_json::to_string_pretty::<Pipeline>(pipeline).into_diagnostic()?;
         println!("{}", pipeline_json);
