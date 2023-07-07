@@ -1,4 +1,3 @@
-pub mod autocomplete;
-pub mod default;
+mod default;
 mod display;
 mod from;

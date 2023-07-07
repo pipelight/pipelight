@@ -3,16 +3,13 @@
 // #![allow(dead_code)]
 #![allow(unused_must_use)]
 
-// use performance::*;
-
-use cli::get_args;
+use cli::case::Client;
 
 use log::error;
 use std::process::exit;
 
 // Error Handling
 use miette::Result;
-// use std::error::Error;
 
 fn main() {
     handler().unwrap_or_else(|e| {
@@ -21,6 +18,6 @@ fn main() {
     })
 }
 fn handler() -> Result<()> {
-    get_args()?;
+    Client::launch()?;
     Ok(())
 }

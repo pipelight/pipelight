@@ -1,21 +1,14 @@
-#![allow(dead_code)]
-
-use crate::interface::traits::default;
 // Clap - command line lib
-use clap::{Args, Parser, Subcommand};
+use clap::{Command, CommandFactory, Parser, Subcommand, ValueHint};
 use clap_verbosity_flag::Verbosity;
 
-//Serde
-use std::cmp::PartialEq;
-
 #[derive(Debug, Clone, Parser)]
-#[command(author, about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
     pub commands: Commands,
 
     /// Set a config file
-    #[arg(long, global = true, hide = true)]
+    #[arg(long, global = true, hide = true, value_name="FILE" ,value_hint = ValueHint::FilePath)]
     pub config: Option<String>,
 
     #[arg(global = true, long)]

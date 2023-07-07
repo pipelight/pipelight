@@ -1,4 +1,4 @@
-use crate::interface::types::{Cli, Commands, DisplayCommands, LogsCommands};
+use crate::interface::types::{Cli, Commands, DisplayCommands};
 use clap_verbosity_flag::Verbosity;
 
 impl Cli {

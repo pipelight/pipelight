@@ -4,10 +4,9 @@ mod test;
 use crate::interface::types::{
     Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, Trigger,
 };
+
 use clap_verbosity_flag::Verbosity;
 use log::LevelFilter;
-use std::convert::From;
-// use crate::cli::verbosity::ErrorLevel;
 
 use std::fmt;
 

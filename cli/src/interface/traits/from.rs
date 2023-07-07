@@ -1,4 +1,4 @@
-use crate::ColoredOutput;
+use crate::interface::types::ColoredOutput;
 use convert_case::{Case, Casing};
 
 use log::error;

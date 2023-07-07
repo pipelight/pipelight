@@ -8,7 +8,7 @@ use exec::Process;
 use log::trace;
 
 // Global
-use crate::CLI;
+use crate::case::CLI;
 
 /// Run the command in a detached subprocess
 pub fn detach() -> Result<()> {
