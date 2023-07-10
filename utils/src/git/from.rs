@@ -17,72 +17,73 @@ impl From<&String> for Hook {
         let cased: &str = &action.to_case(Case::Kebab);
         match cased {
             // client hooks
-            "pre-commit" => return PreCommit,
-            "prepare-commit-msg" => return PrepareCommitMsg,
-            "commit-msg" => return CommitMsg,
-            "post-commit" => return PostCommit,
+            "pre-commit" => PreCommit,
+            "prepare-commit-msg" => PrepareCommitMsg,
+            "commit-msg" => CommitMsg,
+            "post-commit" => PostCommit,
             // mail hooks
-            "applypatch-msg" => return ApplypatchMsg,
-            "pre-applypatch" => return PreApplypatch,
-            "post-applypatch" => return PostApplypatch,
+            "applypatch-msg" => ApplypatchMsg,
+            "pre-applypatch" => PreApplypatch,
+            "post-applypatch" => PostApplypatch,
             // other client hooks
-            "pre-rebase" => return PreRebase,
-            "post-rewrite" => return PostRewrite,
-            "post-checkout" => return PostCheckout,
-            "post-merge" => return PostMerge,
-            "pre-push" => return PrePush,
-            "pre-auto-gc" => return PreAutoGc,
+            "pre-rebase" => PreRebase,
+            "post-rewrite" => PostRewrite,
+            "post-checkout" => PostCheckout,
+            "post-merge" => PostMerge,
+            "pre-push" => PrePush,
+            "pre-auto-gc" => PreAutoGc,
             // server-side hooks
-            "pre-receive" => return PreReceive,
-            "update" => return Update,
-            "post-update" => return PostUpdate,
-            "post-receive" => return PostReceive,
+            "pre-receive" => PreReceive,
+            "update" => Update,
+            "post-update" => PostUpdate,
+            "post-receive" => PostReceive,
             _ => {
                 let message = format!("The hook {} is not known", cased);
                 error!("{}", message);
                 exit(1);
             }
-        };
+        }
     }
 }
 impl From<&Hook> for String {
     fn from(action: &Hook) -> String {
         match action {
-            ApplypatchMsg => return "applypatch-msg".to_owned(),
-            PreApplypatch => return "pre-apply-patch".to_owned(),
-            PostApplypatch => return "post-apply-patch".to_owned(),
-            PreCommit => return "pre-commit".to_owned(),
-            PrepareCommitMsg => return "prepare-commit-msg".to_owned(),
-            CommitMsg => return "commit-msg".to_owned(),
-            PostCommit => return "post-commit".to_owned(),
-            PreRebase => return "pre-rebase".to_owned(),
-            PostCheckout => return "post-checkout".to_owned(),
-            PostMerge => return "post-merge".to_owned(),
-            PreReceive => return "pre-receive".to_owned(),
-            Update => return "update".to_owned(),
-            PostReceive => return "post-receive".to_owned(),
-            PostUpdate => return "post-update".to_owned(),
-            PreAutoGc => return "pre-auto-gc".to_owned(),
-            PostRewrite => return "post-rewrite".to_owned(),
-            PrePush => return "pre-push".to_owned(),
-        };
+            ApplypatchMsg => "applypatch-msg".to_owned(),
+            PreApplypatch => "pre-apply-patch".to_owned(),
+            PostApplypatch => "post-apply-patch".to_owned(),
+            PreCommit => "pre-commit".to_owned(),
+            PrepareCommitMsg => "prepare-commit-msg".to_owned(),
+            CommitMsg => "commit-msg".to_owned(),
+            PostCommit => "post-commit".to_owned(),
+            PreRebase => "pre-rebase".to_owned(),
+            PostCheckout => "post-checkout".to_owned(),
+            PostMerge => "post-merge".to_owned(),
+            PreReceive => "pre-receive".to_owned(),
+            Update => "update".to_owned(),
+            PostReceive => "post-receive".to_owned(),
+            PostUpdate => "post-update".to_owned(),
+            PreAutoGc => "pre-auto-gc".to_owned(),
+            PostRewrite => "post-rewrite".to_owned(),
+            PrePush => "pre-push".to_owned(),
+        }
     }
 }
 impl From<&String> for Flag {
     fn from(action: &String) -> Flag {
         let cased: &str = &action.to_case(Case::Kebab);
-        if cased == "manual" {
-            return Flag::Manual;
-        } else {
-            return Flag::Hook(Hook::from(action));
+        match cased {
+            "manual" => Flag::Manual,
+            "watch" => Flag::Watch,
+            _ => Flag::Hook(Hook::from(action)),
         }
     }
 }
 impl From<&Flag> for String {
     fn from(action: &Flag) -> String {
         match action {
-            Flag::Manual => return "manual".to_owned(),
-            Flag::Hook(hook) => return String::from(hook),
-        };
+            Flag::Manual => "manual".to_owned(),
+            Flag::Watch => "watch".to_owned(),
+            Flag::Hook(hook) => String::from(hook),
+        }
     }
 }

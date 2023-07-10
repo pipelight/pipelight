@@ -3,7 +3,6 @@ pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 use log4rs;
 use log4rs::Handle;
 use std::clone::Clone;
-use std::error::Error;
 use std::fs;
 use uuid::Uuid;
 
@@ -11,6 +10,9 @@ use uuid::Uuid;
 // use arc_swap::ArcSwap;
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
+
+// Error Handling
+use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 
 pub mod config;
 pub mod default;
@@ -32,18 +34,20 @@ impl Logger {
         let level = self.level;
         let config = config::default_with_file(&self.directory, &level, uuid);
         self.handle.set_config(config);
-        return self.to_owned();
+        self.to_owned()
     }
+
     pub fn level(&mut self, level: &LevelFilter) -> Self {
         let config = config::default(level);
         self.handle.set_config(config);
         self.level = level.to_owned();
-        return self.to_owned();
+        self.to_owned()
     }
+
     /// Get handler to change logLevel at runtime
     /// Delete logs directory
-    pub fn clear(&self) -> Result<(), Box<dyn Error>> {
-        fs::remove_dir_all(&self.directory)?;
+    pub fn clear(&self) -> Result<()> {
+        fs::remove_dir_all(&self.directory).into_diagnostic()?;
         Ok(())
     }
 }

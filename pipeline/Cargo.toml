@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 exec = {path = "../exec" }
 utils = {path = "../utils" }
-typescript = {path = "../typescript" }
+cast = {path = "../cast" }
 chrono = "0.4.23"
 colored = "2.0.0"
 log = "0.4.17"
@@ -26,4 +26,5 @@ serde_yaml = "0.9.19"
 toml = "0.7.3"
 strum = { version = "0.24.1", features = ["derive"] }
 glob = "0.3.1"
+rustix = { version = "0.37.20", features = ["process"] }
 

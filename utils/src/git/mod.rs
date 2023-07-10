@@ -5,9 +5,7 @@ use std::cmp::PartialEq;
 use std::env;
 
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-use thiserror::Error;
-// use std::error::Error;
+use miette::{Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 
 // File systeme crates
 use std::fs;
@@ -28,9 +26,9 @@ pub struct Git {
 impl Git {
     pub fn new() -> Git {
         let root = env::current_dir().unwrap();
-        return Git {
+        Git {
             repo: Repository::discover(root).ok(),
-        };
+        }
     }
     pub fn teleport(&mut self) {
         if self.exists() {
@@ -47,7 +45,7 @@ impl Git {
     }
     ///  Detect if inside a git repo
     pub fn exists(&mut self) -> bool {
-        return self.repo.is_some();
+        self.repo.is_some()
     }
     /// Return actual attached branch
     pub fn get_branch(&self) -> Result<Option<String>> {
@@ -60,14 +58,13 @@ impl Git {
     }
     /// Return tag if its is latest commit
     pub fn get_tag(&self) -> Result<Option<String>> {
-        let tag;
         let repo = self.repo.as_ref().unwrap();
         let head = repo.head().into_diagnostic()?;
-        if head.is_tag() {
-            tag = Some(head.name().unwrap().to_string());
+        let tag = if head.is_tag() {
+            Some(head.name().unwrap().to_string())
         } else {
-            tag = None;
-        }
+            None
+        };
         Ok(tag)
     }
 }
@@ -96,6 +93,7 @@ pub enum Hook {
 pub enum Flag {
     Hook(Hook),
     Manual,
+    Watch,
 }
 
 impl Hook {
@@ -131,8 +129,8 @@ impl Hook {
             let script_path = Path::new(&script);
 
             if Git::new().repo.is_some() {
-                Hook::create_script(&dot_d_dir_path, &script_path)?;
-                Hook::create_subscripts_caller(&caller_path, &hook)?;
+                Hook::create_script(dot_d_dir_path, script_path)?;
+                Hook::create_subscripts_caller(caller_path, &hook)?;
             }
         }
         Ok(())
@@ -168,17 +166,15 @@ impl Hook {
         fs::create_dir_all(directory_path).into_diagnostic()?;
         let mut file = fs::File::create(file_path).into_diagnostic()?;
         #[cfg(debug_assertions)]
-        let s = format!(
-            "#!/bin/sh \n\
+        let s = "#!/bin/sh \n\
             cargo run --bin pipelight trigger \
             "
-        );
+        .to_owned();
         #[cfg(not(debug_assertions))]
-        let s = format!(
-            "#!/bin/sh \n\
+        let s = "#!/bin/sh \n\
             pipelight trigger \
             "
-        );
+        .to_owned();
         let b = s.as_bytes();
         file.write_all(b).into_diagnostic()?;
 

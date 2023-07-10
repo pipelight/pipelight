@@ -2,17 +2,26 @@
 
 ## next
 
-- [ ] Bug fix: On "pipelight ls pipeline_name" increase verbosity by +1 if no flag provided
 - [ ] Add signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
-- [ ] feature: Add a -vvvv verbosity level to print commands stdout AND stderr
-- [ ] feature: Add bash autocompletion
-- [ ] feature: pretty logs add allways colorful outupt (ls --color=always)
 - [ ] Add Clap version feature flag
 - [ ] Detect if deno is installed
 - [ ] bug fix: print Pipeline execution time while running (instead of "processing")
 - [ ] Sanitize logs before reading
+- [ ] add: internal dependencies schema for better internals understanding
 - [ ] rewrite test for multiple bad config file.
-- [ ] feature: if pipelines have same pid (--attach), link them in logs tree.
+
+## v0.5.11
+
+- [x] feature: pretty logs add allways colorful outupt (ls --color=always)
+- [x] Bug fix: On "pipelight ls pipeline_name" increase verbosity by +1 if no flag provided
+- [x] rewrite test for multiple bad triggers in config file.
+- [x] feature: Add a -vvvv verbosity level to print commands stdout AND stderr
+- [x] feature: Add bash autocompletion
+
+## v0.5.6
+
+- [x] Add tag to triggers
+- [x] Add globbing patterns for triggers definition
 
 ## v0.5.4
 

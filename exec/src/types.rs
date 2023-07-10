@@ -1,10 +1,10 @@
-use super::display;
-use super::from;
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
 use std::cmp::PartialEq;
+use std::os::unix::io::RawFd;
+use uuid::Uuid;
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub enum Status {
     Started,
     Succeeded,
@@ -12,36 +12,26 @@ pub enum Status {
     Running,
     Aborted,
 }
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub struct StrOutput {
-    pub status: Option<Status>,
-    pub stdout: Option<String>,
-    pub stderr: Option<String>,
-}
-impl Default for StrOutput {
-    fn default() -> Self {
-        StrOutput {
-            status: Some(Status::Started),
-            stdout: None,
-            stderr: None,
-        }
-    }
-}
-impl StrOutput {
-    pub fn new() -> StrOutput {
-        Self::default()
-    }
+
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+pub struct Process {
+    pub uuid: Uuid,
+    pub state: State,
+    pub os: Environment,
 }
 
-pub trait Statuable {
-    fn get_status(&self) -> Option<Status>;
-    fn set_status(&mut self, status: Option<Status>);
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+pub struct Environment {
+    pub shell: String,
+    pub pid: Option<u32>,
+    pub directory: String,
+    pub attached: bool,
 }
-impl Statuable for StrOutput {
-    fn get_status(&self) -> Option<Status> {
-        return self.status.clone();
-    }
-    fn set_status(&mut self, status: Option<Status>) {
-        self.status = status;
-    }
+
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Default)]
+pub struct State {
+    pub status: Option<Status>,
+    pub stdin: Option<String>,
+    pub stdout: Option<String>,
+    pub stderr: Option<String>,
 }

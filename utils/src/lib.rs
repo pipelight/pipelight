@@ -3,7 +3,8 @@
 #![allow(unused_imports)]
 #![allow(unused_must_use)]
 #![allow(non_upper_case_globals)]
-#[allow(dead_code)]
+// #![allow(dead_code)]
+
 // External Imports
 use project_root::get_project_root;
 use rev_buf_reader::RevBufReader;
@@ -25,13 +26,13 @@ pub fn get_root() -> Result<String> {
     let root = get_project_root().into_diagnostic()?;
     let to_str_result = root.to_str();
     match to_str_result {
-        Some(res) => return Ok(res.to_owned()),
+        Some(res) => Ok(res.to_owned()),
         None => {
             let message = "Internal error: Couldn't find project root";
             // warn!("{}", message);
-            return Err(Error::msg(message));
+            Err(Error::msg(message))
         }
-    };
+    }
 }
 
 /// Read last line of each log file

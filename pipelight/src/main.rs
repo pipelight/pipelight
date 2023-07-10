@@ -1,16 +1,15 @@
 #![allow(unused_variables)]
 // #![allow(unused_imports)]
+// #![allow(dead_code)]
 #![allow(unused_must_use)]
-// use performance::*;
+
+use cli::case::Client;
+
 use log::error;
-use shared::cli;
-#[allow(dead_code)]
-use std::error::Error;
 use std::process::exit;
 
 // Error Handling
-// use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-// use thiserror::Error;
+use miette::Result;
 
 fn main() {
     handler().unwrap_or_else(|e| {
@@ -18,7 +17,7 @@ fn main() {
         exit(1)
     })
 }
-fn handler() -> Result<(), Box<dyn Error>> {
-    cli::get_args()?;
+fn handler() -> Result<()> {
+    Client::launch()?;
     Ok(())
 }
