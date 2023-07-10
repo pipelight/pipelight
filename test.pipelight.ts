@@ -11,6 +11,22 @@ const flags = parse(Deno.args, {
 const config = {
   pipelines: [
     {
+      name: "test_attached_pipelines",
+      steps: [
+        {
+          name: `launch a pipeline`,
+          commands: [
+            "cargo run --bin pipelight run test_rw --config test.pipelight.ts --attach",
+          ],
+        },
+      ],
+      triggers: [
+        {
+          actions: ["manual"],
+        },
+      ],
+    },
+    {
       name: "test_watch",
       steps: [
         {
