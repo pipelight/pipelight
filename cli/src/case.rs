@@ -80,11 +80,10 @@ impl Client {
         let verbosity = args.verbose.log_level_filter();
         logger.lock().unwrap().level(&verbosity);
 
-        // Set global config
-        Config::new(args.config.clone(), args.raw.clone())?;
-
         match args.commands {
             Commands::Ls(list) => {
+                // Set global config when needed
+                Config::new(args.config.clone(), args.raw.clone())?;
                 // info!("Listing piplines");
                 // Launch watcher
                 if Config::get()?.has_watch_flag().is_ok() {
@@ -101,6 +100,8 @@ impl Client {
                 }
             }
             Commands::Inspect(list) => {
+                // Set global config when needed
+                Config::new(args.config.clone(), args.raw.clone())?;
                 // info!("Listing piplines");
                 if list.name.is_some() {
                     let pipeline = Pipeline::get_by_name(&list.name.unwrap())?;
@@ -109,22 +110,30 @@ impl Client {
                     prompt::inspect_prompt()?;
                 }
             }
-            Commands::Watch(watch) => match watch.commands {
-                None => {
-                    info!("Watching for changes");
-                    watch::launch(args.attach)?;
-                }
-                Some(watch_cmd) => match watch_cmd {
-                    WatchCommands::Kill => {
-                        watch::destroy_watcher()?;
+            Commands::Watch(watch) => {
+                // Set global config when needed
+                Config::new(args.config.clone(), args.raw.clone())?;
+                match watch.commands {
+                    None => {
+                        info!("Watching for changes");
+                        watch::launch(args.attach)?;
                     }
-                },
-            },
+                    Some(watch_cmd) => match watch_cmd {
+                        WatchCommands::Kill => {
+                            watch::destroy_watcher()?;
+                        }
+                    },
+                }
+            }
             Commands::Trigger(trigger) => {
+                // Set global config when needed
+                Config::new(args.config.clone(), args.raw.clone())?;
                 info!("Triggering pipelines");
                 trigger::launch(args.attach, trigger.flag)?;
             }
             Commands::Run(pipeline) => {
+                // Set global config when needed
+                Config::new(args.config.clone(), args.raw.clone())?;
                 if pipeline.name.is_some() {
                     info!("Running pipeline {:#?}", pipeline.name.clone().unwrap());
                     run::launch(pipeline.name.unwrap(), args.attach, pipeline.trigger.flag)?;
@@ -133,6 +142,8 @@ impl Client {
                 }
             }
             Commands::Stop(pipeline) => {
+                // Set global config when needed
+                Config::new(args.config.clone(), args.raw.clone())?;
                 info!(
                     "Stopping pipeline {:#?} with every attached and detached subprocess",
                     pipeline.name
