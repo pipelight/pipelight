@@ -44,6 +44,8 @@ pub enum Commands {
     /// Launch a watcher on directory
     // #[command(hide = true)]
     Watch(Watch),
+    /// Generate autocompletion script
+    Completion(Shell),
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
@@ -83,6 +85,7 @@ pub struct Logs {
     #[command(flatten)]
     pub display: DisplayCommands,
 }
+
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct DisplayCommands {
     /// The pipeline name
@@ -93,9 +96,10 @@ pub struct DisplayCommands {
     pub json: bool,
 
     /// Ignore the environment and enforce/disable colored output
-    #[arg(long, default_missing_value("always"))]
+    #[arg(long, default_missing_value = "always")]
     pub color: Option<String>,
 }
+
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub enum LogsCommands {
     /// Clear logs
@@ -106,4 +110,10 @@ pub enum LogsCommands {
 pub enum ColoredOutput {
     Always,
     Never,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+pub struct Shell {
+    /// The shell name
+    pub name: String,
 }

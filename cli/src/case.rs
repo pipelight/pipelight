@@ -1,5 +1,5 @@
 // Error Handling
-use miette::Result;
+use miette::{Error, IntoDiagnostic, Result};
 
 // Logger
 use log::info;
@@ -12,7 +12,10 @@ use pipeline::display::set_override;
 use pipeline::{Config, Getters, Logs, Pipeline};
 
 // Clap - command line lib
-use clap::{Args, Command, CommandFactory, FromArgMatches, ValueHint};
+use clap::{
+    builder::PossibleValue, Args, Command, CommandFactory, FromArgMatches, ValueEnum, ValueHint,
+};
+// use std::str::FromStr;
 
 // Cli core types
 use crate::interface::{Cli, ColoredOutput, Commands, LogsCommands, WatchCommands};
@@ -24,6 +27,9 @@ use crate::actions::stop;
 use crate::actions::trigger;
 use crate::actions::watch;
 
+use clap_complete::{generate, shells::Shell};
+use std::io;
+
 // Global vars
 use once_cell::sync::Lazy;
 
@@ -32,12 +38,33 @@ pub static mut CLI: Lazy<Cli> = Lazy::new(Cli::new);
 pub struct Client;
 
 impl Client {
+    pub fn print_completion(shell: Shell) -> Result<()> {
+        // Build client and generate autocompletion script
+        let mut cmd = Client::build()?;
+        let name = cmd.get_name().to_string();
+        generate(shell, &mut cmd, name, &mut io::stdout());
+
+        Ok(())
+    }
     /// Build the cli
     pub fn build() -> Result<Command> {
         let mut cli = Command::new("pipelight");
         cli = Cli::augment_args(cli);
-        cli = cli.mut_arg("config", |e| e.value_hint(ValueHint::FilePath));
-        // println!("{:#?}", cli.clone());
+        cli = cli
+            .mut_subcommand("completion", |a| {
+                a.mut_arg("name", |e| {
+                    e.value_parser([
+                        PossibleValue::new("bash"),
+                        PossibleValue::new("zsh"),
+                        PossibleValue::new("fish"),
+                        PossibleValue::new("elvish"),
+                    ])
+                })
+            })
+            .mut_arg("config", |e| e.value_hint(ValueHint::FilePath))
+            .mut_subcommand("logs", |a| {
+                a.mut_arg("color", |e| e.default_missing_value("always"))
+            });
         Ok(cli)
     }
     /// Build and Launch the cli
@@ -112,6 +139,14 @@ impl Client {
                 );
                 if pipeline.name.is_some() {
                     stop::stop(&pipeline.name.unwrap())?;
+                }
+            }
+            Commands::Completion(shell) => {
+                let shell = Shell::from_str(&shell.name, true);
+                if shell.is_ok() {
+                    Client::print_completion(shell.unwrap())?;
+                } else {
+                    return Err(Error::msg("Couldn't determine shell"));
                 }
             }
             Commands::Logs(logs) => {

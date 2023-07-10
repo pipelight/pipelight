@@ -85,13 +85,14 @@ impl Process {
             .spawn()
             .into_diagnostic()?;
 
+        // Hydrate structure
+        self.os.pid = Some(child.id());
         let output = child.wait_with_output().into_diagnostic()?;
 
         self.state.status = State::from(&output).status;
         self.read();
         self.clean();
 
-        println!("{:#?}", output);
         Ok(())
     }
 

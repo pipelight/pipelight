@@ -16,16 +16,17 @@ fn main() -> Result<()> {
     };
 
     // Practical outdir
-    // let outdir = Path::new("../autocompletion/");
-    // fs::create_dir_all(outdir).into_diagnostic()?;
+    //let outdir = Path::new("../autocompletion/");
+    //fs::create_dir_all(outdir).into_diagnostic()?;
 
-    //Build client and generate autocompletion scripts
+    // Build client and generate autocompletion scripts
     let mut cmd = Client::build()?;
+    let name = cmd.get_name().to_string();
     for shell in vec![Shell::Bash, Shell::Zsh, Shell::Fish, Shell::Elvish] {
         let path = generate_to(
             shell,
-            &mut cmd,       // We need to specify what generator to use
-            "pipelight",    // We need to specify the bin name manually
+            &mut cmd, // We need to specify what generator to use
+            name.clone(),
             outdir.clone(), // We need to specify where to write to
         )
         .into_diagnostic()?;
