@@ -199,7 +199,7 @@ impl Trigger {
         }
     }
     pub fn is_tag_match(&self, trigger: Trigger) -> Result<()> {
-        if trigger.get_tag().is_none() {
+        if trigger.get_tag().is_none() || self.get_tag().is_none() {
             return Ok(());
         } else {
             // Globbing pattern matching

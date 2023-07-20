@@ -52,6 +52,7 @@ pub struct Pipeline {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[serde(untagged)]
 pub enum StepOrParallel {
     Step(Step),
     Parallel(Parallel),
@@ -79,6 +80,7 @@ pub struct Step {
     pub fallback: Option<Fallback>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
+#[serde(untagged)]
 pub enum Mode {
     StopOnFailure,
     JumpNextOnFailure,
@@ -94,6 +96,7 @@ pub struct Command {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
+#[serde(untagged)]
 pub enum Trigger {
     TriggerBranch(TriggerBranch),
     TriggerTag(TriggerTag),
