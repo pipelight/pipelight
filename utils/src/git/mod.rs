@@ -70,6 +70,7 @@ impl Git {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
+#[serde(untagged)]
 pub enum Hook {
     ApplypatchMsg,
     PreApplypatch,
@@ -90,6 +91,7 @@ pub enum Hook {
     PrePush,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
+#[serde(untagged)]
 pub enum Flag {
     Hook(Hook),
     Manual,
