@@ -93,7 +93,7 @@ pub enum Hook {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
-#[serde(rename_all(serialize = "kebab-case", deserialize = "PascalCase"))]
+#[serde(rename_all = "kebab-case")]
 pub enum Special {
     Manual,
     Watch,
