@@ -1,6 +1,5 @@
 use crate::types::{
     Command, Config, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
-    TriggerBranch, TriggerTag,
 };
 // use cast;
 use exec::Process;
@@ -31,7 +30,7 @@ impl Trigger {
     pub fn flag(flag: Flag) -> Result<Trigger> {
         // Get the gloabl env
         let mut env = Trigger::env()?;
-        env.set_action(Some(flag));
+        env.action = Some(flag);
         unsafe {
             // Set the gloabl env
             *TRIGGER_ENV = Some(env.clone());
@@ -59,16 +58,11 @@ impl Trigger {
                 branch = Git::new().get_branch()?;
                 tag = Git::new().get_tag()?;
             }
-            if tag.is_some() {
-                env = Trigger::TriggerTag(TriggerTag { action, tag });
-            } else if branch.is_some() {
-                env = Trigger::TriggerBranch(TriggerBranch { action, branch });
-            } else {
-                env = Trigger::TriggerBranch(TriggerBranch {
-                    action,
-                    branch: None,
-                });
-            }
+            env = Trigger {
+                action,
+                branch,
+                tag,
+            };
             unsafe {
                 // Set the gloabl env
                 *TRIGGER_ENV = Some(env.clone());

@@ -6,11 +6,13 @@ mod methods;
 mod run;
 mod traits;
 mod types;
+// tests
+mod test;
 
 // Re-export
 pub use crate::traits::Getters;
 pub use crate::types::{
     Command, Config, Event, Fallback, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel,
-    Trigger, TriggerBranch, TriggerTag,
+    Trigger,
 };
 pub use traits::display;

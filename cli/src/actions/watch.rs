@@ -3,7 +3,7 @@ use exec::Process;
 use log::{debug, error, info, trace, warn};
 use pipeline::{Config, Trigger};
 use std::thread;
-use utils::git::Flag;
+use utils::git::{Flag, Special};
 use utils::teleport::Teleport;
 
 use crate::interface::types;
@@ -38,7 +38,7 @@ pub fn create_watcher() -> Result<()> {
     let config = Config::get()?;
     let mut env = Trigger::env()?;
 
-    env.set_action(Some(Flag::Watch));
+    env.action = Some(Flag::Special(Special::Watch));
 
     // Guard
     if config.pipelines.is_none() {
@@ -48,7 +48,7 @@ pub fn create_watcher() -> Result<()> {
     }
 
     // Set global triggering flag/action to "watch"
-    let env = Trigger::flag(Flag::Watch)?;
+    let env = Trigger::flag(Flag::Special(Special::Watch))?;
     info!("{:#?}", env);
     let mut args;
     unsafe {
@@ -75,7 +75,7 @@ pub fn watch() -> Result<()> {
     let config = Config::get()?;
 
     // Set global triggering flag/action to "watch"
-    Trigger::flag(Flag::Watch)?;
+    Trigger::flag(Flag::Special(Special::Watch))?;
 
     // Guard
     if config.pipelines.is_none() {

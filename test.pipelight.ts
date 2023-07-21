@@ -22,7 +22,7 @@ const config = {
       ],
       triggers: [
         {
-          actions: ["manual"],
+          actions: ["manual", "update"],
         },
       ],
     },

@@ -20,7 +20,7 @@ use glob::Pattern;
 
 // External imports
 use exec::{Statuable, Status};
-use utils::git::{Flag, Git, Hook};
+use utils::git::{Flag, Git, Hook, Special};
 use utils::logger::logger;
 
 // Tests
@@ -87,7 +87,7 @@ impl Pipeline {
     pub fn is_watchable(&self) -> Result<()> {
         if self.triggers.is_some() {
             for trigger in self.triggers.clone().unwrap() {
-                if trigger.get_action() == Some(Flag::Watch) {
+                if trigger.action == Some(Flag::Special(Special::Watch)) {
                     return Ok(());
                 }
             }
@@ -174,9 +174,9 @@ impl StepOrParallel {
 impl Trigger {
     // Success if trigger has same action or None
     pub fn is_action_match(&self, trigger: Trigger) -> Result<()> {
-        if trigger.get_action().is_none() {
+        if trigger.action.is_none() {
             Ok(())
-        } else if trigger.get_action() == self.get_action() {
+        } else if trigger.action == self.action {
             Ok(())
         } else {
             let message = "no action match";
@@ -184,12 +184,12 @@ impl Trigger {
         }
     }
     pub fn is_branch_match(&self, trigger: Trigger) -> Result<()> {
-        if trigger.get_branch().is_none() {
+        if trigger.branch.is_none() {
             return Ok(());
         } else {
             // Globbing pattern matching
-            let glob = Pattern::new(&trigger.get_branch().unwrap()).into_diagnostic()?;
-            let glob_match = glob.matches(&self.get_branch().unwrap());
+            let glob = Pattern::new(&trigger.branch.unwrap()).into_diagnostic()?;
+            let glob_match = glob.matches(&self.clone().branch.unwrap());
             if glob_match {
                 return Ok(());
             } else {
@@ -199,12 +199,12 @@ impl Trigger {
         }
     }
     pub fn is_tag_match(&self, trigger: Trigger) -> Result<()> {
-        if trigger.get_tag().is_none() || self.get_tag().is_none() {
+        if trigger.tag.is_none() || self.tag.is_none() {
             return Ok(());
         } else {
             // Globbing pattern matching
-            let glob = Pattern::new(&trigger.get_tag().unwrap()).into_diagnostic()?;
-            let glob_match = glob.matches(&self.get_tag().unwrap());
+            let glob = Pattern::new(&trigger.tag.unwrap()).into_diagnostic()?;
+            let glob_match = glob.matches(&self.clone().tag.unwrap());
             if glob_match {
                 return Ok(());
             } else {
@@ -216,21 +216,11 @@ impl Trigger {
     pub fn is_match(&self, list: Vec<Trigger>) -> Result<()> {
         for trigger in list {
             let binding = trigger.clone();
-            match trigger {
-                Trigger::TriggerBranch(res) => {
-                    if self.is_action_match(binding.clone()).is_ok()
-                        && self.is_branch_match(binding).is_ok()
-                    {
-                        return Ok(());
-                    }
-                }
-                Trigger::TriggerTag(res) => {
-                    if self.is_action_match(binding.clone()).is_ok()
-                        && self.is_tag_match(binding).is_ok()
-                    {
-                        return Ok(());
-                    }
-                }
+            if self.is_action_match(binding.clone()).is_ok()
+                && self.is_branch_match(binding.clone()).is_ok()
+                && self.is_tag_match(binding).is_ok()
+            {
+                return Ok(());
             }
         }
         let message = "no match";

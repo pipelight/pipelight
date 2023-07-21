@@ -1,5 +1,6 @@
 use super::Hook::*;
-use super::{Flag, Hook};
+use super::Special::*;
+use super::{Flag, Hook, Special};
 use convert_case::{Case, Casing};
 use log::error;
 use std::fmt;
@@ -8,6 +9,29 @@ use std::process::exit;
 impl fmt::Display for Hook {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self)
+    }
+}
+impl From<&String> for Special {
+    fn from(action: &String) -> Special {
+        // let cased: &str = &action.to_case(Case::Snake);
+        let cased: &str = &action.to_case(Case::Kebab);
+        match cased {
+            "manual" => Manual,
+            "watch" => Watch,
+            _ => {
+                let message = format!("The special flag {} is not known", cased);
+                error!("{}", message);
+                exit(1);
+            }
+        }
+    }
+}
+impl From<&Special> for String {
+    fn from(action: &Special) -> String {
+        match action {
+            Manual => "manual".to_owned(),
+            Watch => "watch".to_owned(),
+        }
     }
 }
 
@@ -72,8 +96,8 @@ impl From<&String> for Flag {
     fn from(action: &String) -> Flag {
         let cased: &str = &action.to_case(Case::Kebab);
         match cased {
-            "manual" => Flag::Manual,
-            "watch" => Flag::Watch,
+            "manual" => Flag::Special(Special::Manual),
+            "watch" => Flag::Special(Special::Watch),
             _ => Flag::Hook(Hook::from(action)),
         }
     }
@@ -81,8 +105,7 @@ impl From<&String> for Flag {
 impl From<&Flag> for String {
     fn from(action: &Flag) -> String {
         match action {
-            Flag::Manual => "manual".to_owned(),
-            Flag::Watch => "watch".to_owned(),
+            Flag::Special(special) => String::from(special),
             Flag::Hook(hook) => String::from(hook),
         }
     }
