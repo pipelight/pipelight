@@ -1,48 +1,65 @@
 #[cfg(test)]
 mod serialize {
     use crate::Trigger;
-    use utils::git::{Flag, Hook};
+    use utils::git::{Flag, Hook, Special};
     // Error Handling
     use miette::{IntoDiagnostic, Result};
 
     #[test]
-    /// match trigger with branch without action
-    fn try_serialize_trigger() {
+    fn try_serialize_trigger_hook() {
         let env = Trigger {
             action: Some(Flag::Hook(Hook::PrePush)),
             branch: Some("master".to_owned()),
             tag: None,
         };
-        let res = serde_json::to_string_pretty::<Trigger>(&env).unwrap();
+        let res = serde_json::to_string::<Trigger>(&env).unwrap();
 
-        let json = r#"
+        let mut json = r#"
         {
-            "action": "pre-push"
+            "action": "pre-push",
             "branch": "master",
-            "tag": null,
+            "tag": null
         }
         "#;
-        println!("{:?}", env);
-        println!("{:?}", res);
+        let binding = json.replace(" ", "").replace("\n", "");
+        json = &binding;
         assert_eq!(res, json);
     }
-    fn try_serialize_flag() {
+    #[test]
+    fn try_serialize_trigger_special() {
+        let env = Trigger {
+            action: Some(Flag::Special(Special::Manual)),
+            branch: Some("master".to_owned()),
+            tag: None,
+        };
+        let res = serde_json::to_string::<Trigger>(&env).unwrap();
+
+        let mut json = r#"
+        {
+            "action": "manual",
+            "branch": "master",
+            "tag": null
+        }
+        "#;
+        let binding = json.replace(" ", "").replace("\n", "");
+        json = &binding;
+        assert_eq!(res, json);
+    }
+    #[test]
+    fn try_deserialize_trigger_hook() {
         let env = Trigger {
             action: Some(Flag::Hook(Hook::PrePush)),
             branch: Some("master".to_owned()),
             tag: None,
         };
-        let res = serde_json::to_string_pretty::<Trigger>(&env).unwrap();
-
         let json = r#"
         {
-            "action": "pre-push"
+            "action": "pre-push",
             "branch": "master",
-            "tag": null,
+            "tag": null
         }
         "#;
-        println!("{:?}", env);
-        println!("{:?}", res);
-        assert_eq!(res, json);
+        let res = serde_json::from_str::<Trigger>(&json).unwrap();
+        assert_eq!(res, env);
     }
 }

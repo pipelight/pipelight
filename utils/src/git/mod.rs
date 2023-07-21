@@ -70,6 +70,8 @@ impl Git {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
+// #[serde(rename_all(serialize = "kebab-case", deserialize = "PascalCase"))]
+#[serde(rename_all = "kebab-case")]
 pub enum Hook {
     ApplypatchMsg,
     PreApplypatch,
@@ -89,11 +91,19 @@ pub enum Hook {
     PostRewrite,
     PrePush,
 }
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
-pub enum Flag {
-    Hook(Hook),
+#[serde(rename_all(serialize = "kebab-case", deserialize = "PascalCase"))]
+pub enum Special {
     Manual,
     Watch,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
+#[serde(untagged)]
+pub enum Flag {
+    Hook(Hook),
+    Special(Special),
 }
 
 impl Hook {
@@ -107,7 +117,7 @@ impl Hook {
             let hook = Flag::Hook(Hook::from(&name));
             Ok(hook)
         } else {
-            Ok(Flag::Manual)
+            Ok(Flag::Special(Special::Manual))
             // let message = "Can't trigger hook outside of repository hook folder";
             // Err(Box::from(message))
         }

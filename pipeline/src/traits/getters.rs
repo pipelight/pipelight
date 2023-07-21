@@ -225,30 +225,3 @@ impl Getters<Trigger> for Trigger {
         Ok(trigger.to_owned())
     }
 }
-impl Trigger {
-    pub fn set_action(&mut self, flag: Option<Flag>) -> Self {
-        match self {
-            Trigger::TriggerBranch(res) => res.action = flag,
-            Trigger::TriggerTag(res) => res.action = flag,
-        }
-        self.to_owned()
-    }
-    pub fn get_action(&self) -> Option<Flag> {
-        match self {
-            Trigger::TriggerBranch(res) => res.action.clone(),
-            Trigger::TriggerTag(res) => res.action.clone(),
-        }
-    }
-    pub fn get_branch(&self) -> Option<String> {
-        match self {
-            Trigger::TriggerBranch(res) => res.branch.clone(),
-            Trigger::TriggerTag(..) => None,
-        }
-    }
-    pub fn get_tag(&self) -> Option<String> {
-        match self {
-            Trigger::TriggerTag(res) => res.tag.clone(),
-            Trigger::TriggerBranch(..) => None,
-        }
-    }
-}
