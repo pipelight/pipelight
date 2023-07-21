@@ -5,7 +5,7 @@ use std::os::unix::io::RawFd;
 use uuid::Uuid;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
-#[serde(untagged)]
+#[serde(rename_all = "kebab-case")]
 pub enum Status {
     Started,
     Succeeded,
