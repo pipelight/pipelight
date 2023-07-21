@@ -218,10 +218,8 @@ impl Trigger {
             let binding = trigger.clone();
             if self.is_action_match(binding.clone()).is_ok()
                 && self.is_branch_match(binding.clone()).is_ok()
+                && self.is_tag_match(binding).is_ok()
             {
-                return Ok(());
-            }
-            if self.is_action_match(binding.clone()).is_ok() && self.is_tag_match(binding).is_ok() {
                 return Ok(());
             }
         }
