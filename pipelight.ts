@@ -12,5 +12,4 @@ const config: Config = {
     uploadPipeline,
   ],
 };
-
 export default config;
