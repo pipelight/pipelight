@@ -9,6 +9,7 @@ use std::path::Path;
 use std::process::exit;
 
 use super::typescript::main_script;
+use utils::teleport;
 use utils::teleport::{FileType, Teleport};
 
 // Error Handling
@@ -16,39 +17,29 @@ use crate::error::{JsonError, TomlError, YamlError};
 use miette::{Error, IntoDiagnostic, NamedSource, Result, SourceSpan};
 
 impl Config {
+    /// Browse through the filesystem to find the config file
     pub fn get(file: Option<String>, args: Option<Vec<String>>) -> Result<Config> {
         // let pwd: String = current_dir().unwrap().display().to_string();
-
-        let default_file_path: String = Teleport::new().config.file_path.unwrap();
-
-        let res: Result<Config>;
+        let mut teleport = Teleport::new();
         if file.is_some() {
-            // Canonicalize file path
-            if Path::new(&file.clone().unwrap()).exists() {
-                let file_path: String = Path::new(&file.unwrap())
-                    .canonicalize()
-                    .into_diagnostic()?
-                    .display()
-                    .to_string();
-                res = Config::load_from_file(&file_path, args);
-            } else {
-                let message = format!("Couldn't find a config file: {}", &file.unwrap());
-                return Err(Error::msg(message));
-            }
+            let file = file.unwrap();
+            teleport.file(&file)?;
+            teleport.search()?;
         } else {
-            res = Config::load_from_file(&default_file_path, args);
+            teleport.preffix("pipelight")?;
+            teleport.search()?;
         }
-
+        let res = Config::load_from_file(&teleport.internal.file_path.unwrap(), args);
         match res {
             Ok(res) => Ok(res),
             Err(e) => {
                 let message = format!("Error in config file:\n{}", e);
                 Err(Error::msg(message))
-                // println!("{}", message);
-                // exit(1);
             }
         }
     }
+    /// Set the appropriated method to load the config according to the FileType
+    /// (the file extension .ts, .toml, .yml...)
     fn load_from_file(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
         // println!("extensiFileType::from(
         let extension = &Path::new(file_path)

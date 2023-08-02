@@ -11,6 +11,15 @@ const flags = parse(Deno.args, {
 const config = {
   pipelines: [
     {
+      name: "test_empty",
+      steps: [
+        {
+          name: `launch a pipeline`,
+          commands: ["pwd"],
+        },
+      ],
+    },
+    {
       name: "test_attached_pipelines",
       steps: [
         {

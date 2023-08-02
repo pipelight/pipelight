@@ -7,6 +7,9 @@ pub mod actions;
 pub mod case;
 pub mod interface;
 
+// Cli test
+pub mod test;
+
 //Re-export
 pub use case::CLI;
 pub use interface::{
