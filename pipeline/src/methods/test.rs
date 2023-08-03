@@ -18,7 +18,7 @@ mod trigger_match {
             action: None,
             tag: None,
         }];
-        assert_eq!(env.is_match(triggers).is_ok(), true);
+        assert!(env.is_match(triggers).is_ok());
     }
     #[test]
     /// unmatch trigger with branch without action
@@ -33,7 +33,7 @@ mod trigger_match {
             action: None,
             tag: None,
         }];
-        assert_eq!(env.is_match(triggers).is_err(), true);
+        assert!(env.is_match(triggers).is_err());
     }
     #[test]
     /// match trigger with action without branch
@@ -48,7 +48,7 @@ mod trigger_match {
             action: Some(Flag::Hook(Hook::PrePush)),
             tag: None,
         }];
-        assert_eq!(env.is_match(triggers).is_ok(), true);
+        assert!(env.is_match(triggers).is_ok());
     }
     #[test]
     /// unmatch trigger with action without branch
@@ -63,7 +63,7 @@ mod trigger_match {
             action: Some(Flag::Hook(Hook::PrePush)),
             tag: None,
         }];
-        assert_eq!(env.is_match(triggers).is_err(), true);
+        assert!(env.is_match(triggers).is_err());
     }
     #[test]
     /// match trigger with tag without action
@@ -79,7 +79,7 @@ mod trigger_match {
 
             branch: None,
         }];
-        assert_eq!(env.is_match(triggers).is_ok(), true);
+        assert!(env.is_match(triggers).is_ok());
     }
     #[test]
     /// unmatch trigger with tag without action
@@ -94,7 +94,7 @@ mod trigger_match {
             action: None,
             branch: None,
         }];
-        assert_eq!(env.is_match(triggers).is_err(), true);
+        assert!(env.is_match(triggers).is_err());
     }
     #[test]
     /// match trigger enums
@@ -109,7 +109,7 @@ mod trigger_match {
             action: None,
             tag: None,
         }];
-        assert_eq!(env.is_match(triggers).is_ok(), true);
+        assert!(env.is_match(triggers).is_ok());
     }
     #[test]
     fn try_match_action_no_tag() {
@@ -123,7 +123,7 @@ mod trigger_match {
             action: Some(Flag::Hook(Hook::PrePush)),
             branch: None,
         }];
-        assert_eq!(env.is_match(triggers).is_ok(), true);
+        assert!(env.is_match(triggers).is_ok());
     }
     #[test]
     fn try_unmatch_action_no_tag() {
@@ -137,6 +137,6 @@ mod trigger_match {
             action: Some(Flag::Hook(Hook::PreCommit)),
             branch: None,
         }];
-        assert_eq!(env.is_match(triggers).is_err(), true);
+        assert!(env.is_match(triggers).is_err());
     }
 }

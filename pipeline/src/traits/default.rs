@@ -1,16 +1,17 @@
 use crate::types::{
     Command, Config, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
 };
-// use cast;
-use exec::Process;
-
-use chrono::Utc;
-use log::LevelFilter;
-use log::{info, trace, warn};
-use uuid::Uuid;
-
 // External imports
 use utils::git::{Flag, Git, Hook};
+
+use exec::Process;
+// Date and time
+use chrono::Local;
+//Logs
+use log::LevelFilter;
+use log::{info, trace, warn};
+
+use uuid::Uuid;
 
 // Error Handling
 use miette::Result;
@@ -192,14 +193,6 @@ impl Step {
         Step::default()
     }
 }
-// impl Default for Command {
-//     fn default() -> Self {
-//         Command {
-//             duration: None,
-//             process: Process::default(),
-//         }
-//     }
-// }
 impl Command {
     pub fn new(stdin: &str) -> Command {
         Command {
@@ -228,7 +221,9 @@ impl Default for Event {
 
         Event {
             trigger: Trigger::env().unwrap(),
-            date: Utc::now().to_string(),
+            // Local instead of UTC to better stick to
+            // most time lib iso8601
+            date: Local::now().to_string(),
             pid: Some(Pid::as_raw(Some(pid))),
             pgid: Some(Pid::as_raw(Some(pgid))),
             sid: Some(Pid::as_raw(Some(sid))),

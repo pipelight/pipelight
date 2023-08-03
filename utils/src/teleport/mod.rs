@@ -1,164 +1,166 @@
 // Standard libs
 use std::env;
 
-use super::git::Git;
-use std::path::Path;
+mod types;
+pub use self::types::{FileType, Internal, NaiveFileInfo, Teleport};
+mod from;
+// Tests
+mod test;
+
 // Enum workaround
 use std::string::ToString;
 use strum::{EnumIter, IntoEnumIterator};
+
+use super::git::Git;
+use std::path::Path;
 // Error Handling
 use log::{debug, error, trace, warn};
 use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
 use std::process::exit;
 use thiserror::Error;
 
-#[derive(Debug, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
-pub enum FileType {
-    TypeScript,
-    JavaScript,
-    Toml,
-    Tml,
-    Yaml,
-    Yml,
-}
-
-impl From<&String> for FileType {
-    fn from(extension: &String) -> FileType {
-        let extension: &str = extension;
-        match extension {
-            "yaml" => FileType::Yaml,
-            "yml" => FileType::Yml,
-            "toml" => FileType::Toml,
-            "tml" => FileType::Tml,
-            "ts" => FileType::TypeScript,
-            "js" => FileType::JavaScript,
-            _ => {
-                let message = format!("Couldn't parse file with extension .{}", extension);
-                error!("{}", message);
-                exit(1);
-            }
-        }
-    }
-}
-impl From<&FileType> for String {
-    fn from(file_type: &FileType) -> String {
-        match file_type {
-            FileType::Yaml => "yaml".to_owned(),
-            FileType::Yml => "yml".to_owned(),
-            FileType::Toml => "toml".to_owned(),
-            FileType::Tml => "tml".to_owned(),
-            FileType::TypeScript => "ts".to_owned(),
-            FileType::JavaScript => "js".to_owned(),
-        }
-    }
-}
-#[derive(Debug, Clone)]
-pub struct Config {
-    pub preffix: String,
-    pub directory_path: Option<String>,
-    pub file_path: Option<String>,
-}
-
-impl Default for Config {
-    fn default() -> Self {
-        Config {
-            preffix: "pipelight".to_owned(),
-            directory_path: None,
-            file_path: None,
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct Teleport {
-    pub config: Config,
-    // Path from which process triggerd (cwd)
-    pub origin: String,
-    // Cwd
-    pub current: String,
-}
-
-impl Default for Teleport {
-    fn default() -> Self {
-        let mut teleport = Teleport {
-            origin: env::current_dir().unwrap().display().to_string(),
-            current: env::current_dir().unwrap().display().to_string(),
-            config: Config::default(),
-        };
-        teleport.search();
-        teleport
-    }
-}
-
 impl Teleport {
-    pub fn new() -> Self {
-        Teleport::default()
-    }
+    /// Jump between PWD and the directory of the loaded config file.
     pub fn teleport(&mut self) -> Self {
         let cwd = env::current_dir().unwrap().display().to_string();
         if cwd == self.origin {
-            env::set_current_dir(self.config.clone().directory_path.unwrap()).unwrap();
+            env::set_current_dir(self.internal.clone().directory_path.unwrap()).unwrap();
         }
-        if cwd == self.config.clone().directory_path.unwrap() {
+        if cwd == self.internal.clone().directory_path.unwrap() {
             env::set_current_dir(self.origin.clone()).unwrap();
         }
         self.to_owned()
     }
-    /// Recursively search a file throught parent dir and return path if exists
-    pub fn search(&mut self) -> Self {
-        let mut cwd = self.current.clone();
-        cwd.push('/');
+    pub fn preffix(&mut self, string: &str) -> Result<Self> {
+        self.file_info.preffix = string.to_owned();
+        Ok(self.to_owned())
+    }
+    pub fn parent(&mut self) -> Result<Self> {
+        if !self.has_reached_root()? {
+            let parent = Path::new(&self.current).parent();
+            if let Some(parent) = parent {
+                self.current = parent.display().to_string();
+            } else {
+                return Err(Error::msg("File has no parent"));
+            }
+        }
+        Ok(self.to_owned())
+    }
+    pub fn has_reached_root(&mut self) -> Result<bool> {
+        // If teleport (search method) has reached git repo root
+        if Git::new().exists() {
+            return Ok(self.current
+                == Git::new()
+                    .repo
+                    .unwrap()
+                    .workdir()
+                    .unwrap()
+                    .to_str()
+                    .unwrap());
+        }
+        // Else if teleport (search method) has reached filesystem root
+        else {
+            return Ok(self.current == "/");
+        }
+    }
+    pub fn file(&mut self, path: &str) -> Result<Self> {
+        // Test filename validity
+        let err = Error::msg("The provided file name is not a valid one");
+        Path::new(path)
+            .file_name()
+            .ok_or(err)?
+            .to_str()
+            .unwrap()
+            .to_owned();
+        self.file_info.path = Some(path.to_owned());
+        Ok(self.to_owned())
+    }
+    pub fn search_file(&mut self) -> Result<()> {
+        // Guard
+        if self.file_info.path.is_some() {
+            let name = self.file_info.path.clone().unwrap();
 
-        let cwd_path = Path::new(&cwd);
-        let message = "Couldn't find a configuration file";
-
-        // Loop through file types
+            let file_str = format!("{}/{}", self.current, name);
+            let path = Path::new(&file_str);
+            if path.exists() {
+                self.internal.file_path = Some(path.display().to_string());
+                self.internal.directory_path = Some(path.parent().unwrap().display().to_string());
+            } else {
+                if self.parent().is_ok() {
+                    self.search_file()?;
+                } else {
+                    return Err(Error::msg("Couldn't find file"));
+                }
+            }
+        }
+        Ok(())
+    }
+    pub fn search_path(&mut self) -> Result<()> {
+        let path_str = self.file_info.path.clone();
+        if path_str.is_some() {
+            let mut path_str = path_str.unwrap();
+            let mut path = Path::new(&path_str);
+            if path.is_relative() {
+                path_str = path.canonicalize().into_diagnostic()?.display().to_string();
+                path = Path::new(&path_str);
+            }
+            if path.exists() {
+                self.internal.file_path = Some(path.display().to_string());
+                self.internal.directory_path = Some(path.parent().unwrap().display().to_string());
+                Ok(())
+            } else {
+                Err(Error::msg(format!(
+                    "Couldn't find file at path {}",
+                    path_str
+                )))
+            }
+        } else {
+            Err(Error::msg("No path was provided"))
+        }
+    }
+    pub fn search_preffix(&mut self) -> Result<()> {
         let mut exists = false;
+        // Loop through file types
         for file_type in FileType::iter() {
             let extension = String::from(&file_type);
-            let file_str = format!("{}{}.{}", cwd, self.config.preffix, extension).to_owned();
-            let path = Path::new(&file_str);
-            exists = path.exists();
-            if exists {
-                self.config.file_path = Some(path.display().to_string());
-                self.config.directory_path = Some(path.parent().unwrap().display().to_string());
+            let path_str =
+                format!("{}/{}.{}", self.current, self.file_info.preffix, extension).to_owned();
+            let path = Path::new(&path_str);
+            if path.exists() {
+                exists = true;
+                self.internal.file_path = Some(path.display().to_string());
+                self.internal.directory_path = Some(path.parent().unwrap().display().to_string());
                 break;
             }
         }
-
-        // If config file exist break
-        // Else recursively call this function in a parent dir
         if !exists {
-            // if reached git repo root
-            if Git::new().exists()
-                && cwd
-                    == Git::new()
-                        .repo
-                        .unwrap()
-                        .workdir()
-                        .unwrap()
-                        .display()
-                        .to_string()
-            {
-                let message = "Couldn't find a config file".to_owned();
-                error!("{}", message);
-                // println!("{}", message);
-                exit(1);
-                // return Err(Error::msg(message));
-            }
-            let parent = cwd_path.parent();
-            // println!("parent: {}", &parent.unwrap().display());
-            if let Some(parent) = parent {
-                self.current = parent.display().to_string();
-                self.search();
+            if self.parent().is_ok() {
+                self.search_preffix()?;
             } else {
-                // No more accessible parents
-                let message = "Couldn't find a config file".to_owned();
-                error!("{}", message);
-                exit(1);
-                // return Err(Error::msg(message));
+                return Err(Error::msg("Couldn't find file"));
             }
         }
-        self.to_owned()
+        Ok(())
+    }
+    /// Recursively search a file throught parent dir and return path if exists
+    pub fn search(&mut self) -> Result<()> {
+        // If a file path provided
+        let naive_path = self.file_info.path.clone();
+        if naive_path.is_some() {
+            let binding = &naive_path.clone().unwrap();
+            let path = Path::new(binding);
+            // If file path is only a file name
+            let name = Path::new(path).file_name();
+            if let Some(name) = name {
+                if name.to_str().unwrap() == naive_path.unwrap() {
+                    return Ok(self.search_file()?);
+                } else {
+                    return Ok(self.search_path()?);
+                }
+            }
+        } else {
+            return Ok(self.search_preffix()?);
+        }
+        Ok(())
     }
 }

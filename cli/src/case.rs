@@ -82,7 +82,7 @@ impl Client {
 
         match args.commands {
             Commands::Ls(list) => {
-                // Set global config when needed
+                // Set global config
                 Config::new(args.config.clone(), args.raw.clone())?;
                 // info!("Listing piplines");
                 // Launch watcher
@@ -100,7 +100,7 @@ impl Client {
                 }
             }
             Commands::Inspect(list) => {
-                // Set global config when needed
+                // Set global config
                 Config::new(args.config.clone(), args.raw.clone())?;
                 // info!("Listing piplines");
                 if list.name.is_some() {
@@ -111,7 +111,7 @@ impl Client {
                 }
             }
             Commands::Watch(watch) => {
-                // Set global config when needed
+                // Set global config
                 Config::new(args.config.clone(), args.raw.clone())?;
                 match watch.commands {
                     None => {
@@ -126,13 +126,13 @@ impl Client {
                 }
             }
             Commands::Trigger(trigger) => {
-                // Set global config when needed
+                // Set global config
                 Config::new(args.config.clone(), args.raw.clone())?;
                 info!("Triggering pipelines");
                 trigger::launch(args.attach, trigger.flag)?;
             }
             Commands::Run(pipeline) => {
-                // Set global config when needed
+                // Set global config
                 Config::new(args.config.clone(), args.raw.clone())?;
                 if pipeline.name.is_some() {
                     info!("Running pipeline {:#?}", pipeline.name.clone().unwrap());
@@ -142,7 +142,7 @@ impl Client {
                 }
             }
             Commands::Stop(pipeline) => {
-                // Set global config when needed
+                // Set global config
                 Config::new(args.config.clone(), args.raw.clone())?;
                 info!(
                     "Stopping pipeline {:#?} with every attached and detached subprocess",
