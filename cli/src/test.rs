@@ -19,12 +19,14 @@ mod cli {
         Ok(())
     }
     #[test]
+    /// Display logs even when no config file present
     fn logs_pipeline() -> Result<()> {
         let mut cmd = Command::cargo_bin("pipelight").into_diagnostic()?;
         cmd.arg("logs");
         Ok(())
     }
     #[test]
+    /// Generate auto completion even when no config file present
     fn make_completion() -> Result<()> {
         let mut cmd = Command::cargo_bin("pipelight").into_diagnostic()?;
         cmd.arg("completion");

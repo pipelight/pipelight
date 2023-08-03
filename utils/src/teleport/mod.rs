@@ -123,9 +123,9 @@ impl Teleport {
         // Loop through file types
         for file_type in FileType::iter() {
             let extension = String::from(&file_type);
-            let file_str =
+            let path_str =
                 format!("{}/{}.{}", self.current, self.file_info.preffix, extension).to_owned();
-            let path = Path::new(&file_str);
+            let path = Path::new(&path_str);
             if path.exists() {
                 exists = true;
                 self.internal.file_path = Some(path.display().to_string());
@@ -137,7 +137,7 @@ impl Teleport {
             if self.parent().is_ok() {
                 self.search_preffix()?;
             } else {
-                return Err(Error::msg("Couldn't find the a file"));
+                return Err(Error::msg("Couldn't find file"));
             }
         }
         Ok(())
