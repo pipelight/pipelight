@@ -13,16 +13,8 @@ impl From<&Event> for String {
         let mut date = e.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
         date = format!("{}\n", date);
         string.push_str(&date);
-
-        let header = "action: ";
-        let action = format!(
-            "{}{}\n",
-            header.white(),
-            String::from(&e.trigger.clone().action.unwrap()).white()
-        );
-        string.push_str(&action);
         if e.trigger.tag.is_some() {
-            let header = "branch: ";
+            let header = "tag: ";
             let tag = format!(
                 "{}{}\n",
                 header.white(),
@@ -38,6 +30,13 @@ impl From<&Event> for String {
             );
             string.push_str(&branch);
         }
+        let header = "action: ";
+        let action = format!(
+            "{}{}\n",
+            header.white(),
+            String::from(&e.trigger.clone().action.unwrap()).white()
+        );
+        string.push_str(&action);
         string
     }
 }
