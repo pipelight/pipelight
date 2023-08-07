@@ -5,7 +5,6 @@
 use log::LevelFilter;
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
-use std::time::Duration;
 use uuid::Uuid;
 
 // Divers methods
@@ -33,7 +32,7 @@ pub struct Config {
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct Node {
     pub value: Option<String>,
-    pub duration: Option<Duration>,
+    pub duration: Option<String>,
     pub status: Option<Status>,
     pub children: Option<Vec<Node>>,
     pub level: LevelFilter,
@@ -45,7 +44,7 @@ pub struct Pipeline {
     pub name: String,
     pub event: Option<Event>,
     pub status: Option<Status>,
-    pub duration: Option<Duration>,
+    pub duration: Option<String>,
     pub triggers: Option<Vec<Trigger>>,
     pub fallback: Option<Fallback>,
     pub steps: Vec<StepOrParallel>,
@@ -60,7 +59,7 @@ pub enum StepOrParallel {
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Parallel {
     pub status: Option<Status>,
-    pub duration: Option<Duration>,
+    pub duration: Option<String>,
     pub steps: Vec<Step>,
     // Failure Handling mode
     pub mode: Option<Mode>,
@@ -72,7 +71,7 @@ pub struct Parallel {
 pub struct Step {
     pub name: String,
     pub status: Option<Status>,
-    pub duration: Option<Duration>,
+    pub duration: Option<String>,
     pub commands: Vec<Command>,
     // Failure Handling mode
     pub mode: Option<Mode>,
@@ -90,7 +89,7 @@ pub enum Mode {
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Default)]
 pub struct Command {
     // Pretty computatoin (Time, duration...)
-    pub duration: Option<Duration>,
+    pub duration: Option<String>,
     // Things relevant to unix process
     pub process: Process,
 }

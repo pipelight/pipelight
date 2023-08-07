@@ -7,7 +7,7 @@ edition = "2021"
 exec = {path = "../exec" }
 utils = {path = "../utils" }
 cast = {path = "../cast" }
-chrono = "0.4.23"
+chrono = { version = "0.4.23", features = ["serde"] }
 colored = "2.0.0"
 log = "0.4.17"
 serde = { version = "1.0.152" ,features = ["derive"] }
@@ -27,4 +27,5 @@ toml = "0.7.3"
 strum = { version = "0.24.1", features = ["derive"] }
 glob = "0.3.1"
 rustix = { version = "0.37.20", features = ["process"] }
+iso8601-duration = { version = "0.2.0", features = ["serde", "chrono"] }
 

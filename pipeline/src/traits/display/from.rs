@@ -13,16 +13,8 @@ impl From<&Event> for String {
         let mut date = e.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
         date = format!("{}\n", date);
         string.push_str(&date);
-
-        let header = "action: ";
-        let action = format!(
-            "{}{}\n",
-            header.white(),
-            String::from(&e.trigger.clone().action.unwrap()).white()
-        );
-        string.push_str(&action);
         if e.trigger.tag.is_some() {
-            let header = "branch: ";
+            let header = "tag: ";
             let tag = format!(
                 "{}{}\n",
                 header.white(),
@@ -38,6 +30,13 @@ impl From<&Event> for String {
             );
             string.push_str(&branch);
         }
+        let header = "action: ";
+        let action = format!(
+            "{}{}\n",
+            header.white(),
+            String::from(&e.trigger.clone().action.unwrap()).white()
+        );
+        string.push_str(&action);
         string
     }
 }
@@ -97,7 +96,7 @@ impl From<&Pipeline> for Node {
         Node {
             value: Some(head),
             status: e.status.clone(),
-            duration: e.duration,
+            duration: e.duration.clone(),
             children: Some(children),
             ..Node::default()
         }
@@ -152,7 +151,7 @@ impl From<&Parallel> for Node {
         Node {
             value: Some("parallel".to_owned()),
             status: e.status.clone(),
-            duration: e.duration,
+            duration: e.duration.clone(),
             children: Some(children),
             level: LevelFilter::Warn,
         }
@@ -200,7 +199,7 @@ impl From<&Step> for Node {
         Node {
             value: Some(head),
             status: e.status.clone(),
-            duration: e.duration,
+            duration: e.duration.clone(),
             children: Some(children),
             level: LevelFilter::Warn,
         }
@@ -211,7 +210,7 @@ impl From<&Command> for Node {
     fn from(e: &Command) -> Self {
         let mut node = Node {
             level: LevelFilter::Info,
-            duration: e.duration,
+            duration: e.duration.clone(),
             ..Node::default()
         };
         // Convert command output as child node
