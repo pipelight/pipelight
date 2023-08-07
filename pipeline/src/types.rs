@@ -44,7 +44,7 @@ pub struct Pipeline {
     pub name: String,
     pub event: Option<Event>,
     pub status: Option<Status>,
-    pub duration: Option<String>,
+    pub duration: Option<Duration>,
     pub triggers: Option<Vec<Trigger>>,
     pub fallback: Option<Fallback>,
     pub steps: Vec<StepOrParallel>,
@@ -59,7 +59,7 @@ pub enum StepOrParallel {
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Parallel {
     pub status: Option<Status>,
-    pub duration: Option<String>,
+    pub duration: Option<Duration>,
     pub steps: Vec<Step>,
     // Failure Handling mode
     pub mode: Option<Mode>,
@@ -71,7 +71,7 @@ pub struct Parallel {
 pub struct Step {
     pub name: String,
     pub status: Option<Status>,
-    pub duration: Option<String>,
+    pub duration: Option<Duration>,
     pub commands: Vec<Command>,
     // Failure Handling mode
     pub mode: Option<Mode>,
@@ -89,9 +89,16 @@ pub enum Mode {
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Default)]
 pub struct Command {
     // Pretty computatoin (Time, duration...)
-    pub duration: Option<String>,
+    pub duration: Option<Duration>,
     // Things relevant to unix process
     pub process: Process,
+}
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Default)]
+pub struct Duration {
+    // iso8601 DateTime
+    pub started_at: Option<String>,
+    // iso8601 Duration
+    pub computed: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]

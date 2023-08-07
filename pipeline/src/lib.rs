@@ -12,7 +12,7 @@ mod test;
 // Re-export
 pub use crate::traits::Getters;
 pub use crate::types::{
-    Command, Config, Event, Fallback, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel,
-    Trigger,
+    Command, Config, Duration, Event, Fallback, Logs, Mode, Node, Parallel, Pipeline, Step,
+    StepOrParallel, Trigger,
 };
 pub use traits::display;

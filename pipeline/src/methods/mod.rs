@@ -3,14 +3,16 @@
 
 // Internal imports
 use super::traits::Getters;
-use crate::{Config, Logs, Mode, Pipeline, StepOrParallel, Trigger};
+use crate::{Config, Duration, Logs, Mode, Pipeline, StepOrParallel, Trigger};
 
 // Error Handling
 use miette::{Error, IntoDiagnostic, Result};
 
+//Duration
+use chrono::{DateTime, Local};
+
 // Standard libs
 use log::info;
-use std::time::Duration;
 
 //sys
 use rustix::process::{kill_process_group, test_kill_process, Pid, Signal};
@@ -239,4 +241,20 @@ pub fn iso8601_to_std_duration(duration: String) -> Result<std::time::Duration> 
     } else {
         Err(Error::msg("Couldn't parse duration: Bad iso8601 duration"))
     }
+}
+pub fn compute_duration(duration: Duration) -> Result<std::time::Duration> {
+    let computed_duration: Option<Duration> = None;
+    let now = Local::now();
+
+    let date = duration
+        .started_at
+        .clone()
+        .unwrap()
+        .parse::<DateTime<Local>>()
+        .unwrap();
+
+    let diff: chrono::Duration = now - date;
+    let duration = diff.to_std().unwrap();
+
+    Ok(duration)
 }
