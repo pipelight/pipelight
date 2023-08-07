@@ -3,6 +3,8 @@ use super::{Command, Event, Mode, Parallel, Pipeline, Step, StepOrParallel, Trig
 // Traits
 // use super::Getters;
 
+use super::methods::std_duration_to_iso8601;
+
 use exec::{Statuable, Status};
 use std::clone::Clone;
 use std::env;
@@ -17,7 +19,8 @@ use once_cell::sync::Lazy;
 
 // Parallelism
 use rayon::prelude::*;
-// Duraion
+// Duration
+use chrono::Duration;
 use std::time::Instant;
 
 // Global var
@@ -58,7 +61,7 @@ impl Pipeline {
 
         unsafe {
             (*ptr).set_status(Some(Status::Running));
-            (*ptr).duration = Some(duration);
+            (*ptr).duration = std_duration_to_iso8601(duration).ok();
             (*ptr).log();
 
             for step in &mut (*ptr).steps {
@@ -66,7 +69,7 @@ impl Pipeline {
 
                 // Duration
                 duration = start.elapsed();
-                (*ptr).duration = Some(duration);
+                (*ptr).duration = std_duration_to_iso8601(duration).ok();
 
                 if (step.get_status() != Some(Status::Succeeded))
                     && (step.mode().is_none() || step.mode() == Some(Mode::StopOnFailure))
@@ -82,7 +85,7 @@ impl Pipeline {
         // Duration
         duration = start.elapsed();
         unsafe {
-            (*ptr).duration = Some(duration);
+            (*ptr).duration = std_duration_to_iso8601(duration).ok();
         }
 
         // Set pipeline status to last Step status
@@ -128,7 +131,7 @@ impl Pipeline {
                 }
                 // Duration
                 duration = start.elapsed();
-                (*ptr).duration = Some(duration);
+                (*ptr).duration = std_duration_to_iso8601(duration).ok();
                 (*ptr).log();
             }
         }
@@ -177,7 +180,7 @@ impl Parallel {
         }
         // Duration
         let duration = start.elapsed();
-        self.duration = Some(duration);
+        self.duration = std_duration_to_iso8601(duration).ok();
 
         unsafe {
             (*ptr).log();
@@ -221,7 +224,7 @@ impl Step {
 
         // Duration
         let duration = start.elapsed();
-        self.duration = Some(duration);
+        self.duration = std_duration_to_iso8601(duration).ok();
 
         unsafe {
             (*ptr).log();
@@ -273,7 +276,7 @@ impl Command {
 
         // Duration
         let duration = start.elapsed();
-        self.duration = Some(duration);
+        self.duration = std_duration_to_iso8601(duration).ok();
 
         unsafe {
             (*ptr).log();

@@ -14,7 +14,7 @@ mod cli {
         cmd.arg("run")
             .arg("test_empty")
             .arg("--config")
-            .arg("test.pipelight.ts");
+            .arg("test.pipelight.unknown.ts");
         cmd.assert().failure();
         Ok(())
     }

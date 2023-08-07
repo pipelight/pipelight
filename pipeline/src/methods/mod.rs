@@ -164,12 +164,6 @@ impl StepOrParallel {
             StepOrParallel::Parallel(res) => res.mode.clone(),
         }
     }
-    pub fn duration(&self) -> Option<Duration> {
-        match self {
-            StepOrParallel::Step(res) => res.duration,
-            StepOrParallel::Parallel(res) => res.duration,
-        }
-    }
 }
 impl Trigger {
     // Success if trigger has same action or None
@@ -225,5 +219,24 @@ impl Trigger {
         }
         let message = "no match";
         return Err(Error::msg(message));
+    }
+}
+
+pub fn std_duration_to_iso8601(duration: std::time::Duration) -> Result<String> {
+    let chrono_duration = chrono::Duration::from_std(duration).ok();
+    if let Some(chrono_duration) = chrono_duration {
+        let duration_ISO_8601 = format!("{}", chrono_duration);
+        Ok(duration_ISO_8601)
+    } else {
+        Err(Error::msg("Bad std::Duration instance"))
+    }
+}
+pub fn iso8601_to_std_duration(duration: String) -> Result<std::time::Duration> {
+    let duration = &duration.as_str();
+    let chrono_duration: Option<iso8601_duration::Duration> = duration.parse().ok();
+    if chrono_duration.is_some() {
+        Ok(chrono_duration.unwrap().to_std().unwrap())
+    } else {
+        Err(Error::msg("Couldn't parse duration: Bad iso8601 duration"))
     }
 }

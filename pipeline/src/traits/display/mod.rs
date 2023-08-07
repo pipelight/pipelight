@@ -1,3 +1,4 @@
+use crate::methods::iso8601_to_std_duration;
 use crate::types::Node;
 
 // Caracteres
@@ -69,7 +70,8 @@ impl Node {
             value = value.replace('\n', &format!("\n{prefix:}", prefix = prefix.white()));
 
             if self.duration.is_some() && logger.lock().unwrap().level >= LevelFilter::Error {
-                let duration = format_duration(self.duration.unwrap()).unwrap();
+                let duration = iso8601_to_std_duration(self.duration.clone().unwrap()).unwrap();
+                let duration = format_duration(duration).unwrap();
                 let pretty = format!(" ({})", duration);
                 value.push_str(&format!("{}", pretty.white()));
             }
