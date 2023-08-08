@@ -1,5 +1,5 @@
-use crate::methods::iso8601_to_std_duration;
-use crate::types::Node;
+use crate::methods::{iso8601_to_std_duration, std_duration_to_iso8601};
+use crate::types::{Duration, Node};
 
 // Caracteres
 mod characters;
@@ -13,7 +13,7 @@ pub use colored::control::set_override;
 use colored::{ColoredString, Colorize};
 
 use chrono::Utc;
-use chrono::{DateTime, Duration, Local};
+use chrono::{DateTime, Local};
 use exec::{Statuable, Status};
 use log::LevelFilter;
 use log::{debug, error, info, warn};
@@ -70,8 +70,10 @@ impl Node {
             value = value.replace('\n', &format!("\n{prefix:}", prefix = prefix.white()));
 
             if self.duration.is_some() && logger.lock().unwrap().level >= LevelFilter::Error {
-                let duration = iso8601_to_std_duration(self.duration.clone().unwrap()).unwrap();
-                let duration = format_duration(duration).unwrap();
+                let duration = format_duration(
+                    iso8601_to_std_duration(self.duration.clone().unwrap()).unwrap(),
+                )
+                .unwrap();
                 let pretty = format!(" ({})", duration);
                 value.push_str(&format!("{}", pretty.white()));
             }
@@ -108,23 +110,21 @@ impl Node {
 }
 
 pub fn format_duration(duration: std::time::Duration) -> Result<String> {
-    let mut res: String;
-    let computed = Duration::from_std(duration).unwrap();
-    let m: f64 = computed.num_minutes() as f64;
-    let mut s: f64 = computed.num_seconds() as f64;
-    let mut ms: f64 = computed.num_milliseconds() as f64;
-    res = "processing".to_owned();
-    if m > 0 as f64 {
-        res = format!("{:.2}m", m);
-    } else if s > 0 as f64 {
-        s = ms / 1000_f64;
-        res = format!("{:.2}s", s);
-    } else if ms > 0 as f64 {
-        let ns = computed.num_nanoseconds();
-        if let Some(ns) = ns {
-            ms = (ns as f64 / (1000 * 1000) as f64) as f64;
-            res = format!("{:.2}ms", ms);
-        }
+    let computed = chrono::Duration::from_std(duration).unwrap();
+    let mut res: String = "".to_owned();
+    // Res
+    let minutes = computed.num_minutes();
+    let seconds = computed.num_seconds() - minutes * 60;
+    let milliseconds = computed.num_milliseconds() - minutes * 60 * 1000 - seconds * 1000;
+
+    if minutes > 0 {
+        res = format!("{}{}m", res, minutes);
+    }
+    if seconds > 0 {
+        res = format!("{}{}s", res, seconds);
+    }
+    if milliseconds > 0 && minutes <= 0 {
+        res = format!("{}{}ms", res, milliseconds);
     }
     Ok(res)
 }
