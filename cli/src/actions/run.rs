@@ -22,12 +22,10 @@ use miette::{Error, Result};
 pub fn launch(pipeline_name: String, attach: bool, flag: Option<String>) -> Result<()> {
     // Set triggering env action
     if flag.is_some() {
-        Trigger::flag(Flag::from(&flag.clone().unwrap()))?;
-    } else {
-        Trigger::env()?;
+        Trigger::flag(Some(Flag::from(&flag.clone().unwrap())))?;
     }
 
-    let mut args;
+    let args;
     unsafe {
         args = (*CLI).clone();
     }

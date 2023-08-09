@@ -10,6 +10,21 @@ const config: Config = {
     parallelPackagingPipeline as Pipeline,
     ...packagingPipelines,
     uploadPipeline,
+    {
+      name: "test",
+      steps: [
+        {
+          name: "get pwd",
+          commands: ["pwd"],
+        },
+      ],
+      triggers: [
+        {
+          branches: ["dev"],
+          actions: ["pre-push"],
+        },
+      ],
+    },
   ],
 };
 export default config;

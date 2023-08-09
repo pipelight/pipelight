@@ -21,7 +21,6 @@ use crate::case::CLI;
 use miette::{Error, IntoDiagnostic, Result};
 
 pub fn launch(attach: bool) -> Result<()> {
-    trace!("Create detached subprocess");
     match attach {
         true => {
             // Lauch in attached thread
@@ -33,49 +32,21 @@ pub fn launch(attach: bool) -> Result<()> {
     Ok(())
 }
 
-/// Filter pipeline by trigger and run
-pub fn create_watcher() -> Result<()> {
-    let config = Config::get()?;
-    let mut env = Trigger::env()?;
-
-    env.action = Some(Flag::Special(Special::Watch));
-
-    // Guard
-    if config.pipelines.is_none() {
-        let message = "No pipeline found";
-        debug!("{}", message);
-        return Ok(());
-    }
-
-    // Set global triggering flag/action to "watch"
-    let env = Trigger::flag(Flag::Special(Special::Watch))?;
-    info!("{:#?}", env);
-    let mut args;
-    unsafe {
-        args = (*CLI).clone();
-    }
-
-    let subcommand = types::Commands::Watch(types::Watch {
-        commands: Some(types::WatchCommands::Kill),
+/// Launch attached thread
+pub fn watch_in_thread() -> Result<()> {
+    let thread = thread::spawn(move || {
+        //Action
+        watch().unwrap()
     });
-
-    unsafe {
-        (*CLI) = args;
-    }
-
-    if can_watch().is_ok() {
-        detach(Some(subcommand))?;
-    }
-
+    thread.join().unwrap();
     Ok(())
 }
-
 /// Filter pipeline by trigger and run
 pub fn watch() -> Result<()> {
     let config = Config::get()?;
 
-    // Set global triggering flag/action to "watch"
-    Trigger::flag(Flag::Special(Special::Watch))?;
+    // Set triggering env
+    let env = Trigger::flag(Some(Flag::Special(Special::Watch)))?;
 
     // Guard
     if config.pipelines.is_none() {
@@ -91,7 +62,7 @@ pub fn watch() -> Result<()> {
     }
     args.attach = true;
     args.commands = types::Commands::Trigger(types::Trigger {
-        flag: Some("watch".to_owned()),
+        flag: Some(String::from(&env.action.unwrap())),
     });
 
     #[cfg(debug_assertions)]
@@ -117,9 +88,7 @@ pub fn can_watch() -> Result<()> {
         let parsed_cmd = types::Cli::try_parse_from(process.cmd());
         if parsed_cmd.is_ok() {
             if parsed_cmd.into_diagnostic()?.commands
-                == types::Commands::Watch(types::Watch {
-                    commands: Some(types::WatchCommands::Kill),
-                })
+                == types::Commands::Watch(types::Watch { commands: None })
             {
                 if process.cwd() == env::current_dir().into_diagnostic()?
                     && pid != &get_current_pid().unwrap()
@@ -133,6 +102,14 @@ pub fn can_watch() -> Result<()> {
     }
     Ok(())
 }
+/// Filter pipeline by trigger and run
+pub fn create_watcher() -> Result<()> {
+    let subcommand = types::Commands::Watch(types::Watch { commands: None });
+    if can_watch().is_ok() {
+        detach(Some(subcommand))?;
+    }
+    Ok(())
+}
 /// Remove the running watcher instance
 pub fn destroy_watcher() -> Result<()> {
     let mut sys = System::new_all();
@@ -141,9 +118,7 @@ pub fn destroy_watcher() -> Result<()> {
         let parsed_cmd = types::Cli::try_parse_from(process.cmd());
         if parsed_cmd.is_ok() {
             if parsed_cmd.into_diagnostic()?.commands
-                == types::Commands::Watch(types::Watch {
-                    commands: Some(types::WatchCommands::Kill),
-                })
+                == types::Commands::Watch(types::Watch { commands: None })
             {
                 if process.cwd() == env::current_dir().into_diagnostic()?
                     && pid != &get_current_pid().unwrap()
@@ -160,15 +135,5 @@ pub fn destroy_watcher() -> Result<()> {
             }
         }
     }
-    Ok(())
-}
-
-/// Launch attached thread
-pub fn watch_in_thread() -> Result<()> {
-    let thread = thread::spawn(move || {
-        //Action
-        watch().unwrap()
-    });
-    thread.join().unwrap();
     Ok(())
 }

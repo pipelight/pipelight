@@ -84,14 +84,12 @@ impl Client {
             Commands::Ls(list) => {
                 // Set global config
                 Config::new(args.config.clone(), args.raw.clone())?;
-                // info!("Listing piplines");
                 // Launch watcher
                 if Config::get()?.has_watch_flag().is_ok() {
                     watch::create_watcher()?;
                 } else {
                     watch::destroy_watcher()?;
                 }
-
                 if list.name.is_some() {
                     let pipeline = Pipeline::get_by_name(&list.name.unwrap())?;
                     print::inspect(&pipeline, list.json)?;

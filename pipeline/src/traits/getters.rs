@@ -16,10 +16,11 @@ use miette::{Error, IntoDiagnostic, Result};
 // use std::error::Error;
 
 // Import global config
-use super::default::CONFIG;
+use super::default::{CONFIG, TELEPORT};
 
 // External imports
-use utils::git::Flag;
+use utils::git::Hook;
+use utils::teleport::Teleport;
 
 pub trait Getters<T> {
     /// Return every instances of the struct.
@@ -30,15 +31,44 @@ pub trait Getters<T> {
 
 impl Config {
     pub fn get() -> Result<Self> {
+        let (config, mut portal) = Config::get_with_teleport()?;
+        Ok(config)
+    }
+    pub fn get_with_teleport() -> Result<(Self, Teleport)> {
         unsafe {
-            if *CONFIG == Config::default() {
-                let message = "Tried to get a Config that hasn't been initialized yet";
-                warn!("{}", message);
-                Err(Error::msg(message))
+            if *CONFIG != Config::default() && *TELEPORT != Teleport::default() {
+                let config = (*CONFIG).to_owned();
+                let teleport = (*TELEPORT).to_owned();
+                Ok((config, teleport))
             } else {
-                let ptr = (*CONFIG).to_owned();
-                Ok(ptr)
+                Err(Error::msg("Config file not initialized"))
             }
+        }
+    }
+    pub fn new(file: Option<String>, args: Option<Vec<String>>) -> Result<Self> {
+        let (config, mut portal) = Config::new_with_teleport(file, args)?;
+        Hook::enable()?;
+        // Launch watcher
+        Ok(config)
+    }
+    pub fn new_with_teleport(
+        file: Option<String>,
+        args: Option<Vec<String>>,
+    ) -> Result<(Self, Teleport)> {
+        unsafe {
+            if *CONFIG == Config::default() && *TELEPORT == Teleport::default() {
+                let mut config: Config;
+                let (json, portal) = cast::Config::get_with_teleport(file, args)?;
+
+                config = Config::from(&json);
+                config.dedup_pipelines();
+                *CONFIG = config;
+                *TELEPORT = portal;
+            }
+            let ptr = (*CONFIG).to_owned();
+            let tel = (*TELEPORT).to_owned();
+
+            Ok((ptr, tel))
         }
     }
 }

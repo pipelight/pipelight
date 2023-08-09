@@ -3,6 +3,7 @@ use crate::types::{
 };
 // External imports
 use utils::git::{Flag, Git, Hook};
+use utils::teleport::Teleport;
 
 use exec::Process;
 // Date and time
@@ -24,71 +25,39 @@ use once_cell::sync::Lazy;
 
 // Global var
 pub static mut CONFIG: Lazy<Config> = Lazy::new(Config::default);
-pub static mut TRIGGER_ENV: Lazy<Option<Trigger>> = Lazy::new(|| None);
+pub static mut TELEPORT: Lazy<Teleport> = Lazy::new(Teleport::default);
+pub static mut TRIGGER_ENV: Lazy<Trigger> = Lazy::new(Trigger::default);
 
 impl Trigger {
     /// Return actual triggering env with a modified flag
-    pub fn flag(flag: Flag) -> Result<Trigger> {
-        // Get the gloabl env
-        let mut env = Trigger::env()?;
-        env.action = Some(flag);
+    pub fn flag(flag: Option<Flag>) -> Result<Trigger> {
+        let mut env;
         unsafe {
-            // Set the gloabl env
-            *TRIGGER_ENV = Some(env.clone());
+            env = (*TRIGGER_ENV).clone();
         }
-        Ok(env)
-    }
-    /// Return actual triggering env
-    pub fn env() -> Result<Trigger> {
-        // Get the gloabl env
-        let global_env;
-        unsafe {
-            global_env = (*TRIGGER_ENV).clone();
+        // Set git env
+        if Git::new().exists() {
+            env.branch = Git::new().get_branch()?;
+            env.tag = Git::new().get_tag()?;
         }
-        let env: Trigger;
-
-        if global_env.is_some() {
-            env = global_env.unwrap();
+        if flag.is_some() {
+            env.action = flag;
         } else {
-            // Default trigger values
-            let mut branch = None;
-            let mut tag = None;
-            let action = Some(Hook::origin()?);
-
-            if Git::new().exists() {
-                branch = Git::new().get_branch()?;
-                tag = Git::new().get_tag()?;
+            if env.action.is_none() {
+                env.action = Some(Flag::default());
             }
-            env = Trigger {
-                action,
-                branch,
-                tag,
-            };
-            unsafe {
-                // Set the gloabl env
-                *TRIGGER_ENV = Some(env.clone());
-            }
+        }
+        // Set the gloabl env
+        unsafe {
+            *TRIGGER_ENV = env.clone();
         }
         Ok(env)
     }
 }
 
 impl Config {
-    pub fn new(file: Option<String>, args: Option<Vec<String>>) -> Result<Self> {
-        unsafe {
-            if *CONFIG == Config::default() {
-                let mut config: Config;
-                let json = cast::Config::get(file, args)?;
-                config = Config::from(&json);
-                config.dedup_pipelines();
-                *CONFIG = config;
-            }
-            let ptr = (*CONFIG).to_owned();
-            Ok(ptr)
-        }
-    }
     /// Remove pipelines with the same name
-    fn dedup_pipelines(&mut self) -> Self {
+    pub fn dedup_pipelines(&mut self) -> Self {
         if self.pipelines.is_some() {
             let init_length = &self.pipelines.clone().unwrap().len();
             self.pipelines
@@ -220,7 +189,7 @@ impl Default for Event {
         let sid = getsid(Some(pid)).unwrap();
 
         Event {
-            trigger: Trigger::env().unwrap(),
+            trigger: Trigger::flag(None).unwrap(),
             // Local instead of UTC to better stick to
             // most time lib iso8601
             date: Local::now().to_string(),

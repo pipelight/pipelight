@@ -9,20 +9,16 @@ mod try_teleport {
     /// Search a pipelight.<extension> file in the filesystem
     fn _search() -> Result<()> {
         let mut teleport = Teleport::new();
+        teleport.preffix("pipelight");
         let res = teleport.search_preffix();
         assert!(res.is_ok());
         Ok(())
     }
 
     fn _search_unknow() -> Result<()> {
-        let mut teleport = Teleport {
-            file_info: NaiveFileInfo {
-                preffix: "test.pipelight.unknown".to_owned(),
-                ..NaiveFileInfo::default()
-            },
-            ..Teleport::default()
-        };
-        let res = teleport.search_preffix();
+        let mut teleport = Teleport::new();
+        teleport.preffix("test.pipelight.unknown");
+        let res = teleport.search();
         assert!(res.is_err());
         Ok(())
     }
@@ -34,13 +30,8 @@ mod try_teleport {
             directory_path: Some("/home/areskul/Tools/PIPE/pipelight".to_owned()),
             file_path: Some("/home/areskul/Tools/PIPE/pipelight/test.pipelight.ts".to_owned()),
         };
-        let mut teleport = Teleport {
-            file_info: NaiveFileInfo {
-                preffix: "test.pipelight".to_owned(),
-                ..NaiveFileInfo::default()
-            },
-            ..Teleport::default()
-        };
+        let mut teleport = Teleport::new();
+        teleport.preffix("test.pipelight");
         teleport.search_preffix()?;
         assert_eq!(internal, teleport.internal);
         Ok(())
@@ -48,13 +39,8 @@ mod try_teleport {
     #[test]
     /// Search a config file with provided name in the filesystem
     fn _search_preffix_unknown() -> Result<()> {
-        let mut teleport = Teleport {
-            file_info: NaiveFileInfo {
-                preffix: "test.pipelight.unknown".to_owned(),
-                ..NaiveFileInfo::default()
-            },
-            ..Teleport::default()
-        };
+        let mut teleport = Teleport::new();
+        teleport.preffix("test.pipelight.unknown");
         let res = teleport.search_preffix();
         assert!(res.is_err());
         Ok(())

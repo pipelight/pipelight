@@ -22,7 +22,7 @@ use glob::Pattern;
 
 // External imports
 use exec::{Statuable, Status};
-use utils::git::{Flag, Git, Hook, Special};
+use utils::git::{Flag, Git, Special};
 use utils::logger::logger;
 
 // Tests
@@ -72,7 +72,7 @@ impl Pipeline {
     }
     /// Verify if pipeline can be triggered
     pub fn is_triggerable(&self) -> Result<bool> {
-        let env = Trigger::env()?;
+        let env = Trigger::flag(None)?;
 
         // If in git repo
         if Git::new().exists() {

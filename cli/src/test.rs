@@ -19,6 +19,17 @@ mod cli {
         Ok(())
     }
     #[test]
+    /// Run simple pipeline
+    fn run_pipeline() -> Result<()> {
+        let mut cmd = Command::cargo_bin("pipelight").into_diagnostic()?;
+        cmd.arg("run")
+            .arg("test")
+            .arg("--config")
+            .arg("test.pipelight.ts");
+        cmd.assert().success();
+        Ok(())
+    }
+    #[test]
     /// Display logs even when no config file present
     fn logs_pipeline() -> Result<()> {
         let mut cmd = Command::cargo_bin("pipelight").into_diagnostic()?;
