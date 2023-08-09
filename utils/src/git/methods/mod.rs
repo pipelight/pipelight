@@ -21,19 +21,6 @@ impl Git {
             repo: Repository::discover(root).ok(),
         }
     }
-    pub fn teleport(&mut self) {
-        if self.exists() {
-            let wd = self
-                .repo
-                .as_mut()
-                .unwrap()
-                .workdir()
-                .unwrap()
-                .display()
-                .to_string();
-            env::set_current_dir(wd).unwrap();
-        }
-    }
     ///  Detect if inside a git repo
     pub fn exists(&mut self) -> bool {
         self.repo.is_some()
@@ -61,49 +48,25 @@ impl Git {
 }
 
 impl Hook {
-    /// Detect name of the hook that triggers script
-    pub fn origin() -> Result<Flag> {
-        let root = env::current_dir().into_diagnostic()?;
-        let path_string = root.display().to_string();
-        if path_string.contains("/.git/hooks/") {
-            // Get hook name from folder name
-            let name = root.file_stem().unwrap().to_str().unwrap().to_owned();
-            let hook = Flag::Hook(Hook::from(&name));
-            Ok(hook)
-        } else {
-            Ok(Flag::Special(Special::Manual))
-            // let message = "Can't trigger hook outside of repository hook folder";
-            // Err(Box::from(message))
-        }
-    }
     /// Ensure .git/hook folder
-    pub fn new() -> Result<()> {
-        let root = ".git/hooks";
-        let extension = ".d";
-        let bin = "pipelight";
-
+    pub fn enable() -> Result<()> {
         for hook in Hook::iter() {
-            let caller = format!("{}/{}", root, String::from(&hook));
-            let caller_path = Path::new(&caller);
-
-            let dot_d_dir = format!("{}/{}{}", root, String::from(&hook), extension);
-            let dot_d_dir_path = Path::new(&dot_d_dir);
-
-            let script = format!("{}/{}", dot_d_dir, bin);
-            let script_path = Path::new(&script);
-
             if Git::new().repo.is_some() {
-                Hook::create_script(dot_d_dir_path, script_path)?;
-                Hook::create_subscripts_caller(caller_path, &hook)?;
+                Hook::create_script(&hook)?;
+                Hook::create_subscripts_caller(&hook)?;
             }
         }
         Ok(())
     }
     /// Create a hook that will call scrpts from a hook.d subfolder
-    fn create_subscripts_caller(path: &Path, hook: &Hook) -> Result<()> {
+    fn create_subscripts_caller(hook: &Hook) -> Result<()> {
         let git = Git::new();
         let action = String::from(hook);
         let root = git.repo.unwrap().path().display().to_string();
+
+        let path = &format!(".git/hooks/{}", String::from(hook));
+        let path = Path::new(path);
+
         let mut file = fs::File::create(path).into_diagnostic()?;
         let s = format!(
             "#!/bin/sh \n\
@@ -126,21 +89,36 @@ impl Hook {
 
         Ok(())
     }
-    fn create_script(directory_path: &Path, file_path: &Path) -> Result<()> {
-        fs::create_dir_all(directory_path).into_diagnostic()?;
-        let mut file = fs::File::create(file_path).into_diagnostic()?;
+    fn create_script(hook: &Hook) -> Result<()> {
+        let hook = String::from(hook);
         #[cfg(debug_assertions)]
-        let s = "#!/bin/sh \n\
-            cargo run --bin pipelight trigger \
-            "
+        let script = format!(
+            "#!/bin/sh \n\
+            cargo run --bin pipelight trigger --flag {}\
+            ",
+            &hook,
+        )
         .to_owned();
         #[cfg(not(debug_assertions))]
-        let s = "#!/bin/sh \n\
-            pipelight trigger \
-            "
+        let script = format!(
+            "#!/bin/sh \n\
+            pipelight trigger --flag {}\
+            ",
+            &hook
+        )
         .to_owned();
-        let b = s.as_bytes();
-        file.write_all(b).into_diagnostic()?;
+
+        let dir_path = format!(".git/hooks/{}.d", &hook);
+        let dir_path = Path::new(&dir_path);
+
+        fs::create_dir_all(dir_path).into_diagnostic()?;
+
+        let file_path = format!(".git/hooks/{}.d/_pipelight", &hook);
+        let file_path = Path::new(&file_path);
+        let mut file = fs::File::create(file_path).into_diagnostic()?;
+
+        let bytes = script.as_bytes();
+        file.write_all(bytes).into_diagnostic()?;
 
         // Set permissions
         let metadata = file.metadata().into_diagnostic()?;

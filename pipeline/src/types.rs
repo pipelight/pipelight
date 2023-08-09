@@ -101,7 +101,7 @@ pub struct Duration {
     pub computed: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Trigger {
     pub action: Option<Flag>,
     pub branch: Option<String>,

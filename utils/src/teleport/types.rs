@@ -14,29 +14,19 @@ pub enum FileType {
     Yml,
 }
 
-#[derive(Debug, Clone, Default, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Default, Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
 /// Internal values to browse the fs
 pub struct Internal {
     /// Config file dir path and file path if founded.
     pub directory_path: Option<String>,
     pub file_path: Option<String>,
 }
-
-#[derive(Debug, Clone)]
+#[derive(Default, Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
 pub struct NaiveFileInfo {
-    pub preffix: String,
+    pub preffix: Option<String>,
     pub path: Option<String>,
 }
-impl Default for NaiveFileInfo {
-    fn default() -> Self {
-        NaiveFileInfo {
-            preffix: "pipelight".to_owned(),
-            path: None,
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Teleport {
     pub internal: Internal,
     pub file_info: NaiveFileInfo,

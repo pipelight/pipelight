@@ -22,7 +22,7 @@ impl Default for Logger {
         if exists {
             Logger {
                 directory: log_dir,
-                handle,
+                handle: handle,
                 level: LevelFilter::Error,
             }
         } else {
@@ -30,8 +30,8 @@ impl Default for Logger {
             let path_string = format!("{}/{}", &root, log_dir);
             // Get default config
             Logger {
-                directory: path_string,
-                handle,
+                directory: path_string.clone(),
+                handle: handle,
                 level: LevelFilter::Error,
             }
         }

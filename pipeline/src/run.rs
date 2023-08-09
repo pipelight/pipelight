@@ -55,10 +55,8 @@ impl Pipeline {
             });
         }
 
-        //Event
-        let origin = env::current_dir().unwrap();
+        // Event
         let event = Event::new();
-        Git::new().teleport();
 
         // Set event = Pid , Status and Duration
         unsafe {
@@ -81,9 +79,6 @@ impl Pipeline {
                 }
             }
         }
-
-        //Event
-        env::set_current_dir(origin).unwrap();
 
         // Duration
         let duration = start.elapsed();

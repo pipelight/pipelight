@@ -4,10 +4,12 @@ import type {
   Step,
   Parallel,
 } from "https://deno.land/x/pipelight/mod.ts";
-import { exec } from "https://deno.land/x/pipelight/mod.ts";
+
+import $ from "https://deno.land/x/dax/mod.ts";
 
 const version =
-  (await exec("git describe --tags --abbrev=0 | sed s/v//")) + "-1-any";
+  (await $`git describe --tags --abbrev=0`.text()).replace("v", "") + "-1-any";
+console.debug(version);
 
 const distros = [
   {

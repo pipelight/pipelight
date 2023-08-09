@@ -47,7 +47,6 @@ impl From<&cast::Pipeline> for Pipeline {
         let triggers: Option<Vec<Trigger>> = if e.triggers.is_none() {
             None
         } else {
-            Hook::new().unwrap();
             Some(
                 e.clone()
                     .triggers
