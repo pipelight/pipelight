@@ -5,10 +5,11 @@ Here are the features it needs to implement to reach v1.0.0
 
 ## core
 
+- [ ] add: pipelight stop -> prompt for running pipeline to interupt
 - [ ] add: signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
 - [ ] add: Clap version feature flag
 - [ ] add: More colorful and verbose internam error type (line, column + code sample)
-- [ ] security: Sanitize logs before reading
+- [ ] security: sanitize logs before reading
 
 ## installer
 
