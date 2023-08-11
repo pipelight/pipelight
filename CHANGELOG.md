@@ -1,14 +1,8 @@
 # CHANGELOG
 
-## next
+## v0.6.12
 
-- [ ] Add signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
-- [ ] Add Clap version feature flag
-- [ ] Detect if deno is installed
-- [ ] bug fix: print Pipeline execution time while running (instead of "processing")
-- [ ] Sanitize logs before reading
-- [ ] add: internal dependencies schema for better internals understanding
-- [ ] rewrite test for multiple bad config file.
+- [x] bug fix: print Pipeline execution time while running (instead of "processing")
 
 ## v0.5.11
 
