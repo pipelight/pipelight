@@ -1,9 +1,9 @@
-<p align="center">
-<img width="200px" alt="pipelight logo" src="https://pipelight.dev/images/pipelight.png"/>
-</p>
-<h1 align="center">
+<h1>
+<span>
 <p>Pipelight</p>
-<p>Self-hosted automation pipelines!</p>
+<p>Automation pipelines but easier.</p>
+</span>
+<img width="125px" alt="pipelight_logo" src="https://pipelight.dev/images/pipelight.png"/>
 </h1>
 
 ## Join the Community
