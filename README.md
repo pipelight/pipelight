@@ -1,10 +1,10 @@
-<h1>
 <span>
+<h1>
+<img width="125px" alt="pipelight_logo" src="https://pipelight.dev/images/pipelight.png"/>
 <p>Pipelight</p>
+</h1>
 <p>Automation pipelines but easier.</p>
 </span>
-<img width="125px" alt="pipelight_logo" src="https://pipelight.dev/images/pipelight.png"/>
-</h1>
 
 ## Join the Community
 
@@ -80,5 +80,5 @@ pipelight logs
 
 <img width="500px" alt="pretty logs" src="https://pipelight.dev/images/example_log_level_4.png"/>
 
-<p align="center">Licensed under GNU GPLv2</p>
-<p align="center">Copyright (C) 2023 Areskul</p>
+Licensed under GNU GPLv2
+Copyright (C) 2023 Areskul
