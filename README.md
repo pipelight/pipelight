@@ -5,7 +5,7 @@
 </h1>
 </span>
 
-Pipelight can be used in so many ways that I keep this README cold-blooded and short as fuck
+Pipelight can be used in so many ways that I had to keep this README concise
 for you to quickly grab its concept.
 
 You should checkout the [Documentation](https://pipelight.dev) for a much friendly approach and a deeper understanding.
@@ -16,17 +16,15 @@ Pipelight is a 6Mb binary, to be used in the terminal.
 
 It aims to automates boring and repetitive tasks.
 
-You fold your bash commands into a `Pipeline {Step { Command }}` written in **Typescript** (Yaml or Toml),
+You fold your bash commands into a `Pipeline{ Step{ Command }}` written in **Typescript** (Yaml or Toml),
 and it executes the pipeline on some events.
 
-## Define pipelines
+## Define pipelines with a programming language
 
 Create a `pipelight.ts` file on your project root directory.
 Then use and combine your favorite syntax flavors.
 
-### Option API
-
-Use a verbose and declarative syntax.
+Use a verbose and declarative syntax. (Option API)
 
 ```ts
 const my_pipeline: Pipeline = {
@@ -44,9 +42,7 @@ const my_pipeline: Pipeline = {
 };
 ```
 
-### Composition API
-
-Use the provided sweet shorthands, or make your owns.
+Use the provided sweet shorthands, or make your owns. (Composition API)
 
 ```ts
 const my_pipeline = pipeline("build website", () => [
@@ -71,10 +67,16 @@ pipeline.trigger({
 ## Pretty and Verbose logs
 
 ```sh
-pipelight logs -vvv
+pipelight logs
 ```
 
-<img width="500px" alt="pretty logs" src="https://pipelight.dev/images/example_log_level_4.png"/>
+<img width="500px" alt="pretty logs" src="https://pipelight.dev/images/log_level_error.png"/>
+
+```sh
+pipelight logs -vvvv
+```
+
+<img width="500px" alt="pretty logs" src="https://pipelight.dev/images/log_level_trace.png"/>
 
 ## Try it fast (ArchLinux)
 
