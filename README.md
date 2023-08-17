@@ -67,10 +67,16 @@ pipeline.trigger({
 ## Pretty and Verbose logs
 
 ```sh
-pipelight logs -vvv
+pipelight logs
 ```
 
-<img width="500px" alt="pretty logs" src="https://pipelight.dev/images/example_log_level_4.png"/>
+<img width="500px" alt="pretty logs" src="https://pipelight.dev/images/log_level_error.png"/>
+
+```sh
+pipelight logs -vvvv
+```
+
+<img width="500px" alt="pretty logs" src="https://pipelight.dev/images/log_level_trace.png"/>
 
 ## Try it fast (ArchLinux)
 
