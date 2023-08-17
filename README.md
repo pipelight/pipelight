@@ -1,33 +1,36 @@
-<p align="center">
-<img width="200px" alt="pipelight logo" src="https://pipelight.dev/images/pipelight.png"/>
-</p>
-<h1 align="center">
-<p>Pipelight</p>
-<p>Self-hosted automation pipelines!</p>
+<span>
+<h1>
+<img width="125px" alt="pipelight_logo" src="https://pipelight.dev/images/pipelight.png"/>
+<p>Pipelight - Automation pipelines but easier.</p>
 </h1>
+</span>
 
-## Join the Community
+Pipelight can be used in so many ways that I keep this README cold-blooded and short as fuck
+for you to quickly grab its concept.
 
-### Contacts
+You should checkout the [Documentation](https://pipelight.dev) for a much friendly approach and a deeper understanding.
 
-Join the **[Discord server](https://discord.gg/swNRD3Xysz)**
+## A lightweight software
 
-### Documentation
+Pipelight is a 6Mb binary, to be used in the terminal.
 
-Checkout the [Full Documentation](https://pipelight.dev)
+It aims to automates boring and repetitive tasks.
+
+You fold your bash commands into a `Pipeline {Step { Command }}` written in **Typescript** (Yaml or Toml),
+and it executes the pipeline on some events.
 
 ## Define pipelines
 
-Alongside your code in a `pipelight.ts` file.
+Create a `pipelight.ts` file on your project root directory.
+Then use and combine your favorite syntax flavors.
 
-Simple pipelines with Toml and Yaml.
-Complex pipelines with Typescript.
+### Option API
 
-### Enjoy the declarative Object syntax.
+Use a verbose and declarative syntax.
 
 ```ts
-const pipeline: Pipeline = {
-  name: "build website",
+const my_pipeline: Pipeline = {
+  name: "build_my_website",
   steps: [
     {
       name: "clean directory",
@@ -41,44 +44,81 @@ const pipeline: Pipeline = {
 };
 ```
 
-### Taste a bunch of Typescript Helpers.
+### Composition API
+
+Use the provided sweet shorthands, or make your owns.
 
 ```ts
-pipeline("deploy_to_remote", () => [
-  step("build_new_images", () => docker.update()),
-  step("send_images_to_remote", () => docker.images.send([host])),
-  step("upgrade_remote_containers", () => ssh([host], docker.upgrade())),
+const my_pipeline = pipeline("build website", () => [
+  step("clean directory", () => ["rm -rf ./dist"]),
+  step("build", () => ["pnpm install", "pnpm lint", "pnpm build"]),
 ]);
 ```
 
-And much more to come in the Cookbook.
+## Automatic triggers
 
-## Add triggers
-
-Automatic triggers in git repo.
+Add automatic triggers to your pipeline.
+Run tests on file change.
+Push to production on new tag...
 
 ```ts
-pipeline.add_trigger({
-  tags: "v*",
-  action: "pre-push",
+pipeline.trigger({
+  tags: ["v*"],
+  actions: ["watch", "pre-push"],
 });
 ```
 
-## Enjoy the CLI
-
-Manual triggers via the CLI
+## Pretty and Verbose logs
 
 ```sh
-pipelight run
+pipelight logs -vvv
 ```
 
-## Pretty logs
+<img width="500px" alt="pretty logs" src="https://pipelight.dev/images/example_log_level_4.png"/>
+
+## Try it fast (ArchLinux)
+
+```sh
+paru -S pipelight-git
+```
+
+```sh
+touch pipelight.ts
+```
+
+Past this skeleton in your file.
+
+```ts
+// pipelight.ts
+const my_pipeline: Pipeline = {
+  name: "template",
+  steps: [
+    {
+      name: "clean directory",
+      commands: ["ls"],
+    },
+    {
+      name: "build",
+      commands: ["pwd"],
+    },
+  ],
+};
+export default {
+  pipelines: [my_pipeline],
+};
+```
+
+```sh
+pipelight run template
+```
 
 ```sh
 pipelight logs
 ```
 
-<img width="500px" alt="pretty logs" src="https://pipelight.dev/images/example_log_level_4.png"/>
+### Contacts and Community
 
-<p align="center">Licensed under GNU GPLv2</p>
-<p align="center">Copyright (C) 2023 Areskul</p>
+Join the **[Discord server](https://discord.gg/swNRD3Xysz)**
+
+Licensed under GNU GPLv2
+Copyright (C) 2023 Areskul
