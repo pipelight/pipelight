@@ -10,7 +10,7 @@ mod try_teleport {
     fn _search() -> Result<()> {
         let mut teleport = Teleport::new();
         teleport.preffix("pipelight");
-        let res = teleport.search_preffix();
+        let res = teleport.search();
         assert!(res.is_ok());
         Ok(())
     }
