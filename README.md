@@ -46,8 +46,12 @@ Use the provided sweet shorthands, or make your owns. (Composition API)
 
 ```ts
 const my_pipeline = pipeline("build website", () => [
-  step("clean directory", () => ["rm -rf ./dist"]),
+  step("clean directory", () => [`rm -rf ${build_dir}`]),
   step("build", () => ["pnpm install", "pnpm lint", "pnpm build"]),
+  step("send to host", () => [`scp -r ${build_dir}`]),
+  step("do stuffs on host", () => [
+    ssh("host", () => ["systemctl restart nginx"]),
+  ]),
 ]);
 ```
 
@@ -58,7 +62,7 @@ Run tests on file change.
 Push to production on new tag...
 
 ```ts
-pipeline.trigger({
+pipeline.add_trigger({
   tags: ["v*"],
   actions: ["watch", "pre-push"],
 });
@@ -96,11 +100,11 @@ const my_pipeline: Pipeline = {
   name: "template",
   steps: [
     {
-      name: "clean directory",
+      name: "list directory",
       commands: ["ls"],
     },
     {
-      name: "build",
+      name: "get present working directory",
       commands: ["pwd"],
     },
   ],

@@ -1,6 +1,6 @@
 # A pipeline
 [[pipelines]]
-  name =  "simple_example"
+name =  "simple_example"
 
 [[pipelines.steps]]
 name = "list directory"
@@ -14,7 +14,7 @@ commands = ["pwd"]
 # Another pipeline
 
 [[pipelines]]
-  name =  "simple_example2"
+name =  "simple_example2"
 
 [[pipelines.steps]]
 name = "list directory"
