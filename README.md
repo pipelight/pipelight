@@ -14,7 +14,7 @@ You should checkout the [Documentation](https://pipelight.dev) for a much friend
 
 Pipelight is a 6Mb binary, to be used in the terminal.
 
-It aims to automates boring and repetitive tasks.
+It aims to automate boring and repetitive tasks.
 
 You fold your bash commands into a `Pipeline{ Step{ Command }}` written in **Typescript** (Yaml or Toml),
 and it executes the pipeline on some events.
