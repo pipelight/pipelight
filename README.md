@@ -10,11 +10,19 @@ for you to quickly grab its concept.
 
 You should checkout the [Documentation](https://pipelight.dev) for a much friendly approach and a deeper understanding.
 
+## Your feedback is precious!
+
+Pipelight is a young software and has become stable recently.
+If you encouter a bug or whatever difficulty, please open an issue or send a message
+on [discord](https://discord.gg/swNRD3Xysz)
+or on telegram at [@Areskul](https://t.me/areskul)
+or send a mail at areskul@areskul.com.
+
 ## A lightweight software
 
 Pipelight is a 6Mb binary, to be used in the terminal.
 
-It aims to automates boring and repetitive tasks.
+It aims to automate boring and repetitive tasks.
 
 You fold your bash commands into a `Pipeline{ Step{ Command }}` written in **Typescript** (Yaml or Toml),
 and it executes the pipeline on some events.
