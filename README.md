@@ -10,7 +10,7 @@ for you to quickly grab its concept.
 
 You should checkout the [Documentation](https://pipelight.dev) for a much friendly approach and a deeper understanding.
 
-## Your feedback is precious!
+## Your feedback is crucial!
 
 Pipelight is a young software and has become stable recently.
 If you encouter a bug or whatever difficulty, please open an issue or send a message
