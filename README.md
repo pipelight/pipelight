@@ -10,7 +10,7 @@ for you to quickly grab its concept.
 
 You should checkout the [Documentation](https://pipelight.dev) for a much friendly approach and a deeper understanding.
 
-## Your feedback is crucial!
+## Your feedback is precious!
 
 Pipelight is a young software and has become stable recently.
 If you encouter a bug or whatever difficulty, please open an issue or send a message
@@ -35,7 +35,7 @@ Then use and combine your favorite syntax flavors.
 Use a verbose and declarative syntax. (Option API)
 
 ```ts
-const my_pipeline: Pipeline = {
+const my_pipeline = {
   name: "build_my_website",
   steps: [
     {
@@ -72,7 +72,7 @@ Push to production on new tag...
 ```ts
 pipeline.add_trigger({
   tags: ["v*"],
-  actions: ["watch", "pre-push"],
+  actions: ["pre-commit", "pre-push"],
 });
 ```
 
@@ -104,6 +104,7 @@ Past this skeleton in your file.
 
 ```ts
 // pipelight.ts
+import type { Pipeline } from "https://deno.land/x/pipelight/mod.ts";
 const my_pipeline: Pipeline = {
   name: "template",
   steps: [
