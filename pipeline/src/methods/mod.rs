@@ -28,6 +28,13 @@ use utils::logger::logger;
 // Tests
 mod test;
 
+impl Logs {
+    /// Pretty print logs from json log file
+    pub fn sanitize(pipelines: &mut Vec<Pipeline>) -> Result<()> {
+        Ok(())
+    }
+}
+
 impl Config {
     pub fn has_watch_flag(&self) -> Result<()> {
         for pipeline in self.pipelines.clone().unwrap() {

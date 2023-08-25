@@ -5,7 +5,7 @@ use std::fs;
 use std::path::Path;
 
 // Logger
-use log::warn;
+use log::{debug, warn};
 use utils::logger::logger;
 
 // Date and Time
@@ -91,10 +91,13 @@ impl Getters<Pipeline> for Logs {
                 for path in paths {
                     let dir_entry = path.into_diagnostic()?;
                     let json = utils::read_last_line(&dir_entry.path())?;
-                    let pipeline = serde_json::from_str::<Pipeline>(&json).into_diagnostic()?;
-                    pipelines.push(pipeline);
+                    let pipeline = serde_json::from_str::<Pipeline>(&json);
+                    if pipeline.is_err() {
+                        warn!("Striping corrupted log")
+                    } else {
+                        pipelines.push(pipeline.into_diagnostic()?);
+                    }
                 }
-                // pipelines = Logs::sanitize(pipelines)?;
                 pipelines.sort_by(|a, b| {
                     let a_date = a
                         .clone()

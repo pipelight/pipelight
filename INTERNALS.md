@@ -7,6 +7,10 @@ the software is getting more and more structured, tested and documented.
 I feel it is now time for the internal functionning to be explained with schemas and all.
 Here will be a quick overview of the crate, functions and global variables roles and interdependencies explanation.
 
+## Browsing the source code (must read)
+
+You can find READMEs inside project crates for better overview.
+
 ## Functionning
 
 When running a pipeline.
