@@ -1,5 +1,5 @@
-use crate::methods::{iso8601_to_std_duration, std_duration_to_iso8601};
-use crate::types::{Duration, Node};
+use crate::methods::iso8601_to_std_duration;
+use crate::types::Node;
 
 // Caracteres
 mod characters;
@@ -12,17 +12,14 @@ mod from;
 pub use colored::control::set_override;
 use colored::{ColoredString, Colorize};
 
-use chrono::Utc;
-use chrono::{DateTime, Local};
-use exec::{Statuable, Status};
+use exec::Status;
 use log::LevelFilter;
-use log::{debug, error, info, warn};
 use regex::Regex;
 use std::fmt;
 use utils::logger::logger;
 
 // Error Handling
-use miette::{IntoDiagnostic, Result};
+use miette::Result;
 
 static INDENT: &str = "  ";
 
@@ -39,7 +36,7 @@ fn add_level_phantom(prefix: String) -> String {
     prefix.to_owned()
 }
 impl Node {
-    /// Add a leaf to prefix T from inside [T] of nth element
+    /// Add a leaf to prefix T from inside a vec of T of nth element
     pub fn leaf(&self, prefix: String, index: usize, length: usize) -> ColoredString {
         let leaf: String;
         let leaf: String = if index == length {

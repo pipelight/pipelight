@@ -59,14 +59,19 @@ impl Teleport {
             // If file path is only a file name
             let name = Path::new(path).file_name();
             if let Some(name) = name {
-                if name.to_str().unwrap() == naive_path.unwrap() {
-                    return Ok(self.search_file()?);
-                } else {
-                    return Ok(self.search_path()?);
+                let name = name.to_str();
+                if let Some(name) = name {
+                    if let Some(naive_path) = naive_path {
+                        if name == naive_path {
+                            self.search_file()?
+                        } else {
+                            self.search_path()?
+                        }
+                    }
                 }
             }
         } else {
-            return Ok(self.search_preffix()?);
+            self.search_preffix()?
         }
         Ok(())
     }
@@ -84,18 +89,18 @@ impl Teleport {
     fn has_reached_root(&mut self) -> Result<bool> {
         // If teleport (search method) has reached git repo root
         if Git::new().exists() {
-            return Ok(self.current
+            Ok(self.current
                 == Git::new()
                     .repo
                     .unwrap()
                     .workdir()
                     .unwrap()
                     .to_str()
-                    .unwrap());
+                    .unwrap())
         }
         // Else if teleport (search method) has reached filesystem root
         else {
-            return Ok(self.current == "/");
+            Ok(self.current == "/")
         }
     }
     fn search_file(&mut self) -> Result<()> {
@@ -108,19 +113,17 @@ impl Teleport {
             if path.exists() {
                 self.internal.file_path = Some(path.display().to_string());
                 self.internal.directory_path = Some(path.parent().unwrap().display().to_string());
+            } else if self.parent().is_ok() {
+                self.search_file()?;
             } else {
-                if self.parent().is_ok() {
-                    self.search_file()?;
-                } else {
-                    return Err(Error::msg("Couldn't find file"));
-                }
+                return Err(Error::msg("Couldn't find file"));
             }
         }
         Ok(())
     }
     fn search_path(&mut self) -> Result<()> {
         let path_str = self.file_info.path.clone();
-        if path_str.is_some() {
+        if let Some(..) = path_str {
             let mut path_str = path_str.unwrap();
             let mut path = Path::new(&path_str);
             if path.is_relative() {

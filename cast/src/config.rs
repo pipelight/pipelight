@@ -9,12 +9,11 @@ use std::path::Path;
 use std::process::exit;
 
 use super::typescript::main_script;
-use utils::teleport;
 use utils::teleport::{FileType, Teleport};
 
 // Error Handling
 use crate::error::{JsonError, TomlError, YamlError};
-use miette::{Error, IntoDiagnostic, NamedSource, Result, SourceSpan};
+use miette::{Error, NamedSource, Result, SourceSpan};
 
 impl Config {
     /// Browse through the filesystem to find the config file
@@ -22,8 +21,7 @@ impl Config {
     pub fn get(file: Option<String>, args: Option<Vec<String>>) -> Result<Config> {
         // let pwd: String = current_dir().unwrap().display().to_string();
         let mut teleport = Teleport::new();
-        if file.is_some() {
-            let file = file.unwrap();
+        if let Some(file) = file {
             teleport.file(&file)?;
             teleport.search()?;
         } else {
@@ -51,8 +49,7 @@ impl Config {
     ) -> Result<(Config, Teleport)> {
         // let pwd: String = current_dir().unwrap().display().to_string();
         let mut teleport = Teleport::new();
-        if file.is_some() {
-            let file = file.unwrap();
+        if let Some(file) = file {
             teleport.file(&file)?;
             teleport.search()?;
         } else {

@@ -6,7 +6,6 @@ use convert_case::{Case, Casing};
 use std::convert::From;
 use std::process::exit;
 use utils::git::Flag;
-use utils::git::Hook;
 use uuid::Uuid;
 
 // Logger

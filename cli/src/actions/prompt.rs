@@ -3,7 +3,6 @@ use pipeline::{Getters, Node, Pipeline};
 
 // Logging and verbosity
 use log::LevelFilter;
-use utils::git::Flag;
 use utils::logger::logger;
 
 // Prompt

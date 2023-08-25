@@ -1,11 +1,18 @@
 #[cfg(test)]
 mod from_trait {
-    use crate::git::{Flag, Hook};
+    use crate::git::{Flag, Hook, Special};
     #[test]
     fn hook_to_string() {
         let hook = Hook::ApplypatchMsg;
         let res = String::from(&hook);
         let string = "applypatch-msg".to_owned();
+        assert_eq!(string, res);
+    }
+    #[test]
+    fn special_to_string() {
+        let flag = Special::Blank;
+        let res = String::from(&flag);
+        let string = "blank".to_owned();
         assert_eq!(string, res);
     }
     #[test]

@@ -7,12 +7,6 @@ use super::methods::std_duration_to_iso8601;
 
 use exec::{Statuable, Status};
 use std::clone::Clone;
-use std::env;
-use utils::git::Git;
-
-// Error Handling
-use miette::{IntoDiagnostic, Result};
-// use std::error::Error;
 
 // Global var
 use once_cell::sync::Lazy;

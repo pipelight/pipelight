@@ -1,9 +1,7 @@
 #[cfg(test)]
 mod type_conversion {
     mod triggers {
-        use crate::{Config, Pipeline, Step, Trigger, TriggerBranch, TriggerTag};
-        // Error Handling
-        use miette::{IntoDiagnostic, Result};
+        use crate::{Trigger, TriggerBranch, TriggerTag};
 
         #[test]
         fn normal() {

@@ -60,4 +60,5 @@ pub enum Special {
     #[default]
     Manual,
     Watch,
+    Blank,
 }

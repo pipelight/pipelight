@@ -30,9 +30,9 @@ pub fn trigger(attach: bool, flag: Option<String>) -> Result<()> {
     let config = Config::get()?;
 
     // Set triggering env action
-    let mut env = Trigger::default();
+    Trigger::default();
     if flag.is_some() {
-        env = Trigger::flag(Some(Flag::from(&flag.clone().unwrap())))?;
+        Trigger::flag(Some(Flag::from(&flag.clone().unwrap())))?;
     }
 
     if config.pipelines.is_none() {
