@@ -22,7 +22,8 @@ fn main() -> Result<()> {
     // Build client and generate autocompletion scripts
     let mut cmd = Client::build()?;
     let name = cmd.get_name().to_string();
-    for shell in vec![Shell::Bash, Shell::Zsh, Shell::Fish, Shell::Elvish] {
+    let shells = vec![Shell::Bash, Shell::Zsh, Shell::Fish, Shell::Elvish];
+    for shell in shells {
         let path = generate_to(
             shell,
             &mut cmd, // We need to specify what generator to use

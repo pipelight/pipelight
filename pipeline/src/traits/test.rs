@@ -1,10 +1,7 @@
 #[cfg(test)]
 mod date {
-    use crate::Event;
     // Date and time
-    use chrono::{DateTime, Duration, Local, NaiveDateTime, Utc};
-    // Error Handling
-    use miette::{IntoDiagnostic, Result};
+    use chrono::{DateTime, NaiveDateTime};
 
     #[test]
     fn iso8601_to_date() {

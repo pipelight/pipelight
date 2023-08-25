@@ -1,4 +1,4 @@
-use crate::{Command, Duration, Event, Node, Parallel, Pipeline, Step, StepOrParallel};
+use crate::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel};
 use exec::{Statuable, Status};
 use log::LevelFilter;
 use utils::logger::logger;
@@ -7,9 +7,8 @@ use utils::logger::logger;
 use colored::Colorize;
 
 // Duration
-use crate::methods::{compute_duration, iso8601_to_std_duration, std_duration_to_iso8601};
+use crate::methods::{compute_duration, std_duration_to_iso8601};
 use chrono::{DateTime, Local};
-use std::time::Instant;
 
 impl From<&Event> for String {
     fn from(e: &Event) -> String {

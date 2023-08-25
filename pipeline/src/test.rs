@@ -2,8 +2,6 @@
 mod serialize {
     use crate::Trigger;
     use utils::git::{Flag, Hook, Special};
-    // Error Handling
-    use miette::{IntoDiagnostic, Result};
 
     #[test]
     fn try_serialize_trigger_hook() {

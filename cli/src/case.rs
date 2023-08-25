@@ -1,5 +1,5 @@
 // Error Handling
-use miette::{Error, IntoDiagnostic, Result};
+use miette::{Error, Result};
 
 // Logger
 use log::info;
@@ -12,9 +12,7 @@ use pipeline::display::set_override;
 use pipeline::{Config, Getters, Logs, Pipeline};
 
 // Clap - command line lib
-use clap::{
-    builder::PossibleValue, Args, Command, CommandFactory, FromArgMatches, ValueEnum, ValueHint,
-};
+use clap::{builder::PossibleValue, Args, Command, FromArgMatches, ValueEnum, ValueHint};
 // use std::str::FromStr;
 
 // Cli core types

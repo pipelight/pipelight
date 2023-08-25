@@ -1,6 +1,6 @@
 use super::detach::detach;
 use exec::Process;
-use log::{debug, error, info, trace, warn};
+use log::{debug, trace};
 use pipeline::{Config, Trigger};
 use std::thread;
 use utils::git::{Flag, Special};
@@ -86,18 +86,15 @@ pub fn can_watch() -> Result<()> {
     sys.refresh_all();
     for (pid, process) in sys.processes() {
         let parsed_cmd = types::Cli::try_parse_from(process.cmd());
-        if parsed_cmd.is_ok() {
-            if parsed_cmd.into_diagnostic()?.commands
+        if parsed_cmd.is_ok()
+            && parsed_cmd.into_diagnostic()?.commands
                 == types::Commands::Watch(types::Watch { commands: None })
-            {
-                if process.cwd() == env::current_dir().into_diagnostic()?
-                    && pid != &get_current_pid().unwrap()
-                {
-                    let message = "a watcher is already running on this project";
-                    //     let hint = "no need to re run another watcher";
-                    return Err(Error::msg(message));
-                }
-            }
+            && process.cwd() == env::current_dir().into_diagnostic()?
+            && pid != &get_current_pid().unwrap()
+        {
+            let message = "a watcher is already running on this project";
+            //     let hint = "no need to re run another watcher";
+            return Err(Error::msg(message));
         }
     }
     Ok(())
@@ -116,21 +113,18 @@ pub fn destroy_watcher() -> Result<()> {
     sys.refresh_all();
     for (pid, process) in sys.processes() {
         let parsed_cmd = types::Cli::try_parse_from(process.cmd());
-        if parsed_cmd.is_ok() {
-            if parsed_cmd.into_diagnostic()?.commands
+        if parsed_cmd.is_ok()
+            && parsed_cmd.into_diagnostic()?.commands
                 == types::Commands::Watch(types::Watch { commands: None })
-            {
-                if process.cwd() == env::current_dir().into_diagnostic()?
-                    && pid != &get_current_pid().unwrap()
-                {
-                    // Kill watcher and subprocesses
-                    let pid = process.pid().as_u32();
-                    unsafe {
-                        let pgid = getpgid(Pid::from_raw(pid)).into_diagnostic()?;
-                        if test_kill_process_group(pgid).is_ok() {
-                            kill_process_group(pgid, Signal::Term).into_diagnostic()?;
-                        }
-                    }
+            && process.cwd() == env::current_dir().into_diagnostic()?
+            && pid != &get_current_pid().unwrap()
+        {
+            // Kill watcher and subprocesses
+            let pid = process.pid().as_u32();
+            unsafe {
+                let pgid = getpgid(Pid::from_raw(pid)).into_diagnostic()?;
+                if test_kill_process_group(pgid).is_ok() {
+                    kill_process_group(pgid, Signal::Term).into_diagnostic()?;
                 }
             }
         }

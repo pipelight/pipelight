@@ -2,15 +2,15 @@ use crate::types::{
     Command, Config, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
 };
 // External imports
-use utils::git::{Flag, Git, Hook};
+use utils::git::{Flag, Git};
 use utils::teleport::Teleport;
 
 use exec::Process;
 // Date and time
 use chrono::Local;
 //Logs
+use log::warn;
 use log::LevelFilter;
-use log::{info, trace, warn};
 
 use uuid::Uuid;
 
@@ -42,10 +42,8 @@ impl Trigger {
         }
         if flag.is_some() {
             env.action = flag;
-        } else {
-            if env.action.is_none() {
-                env.action = Some(Flag::default());
-            }
+        } else if env.action.is_none() {
+            env.action = Some(Flag::default());
         }
         // Set the gloabl env
         unsafe {
@@ -112,7 +110,7 @@ impl Default for Pipeline {
 }
 impl Pipeline {
     pub fn new() -> Self {
-        Pipeline::default()
+        Self::default()
     }
 }
 impl Default for StepOrParallel {
@@ -124,7 +122,7 @@ impl Default for StepOrParallel {
 }
 impl StepOrParallel {
     pub fn new() -> Self {
-        StepOrParallel::default()
+        Self::default()
     }
 }
 
@@ -141,7 +139,7 @@ impl Default for Parallel {
 }
 impl Parallel {
     pub fn new() -> Self {
-        Parallel::default()
+        Self::default()
     }
 }
 impl Default for Step {
@@ -159,7 +157,7 @@ impl Default for Step {
 }
 impl Step {
     pub fn new() -> Self {
-        Step::default()
+        Self::default()
     }
 }
 impl Command {

@@ -1,5 +1,5 @@
 // Clap - command line lib
-use clap::{Command, CommandFactory, Parser, Subcommand, ValueHint};
+use clap::{Parser, Subcommand, ValueHint};
 use clap_verbosity_flag::Verbosity;
 
 #[derive(Debug, Clone, Parser)]

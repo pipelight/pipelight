@@ -14,12 +14,17 @@ use std::io::Write;
 use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
 
-impl Git {
-    pub fn new() -> Git {
+impl Default for Git {
+    fn default() -> Git {
         let root = env::current_dir().unwrap();
         Git {
             repo: Repository::discover(root).ok(),
         }
+    }
+}
+impl Git {
+    pub fn new() -> Self {
+        Self::default()
     }
     ///  Detect if inside a git repo
     pub fn exists(&mut self) -> bool {
@@ -97,16 +102,14 @@ impl Hook {
             cargo run --bin pipelight trigger --flag {}\
             ",
             &hook,
-        )
-        .to_owned();
+        );
         #[cfg(not(debug_assertions))]
         let script = format!(
             "#!/bin/sh \n\
             pipelight trigger --flag {}\
             ",
             &hook
-        )
-        .to_owned();
+        );
 
         let dir_path = format!(".git/hooks/{}.d", &hook);
         let dir_path = Path::new(&dir_path);

@@ -27,10 +27,7 @@ impl From<&String> for Special {
 }
 impl From<&Special> for String {
     fn from(action: &Special) -> String {
-        match action {
-            Manual => "manual".to_owned(),
-            Watch => "watch".to_owned(),
-        }
+        serde_plain::to_string::<Special>(action).unwrap()
     }
 }
 

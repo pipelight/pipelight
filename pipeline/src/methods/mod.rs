@@ -30,7 +30,7 @@ mod test;
 
 impl Logs {
     /// Pretty print logs from json log file
-    pub fn sanitize(pipelines: &mut Vec<Pipeline>) -> Result<()> {
+    pub fn sanitize(pipelines: &mut [Pipeline]) -> Result<()> {
         Ok(())
     }
 }
@@ -177,9 +177,7 @@ impl StepOrParallel {
 impl Trigger {
     // Success if trigger has same action or None
     pub fn is_action_match(&self, trigger: Trigger) -> Result<()> {
-        if trigger.action.is_none() {
-            Ok(())
-        } else if trigger.action == self.action {
+        if trigger.action.is_none() || trigger.action == self.action {
             Ok(())
         } else {
             let message = "no action match";
@@ -188,31 +186,31 @@ impl Trigger {
     }
     pub fn is_branch_match(&self, trigger: Trigger) -> Result<()> {
         if trigger.branch.is_none() {
-            return Ok(());
+            Ok(())
         } else {
             // Globbing pattern matching
             let glob = Pattern::new(&trigger.branch.unwrap()).into_diagnostic()?;
             let glob_match = glob.matches(&self.clone().branch.unwrap());
             if glob_match {
-                return Ok(());
+                Ok(())
             } else {
                 let message = "no branch match";
-                return Err(Error::msg(message));
+                Err(Error::msg(message))
             }
         }
     }
     pub fn is_tag_match(&self, trigger: Trigger) -> Result<()> {
         if trigger.tag.is_none() || self.tag.is_none() {
-            return Ok(());
+            Ok(())
         } else {
             // Globbing pattern matching
             let glob = Pattern::new(&trigger.tag.unwrap()).into_diagnostic()?;
             let glob_match = glob.matches(&self.clone().tag.unwrap());
             if glob_match {
-                return Ok(());
+                Ok(())
             } else {
                 let message = "no tag match";
-                return Err(Error::msg(message));
+                Err(Error::msg(message))
             }
         }
     }
@@ -227,15 +225,15 @@ impl Trigger {
             }
         }
         let message = "no match";
-        return Err(Error::msg(message));
+        Err(Error::msg(message))
     }
 }
 
 pub fn std_duration_to_iso8601(duration: std::time::Duration) -> Result<String> {
     let chrono_duration = chrono::Duration::from_std(duration).ok();
     if let Some(chrono_duration) = chrono_duration {
-        let duration_ISO_8601 = format!("{}", chrono_duration);
-        Ok(duration_ISO_8601)
+        let duration_iso_8601 = format!("{}", chrono_duration);
+        Ok(duration_iso_8601)
     } else {
         Err(Error::msg("Bad std::Duration instance"))
     }
@@ -243,11 +241,13 @@ pub fn std_duration_to_iso8601(duration: std::time::Duration) -> Result<String> 
 pub fn iso8601_to_std_duration(duration: String) -> Result<std::time::Duration> {
     let duration = &duration.as_str();
     let chrono_duration: Option<iso8601_duration::Duration> = duration.parse().ok();
-    if chrono_duration.is_some() {
-        Ok(chrono_duration.unwrap().to_std().unwrap())
-    } else {
-        Err(Error::msg("Couldn't parse duration: Bad iso8601 duration"))
+    if let Some(chrono_duration) = chrono_duration {
+        let std_duration = chrono_duration.to_std();
+        if let Some(std_duration) = std_duration {
+            return Ok(std_duration);
+        }
     }
+    Err(Error::msg("Couldn't parse duration: Bad iso8601 duration"))
 }
 pub fn compute_duration(duration: Duration) -> Result<std::time::Duration> {
     let computed_duration: Option<Duration> = None;
@@ -255,7 +255,6 @@ pub fn compute_duration(duration: Duration) -> Result<std::time::Duration> {
 
     let date = duration
         .started_at
-        .clone()
         .unwrap()
         .parse::<DateTime<Local>>()
         .unwrap();

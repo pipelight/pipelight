@@ -2,6 +2,9 @@
 
 ## What is inside ?
 
+Same as the **exec crate**, it is a compatibility crate,
+between pipelight core and config file formats.
+
 All the types and functions defined in this crate are to use to cast any documents
 into a **Rust Pipelight Config struct**.
 In other words it is just a crate to convert connfiguration files.
