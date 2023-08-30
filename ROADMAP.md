@@ -8,7 +8,8 @@ Here are the features it needs to implement to reach v1.0.0
 - [ ] add: "blank" flag to trigger on server after a pipeline is done client side.
 - [ ] add: signal handeling (for interupted piplines with Ctrl-C or SIGKILL/SiGTERM)
 - [ ] add: More colorful and verbose internam error type (line, column + code sample)
-- [ ] security: sanitize logs before reading
+- [ ] security: sanitize logs before reading (use pipeline.is_running method)
+  - [ ]: remove unused internal logs on sanitization
 
 ## cli
 
