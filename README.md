@@ -1,18 +1,15 @@
 <span>
 <h1>
 <img width="125px" alt="pipelight_logo" src="https://pipelight.dev/images/pipelight.png"/>
-<p>Pipelight - Automation pipelines but easier.</p>
+<p>Pipelight - Tiny automation pipelines.</p>
 </h1>
 </span>
 
-Pipelight can be used in so many ways that I had to keep this README concise
-for you to quickly grab its concept.
-
 You should checkout the [Documentation](https://pipelight.dev) for a much friendly approach and a deeper understanding.
 
-## Your feedback is precious!
+## Get help (fast)!
 
-Pipelight is a young software and has become stable recently.
+Pipelight is a young software and has become stable pretty recently.
 If you encouter a bug or whatever difficulty, please open an issue or send a message
 on [discord](https://discord.gg/swNRD3Xysz)
 or on telegram at [@Areskul](https://t.me/areskul)
@@ -100,7 +97,7 @@ paru -S pipelight-git
 touch pipelight.ts
 ```
 
-Past this skeleton in your file.
+Past this skeleton in your configuration file.
 
 ```ts
 // pipelight.ts
@@ -130,10 +127,6 @@ pipelight run template
 ```sh
 pipelight logs
 ```
-
-### Contacts and Community
-
-Join the **[Discord server](https://discord.gg/swNRD3Xysz)**
 
 Licensed under GNU GPLv2
 Copyright (C) 2023 Areskul
