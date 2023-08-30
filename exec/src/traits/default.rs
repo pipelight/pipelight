@@ -1,5 +1,7 @@
 use crate::types::{Environment, Process, State};
 use std::env;
+use std::fs;
+use std::path::Path;
 use uuid::Uuid;
 
 impl Default for Process {
@@ -25,8 +27,11 @@ impl Process {
 
 impl Default for Environment {
     fn default() -> Self {
+        let dir_path = ".pipelight/internals/out";
+        let path = Path::new(&dir_path);
+        fs::create_dir_all(path).unwrap();
         Environment {
-            directory: "/var/log/pipelight".to_owned(),
+            directory: dir_path.to_owned(),
             shell: "sh".to_owned(),
             attached: true,
             pid: None,

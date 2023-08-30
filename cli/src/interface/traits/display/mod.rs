@@ -2,7 +2,7 @@
 mod test;
 
 use crate::interface::types::{
-    Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, Shell, Trigger,
+    Cli, Commands, DisplayCommands, Init, Logs, LogsCommands, Pipeline, Shell, Trigger,
 };
 
 use clap_verbosity_flag::Verbosity;
@@ -70,6 +70,12 @@ impl fmt::Display for Shell {
         write!(f, "{}", string)
     }
 }
+impl fmt::Display for Init {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let string = "".to_owned();
+        write!(f, "{}", string)
+    }
+}
 impl fmt::Display for Logs {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut string = "".to_owned();
@@ -125,6 +131,7 @@ impl fmt::Display for Commands {
             Commands::Inspect(pipeline) => format!("inspect{}", pipeline),
             Commands::Ls(list) => format!("ls{}", list),
             Commands::Watch(_) => "watch".to_owned(),
+            Commands::Init(_) => "init".to_owned(),
             Commands::Completion(shell) => format!("completion{}", shell),
         };
         write!(f, "{}", string)

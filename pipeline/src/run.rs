@@ -26,7 +26,7 @@ impl Pipeline {
     /// Execute the pipeline
     pub fn run(&mut self) {
         // Globals
-        let mut ptr: *mut Pipeline;
+        let ptr: *mut Pipeline;
         unsafe {
             ptr = &mut *PIPELINE;
             *ptr = self.to_owned();
