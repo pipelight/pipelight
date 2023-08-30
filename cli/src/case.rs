@@ -156,6 +156,9 @@ impl Client {
                     return Err(Error::msg("Couldn't determine shell"));
                 }
             }
+            Commands::Init(_) => {
+                // create file
+            }
             Commands::Logs(logs) => {
                 // Set colors
                 if logs.display.color.is_some() {

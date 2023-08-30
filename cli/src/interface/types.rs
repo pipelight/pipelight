@@ -46,6 +46,8 @@ pub enum Commands {
     Watch(Watch),
     /// Generate autocompletion script
     Completion(Shell),
+    /// Create a pipeline template file
+    Init(Init),
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
@@ -58,6 +60,8 @@ pub struct Watch {
 pub enum WatchCommands {
     Kill,
 }
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+pub struct Init;
 
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Pipeline {
@@ -71,7 +75,7 @@ pub struct Pipeline {
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Trigger {
     /// Manualy set a flag/action to bypass environment computation
-    #[arg(long, hide = true)]
+    #[arg(long)]
     pub flag: Option<String>,
 }
 

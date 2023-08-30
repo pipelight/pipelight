@@ -32,7 +32,7 @@ and it executes the pipeline on some events.
 Create a `pipelight.ts` file on your project root directory.
 Then use and combine your favorite syntax flavors.
 
-Use a verbose and declarative syntax. (Option API)
+Use a verbose and declarative syntax. (Objects API)
 
 ```ts
 const my_pipeline = {
@@ -50,7 +50,7 @@ const my_pipeline = {
 };
 ```
 
-Use the provided sweet shorthands, or make your owns. (Composition API)
+Use the provided sweet shorthands, or make your owns. (Helpers API)
 
 ```ts
 const my_pipeline = pipeline("build website", () => [

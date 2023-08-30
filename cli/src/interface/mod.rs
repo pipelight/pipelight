@@ -11,6 +11,7 @@ pub use types::{
     ColoredOutput,
     Commands,
     DisplayCommands,
+    Init,
     Logs,
     LogsCommands,
     Pipeline,

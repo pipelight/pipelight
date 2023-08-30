@@ -18,6 +18,7 @@ pub use interface::{
     ColoredOutput,
     Commands,
     DisplayCommands,
+    Init,
     Logs,
     LogsCommands,
     Pipeline,
