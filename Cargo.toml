@@ -6,6 +6,7 @@ members=[
   "pipeline",
   "cast",
   "cli",
-  "pipelight"
+  "pipelight",
+  "error"
 ]
 

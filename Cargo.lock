@@ -517,6 +517,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "error"
+version = "0.0.1"
+dependencies = [
+ "chrono",
+ "colored",
+ "convert_case",
+ "glob",
+ "iso8601-duration",
+ "log",
+ "miette",
+ "once_cell",
+ "regex",
+ "serde",
+ "serde_json",
+ "serde_yaml 0.9.22",
+ "strum",
+ "thiserror",
+ "toml",
+ "uuid",
+]
+
+[[package]]
 name = "exec"
 version = "0.2.0"
 dependencies = [
