@@ -114,15 +114,8 @@ impl Config {
             Err(e) => {
                 println!("{:?}", e);
                 // println!("{}", json);
-                let span: SourceSpan = (e.line(), e.column()).into();
-                let json_err = JsonError {
-                    src: NamedSource::new("config_json_output", json),
-                    bad_bit: span,
-                };
-                let me = Error::from(json_err);
-                // println!("{:?}", me);
-                Err(me)
-                // exit(1);
+                let err = JsonError::new(e, &json);
+                Err(err.into())
             }
         }
     }
@@ -161,14 +154,7 @@ impl Config {
         match res {
             Ok(res) => Ok(res),
             Err(e) => {
-                println!("{:?}", e);
-                let span: SourceSpan =
-                    (e.location().unwrap().line(), e.location().unwrap().column()).into();
-                let yaml_err = YamlError {
-                    src: NamedSource::new("config_yaml_output", yml),
-                    bad_bit: span,
-                };
-                let me = Error::from(yaml_err);
+                let me = YamlError::new(e, &yml);
                 println!("{:?}", me);
                 exit(1);
             }

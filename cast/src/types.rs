@@ -42,15 +42,15 @@ pub struct Parallel {
     pub fallback: Option<Fallback>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
-#[serde(deny_unknown_fields)]
 #[serde(untagged)]
+#[serde(deny_unknown_fields)]
 pub enum StepOrParallel {
     Step(Step),
     Parallel(Parallel),
 }
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
-#[serde(deny_unknown_fields)]
 #[serde(untagged)]
+#[serde(deny_unknown_fields)]
 pub enum Trigger {
     TriggerBranch(TriggerBranch),
     TriggerTag(TriggerTag),
