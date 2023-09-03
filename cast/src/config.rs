@@ -6,14 +6,13 @@ use exec::Process;
 // Standard lib
 // use std::env::current_dir;
 use std::path::Path;
-use std::process::exit;
 
 use super::typescript::main_script;
 use utils::teleport::{FileType, Teleport};
 
 // Error Handling
 use crate::error::{JsonError, TomlError, YamlError};
-use miette::{Error, NamedSource, Result, SourceSpan};
+use miette::{Error, Result};
 
 impl Config {
     /// Browse through the filesystem to find the config file
@@ -35,10 +34,7 @@ impl Config {
                 teleport.teleport();
                 Ok(res)
             }
-            Err(e) => {
-                let message = format!("Error in config file:\n{}", e);
-                Err(Error::msg(message))
-            }
+            Err(e) => Err(e.wrap_err("Error in configuration file")),
         }
     }
     /// Browse through the filesystem to find the config file
@@ -63,10 +59,7 @@ impl Config {
                 teleport.teleport();
                 Ok((res, teleport))
             }
-            Err(e) => {
-                let message = format!("Error in config file:\n{}", e);
-                Err(Error::msg(message))
-            }
+            Err(e) => Err(e.wrap_err("Error in configuration file")),
         }
     }
     /// Set the appropriated method to load the config according to the FileType
@@ -112,8 +105,6 @@ impl Config {
         match res {
             Ok(res) => Ok(res),
             Err(e) => {
-                println!("{:?}", e);
-                // println!("{}", json);
                 let err = JsonError::new(e, &json);
                 Err(err.into())
             }
@@ -130,16 +121,8 @@ impl Config {
         match res {
             Ok(res) => Ok(res),
             Err(e) => {
-                println!("{:?}", e);
-                // println!("{}", json);
-                let span: SourceSpan = e.span().unwrap().into();
-                let toml_err = TomlError {
-                    src: NamedSource::new("config_toml_output", tml),
-                    bad_bit: span,
-                };
-                let me = Error::from(toml_err);
-                println!("{:?}", me);
-                exit(1);
+                let err = TomlError::new(e, &tml);
+                Err(err.into())
             }
         }
     }
@@ -154,9 +137,8 @@ impl Config {
         match res {
             Ok(res) => Ok(res),
             Err(e) => {
-                let me = YamlError::new(e, &yml);
-                println!("{:?}", me);
-                exit(1);
+                let err = YamlError::new(e, &yml);
+                Err(err.into())
             }
         }
     }

@@ -1,12 +1,7 @@
 #[cfg(test)]
 mod display {
-    use crate::error::{make_handler, CastError, JsonError};
     use crate::Pipeline;
-    // use error::types::PipeError;
-    use miette::{
-        diagnostic, miette, Diagnostic, Error, IntoDiagnostic, MietteHandlerOpts, NamedSource,
-        Result, RgbColors, SourceSpan,
-    };
+    use miette::Result;
     #[test]
     fn wrong_json_type() -> Result<()> {
         let json = r#"
@@ -25,7 +20,6 @@ mod display {
     }
     #[test]
     fn pipeline_bad_name() -> Result<()> {
-        make_handler()?;
         let json = r#"
           {
             "name": "my pipe",
@@ -38,12 +32,23 @@ mod display {
           }
         "#;
         let res = serde_json::from_str::<Pipeline>(&json);
-        match res {
-            Ok(_) => Ok(()),
-            Err(err) => {
-                let err = JsonError::new(err, json);
-                Err(err.into())
-            }
-        }
+        assert!(res.is_err());
+        Ok(())
+    }
+    #[test]
+    fn wrong_yaml() -> Result<()> {
+        let yml = r#"
+        name: test
+        steps:
+          - command:
+              - ls
+            name: list directory
+          - commands:
+              - pwd
+            name: get working directory
+        "#;
+        let res = serde_yaml::from_str::<Pipeline>(&yml);
+        assert!(res.is_err());
+        Ok(())
     }
 }

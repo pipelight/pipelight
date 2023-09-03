@@ -5,7 +5,6 @@ edition = "2021"
 
 [dependencies]
 git2 = "0.16.1"
-project-root = "0.2.2"
 rev_buf_reader = "0.3.0"
 log = "0.4.17"
 log4rs = { version = "1.2.0", features = ["json_encoder","pattern_encoder","size_trigger","console_appender", "file_appender"]}

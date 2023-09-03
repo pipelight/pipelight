@@ -24,14 +24,14 @@ fn main() -> Result<()> {
     let name = cmd.get_name().to_string();
     let shells = vec![Shell::Bash, Shell::Zsh, Shell::Fish, Shell::Elvish];
     for shell in shells {
-        let path = generate_to(
+        let _path = generate_to(
             shell,
             &mut cmd, // We need to specify what generator to use
             name.clone(),
             outdir.clone(), // We need to specify where to write to
         )
         .into_diagnostic()?;
-        println!("cargo:warning=completion file is generated: {path:?}");
+        // println!("cargo:warning=completion file is generated: {path:?}");
     }
     Ok(())
 }

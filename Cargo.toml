@@ -7,6 +7,5 @@ members=[
   "cast",
   "cli",
   "pipelight",
-  "error"
 ]
 

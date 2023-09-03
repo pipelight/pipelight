@@ -1,17 +1,6 @@
+mod test;
 // Error Handling
-use miette::miette;
-use miette::{
-    Diagnostic,
-    IntoDiagnostic,
-    MietteHandlerOpts,
-    NamedSource,
-    Report,
-    Result,
-    //
-    RgbColors,
-    SourceOffset,
-    SourceSpan,
-};
+use miette::{Diagnostic, SourceOffset, SourceSpan};
 use thiserror::Error;
 
 #[derive(Error, Diagnostic, Debug)]
@@ -23,7 +12,7 @@ pub enum CastError {
 
 #[derive(Error, Diagnostic, Debug)]
 #[diagnostic(code(cast::json))]
-#[error("Couldn't convert json to Pipelight inner types")]
+#[error("Serde: Could not convert Json into Rust types")]
 pub struct JsonError {
     #[source]
     pub origin: serde_json::Error,
@@ -52,7 +41,7 @@ impl JsonError {
 
 #[derive(Error, Diagnostic, Debug)]
 #[diagnostic(code(cast::yaml))]
-#[error("Couldn't convert json to Pipelight inner types")]
+#[error("Serde: Could not convert Yaml into Rust types")]
 pub struct YamlError {
     #[source]
     pub origin: serde_yaml::Error,
@@ -86,27 +75,39 @@ impl YamlError {
         }
     }
 }
-#[derive(Error, Debug, Diagnostic)]
-#[error("toml file syntax issue!")]
-#[diagnostic(code(yaml::error))]
+#[derive(Error, Diagnostic, Debug)]
+#[diagnostic(code(cast::yaml))]
+#[error("Serde: Could not convert Toml into Rust types")]
 pub struct TomlError {
+    #[source]
+    pub origin: toml::de::Error,
+    #[label("here")]
+    pub at: SourceSpan,
     #[source_code]
-    pub src: NamedSource,
-    #[label("This bit here")]
-    pub bad_bit: SourceSpan,
+    pub src: String,
 }
-pub fn make_handler() -> Result<()> {
-    miette::set_hook(Box::new(|_| {
-        Box::new(
-            MietteHandlerOpts::new()
-                .rgb_colors(RgbColors::Never)
-                .color(true)
-                .unicode(true)
-                .terminal_links(true)
-                .context_lines(3)
-                .with_cause_chain()
-                .build(),
-        )
-    }))?;
-    Ok(())
+impl TomlError {
+    pub fn new(e: toml::de::Error, src: &str) -> Self {
+        if let Some(span) = e.span() {
+            let line = span.start;
+            let column = span.end;
+            TomlError {
+                at: SourceSpan::new(
+                    SourceOffset::from_location(
+                        //source
+                        src, line, column,
+                    ),
+                    1.into(),
+                ),
+                src: src.to_owned(),
+                origin: e,
+            }
+        } else {
+            TomlError {
+                at: SourceSpan::new(0.into(), 0.into()),
+                src: src.to_owned(),
+                origin: e,
+            }
+        }
+    }
 }

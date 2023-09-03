@@ -53,7 +53,6 @@ impl Config {
             if *CONFIG == Config::default() && *TELEPORT == Teleport::default() {
                 let mut config: Config;
                 let (json, portal) = cast::Config::get_with_teleport(file, args)?;
-
                 config = Config::from(&json);
                 config.dedup_pipelines();
                 *CONFIG = config;
