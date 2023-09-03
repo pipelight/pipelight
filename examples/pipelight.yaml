@@ -1,7 +1,7 @@
 pipelines:
   - name: simple_example
     steps:
-      - command:
+      - commands:
           - ls
         name: list directory
       - commands:

@@ -1,7 +1,7 @@
 const config = {
   pipelines: [
     {
-      names: "test_kill",
+      name: "test_kill",
       steps: [
         {
           name: `kill decendent subprocess`,
