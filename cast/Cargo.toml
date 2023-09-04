@@ -11,5 +11,6 @@ serde_json = "1.0.93"
 miette = { version = "5.5.0"}
 thiserror = "1.0.38"
 serde_yaml = "0.9.19"
+log = "0.4.17"
 toml = { version = "0.7.3", features = ["parse"] }
 

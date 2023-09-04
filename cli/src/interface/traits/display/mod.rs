@@ -1,11 +1,11 @@
 // import tests
 mod test;
 
-use crate::interface::types::{
-    Cli, Commands, DisplayCommands, Init, Logs, LogsCommands, Pipeline, Shell, Trigger,
+use crate::interface::{
+    Cli, Commands, DisplayCommands, Init, InternalVerbosity, Logs, LogsCommands, Pipeline, Shell,
+    Trigger, Verbosity,
 };
 
-use clap_verbosity_flag::Verbosity;
 use log::LevelFilter;
 
 use std::fmt;
@@ -23,6 +23,8 @@ impl fmt::Display for Cli {
             string += &format!("-- {}", self.raw.clone().unwrap().join(" "));
         }
         string += &from_verbosity_to_string(self.verbose.clone());
+        string += &from_internal_verbosity_to_string(self.internal_verbose.clone());
+
         if self.attach {
             string += " ";
             string += "--attach";
@@ -105,13 +107,22 @@ impl fmt::Display for Trigger {
     }
 }
 
-fn from_verbosity_to_string(e: Verbosity) -> String {
+fn from_internal_verbosity_to_string(e: InternalVerbosity) -> String {
     let mut string = "".to_owned();
     if e.is_silent() {
         string += " ";
         string += "-q";
     }
-
+    if e.log_level_filter() > LevelFilter::Error {
+        let n = e.log_level_filter() as usize;
+        string += " ";
+        string += "-";
+        string += &"u".repeat(n - 1);
+    }
+    string
+}
+fn from_verbosity_to_string(e: Verbosity) -> String {
+    let mut string = "".to_owned();
     if e.log_level_filter() > LevelFilter::Error {
         let n = e.log_level_filter() as usize;
         string += " ";

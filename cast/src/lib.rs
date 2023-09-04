@@ -10,11 +10,10 @@
 // and are then converted into practical structs to be used outside the crate.
 
 // import modules
-mod config;
 mod error;
+mod getters;
 mod test;
 mod types;
-mod typescript;
 
 // Re-export
 pub use types::*;

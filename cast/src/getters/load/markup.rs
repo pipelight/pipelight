@@ -1,8 +1,14 @@
+// Exec
+use exec::Process;
+
+// Error Handling
+use crate::error::{TomlError, YamlError};
 use crate::Config;
+use miette::Result;
 
 /// Return a Config struct from a provided toml file path
 impl Config {
-    fn tml(file_path: &str) -> Result<Config> {
+    pub fn tml(file_path: &str) -> Result<Config> {
         let executable = "cat";
         let command = format!("{} {}", executable, file_path);
         let p = Process::new(&command).simple()?;
@@ -18,7 +24,7 @@ impl Config {
         }
     }
     /// Return a Config struct from a provided yaml file path
-    fn yml(file_path: &str) -> Result<Config> {
+    pub fn yml(file_path: &str) -> Result<Config> {
         let executable = "cat";
         let command = format!("{} {}", executable, file_path);
         let p = Process::new(&command).simple()?;

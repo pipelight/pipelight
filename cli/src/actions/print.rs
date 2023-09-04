@@ -32,7 +32,7 @@ pub fn json(pipelines: &Vec<Pipeline>) -> Result<()> {
 }
 /// Print pipeline from config file
 pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<()> {
-    logger.lock().unwrap().level = LevelFilter::max();
+    logger.lock().unwrap().pipelines.level = LevelFilter::max();
     if json {
         let pipeline_json = serde_json::to_string_pretty::<Pipeline>(pipeline).into_diagnostic()?;
         println!("{}", pipeline_json);
@@ -45,7 +45,7 @@ pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<()> {
 
 /// Print a flatten list of pipelines present in config file
 pub fn list() -> Result<()> {
-    let level = logger.lock().unwrap().level;
+    let level = logger.lock().unwrap().pipelines.level;
     let config = Config::get()?;
     // Print headers
     match level {

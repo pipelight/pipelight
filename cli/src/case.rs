@@ -78,6 +78,10 @@ impl Client {
         let verbosity = args.verbose.log_level_filter();
         logger.lock().unwrap().level(&verbosity);
 
+        // Set internal verbosity level
+        let verbosity = args.internal_verbose.log_level_filter();
+        logger.lock().unwrap().internal_level(&verbosity);
+
         match args.commands {
             Commands::Ls(list) => {
                 // Set global config
@@ -160,6 +164,7 @@ impl Client {
                 // create file
             }
             Commands::Logs(logs) => {
+                Config::new(args.config.clone(), args.raw.clone())?;
                 // Set colors
                 if logs.display.color.is_some() {
                     match ColoredOutput::from(&logs.display.color.unwrap()) {

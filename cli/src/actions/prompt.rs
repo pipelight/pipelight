@@ -22,7 +22,7 @@ pub fn inspect_prompt() -> Result<()> {
 
     match selection {
         Some(index) => {
-            logger.lock().unwrap().level = LevelFilter::max();
+            logger.lock().unwrap().pipelines.level = LevelFilter::max();
             let node = Node::from(&pipelines[index]);
             println!("{}", node);
         }

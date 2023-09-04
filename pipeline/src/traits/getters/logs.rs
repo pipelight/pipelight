@@ -18,7 +18,7 @@ use super::Getters;
 
 impl Getters<Pipeline> for Logs {
     fn get() -> Result<Vec<Pipeline>> {
-        let dir = &logger.lock().unwrap().directory;
+        let dir = &logger.lock().unwrap().pipelines.directory;
         let message = "No logs to display.";
         // Safe exit if no log folder
         if !Path::new(dir).exists() {

@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod display {
-    use crate::{Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, Trigger};
-    use clap_verbosity_flag::Verbosity;
+    use crate::interface::{Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, Trigger};
+    use crate::interface::{InternalVerbosity, Verbosity};
 
     // Test Cli struct to bash string reversion
     //
@@ -19,6 +19,7 @@ mod display {
             raw: None,
             config: None,
             // Set verbosity to default level (Error)
+            internal_verbose: InternalVerbosity::new(0, 0),
             verbose: Verbosity::new(0, 0),
         };
         // print it
@@ -40,11 +41,32 @@ mod display {
             attach: false,
             raw: None,
             config: None,
+            internal_verbose: InternalVerbosity::new(0, 0),
             verbose: Verbosity::new(0, 0),
         };
         // print it
         let result = format!("{}", cli);
         assert_eq!(result, "logs rm");
+    }
+    #[test]
+    fn internal_verbosity() {
+        // Define a cli struct
+        let cli = Cli {
+            commands: Commands::Ls(DisplayCommands {
+                json: false,
+                name: None,
+                color: None,
+            }),
+            attach: false,
+            raw: None,
+            config: None,
+            // fn new(verbose: u8, quiet: u8) -> Self
+            internal_verbose: InternalVerbosity::new(2, 0),
+            verbose: Verbosity::new(0, 0),
+        };
+        // print it
+        let result = format!("{}", cli);
+        assert_eq!(result, "ls -uu");
     }
     #[test]
     fn verbosity() {
@@ -59,6 +81,7 @@ mod display {
             raw: None,
             config: None,
             // fn new(verbose: u8, quiet: u8) -> Self
+            internal_verbose: InternalVerbosity::new(0, 0),
             verbose: Verbosity::new(2, 0),
         };
         // print it
@@ -78,6 +101,7 @@ mod display {
             raw: None,
             config: Some("test.pipelight.ts".to_owned()),
             // fn new(verbose: u8, quiet: u8) -> Self
+            internal_verbose: InternalVerbosity::new(0, 0),
             verbose: Verbosity::new(0, 0),
         };
         // print it
@@ -97,6 +121,7 @@ mod display {
             raw: Some(vec!["--host".to_owned(), "linode".to_owned()]),
             config: None,
             // fn new(verbose: u8, quiet: u8) -> Self
+            internal_verbose: InternalVerbosity::new(0, 0),
             verbose: Verbosity::new(0, 0),
         };
         // print it

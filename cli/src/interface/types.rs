@@ -1,6 +1,9 @@
 // Clap - command line lib
+
+pub use super::verbosity::internal::InternalVerbosity;
+pub use super::verbosity::external::Verbosity;
+
 use clap::{Parser, Subcommand, ValueHint};
-use clap_verbosity_flag::Verbosity;
 
 #[derive(Debug, Clone, Parser)]
 pub struct Cli {
@@ -19,6 +22,10 @@ pub struct Cli {
     #[clap(flatten)]
     // #[serde(flatten)]
     pub verbose: Verbosity,
+
+    #[clap(flatten)]
+    // #[serde(flatten)]
+    pub internal_verbose: InternalVerbosity,
 
     /// Pass those arguments to deno
     #[arg(global = true, last = true, allow_hyphen_values = true)]

@@ -1,18 +1,9 @@
 use super::Config;
 
 // Error Handling
-use crate::error::{JsonError, TomlError, YamlError};
-use miette::{Error, Result};
+use miette::Result;
 
-// Exec
-use exec::Process;
-
-// Standard lib
-// use std::env::current_dir;
-use std::path::Path;
-
-use super::typescript::main_script;
-use utils::teleport::{FileType, Teleport};
+use utils::teleport::Teleport;
 
 //Loaders
 mod load;
@@ -31,7 +22,7 @@ impl Config {
             teleport.preffix("pipelight")?;
             teleport.search()?;
         }
-        let res = Config::load_from_file(&teleport.internal.file_path.clone().unwrap(), args);
+        let res = Config::file(&teleport.internal.file_path.clone().unwrap(), args);
         match res {
             Ok(res) => {
                 teleport.teleport();
@@ -56,7 +47,7 @@ impl Config {
             teleport.preffix("pipelight")?;
             teleport.search()?;
         }
-        let res = Config::load_from_file(&teleport.internal.file_path.clone().unwrap(), args);
+        let res = Config::file(&teleport.internal.file_path.clone().unwrap(), args);
         match res {
             Ok(res) => {
                 teleport.teleport();

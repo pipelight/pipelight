@@ -1,14 +1,24 @@
+// Error Handling
+use crate::error::JsonError;
+use miette::{Error, Result};
+
+// Exec
+use exec::Process;
+
+mod script;
+use script::import_script;
+
 use crate::Config;
 
 impl Config {
     /// Return a Config struct from a provided typescript file path
-    fn ts(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
+    pub fn ts(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
         // Fail safe guards
         Config::lint(file_path)?;
         Config::check(file_path, args.clone())?;
 
         let executable = "deno eval";
-        let script = main_script(file_path);
+        let script = import_script(file_path);
         let command = if args.is_some() {
             format!("{} {} -- {}", executable, script, args.unwrap().join(" "))
         } else {

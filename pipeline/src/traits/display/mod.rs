@@ -66,7 +66,9 @@ impl Node {
             value = big_spaces.replace_all(&value, "\n").to_string();
             value = value.replace('\n', &format!("\n{prefix:}", prefix = prefix.white()));
 
-            if self.duration.is_some() && logger.lock().unwrap().level >= LevelFilter::Error {
+            if self.duration.is_some()
+                && logger.lock().unwrap().pipelines.level >= LevelFilter::Error
+            {
                 let duration = format_duration(
                     iso8601_to_std_duration(self.duration.clone().unwrap()).unwrap(),
                 )
@@ -90,7 +92,7 @@ impl Node {
             if self.children.is_some() {
                 let length = self.children.clone().unwrap().len() - 1;
                 for (index, child) in &mut self.children.clone().unwrap().iter().enumerate() {
-                    if child.level <= logger.lock().unwrap().level {
+                    if child.level <= logger.lock().unwrap().pipelines.level {
                         print!("{}", &child.leaf(prefix.clone(), index, length));
                         if index == length {
                             let prefix = add_level_phantom(prefix.clone());

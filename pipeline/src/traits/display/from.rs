@@ -297,7 +297,7 @@ impl From<&Command> for Node {
                 level: LevelFilter::Trace,
                 ..Node::new()
             };
-            if logger.lock().unwrap().level == LevelFilter::Debug {
+            if logger.lock().unwrap().pipelines.level == LevelFilter::Debug {
                 node.children = Some(vec![out]);
             } else {
                 node.children = Some(vec![stdout, stderr]);

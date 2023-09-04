@@ -1,4 +1,4 @@
-pub fn main_script(file_name: &str) -> String {
+pub fn import_script(file_name: &str) -> String {
     format!(
         r#"'
 // Disable console log statements

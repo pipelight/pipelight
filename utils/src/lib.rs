@@ -1,6 +1,5 @@
 // Rules
 #![allow(unused_variables)]
-#![allow(unused_imports)]
 #![allow(unused_must_use)]
 #![allow(non_upper_case_globals)]
 // #![allow(dead_code)]
@@ -16,9 +15,7 @@ pub mod logger;
 pub mod teleport;
 
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-use thiserror::Error;
-// use std::error::Error;
+use miette::{IntoDiagnostic, Result};
 
 /// Read last line of each log file
 pub fn read_last_line(path: &Path) -> Result<String> {
