@@ -1,26 +1,23 @@
 // Standard libs
 use std::env;
 
+// File type usage
+use crate::files::FileType;
+use strum::IntoEnumIterator;
+
 mod types;
-pub use self::types::{FileType, Internal, NaiveFileInfo, Teleport};
-mod from;
+pub use self::types::{Internal, NaiveFileInfo, Teleport};
 // Tests
 mod test;
 
 // Enum workaround
 use std::string::ToString;
-use strum::{EnumIter, IntoEnumIterator};
 
 use super::git::Git;
 use std::path::Path;
-// Error Handling
-use log::{debug, error, trace, warn};
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
-use std::process::exit;
-use thiserror::Error;
 
-// Global var
-use once_cell::sync::Lazy;
+// Error Handling
+use miette::{Error, IntoDiagnostic, Result};
 
 impl Teleport {
     /// Jump between PWD and the directory of the loaded config file.

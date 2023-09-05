@@ -1,9 +1,5 @@
 use crate::types::{Logs, Pipeline};
 
-// File storage
-use std::fs;
-use std::path::Path;
-
 // Logger
 use log::warn;
 use utils::logger::logger;
@@ -18,49 +14,30 @@ use super::Getters;
 
 impl Getters<Pipeline> for Logs {
     fn get() -> Result<Vec<Pipeline>> {
-        let dir = &logger.lock().unwrap().pipelines.directory;
-        let message = "No logs to display.";
-        // Safe exit if no log folder
-        if !Path::new(dir).exists() {
-            Err(Error::msg(message))
-        } else {
-            let paths = fs::read_dir(dir).unwrap();
-            let n = paths.count();
-            if n == 0 {
-                Err(Error::msg(message))
-            } else {
-                let paths = fs::read_dir(dir).unwrap();
-                let mut pipelines = vec![];
-                for path in paths {
-                    let dir_entry = path.into_diagnostic()?;
-                    let json = utils::read_last_line(&dir_entry.path())?;
-                    let pipeline = serde_json::from_str::<Pipeline>(&json);
-                    if pipeline.is_err() {
-                        warn!("Striping corrupted log")
-                    } else {
-                        pipelines.push(pipeline.into_diagnostic()?);
-                    }
-                }
-                pipelines.sort_by(|a, b| {
-                    let a_date = a
-                        .clone()
-                        .event
-                        .unwrap()
-                        .date
-                        .parse::<DateTime<Local>>()
-                        .unwrap();
-                    let b_date = &b
-                        .clone()
-                        .event
-                        .unwrap()
-                        .date
-                        .parse::<DateTime<Local>>()
-                        .unwrap();
-                    a_date.cmp(b_date)
-                });
-                Ok(pipelines)
-            }
+        let pipelines;
+        for json in logs {
+            let pipeline = serde_json::from_str::<Pipeline>(&json);
+            pipelines.push(pipeline.into_diagnostic()?);
         }
+        // Sort by date ascending
+        pipelines.sort_by(|a, b| {
+            let a_date = a
+                .clone()
+                .event
+                .unwrap()
+                .date
+                .parse::<DateTime<Local>>()
+                .unwrap();
+            let b_date = &b
+                .clone()
+                .event
+                .unwrap()
+                .date
+                .parse::<DateTime<Local>>()
+                .unwrap();
+            a_date.cmp(b_date)
+        });
+        Ok(pipelines)
     }
     fn get_by_name(name: &str) -> Result<Pipeline> {
         let pipelines = Logs::get()?;

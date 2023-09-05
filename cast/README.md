@@ -1,32 +1,16 @@
-# Cast crate
+# The Cast crate
 
-## What is inside ?
+It is a compatibility crate,
+between pipelight core and configuration file formats.
 
-Same as the **exec crate**, it is a compatibility crate,
-between pipelight core and config file formats.
+## Convert files into struct
 
-All the types and functions defined in this crate are to use to cast any documents
-into a **Rust Pipelight Config struct**.
-In other words it is just a crate to convert connfiguration files.
+Uses serde to convert files into exploitable Structs.
+(**Casts** files to structs)
 
-The supported configuration formats are:
+It converts:
 
-- YAML
-- TOML
-- Javascript
-- Typescript
+- configuration files -> cast::Config;
+- log files into -> cast::Log.
 
-It uses **serde** to check and convert provided config files.
-The resulting struct `cast::Config` isn't optimized for furthere exploitation.
-
-It is converted from a `cast::Config` into a `pipeline::Config`
-inside the **pipeline crate** thus providing top level methods to inner structs like
-`pipeline.run()`, `pipeline.stop()`.
-
-## Files
-
-You have an overview of the struct definition in `types.rs`.
-
-## Tests
-
-This is the crate where triggers array are converted. (sensible operation)
+The resulting cast struct are not to be used as is.
