@@ -13,7 +13,7 @@ You can find READMEs inside project crates for deep dive.
 
 # Structure
 
-The pipelight source code is splitted into 7 crates.
+The pipelight source code is splitted into 5 crates.
 Every crate serves the one where all the logic happens,
 the **pipeline** crate.
 

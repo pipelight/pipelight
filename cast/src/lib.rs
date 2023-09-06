@@ -13,3 +13,4 @@ mod test;
 // Re-export
 pub use config::types::*;
 pub use logs::Logs;
+pub use logs::*;

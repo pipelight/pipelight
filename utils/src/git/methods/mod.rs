@@ -18,6 +18,7 @@ impl Default for Git {
     fn default() -> Git {
         let root = env::current_dir().unwrap();
         Git {
+            // recursively browse through fs
             repo: Repository::discover(root).ok(),
         }
     }

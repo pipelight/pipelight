@@ -239,16 +239,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "clap-verbosity-flag"
-version = "2.0.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1eef05769009513df2eb1c3b4613e7fad873a14c600ff025b08f250f59fee7de"
-dependencies = [
- "clap",
- "log",
-]
-
-[[package]]
 name = "clap_builder"
 version = "4.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -289,33 +279,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cd7cc57abe963c6d3b9d8be5b06ba7c8957a930305ca90304f24ef040aa6f961"
 
 [[package]]
-name = "cli"
-version = "0.2.1"
-dependencies = [
- "assert_cmd",
- "chrono",
- "clap",
- "clap-verbosity-flag",
- "clap_complete",
- "convert_case",
- "dialoguer",
- "exec",
- "fork",
- "log",
- "miette",
- "once_cell",
- "pipeline",
- "predicates",
- "rustix 0.37.23",
- "serde",
- "serde_json",
- "sysinfo 0.28.4",
- "thiserror",
- "utils",
- "uuid",
-]
-
-[[package]]
 name = "colorchoice"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -352,6 +315,36 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ec182b0ca2f35d8fc196cf3404988fd8b8c739a4d270ff118a398feb0cbec1ca"
 dependencies = [
  "unicode-segmentation",
+]
+
+[[package]]
+name = "core"
+version = "0.4.0"
+dependencies = [
+ "assert_cmd",
+ "cast",
+ "chrono",
+ "clap",
+ "clap_complete",
+ "colored",
+ "convert_case",
+ "dialoguer",
+ "exec",
+ "glob",
+ "iso8601-duration",
+ "log",
+ "miette",
+ "once_cell",
+ "rayon",
+ "regex",
+ "rustix 0.37.23",
+ "serde",
+ "serde_json",
+ "strum",
+ "sysinfo 0.28.4",
+ "thiserror",
+ "utils",
+ "uuid",
 ]
 
 [[package]]
@@ -507,28 +500,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6999dc1837253364c2ebb0704ba97994bd874e8f195d665c50b7548f6ea92764"
 
 [[package]]
-name = "float-cmp"
-version = "0.9.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "98de4bbd547a563b716d8dfa9aad1cb19bfab00f4fa09a6a4ed21dbcf44ce9c4"
-dependencies = [
- "num-traits",
-]
-
-[[package]]
 name = "fnv"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
-
-[[package]]
-name = "fork"
-version = "0.1.22"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bf2ca97a59201425e7ee4d197c9c4fea282fe87a97d666a580bda889b95b8e88"
-dependencies = [
- "libc",
-]
 
 [[package]]
 name = "form_urlencoded"
@@ -937,12 +912,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "normalize-line-endings"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61807f77802ff30975e01f4f071c8ba10c022052f98b3294119f3e615d13e5be"
-
-[[package]]
 name = "ntapi"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1057,37 +1026,11 @@ checksum = "8afb450f006bf6385ca15ef45d71d2288452bc3683ce2e2cacc0d18e4be60b58"
 name = "pipelight"
 version = "0.3.0"
 dependencies = [
- "cli",
+ "core",
  "exec",
  "log",
  "miette",
- "pipeline",
  "utils",
-]
-
-[[package]]
-name = "pipeline"
-version = "0.3.0"
-dependencies = [
- "cast",
- "chrono",
- "colored",
- "convert_case",
- "exec",
- "glob",
- "iso8601-duration",
- "log",
- "miette",
- "once_cell",
- "rayon",
- "regex",
- "rustix 0.37.23",
- "serde",
- "serde_json",
- "strum",
- "thiserror",
- "utils",
- "uuid",
 ]
 
 [[package]]
@@ -1110,11 +1053,8 @@ checksum = "09963355b9f467184c04017ced4a2ba2d75cbcb4e7462690d388233253d4b1a9"
 dependencies = [
  "anstyle",
  "difflib",
- "float-cmp",
  "itertools",
- "normalize-line-endings",
  "predicates-core",
- "regex",
 ]
 
 [[package]]

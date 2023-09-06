@@ -3,7 +3,7 @@
 // #![allow(dead_code)]
 #![allow(unused_must_use)]
 
-use cli::case::Client;
+use core::cli::case::Client;
 
 // Error Handling
 use miette::{MietteHandlerOpts, Result, RgbColors};
