@@ -1,5 +1,5 @@
-use crate::actions::run;
-use pipeline::{Getters, Node, Pipeline};
+use crate::cli::actions::run;
+use crate::workflow::{Getters, Node, Pipeline};
 
 // Logging and verbosity
 use log::LevelFilter;

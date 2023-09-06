@@ -1,6 +1,6 @@
 mod logs;
 
-use crate::types::{Config, Pipeline, Trigger};
+use crate::workflow::types::{Config, Pipeline, Trigger};
 
 // Logger
 use log::warn;
@@ -10,7 +10,7 @@ use miette::{Error, Result};
 // use std::error::Error;
 
 // Import global config
-use super::default::{CONFIG, TELEPORT};
+use crate::globals::CONFIG;
 
 // External imports
 use utils::git::Hook;
@@ -23,16 +23,11 @@ pub trait Getters<T> {
 }
 
 impl Config {
-    // pub fn get() -> Result<Self> {
-    //     let (config, portal) = Config::get_with_teleport()?;
-    //     Ok(config)
-    // }
-    // pub fn new(file: Option<String>, args: Option<Vec<String>>) -> Result<Self> {
-    // let (config, portal) = Config::new_with_teleport(file, args)?;
-    // Hook::enable()?;
-    // Launch watcher
-    //     Ok(config)
-    // }
+    pub fn get() -> Result<Self> {
+        let config;
+        unsafe { config = (*CONFIG).clone() };
+        Ok(config)
+    }
 }
 
 impl Getters<Pipeline> for Pipeline {

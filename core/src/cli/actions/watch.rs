@@ -1,12 +1,11 @@
-use super::detach::detach;
+use crate::cli::utils::detach::detach;
+use crate::workflow::{Config, Trigger};
 use exec::Process;
 use log::{debug, trace};
-use pipeline::{Config, Trigger};
 use std::thread;
 use utils::git::{Flag, Special};
-use utils::teleport::Teleport;
 
-use crate::interface::types;
+use crate::cli::interface::types;
 
 // sys
 use clap::Parser;
@@ -15,7 +14,7 @@ use std::env;
 use sysinfo::{get_current_pid, PidExt, ProcessExt, System, SystemExt};
 
 // Global
-use crate::case::CLI;
+use crate::globals::{CLI, PORTAL};
 
 // Error Handling
 use miette::{Error, IntoDiagnostic, Result};
@@ -70,8 +69,10 @@ pub fn watch() -> Result<()> {
 
     #[cfg(not(debug_assertions))]
     let action = format!("{} {}", &bin, &args);
-
-    let command = format!("watchexec -w {} {}", Teleport::new().origin, &action);
+    let portal;
+    unsafe { portal = (*PORTAL).clone() };
+    let directory = portal.origin.directory_path.unwrap();
+    let command = format!("watchexec -w {} {}", &directory, &action);
 
     if can_watch().is_ok() {
         Process::new(&command).simple()?;

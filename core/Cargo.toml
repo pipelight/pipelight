@@ -25,6 +25,8 @@ glob = "0.3.1"
 rustix = { version = "0.37.20", features = ["process"] }
 iso8601-duration = { version = "0.2.0", features = ["serde", "chrono"] }
 clap_complete = "4.3.1"
+dialoguer = "0.10.3"
+sysinfo = "0.28.1"
 
 [build-dependencies]
 exec = {path = "../exec" }

@@ -1,4 +1,6 @@
-use crate::{Command, Config, Fallback, Mode, Parallel, Pipeline, Step, StepOrParallel, Trigger};
+use crate::workflow::types::{
+    Command, Config, Fallback, Mode, Parallel, Pipeline, Step, StepOrParallel, Trigger,
+};
 use exec::Process;
 
 use convert_case::{Case, Casing};

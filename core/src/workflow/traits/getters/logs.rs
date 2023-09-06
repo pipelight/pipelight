@@ -1,8 +1,7 @@
-use crate::types::{Logs, Pipeline};
-
-// Logger
-use log::warn;
-use utils::logger::logger;
+use super::Getters;
+use crate::globals::PORTAL;
+use crate::workflow::types::{Logs, Pipeline};
+use cast;
 
 // Date and Time
 use chrono::{DateTime, Local};
@@ -10,15 +9,20 @@ use chrono::{DateTime, Local};
 // Error Handling
 use miette::{Error, IntoDiagnostic, Result};
 
-use super::Getters;
-
 impl Getters<Pipeline> for Logs {
     fn get() -> Result<Vec<Pipeline>> {
-        let pipelines: Vec<Pipeline>;
-        // for json in logs {
-        //     let pipeline = serde_json::from_str::<Pipeline>(&json);
-        //     pipelines.push(pipeline.into_diagnostic()?);
-        // }
+        let portal;
+        unsafe {
+            portal = (*PORTAL).clone();
+        };
+        let logs: Vec<String> =
+            cast::Logs::read(&format!("{}/logs/", portal.target.directory_path.unwrap()))?;
+
+        let mut pipelines: Vec<Pipeline> = vec![];
+        for json in logs {
+            let pipeline = serde_json::from_str::<Pipeline>(&json).into_diagnostic()?;
+            pipelines.push(pipeline);
+        }
         // Sort by date ascending
         pipelines.sort_by(|a, b| {
             let a_date = a

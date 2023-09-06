@@ -2,7 +2,7 @@
 // #![allow(unused_imports)]
 // #![allow(unused_must_use)]
 
-mod cli;
+pub mod cli;
 mod globals;
 mod workflow;
 // tests

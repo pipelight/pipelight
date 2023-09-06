@@ -3,14 +3,14 @@
 // #![allow(dead_code)]
 #![allow(unused_must_use)]
 
-use core::cli::case::Client;
+use core::cli::Cli;
 
 // Error Handling
 use miette::{MietteHandlerOpts, Result, RgbColors};
 
 fn main() -> Result<()> {
     make_handler()?;
-    Client::launch()?;
+    Cli::launch()?;
     Ok(())
 }
 pub fn make_handler() -> Result<()> {

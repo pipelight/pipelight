@@ -35,16 +35,16 @@ impl Portal {
         self.to_owned()
     }
     /// Recursively search a file throught parent
-    fn search(&mut self) -> Result<()> {
+    pub fn search(&mut self) -> Result<Self> {
         let seed = self.seed.clone();
         if let Some(seed) = seed {
             let path = Path::new(&seed);
             if self.search_path().is_ok() {
-                return Ok(());
+                return Ok(self.to_owned());
             } else if self.search_file().is_ok() {
-                return Ok(());
+                return Ok(self.to_owned());
             } else if self.search_prefix().is_ok() {
-                return Ok(());
+                return Ok(self.to_owned());
             } else {
                 return Err(Error::msg(format!(
                     "Couldn't find a file with the provided seed: {}",
@@ -52,7 +52,7 @@ impl Portal {
                 )));
             }
         }
-        Ok(())
+        Ok(self.to_owned())
     }
     fn parent(&mut self) -> Result<Self> {
         if !self.has_reached_root()? {
@@ -93,9 +93,13 @@ impl Portal {
         // SafeGuard
         if self.seed.is_some() {
             let name = self.seed.clone().unwrap();
-
             let file_str = format!("{}/{}", self.current.directory_path.clone().unwrap(), name);
             let path = Path::new(&file_str);
+            // SafeGuard
+            if path.extension().is_none() {
+                return Err(Error::msg("Couldn't find file"));
+            }
+
             if path.exists() {
                 self.target.file(path.display().to_string());
             } else if self.parent().is_ok() {
@@ -114,6 +118,10 @@ impl Portal {
             if path.is_relative() {
                 path_str = path.canonicalize().into_diagnostic()?.display().to_string();
                 path = Path::new(&path_str);
+            }
+            // SafeGuard
+            if path.extension().is_none() {
+                return Err(Error::msg("Couldn't find file"));
             }
             if path.exists() {
                 self.target.file(path.display().to_string());

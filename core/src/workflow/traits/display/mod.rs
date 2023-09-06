@@ -1,5 +1,5 @@
-use crate::methods::iso8601_to_std_duration;
-use crate::types::Node;
+use crate::workflow::methods::iso8601_to_std_duration;
+use crate::workflow::types::Node;
 
 // Caracteres
 mod characters;

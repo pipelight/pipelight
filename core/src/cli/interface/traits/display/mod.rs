@@ -1,7 +1,7 @@
 // import tests
 mod test;
 
-use crate::interface::{
+use crate::cli::interface::{
     Cli, Commands, DisplayCommands, Init, InternalVerbosity, Logs, LogsCommands, Pipeline, Shell,
     Trigger, Verbosity,
 };

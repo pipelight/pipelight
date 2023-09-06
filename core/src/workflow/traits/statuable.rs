@@ -1,4 +1,4 @@
-use crate::types::{Command, Parallel, Pipeline, Step, StepOrParallel};
+use crate::workflow::types::{Command, Parallel, Pipeline, Step, StepOrParallel};
 use exec::{Statuable, Status};
 
 impl Statuable for Command {

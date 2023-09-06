@@ -6,10 +6,10 @@ use log::info;
 use utils::logger::logger;
 
 // Colors
-use crate::display::set_override;
+use crate::workflow::traits::display::set_override;
 
 // Pipeline types
-use crate::{Config, Getters, Logs, Pipeline};
+use crate::workflow::{Config, Getters, Logs, Pipeline};
 
 // Clap - command line lib
 use clap::{builder::PossibleValue, Args, Command, FromArgMatches, ValueEnum, ValueHint};
@@ -36,7 +36,7 @@ impl Cli {
 
         let args;
         unsafe {
-            args = *CLI;
+            args = (*CLI).clone();
         };
 
         // Set verbosity level
@@ -50,7 +50,6 @@ impl Cli {
         match args.commands {
             Commands::Ls(list) => {
                 // Set global config
-                Config::new(args.config.clone(), args.raw.clone())?;
                 // Launch watcher
                 if Config::get()?.has_watch_flag().is_ok() {
                     watch::create_watcher()?;
@@ -66,7 +65,6 @@ impl Cli {
             }
             Commands::Inspect(list) => {
                 // Set global config
-                Config::new(args.config.clone(), args.raw.clone())?;
                 // info!("Listing piplines");
                 if list.name.is_some() {
                     let pipeline = Pipeline::get_by_name(&list.name.unwrap())?;
@@ -76,7 +74,6 @@ impl Cli {
                 }
             }
             Commands::Watch(watch) => {
-                Config::new(args.config.clone(), args.raw.clone())?;
                 match watch.commands {
                     // Set global config
                     None => {
@@ -92,13 +89,11 @@ impl Cli {
             }
             Commands::Trigger(trigger) => {
                 // Set global config
-                Config::new(args.config.clone(), args.raw.clone())?;
                 info!("Triggering pipelines");
                 trigger::launch(args.attach, trigger.flag)?;
             }
             Commands::Run(pipeline) => {
                 // Set global config
-                Config::new(args.config.clone(), args.raw.clone())?;
                 if pipeline.name.is_some() {
                     info!("Running pipeline {:#?}", pipeline.name.clone().unwrap());
                     run::launch(pipeline.name.unwrap(), args.attach, pipeline.trigger.flag)?;
@@ -108,7 +103,6 @@ impl Cli {
             }
             Commands::Stop(pipeline) => {
                 // Set global config
-                Config::new(args.config.clone(), args.raw.clone())?;
                 info!(
                     "Stopping pipeline {:#?} with every attached and detached subprocess",
                     pipeline.name
@@ -129,7 +123,6 @@ impl Cli {
                 // create file
             }
             Commands::Logs(logs) => {
-                Config::new(args.config.clone(), args.raw.clone())?;
                 // Set colors
                 if logs.display.color.is_some() {
                     match ColoredOutput::from(&logs.display.color.unwrap()) {

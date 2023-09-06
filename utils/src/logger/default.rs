@@ -4,6 +4,9 @@ use super::{LogFile, Logger, LoggerArgs};
 
 use log::LevelFilter;
 
+// Error Handling
+use miette::{IntoDiagnostic, Result};
+
 // Absolute paths
 // use crate::git::Git;
 // use crate::teleport::Teleport;
@@ -29,7 +32,7 @@ impl Default for Logger {
     fn default() -> Self {
         let e = LoggerArgs::default();
         let config = config::default(e.clone());
-        let handle = log4rs::init_config(config).expect("Couldn't init logger");
+        let handle = log4rs::init_config(config).unwrap();
         Logger {
             handle,
             internals: e.internals.clone(),

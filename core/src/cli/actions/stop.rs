@@ -1,4 +1,4 @@
-use pipeline::Logs;
+use crate::workflow::Logs;
 
 // Error Handling
 use miette::Result;

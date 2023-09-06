@@ -1,10 +1,8 @@
-use super::detach::detach;
 use super::run;
+use crate::cli::utils::detach::detach;
+use crate::workflow::{Config, Trigger};
 use log::{debug, trace};
-use pipeline::{Config, Trigger};
 use utils::git::Flag;
-
-use std::thread;
 
 // Error Handling
 use miette::Result;

@@ -3,7 +3,7 @@
 
 // Internal imports
 use super::traits::Getters;
-use crate::{Config, Duration, Logs, Mode, Pipeline, StepOrParallel, Trigger};
+use crate::workflow::types::{Config, Duration, Logs, Mode, Pipeline, StepOrParallel, Trigger};
 
 // Error Handling
 use miette::{Error, IntoDiagnostic, Result};
@@ -80,7 +80,7 @@ impl Config {
             let end_length = &self.pipelines.clone().unwrap().len();
             if init_length != end_length {
                 let message = "Removed pipelines with identical names";
-                warn!("{}", message)
+                // warn!("{}", message)
             }
         }
         self.to_owned()

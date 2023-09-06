@@ -1,6 +1,6 @@
 use crate::cli::utils::detach;
 
-use crate::{Getters, Node, Pipeline, Trigger};
+use crate::workflow::{Getters, Node, Pipeline, Trigger};
 use exec::Status;
 use utils::git::Flag;
 

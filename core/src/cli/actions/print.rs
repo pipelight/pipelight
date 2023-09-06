@@ -1,7 +1,7 @@
 // Types
+use crate::workflow::{Config, Getters, Logs, Node, Pipeline};
 use chrono::{DateTime, Local};
 use exec::{Statuable, Status};
-use pipeline::{Config, Getters, Logs, Node, Pipeline};
 
 // Error Handling
 use miette::{IntoDiagnostic, Result};

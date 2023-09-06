@@ -45,7 +45,7 @@ const makePipeline = ({ name, prefix, format }: any): Pipeline => {
           "cd ../ && docker build \
             --pull \
             --no-cache \
-            -f pipelight/.pipelight/docker/Dockerfile.${prefix} \
+            -f pipelight/.docker/Dockerfile.${prefix} \
             -t ${name}.latest ."`,
         ],
       },

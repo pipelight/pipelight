@@ -1,7 +1,7 @@
 // Error Handling
 use miette::Result;
 
-use crate::interface::types::Commands;
+use crate::cli::interface::types::Commands;
 
 // sys
 use exec::Process;
@@ -10,7 +10,7 @@ use exec::Process;
 use log::trace;
 
 // Global
-use crate::case::CLI;
+use crate::globals::CLI;
 
 /// Run the command in a detached subprocess
 pub fn detach(subcommand: Option<Commands>) -> Result<()> {

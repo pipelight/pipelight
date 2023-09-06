@@ -1,4 +1,4 @@
-use crate::types::{
+use crate::workflow::types::{
     Command, Config, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
 };
 // External imports

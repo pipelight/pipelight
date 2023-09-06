@@ -1,19 +1,18 @@
 // Global vars
-use crate::types::Trigger;
 use once_cell::sync::Lazy;
 // Teleport
-use utils::{git::Hook, teleport::Portal};
+use utils::{git::Hook, logger::Logger, teleport::Portal};
 // Logs
+use crate::workflow::{Config, Trigger};
 use cast;
 // Cli
 use crate::cli::interface::Cli;
-use crate::types::Config;
 use clap::FromArgMatches;
 // Error Handling
 use miette::{IntoDiagnostic, Result};
 
 pub static mut CLI: Lazy<Cli> = Lazy::new(Cli::new);
-pub static mut LOGS: Lazy<Cli> = Lazy::new(Cli::new);
+pub static mut LOGGER: Lazy<Logger> = Lazy::new(Logger::default);
 pub static mut CONFIG: Lazy<Config> = Lazy::new(Config::default);
 pub static mut PORTAL: Lazy<Portal> = Lazy::new(Portal::default);
 pub static mut TRIGGER_ENV: Lazy<Trigger> = Lazy::new(Trigger::default);
@@ -29,38 +28,58 @@ pub fn hydrate_cli() -> Result<()> {
     Ok(())
 }
 
-// Hydrate logs
-pub fn hydrate_logs() {}
+// Hydrate portal
+pub fn hydrate_portal() -> Result<()> {
+    let args;
+    unsafe { args = (*CLI).clone() };
+    let seed = if args.config.is_some() {
+        args.config.unwrap()
+    } else {
+        "pipelight".to_owned()
+    };
+    let portal = Portal::new()?.seed(&seed).search()?;
+    unsafe { *PORTAL = portal.clone() };
+    Ok(())
+}
 
 // Hydrate config
-pub fn hydrate_config(file_path: &str) -> Result<()> {
+pub fn hydrate_config() -> Result<()> {
+    let portal;
     let args;
     unsafe {
-        args = *CLI;
+        portal = (*PORTAL).clone();
+        args = (*CLI).clone();
     };
-    let casted_config = cast::Config::load(file_path, args.raw.clone())?;
-    let config = Config::from(casted_config);
+    let casted_config = cast::Config::load(&portal.target.file_path.unwrap(), args.raw.clone())?;
+    let config = Config::from(&casted_config);
     unsafe { *CONFIG = config.clone() };
+    Ok(())
+}
+
+// Hydrate logs
+pub fn hydrate_logger() -> Result<()> {
+    let mut portal;
+    unsafe {
+        portal = (*PORTAL).clone();
+    };
+    portal.teleport()?;
+    portal.origin()?;
     Ok(())
 }
 
 // The main usage of teleport
 // Set every main globals
 pub fn set_globals() -> Result<()> {
-    unsafe {
-        if *CONFIG == Config::default() && *PORTAL == Portal::default() {
-            hydrate_cli()?;
-
-            *PORTAL.hydrate_config()?;
-            config = Config::from(&json);
-            config.dedup_pipelines();
-
-            *CONFIG = config;
-            *PORTAL = portal;
-        }
-        let ptr = (*CONFIG).to_owned();
-        let tel = (*PORTAL).to_owned();
-
-        Ok((ptr, tel))
+    let cond;
+    unsafe { cond = *CONFIG == Config::default() && *PORTAL == Portal::default() };
+    if cond {
+        // hydrate the CLI global var
+        hydrate_cli()?;
+        // hydrate the PORTAL global var
+        hydrate_portal()?;
+        // hydrate the CONFIG global var
+        hydrate_logger()?;
+        hydrate_config()?;
     }
+    Ok(())
 }

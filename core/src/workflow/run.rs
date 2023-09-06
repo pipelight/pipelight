@@ -1,5 +1,7 @@
 // Types
-use super::{Command, Duration, Event, Mode, Parallel, Pipeline, Step, StepOrParallel};
+use crate::workflow::types::{
+    Command, Duration, Event, Mode, Parallel, Pipeline, Step, StepOrParallel,
+};
 // Traits
 // use super::Getters;
 
