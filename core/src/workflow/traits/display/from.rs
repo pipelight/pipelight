@@ -1,7 +1,7 @@
+use crate::globals::LOGGER;
 use crate::workflow::types::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel};
 use exec::{Statuable, Status};
 use log::LevelFilter;
-use utils::logger::logger;
 
 // Colorize
 use colored::Colorize;
@@ -297,7 +297,7 @@ impl From<&Command> for Node {
                 level: LevelFilter::Trace,
                 ..Node::new()
             };
-            if logger.lock().unwrap().pipelines.level == LevelFilter::Debug {
+            if LOGGER.lock().unwrap().pipelines.level == LevelFilter::Debug {
                 node.children = Some(vec![out]);
             } else {
                 node.children = Some(vec![stdout, stderr]);

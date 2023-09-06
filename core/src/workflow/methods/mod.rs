@@ -21,9 +21,9 @@ use rustix::process::{kill_process_group, test_kill_process, Pid, Signal};
 use glob::Pattern;
 
 // External imports
+use crate::globals::LOGGER;
 use exec::{Statuable, Status};
 use utils::git::{Flag, Git, Special};
-use utils::logger::logger;
 
 // Tests
 mod test;
@@ -98,7 +98,7 @@ impl Config {
 
 impl Pipeline {
     pub fn log(&self) {
-        logger.lock().unwrap().file(&self.uuid);
+        LOGGER.lock().unwrap().file(&self.uuid);
         let json = serde_json::to_string(&self).unwrap();
         info!(target: "pipeline_json","{}", json);
     }
@@ -110,7 +110,7 @@ impl Pipeline {
                 StepOrParallel::Step(step) => {
                     for command in &mut step.commands {
                         if command.get_status() == Some(Status::Running) {
-                            command.process.read();
+                            let _ = command.process.read();
                         }
                     }
                 }
@@ -118,7 +118,7 @@ impl Pipeline {
                     for step in &mut parallel.steps {
                         for command in &mut step.commands {
                             if command.get_status() == Some(Status::Running) {
-                                command.process.read();
+                                let _ = command.process.read();
                             }
                         }
                     }
@@ -193,7 +193,7 @@ impl Pipeline {
                         }
                     }
                 }
-                Err(e) => return false,
+                Err(_err) => return false,
             }
             false
         }
@@ -201,7 +201,7 @@ impl Pipeline {
     /// Abort process execution
     pub fn stop(&mut self) {
         if self.event.is_some() && self.status == Some(Status::Running) {
-            let pid = self.clone().event.unwrap().pid.unwrap();
+            let _pid = self.clone().event.unwrap().pid.unwrap();
             unsafe {
                 let pgid_raw = self.event.clone().unwrap().pgid.unwrap();
                 let pgid = Pid::from_raw(pgid_raw).unwrap();

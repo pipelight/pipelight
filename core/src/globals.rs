@@ -1,5 +1,6 @@
 // Global vars
 use once_cell::sync::Lazy;
+use std::sync::{Arc, Mutex};
 // Teleport
 use utils::{git::Hook, logger::Logger, teleport::Portal};
 // Logs
@@ -12,7 +13,7 @@ use clap::FromArgMatches;
 use miette::{IntoDiagnostic, Result};
 
 pub static mut CLI: Lazy<Cli> = Lazy::new(Cli::new);
-pub static mut LOGGER: Lazy<Logger> = Lazy::new(Logger::default);
+pub static LOGGER: Lazy<Arc<Mutex<Logger>>> = Lazy::new(|| Arc::new(Mutex::new(Logger::new())));
 pub static mut CONFIG: Lazy<Config> = Lazy::new(Config::default);
 pub static mut PORTAL: Lazy<Portal> = Lazy::new(Portal::default);
 pub static mut TRIGGER_ENV: Lazy<Trigger> = Lazy::new(Trigger::default);
@@ -63,6 +64,7 @@ pub fn hydrate_logger() -> Result<()> {
         portal = (*PORTAL).clone();
     };
     portal.teleport()?;
+    LOGGER.lock().unwrap();
     portal.origin()?;
     Ok(())
 }

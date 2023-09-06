@@ -1,12 +1,12 @@
-use crate::git::{Flag, Git, Hook, Special};
+use crate::git::{Git, Hook};
 use git2::Repository;
 use std::env;
 // Enum workaround
 use std::string::ToString;
-use strum::{EnumIter, IntoEnumIterator};
+use strum::IntoEnumIterator;
 
 // Error Handling
-use miette::{Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use miette::{IntoDiagnostic, Result};
 
 // File systeme crates
 use std::fs;

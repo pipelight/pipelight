@@ -2,8 +2,8 @@ use crate::cli::actions::run;
 use crate::workflow::{Getters, Node, Pipeline};
 
 // Logging and verbosity
+use crate::globals::LOGGER;
 use log::LevelFilter;
-use utils::logger::logger;
 
 // Prompt
 use dialoguer::{console::Term, Select};
@@ -22,7 +22,7 @@ pub fn inspect_prompt() -> Result<()> {
 
     match selection {
         Some(index) => {
-            logger.lock().unwrap().pipelines.level = LevelFilter::max();
+            LOGGER.lock().unwrap().pipelines.level = LevelFilter::max();
             let node = Node::from(&pipelines[index]);
             println!("{}", node);
         }

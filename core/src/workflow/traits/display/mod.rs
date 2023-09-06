@@ -12,11 +12,11 @@ mod from;
 pub use colored::control::set_override;
 use colored::{ColoredString, Colorize};
 
+use crate::globals::LOGGER;
 use exec::Status;
 use log::LevelFilter;
 use regex::Regex;
 use std::fmt;
-use utils::logger::logger;
 
 // Error Handling
 use miette::Result;
@@ -67,7 +67,7 @@ impl Node {
             value = value.replace('\n', &format!("\n{prefix:}", prefix = prefix.white()));
 
             if self.duration.is_some()
-                && logger.lock().unwrap().pipelines.level >= LevelFilter::Error
+                && LOGGER.lock().unwrap().pipelines.level >= LevelFilter::Error
             {
                 let duration = format_duration(
                     iso8601_to_std_duration(self.duration.clone().unwrap()).unwrap(),
@@ -92,7 +92,7 @@ impl Node {
             if self.children.is_some() {
                 let length = self.children.clone().unwrap().len() - 1;
                 for (index, child) in &mut self.children.clone().unwrap().iter().enumerate() {
-                    if child.level <= logger.lock().unwrap().pipelines.level {
+                    if child.level <= LOGGER.lock().unwrap().pipelines.level {
                         print!("{}", &child.leaf(prefix.clone(), index, length));
                         if index == length {
                             let prefix = add_level_phantom(prefix.clone());

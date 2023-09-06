@@ -287,7 +287,7 @@ impl Command {
 
         // Run process
         let res = self.process.run();
-        match res {
+        let _ = match res {
             Ok(_) => Ok(()),
             Err(e) => {
                 self.set_status(Some(Status::Aborted));

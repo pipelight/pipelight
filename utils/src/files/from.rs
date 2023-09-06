@@ -1,7 +1,7 @@
 use super::FileType;
+use log::error;
 
 // Error Handling
-use log::{debug, error, trace, warn};
 use std::process::exit;
 
 impl From<&String> for FileType {

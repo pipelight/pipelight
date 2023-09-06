@@ -1,9 +1,8 @@
 // Error Handling
 use miette::{Error, Result};
-
 // Logger
-use log::info;
-use utils::logger::logger;
+use crate::globals::LOGGER;
+use log::{error, info};
 
 // Colors
 use crate::workflow::traits::display::set_override;
@@ -12,7 +11,7 @@ use crate::workflow::traits::display::set_override;
 use crate::workflow::{Config, Getters, Logs, Pipeline};
 
 // Clap - command line lib
-use clap::{builder::PossibleValue, Args, Command, FromArgMatches, ValueEnum, ValueHint};
+use clap::ValueEnum;
 // use std::str::FromStr;
 
 // Cli core types
@@ -26,14 +25,13 @@ use crate::cli::actions::stop;
 use crate::cli::actions::trigger;
 use crate::cli::actions::watch;
 
-use crate::globals::{set_globals, CLI, PORTAL};
+use crate::globals::{set_globals, CLI};
 use clap_complete::shells::Shell;
 
 impl Cli {
     /// Build and Launch the cli
     pub fn launch() -> Result<()> {
-        set_globals();
-
+        set_globals()?;
         let args;
         unsafe {
             args = (*CLI).clone();
@@ -41,11 +39,11 @@ impl Cli {
 
         // Set verbosity level
         let verbosity = args.verbose.log_level_filter();
-        logger.lock().unwrap().level(&verbosity);
+        LOGGER.lock().unwrap().level(&verbosity);
 
         // Set internal verbosity level
         let verbosity = args.internal_verbose.log_level_filter();
-        logger.lock().unwrap().internal_level(&verbosity);
+        LOGGER.lock().unwrap().internal_level(&verbosity);
 
         match args.commands {
             Commands::Ls(list) => {
@@ -147,7 +145,7 @@ impl Cli {
                     }
                     Some(logs_cmd) => match logs_cmd {
                         LogsCommands::Rm => {
-                            logger.lock().unwrap().clear()?;
+                            LOGGER.lock().unwrap().clear()?;
                         }
                     },
                 };

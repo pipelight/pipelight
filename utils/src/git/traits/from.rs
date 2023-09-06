@@ -1,5 +1,5 @@
+use crate::git::types::Special::*;
 use crate::git::types::{Flag, Hook, Special};
-use crate::git::{Hook::*, Special::*};
 use convert_case::{Case, Casing};
 use log::error;
 use std::fmt;

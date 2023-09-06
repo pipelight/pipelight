@@ -7,16 +7,15 @@ use uuid::Uuid;
 
 // Global var
 // use arc_swap::ArcSwap;
-use once_cell::sync::Lazy;
-use std::sync::{Arc, Mutex};
+// use once_cell::sync::Lazy;
+// use std::sync::{Arc, Mutex};
+// pub static logger: Lazy<Arc<Mutex<Logger>>> = Lazy::new(|| Arc::new(Mutex::new(Logger::new())));
 
 // Error Handling
 use miette::{IntoDiagnostic, Result};
 
 pub mod config;
 pub mod default;
-
-pub static logger: Lazy<Arc<Mutex<Logger>>> = Lazy::new(|| Arc::new(Mutex::new(Logger::new())));
 
 #[derive(Debug, Clone)]
 pub struct Logger {
