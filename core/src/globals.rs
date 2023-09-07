@@ -30,9 +30,10 @@ pub fn full_hydrate_logger() -> Result<()> {
     unsafe {
         portal = (*PORTAL).clone();
     };
-    portal.teleport()?;
-    LOGGER.lock().unwrap().full();
-    portal.origin()?;
+    LOGGER
+        .lock()
+        .unwrap()
+        .full(&portal.target.directory_path.clone().unwrap());
     Ok(())
 }
 
@@ -98,8 +99,14 @@ pub fn set_globals() -> Result<()> {
         // hydrate the PORTAL global var
         hydrate_portal()?;
         // hydrate the CONFIG global var
+        unsafe {
+            (*PORTAL).teleport()?;
+        }
         full_hydrate_logger()?;
         hydrate_config()?;
+        // unsafe {
+        //     (*PORTAL).origin()?;
+        // }
     }
     Ok(())
 }

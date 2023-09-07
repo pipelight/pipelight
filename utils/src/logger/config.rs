@@ -12,19 +12,13 @@ use super::LoggerArgs;
 
 /// Return logger config with chosen verbosity level and logging file "uuid.log"
 pub fn default_set_file(args: LoggerArgs) -> Config {
-    // Canonicalize paths
-    let relative = args.pipelines.directory;
-    let pipelines_dir = Path::new(&relative).canonicalize().unwrap();
-    let relative = args.internals.directory;
-    let internals_dir = Path::new(&relative).canonicalize().unwrap();
-
     // Set pipeline logs path.
-    // let string = format!("{}/{}.json", args.pipelines.directory, args.pipelines.name);
-    let string = format!("{}/{}.json", pipelines_dir.display(), args.pipelines.name);
+    let string = format!("{}/{}.json", args.pipelines.directory, args.pipelines.name);
+    // let string = format!("{}/{}.json", pipelines_dir.display(), args.pipelines.name);
     let logs_path = Path::new(&string);
 
-    // let string = format!("{}/{}.txt", args.internals.directory, args.pipelines.name);
-    let string = format!("{}/{}.txt", internals_dir.display(), args.pipelines.name);
+    let string = format!("{}/{}.txt", args.internals.directory, args.pipelines.name);
+    // let string = format!("{}/{}.txt", internals_dir.display(), args.pipelines.name);
     let internals_path = Path::new(&string);
 
     // Internal appenders
@@ -102,11 +96,17 @@ pub fn default(args: LoggerArgs) -> Config {
     Config::builder()
         .appender(Appender::builder().build("stdout", Box::new(stdout)))
         .appender(Appender::builder().build("nude", Box::new(nude)))
+        // Internals
+        .logger(
+            Logger::builder()
+                .additive(false)
+                .build("stdout", args.internals.level.to_owned()),
+        )
         .logger(
             Logger::builder()
                 .additive(false)
                 .appender("nude")
-                .build("nude", args.internals.level.to_owned()),
+                .build("nude", args.pipelines.level.to_owned()),
         )
         .build(
             Root::builder()

@@ -2,8 +2,8 @@ import type { Config, Pipeline } from "https://deno.land/x/pipelight/mod.ts";
 import {
   packagingPipelines,
   parallelPackagingPipeline,
-} from "./.pipelight/packages.ts";
-import { uploadPipeline } from "./.pipelight/upload.ts";
+} from "./cicd/packages.ts";
+import { uploadPipeline } from "./cicd/upload.ts";
 
 const config: Config = {
   pipelines: [

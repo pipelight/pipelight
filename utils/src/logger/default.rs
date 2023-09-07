@@ -35,16 +35,24 @@ impl Logger {
     pub fn new() -> Self {
         Self::default()
     }
-    pub fn full(&self) -> Self {
-        let mut e = LoggerArgs::default();
-        e.pipelines.level = self.pipelines.level;
-        e.internals.level = self.internals.level;
+    pub fn full(&mut self, root: &str) -> Self {
+        let e = LoggerArgs {
+            internals: LogFile {
+                directory: format!("{}/{}", root, LoggerArgs::default().internals.directory),
+                level: self.internals.level,
+                ..LoggerArgs::default().internals
+            },
+            pipelines: LogFile {
+                directory: format!("{}/{}", root, LoggerArgs::default().pipelines.directory),
+                level: self.pipelines.level,
+                ..LoggerArgs::default().pipelines
+            },
+        };
         let config = config::default_set_file(e.clone());
         self.handle.set_config(config);
-        Logger {
-            handle: self.handle.to_owned(),
-            ..self.clone()
-        }
+        self.internals = e.internals;
+        self.pipelines = e.pipelines;
+        self.to_owned()
     }
     pub fn early() -> Self {
         let e = LoggerArgs::default();
@@ -52,8 +60,8 @@ impl Logger {
         let handle = log4rs::init_config(config).unwrap();
         Logger {
             handle,
-            internals: e.internals.clone(),
-            pipelines: e.pipelines.clone(),
+            internals: e.internals,
+            pipelines: e.pipelines,
         }
     }
 }

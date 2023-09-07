@@ -5,11 +5,6 @@ use std::clone::Clone;
 use std::fs;
 use uuid::Uuid;
 
-// Global var
-use once_cell::sync::Lazy;
-use std::sync::{Arc, Mutex};
-pub static LOGGER: Lazy<Arc<Mutex<Logger>>> = Lazy::new(|| Arc::new(Mutex::new(Logger::new())));
-
 // Error Handling
 use miette::{IntoDiagnostic, Result};
 
@@ -36,44 +31,46 @@ pub struct LoggerArgs {
 
 impl Logger {
     pub fn internal_level(&mut self, level: &LevelFilter) -> Self {
-        let args = LoggerArgs {
+        let e = LoggerArgs {
             internals: LogFile {
                 level: level.to_owned(),
                 ..self.internals.clone()
             },
             pipelines: self.pipelines.clone(),
         };
-        let config = config::default_set_file(args.clone());
+        let config = config::default_set_file(e.clone());
         self.handle.set_config(config);
-        self.internals = args.internals;
-        self.pipelines = args.pipelines;
+        self.internals = e.internals;
+        self.pipelines = e.pipelines;
         self.to_owned()
     }
     pub fn level(&mut self, level: &LevelFilter) -> Self {
-        let args = LoggerArgs {
+        let e = LoggerArgs {
             pipelines: LogFile {
                 level: level.to_owned(),
                 ..self.pipelines.clone()
             },
             internals: self.internals.clone(),
         };
-        let config = config::default_set_file(args.clone());
+        let config = config::default_set_file(e.clone());
         self.handle.set_config(config);
-        self.internals = args.internals;
-        self.pipelines = args.pipelines;
+        self.internals = e.internals;
+        self.pipelines = e.pipelines;
         self.to_owned()
     }
     /// Set log level and logging file, and return handler to change logLevels at runtime
-    pub fn file(&self, uuid: &Uuid) -> Self {
-        let args = LoggerArgs {
+    pub fn file(&mut self, uuid: &Uuid) -> Self {
+        let e = LoggerArgs {
             pipelines: LogFile {
                 name: uuid.to_string(),
                 ..self.pipelines.clone()
             },
             internals: self.internals.clone(),
         };
-        let config = config::default_set_file(args);
+        let config = config::default_set_file(e.clone());
         self.handle.set_config(config);
+        self.internals = e.internals;
+        self.pipelines = e.pipelines;
         self.to_owned()
     }
 
