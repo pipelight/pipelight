@@ -6,11 +6,13 @@
 use core::cli::Cli;
 
 // Error Handling
+use log::trace;
 use miette::{MietteHandlerOpts, Result, RgbColors};
 
 fn main() -> Result<()> {
     make_handler()?;
     Cli::launch()?;
+    trace!("Process clean exit.");
     Ok(())
 }
 pub fn make_handler() -> Result<()> {

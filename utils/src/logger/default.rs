@@ -33,16 +33,17 @@ impl Default for Logger {
 
 impl Logger {
     pub fn new() -> Self {
-        Self::early()
+        Self::default()
     }
     pub fn full(&self) -> Self {
-        let e = LoggerArgs::default();
-        let config = config::default_stdout_and_files(e.clone());
+        let mut e = LoggerArgs::default();
+        e.pipelines.level = self.pipelines.level;
+        e.internals.level = self.internals.level;
+        let config = config::default_set_file(e.clone());
         self.handle.set_config(config);
         Logger {
             handle: self.handle.to_owned(),
-            internals: e.internals.clone(),
-            pipelines: e.pipelines.clone(),
+            ..self.clone()
         }
     }
     pub fn early() -> Self {

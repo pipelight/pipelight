@@ -13,18 +13,18 @@ use super::LoggerArgs;
 /// Return logger config with chosen verbosity level and logging file "uuid.log"
 pub fn default_set_file(args: LoggerArgs) -> Config {
     // Canonicalize paths
-    // let relative = args.pipelines.directory;
-    // let pipelines_dir = Path::new(&relative).canonicalize().unwrap();
-    // let relative = args.internals.directory;
-    // let internals_dir = Path::new(&relative).canonicalize().unwrap();
+    let relative = args.pipelines.directory;
+    let pipelines_dir = Path::new(&relative).canonicalize().unwrap();
+    let relative = args.internals.directory;
+    let internals_dir = Path::new(&relative).canonicalize().unwrap();
 
     // Set pipeline logs path.
-    // let string = format!("{}/{}.json", pipelines_dir.display(), args.pipelines.name);
-    let string = format!("{}/{}.json", args.pipelines.directory, args.pipelines.name);
+    // let string = format!("{}/{}.json", args.pipelines.directory, args.pipelines.name);
+    let string = format!("{}/{}.json", pipelines_dir.display(), args.pipelines.name);
     let logs_path = Path::new(&string);
 
-    // let string = format!("{}/{}.txt", internals_dir.display(), args.pipelines.name);
-    let string = format!("{}/{}.txt", args.internals.directory, args.pipelines.name);
+    // let string = format!("{}/{}.txt", args.internals.directory, args.pipelines.name);
+    let string = format!("{}/{}.txt", internals_dir.display(), args.pipelines.name);
     let internals_path = Path::new(&string);
 
     // Internal appenders
@@ -85,49 +85,6 @@ pub fn default_set_file(args: LoggerArgs) -> Config {
         .unwrap()
 }
 
-/// Return logger config with chosen verbosity level
-pub fn default_stdout_and_files(args: LoggerArgs) -> Config {
-    // Pipeline appender
-    let body = "{m}";
-    let nude = ConsoleAppender::builder()
-        .encoder(Box::new(PatternEncoder::new(body)))
-        .build();
-    // Internal appenders
-    let pattern = "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}";
-    let stdout = ConsoleAppender::builder()
-        .encoder(Box::new(PatternEncoder::new(pattern)))
-        .build();
-    // File
-    let string = format!("{}/_unlinked.txt", args.internals.directory);
-    let internals_path = Path::new(&string);
-    let internal = FileAppender::builder()
-        .encoder(Box::new(PatternEncoder::new(pattern)))
-        .build(internals_path.display().to_string())
-        .unwrap();
-
-    Config::builder()
-        .appender(Appender::builder().build("stdout", Box::new(stdout)))
-        .appender(Appender::builder().build("nude", Box::new(nude)))
-        .appender(Appender::builder().build("internal", Box::new(internal)))
-        .logger(
-            Logger::builder()
-                .additive(false)
-                .appender("nude")
-                .build("nude", args.pipelines.level.to_owned()),
-        )
-        .logger(
-            Logger::builder()
-                .additive(false)
-                .appender("internal")
-                .build("internal", args.internals.level.to_owned()),
-        )
-        .build(
-            Root::builder()
-                .appender("stdout")
-                .build(args.internals.level.to_owned()),
-        )
-        .unwrap()
-}
 /// Return logger config with chosen verbosity level
 pub fn default(args: LoggerArgs) -> Config {
     // Pipeline appender

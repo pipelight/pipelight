@@ -65,8 +65,13 @@ impl Logger {
     }
     /// Set log level and logging file, and return handler to change logLevels at runtime
     pub fn file(&self, uuid: &Uuid) -> Self {
-        let mut args = LoggerArgs::default();
-        args.pipelines.name = uuid.to_string();
+        let args = LoggerArgs {
+            pipelines: LogFile {
+                name: uuid.to_string(),
+                ..self.pipelines.clone()
+            },
+            internals: self.internals.clone(),
+        };
         let config = config::default_set_file(args);
         self.handle.set_config(config);
         self.to_owned()
@@ -76,6 +81,11 @@ impl Logger {
     /// Delete logs directory
     pub fn clear(&self) -> Result<()> {
         fs::remove_dir_all(&self.pipelines.directory).into_diagnostic()?;
+        let message = format!("Soft delete directory {}", &self.pipelines.directory);
+        trace!("{}", message);
+        fs::remove_dir_all(&self.internals.directory).into_diagnostic()?;
+        let message = format!("Soft delete directory {}", &self.internals.directory);
+        trace!("{}", message);
         Ok(())
     }
 }

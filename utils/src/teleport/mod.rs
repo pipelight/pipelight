@@ -17,16 +17,21 @@ use super::git::Git;
 use std::path::Path;
 
 // Error Handling
+use log::{debug, info};
 use miette::{Error, IntoDiagnostic, Result};
 
 impl Portal {
     /// Jump between PWD and the directory of the loaded config file.
     pub fn teleport(&mut self) -> Result<Self> {
-        env::set_current_dir(self.current.directory_path.clone().unwrap()).into_diagnostic()?;
+        let target = self.current.directory_path.clone().unwrap();
+        env::set_current_dir(target.clone()).into_diagnostic()?;
+        info!("working directory changed to ->  {}", &target);
         Ok(self.to_owned())
     }
     pub fn origin(&mut self) -> Result<Self> {
-        env::set_current_dir(self.origin.directory_path.clone().unwrap()).into_diagnostic()?;
+        let target = self.origin.directory_path.clone().unwrap();
+        env::set_current_dir(target.clone()).into_diagnostic()?;
+        info!("working directory changed to ->  {}", &target);
         Ok(self.to_owned())
     }
     // Set seed string, file name, relative path, absolute path

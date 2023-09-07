@@ -10,6 +10,7 @@ use cast;
 use crate::cli::interface::Cli;
 use clap::FromArgMatches;
 // Error Handling
+use log::{info, trace};
 use miette::{IntoDiagnostic, Result};
 
 pub static mut CLI: Lazy<Cli> = Lazy::new(Cli::new);
@@ -20,7 +21,7 @@ pub static mut TRIGGER_ENV: Lazy<Trigger> = Lazy::new(Trigger::default);
 
 // Hydrate logs
 pub fn early_hydrate_logger() -> Result<()> {
-    LOGGER.lock().unwrap();
+    let _logger = LOGGER.lock().unwrap();
     Ok(())
 }
 // Hydrate logs
@@ -43,6 +44,12 @@ pub fn hydrate_cli() -> Result<()> {
         .map_err(|err| err.exit())
         .unwrap();
     unsafe { *CLI = args.clone() };
+    // Set verbosity level
+    let verbosity = args.verbose.log_level_filter();
+    LOGGER.lock().unwrap().level(&verbosity);
+    // Set internal verbosity level
+    let verbosity = args.internal_verbose.log_level_filter();
+    LOGGER.lock().unwrap().internal_level(&verbosity);
     Ok(())
 }
 
@@ -56,6 +63,10 @@ pub fn hydrate_portal() -> Result<()> {
         "pipelight".to_owned()
     };
     let portal = Portal::new()?.seed(&seed).search()?;
+    info!(
+        "Found config file at: {}",
+        portal.target.file_path.clone().unwrap()
+    );
     unsafe { *PORTAL = portal.clone() };
     Ok(())
 }
@@ -77,10 +88,11 @@ pub fn hydrate_config() -> Result<()> {
 // The main usage of teleport
 // Set every main globals
 pub fn set_globals() -> Result<()> {
+    trace!("Set globals");
+    early_hydrate_logger()?;
     let cond;
     unsafe { cond = *CONFIG == Config::default() && *PORTAL == Portal::default() };
     if cond {
-        early_hydrate_logger()?;
         // hydrate the CLI global var
         hydrate_cli()?;
         // hydrate the PORTAL global var
