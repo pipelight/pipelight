@@ -15,9 +15,10 @@ impl Getters<Pipeline> for Logs {
         unsafe {
             portal = (*PORTAL).clone();
         };
-        let logs: Vec<String> =
-            cast::Logs::read(&format!("{}/logs/", portal.target.directory_path.unwrap()))?;
-
+        let logs: Vec<String> = cast::Logs::read(&format!(
+            "{}/.pipelight/logs/",
+            portal.target.directory_path.unwrap()
+        ))?;
         let mut pipelines: Vec<Pipeline> = vec![];
         for json in logs {
             let pipeline = serde_json::from_str::<Pipeline>(&json).into_diagnostic()?;
@@ -95,7 +96,7 @@ impl Logs {
             Err(Error::msg(message))
         }
     }
-    pub fn get_many_by_sid(sid: &u32) -> Result<Vec<Pipeline>> {
+    pub fn _get_many_by_sid(sid: &u32) -> Result<Vec<Pipeline>> {
         let pipelines = Logs::get()?;
         let mut pipelines = pipelines
             .iter()

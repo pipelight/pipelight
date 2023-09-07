@@ -4,9 +4,6 @@ use super::{LogFile, Logger, LoggerArgs};
 
 use log::LevelFilter;
 
-// Error Handling
-use miette::{IntoDiagnostic, Result};
-
 // Absolute paths
 // use crate::git::Git;
 // use crate::teleport::Teleport;
@@ -30,6 +27,25 @@ impl Default for LoggerArgs {
 }
 impl Default for Logger {
     fn default() -> Self {
+        Self::early()
+    }
+}
+
+impl Logger {
+    pub fn new() -> Self {
+        Self::early()
+    }
+    pub fn full(&self) -> Self {
+        let e = LoggerArgs::default();
+        let config = config::default_stdout_and_files(e.clone());
+        self.handle.set_config(config);
+        Logger {
+            handle: self.handle.to_owned(),
+            internals: e.internals.clone(),
+            pipelines: e.pipelines.clone(),
+        }
+    }
+    pub fn early() -> Self {
         let e = LoggerArgs::default();
         let config = config::default(e.clone());
         let handle = log4rs::init_config(config).unwrap();
@@ -38,11 +54,5 @@ impl Default for Logger {
             internals: e.internals.clone(),
             pipelines: e.pipelines.clone(),
         }
-    }
-}
-
-impl Logger {
-    pub fn new() -> Self {
-        Self::default()
     }
 }

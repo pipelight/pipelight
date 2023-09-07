@@ -12,9 +12,6 @@ use miette::{Error, Result};
 // Import global config
 use crate::globals::CONFIG;
 
-// External imports
-use utils::git::Hook;
-
 pub trait Getters<T> {
     /// Return every instances of the struct.
     fn get() -> Result<Vec<T>>;
@@ -48,7 +45,7 @@ impl Getters<Pipeline> for Pipeline {
         match optional {
             Some(res) => Ok(res.to_owned()),
             None => {
-                let message = format!("Couldn't find pipeline {:?}", name);
+                let message = format!("Couldn't find pipeline: {:?}", name);
                 warn!("{}", message);
                 Err(Error::msg(message))
             }

@@ -6,10 +6,9 @@ use std::fs;
 use uuid::Uuid;
 
 // Global var
-// use arc_swap::ArcSwap;
-// use once_cell::sync::Lazy;
-// use std::sync::{Arc, Mutex};
-// pub static logger: Lazy<Arc<Mutex<Logger>>> = Lazy::new(|| Arc::new(Mutex::new(Logger::new())));
+use once_cell::sync::Lazy;
+use std::sync::{Arc, Mutex};
+pub static LOGGER: Lazy<Arc<Mutex<Logger>>> = Lazy::new(|| Arc::new(Mutex::new(Logger::new())));
 
 // Error Handling
 use miette::{IntoDiagnostic, Result};
@@ -44,7 +43,7 @@ impl Logger {
             },
             pipelines: self.pipelines.clone(),
         };
-        let config = config::default_with_file(args.clone());
+        let config = config::default_set_file(args.clone());
         self.handle.set_config(config);
         self.internals = args.internals;
         self.pipelines = args.pipelines;
@@ -58,7 +57,7 @@ impl Logger {
             },
             internals: self.internals.clone(),
         };
-        let config = config::default_with_file(args.clone());
+        let config = config::default_set_file(args.clone());
         self.handle.set_config(config);
         self.internals = args.internals;
         self.pipelines = args.pipelines;
@@ -68,7 +67,7 @@ impl Logger {
     pub fn file(&self, uuid: &Uuid) -> Self {
         let mut args = LoggerArgs::default();
         args.pipelines.name = uuid.to_string();
-        let config = config::default_with_file(args);
+        let config = config::default_set_file(args);
         self.handle.set_config(config);
         self.to_owned()
     }

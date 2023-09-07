@@ -25,6 +25,8 @@ impl From<&cast::Config> for Config {
                 .map(Pipeline::from)
                 .collect();
             config.pipelines = Some(pipelines);
+            // Remove duplicates
+            config.dedup_pipelines();
         }
         config
     }

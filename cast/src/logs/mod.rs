@@ -1,4 +1,5 @@
 // Error Handling
+use log::{trace, warn};
 use miette::{Error, IntoDiagnostic, Result};
 
 // Read file
@@ -15,10 +16,11 @@ pub struct Logs;
 impl Logs {
     pub fn read(directory_path: &str) -> Result<Vec<String>> {
         let mut logs: Vec<String> = vec![];
-        let message = "No logs to display.";
-
         // Directory Safe-guard
+        let message = format!("Reading log directory: {}", directory_path);
+        trace!("{}", message);
         if !Path::new(directory_path).exists() {
+            let message = "No logs to display.";
             return Err(Error::msg(message));
         }
         // Files Safe-guard
@@ -32,7 +34,7 @@ impl Logs {
                         logs.push(json);
                     }
                     Err(_err) => {
-                        // warn!("Striping corrupted log")
+                        warn!("Stripped corrupted log file: {}", entry.path().display())
                     }
                 }
             }

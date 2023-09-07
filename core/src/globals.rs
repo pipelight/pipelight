@@ -18,6 +18,23 @@ pub static mut CONFIG: Lazy<Config> = Lazy::new(Config::default);
 pub static mut PORTAL: Lazy<Portal> = Lazy::new(Portal::default);
 pub static mut TRIGGER_ENV: Lazy<Trigger> = Lazy::new(Trigger::default);
 
+// Hydrate logs
+pub fn early_hydrate_logger() -> Result<()> {
+    LOGGER.lock().unwrap();
+    Ok(())
+}
+// Hydrate logs
+pub fn full_hydrate_logger() -> Result<()> {
+    let mut portal;
+    unsafe {
+        portal = (*PORTAL).clone();
+    };
+    portal.teleport()?;
+    LOGGER.lock().unwrap().full();
+    portal.origin()?;
+    Ok(())
+}
+
 // Hydrate cli
 pub fn hydrate_cli() -> Result<()> {
     let cli = Cli::build()?;
@@ -57,30 +74,19 @@ pub fn hydrate_config() -> Result<()> {
     Ok(())
 }
 
-// Hydrate logs
-pub fn hydrate_logger() -> Result<()> {
-    let mut portal;
-    unsafe {
-        portal = (*PORTAL).clone();
-    };
-    portal.teleport()?;
-    LOGGER.lock().unwrap();
-    portal.origin()?;
-    Ok(())
-}
-
 // The main usage of teleport
 // Set every main globals
 pub fn set_globals() -> Result<()> {
     let cond;
     unsafe { cond = *CONFIG == Config::default() && *PORTAL == Portal::default() };
     if cond {
+        early_hydrate_logger()?;
         // hydrate the CLI global var
         hydrate_cli()?;
         // hydrate the PORTAL global var
         hydrate_portal()?;
         // hydrate the CONFIG global var
-        hydrate_logger()?;
+        full_hydrate_logger()?;
         hydrate_config()?;
     }
     Ok(())

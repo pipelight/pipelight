@@ -12,7 +12,7 @@ use miette::{Error, IntoDiagnostic, Result};
 use chrono::{DateTime, Local};
 
 // Standard libs
-use log::info;
+use log::{info, warn};
 
 //sys
 use rustix::process::{kill_process_group, test_kill_process, Pid, Signal};
@@ -80,7 +80,7 @@ impl Config {
             let end_length = &self.pipelines.clone().unwrap().len();
             if init_length != end_length {
                 let message = "Removed pipelines with identical names";
-                // warn!("{}", message)
+                warn!("{}", message)
             }
         }
         self.to_owned()
