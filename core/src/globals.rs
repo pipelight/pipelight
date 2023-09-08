@@ -30,10 +30,12 @@ pub fn full_hydrate_logger() -> Result<()> {
     unsafe {
         portal = (*PORTAL).clone();
     };
+    portal.teleport()?;
     LOGGER
         .lock()
         .unwrap()
         .full(&portal.target.directory_path.clone().unwrap());
+    portal.origin()?;
     Ok(())
 }
 
@@ -45,12 +47,6 @@ pub fn hydrate_cli() -> Result<()> {
         .map_err(|err| err.exit())
         .unwrap();
     unsafe { *CLI = args.clone() };
-    // Set verbosity level
-    let verbosity = args.verbose.log_level_filter();
-    LOGGER.lock().unwrap().level(&verbosity);
-    // Set internal verbosity level
-    let verbosity = args.internal_verbose.log_level_filter();
-    LOGGER.lock().unwrap().internal_level(&verbosity);
     Ok(())
 }
 
@@ -68,7 +64,9 @@ pub fn hydrate_portal() -> Result<()> {
         "Found config file at: {}",
         portal.target.file_path.clone().unwrap()
     );
-    unsafe { *PORTAL = portal.clone() };
+    unsafe {
+        *PORTAL = portal.clone();
+    };
     Ok(())
 }
 
@@ -90,7 +88,7 @@ pub fn hydrate_config() -> Result<()> {
 // Set every main globals
 pub fn set_globals() -> Result<()> {
     trace!("Set globals");
-    early_hydrate_logger()?;
+    // early_hydrate_logger()?;
     let cond;
     unsafe { cond = *CONFIG == Config::default() && *PORTAL == Portal::default() };
     if cond {
@@ -99,10 +97,10 @@ pub fn set_globals() -> Result<()> {
         // hydrate the PORTAL global var
         hydrate_portal()?;
         // hydrate the CONFIG global var
-        unsafe {
-            (*PORTAL).teleport()?;
-        }
-        full_hydrate_logger()?;
+        // unsafe {
+        //     (*PORTAL).teleport()?;
+        // }
+        // full_hydrate_logger()?;
         hydrate_config()?;
         // unsafe {
         //     (*PORTAL).origin()?;

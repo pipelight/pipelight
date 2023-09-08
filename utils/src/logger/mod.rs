@@ -13,53 +13,39 @@ pub mod default;
 
 #[derive(Debug, Clone)]
 pub struct Logger {
-    pub pipelines: LogFile,
-    pub internals: LogFile,
-    pub handle: Handle,
+    pub handle: Option<Handle>,
+    pub pipelines: LogInfo,
+    pub internals: LogInfo,
+}
+#[derive(Debug, Clone)]
+pub struct LogInfo {
+    file_info: Option<LogFile>,
+    pattern: String,
+    name: String,
+    level: LevelFilter,
 }
 #[derive(Debug, Clone)]
 pub struct LogFile {
     pub directory: String,
     pub name: String,
-    pub level: LevelFilter,
-}
-#[derive(Debug, Clone)]
-pub struct LoggerArgs {
-    pipelines: LogFile,
-    internals: LogFile,
 }
 
 impl Logger {
-    pub fn internal_level(&mut self, level: &LevelFilter) -> Self {
-        let e = LoggerArgs {
-            internals: LogFile {
-                level: level.to_owned(),
-                ..self.internals.clone()
-            },
-            pipelines: self.pipelines.clone(),
-        };
-        let config = config::default_set_file(e.clone());
-        self.handle.set_config(config);
-        self.internals = e.internals;
-        self.pipelines = e.pipelines;
-        self.to_owned()
+    pub fn set_internal_level(&mut self, level: &LevelFilter) -> Result<Self> {
+        self.internals.level = level.to_owned();
+        let config = self.update();
+        Ok(self.to_owned())
     }
-    pub fn level(&mut self, level: &LevelFilter) -> Self {
-        let e = LoggerArgs {
-            pipelines: LogFile {
-                level: level.to_owned(),
-                ..self.pipelines.clone()
-            },
-            internals: self.internals.clone(),
-        };
-        let config = config::default_set_file(e.clone());
-        self.handle.set_config(config);
-        self.internals = e.internals;
-        self.pipelines = e.pipelines;
-        self.to_owned()
+    pub fn set_level(&mut self, level: &LevelFilter) -> Result<Self> {
+        self.pipelines.level = level.to_owned();
+        let config = self.update();
+        Ok(self.to_owned())
     }
+}
+
+impl Logger {
     /// Set log level and logging file, and return handler to change logLevels at runtime
-    pub fn file(&mut self, uuid: &Uuid) -> Self {
+    pub fn set_file(&mut self, uuid: &Uuid) -> Self {
         let e = LoggerArgs {
             pipelines: LogFile {
                 name: uuid.to_string(),

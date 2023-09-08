@@ -10,6 +10,7 @@ use log::trace;
 use miette::{MietteHandlerOpts, Result, RgbColors};
 
 fn main() -> Result<()> {
+    trace!("Launch process.");
     make_handler()?;
     Cli::launch()?;
     trace!("Process clean exit.");

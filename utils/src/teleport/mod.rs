@@ -23,15 +23,15 @@ use miette::{Error, IntoDiagnostic, Result};
 impl Portal {
     /// Jump between PWD and the directory of the loaded config file.
     pub fn teleport(&mut self) -> Result<Self> {
-        let target = self.current.directory_path.clone().unwrap();
+        let target = self.target.directory_path.clone().unwrap();
         env::set_current_dir(target.clone()).into_diagnostic()?;
-        info!("working directory changed to ->  {}", &target);
+        info!("working directory changed to -> {}", &target);
         Ok(self.to_owned())
     }
     pub fn origin(&mut self) -> Result<Self> {
         let target = self.origin.directory_path.clone().unwrap();
         env::set_current_dir(target.clone()).into_diagnostic()?;
-        info!("working directory changed to ->  {}", &target);
+        info!("working directory changed to -> {}", &target);
         Ok(self.to_owned())
     }
     // Set seed string, file name, relative path, absolute path
