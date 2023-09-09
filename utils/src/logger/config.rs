@@ -12,48 +12,61 @@ use std::path::Path;
 // Error Handling
 use miette::{Error, IntoDiagnostic, Result};
 
+impl super::Logger {
+    pub fn update(&mut self) -> Result<()> {
+        let mut loggers = vec![];
+        loggers.extend(self.pipelines.make_loggers()?);
+        loggers.extend(self.internals.make_loggers()?);
+        let mut config = Config::builder();
+        for logger in loggers {
+            config = config.logger(logger);
+        }
+        let config = config
+            .build(Root::builder().appender("stdout").build(LevelFilter::Trace))
+            .into_diagnostic()?;
+        let handle = log4rs::init_config(config).into_diagnostic()?;
+        self.handle = Some(handle);
+        Ok(())
+    }
+}
 impl super::LogInfo {
-    pub fn to_loggers(&mut self) -> Result<Vec<Logger>> {
-        let loggers = vec![];
-        let file_info = self.file_info;
+    fn make_loggers(&mut self) -> Result<Vec<Logger>> {
+        let mut loggers = vec![];
+        let file_info = self.file_info.clone();
         if let Some(file_info) = file_info {
-            let path = format!(
-                "{}/{}.json",
-                file_info.directory.unwrap(),
-                file_info.name.unwrap()
-            );
+            // File
+            let path = format!("{}/{}.json", file_info.directory, file_info.name);
+            let name = format!("{}_to_file", self.name);
             let appender = FileAppender::builder()
                 .encoder(Box::new(PatternEncoder::new(&self.pattern)))
                 .build(path)
                 .unwrap();
             let logger = Logger::builder()
                 .additive(false)
-                .appender(format!("{}_to_file", self.name))
-                .build(self.name, self.level);
+                .appender(&name)
+                .build(name, self.level);
             loggers.push(logger);
         }
+        // Stdout
+        let name = format!("{}_to_stdout", self.name);
         let appender = ConsoleAppender::builder()
             .encoder(Box::new(PatternEncoder::new(&self.pattern)))
             .build();
         let logger = Logger::builder()
             .additive(false)
-            .appender(format!("{}_to_stdout", self.name))
-            .build(self.name, self.level);
+            .appender(&name)
+            .build(name, self.level);
+        loggers.push(logger);
+        // Nude
+        let name = format!("{}_nude", self.name);
+        let appender = ConsoleAppender::builder()
+            .encoder(Box::new(PatternEncoder::new("{m}")))
+            .build();
+        let logger = Logger::builder()
+            .additive(false)
+            .appender(&name)
+            .build(name, self.level);
         loggers.push(logger);
         Ok(loggers)
-    }
-}
-
-impl super::Logger {
-    pub fn update(&mut self) -> Result<()> {
-        let loggers = vec![];
-        loggers.extend(self.pipelines.to_loggers()?);
-        loggers.extend(self.internals.to_loggers()?);
-        let config = Config::builder();
-        for logger in loggers {
-            config.logger(logger);
-        }
-        config.build(Root::builder().appender("stdout").build(LevelFilter::Trace));
-        Ok(())
     }
 }

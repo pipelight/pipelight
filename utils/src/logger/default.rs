@@ -11,7 +11,7 @@ use log::LevelFilter;
 
 impl Default for Logger {
     fn default() -> Self {
-        Logger {
+        let mut logger = Logger {
             handle: None,
             internals: LogInfo {
                 name: "internals".to_owned(),
@@ -25,51 +25,49 @@ impl Default for Logger {
                 pattern: "{m}{n}".to_owned(),
                 level: LevelFilter::Error,
             },
-        }
+        };
+        logger.update();
+        logger
     }
 }
 impl Logger {
     pub fn new() -> Self {
         Self::default()
     }
-    pub fn full(&mut self) -> Self {
-        Logger {
+    pub fn to_file(&mut self) -> Self {
+        let logger = Logger {
             handle: None,
             internals: LogInfo {
-                name: "internals".to_owned(),
                 file_info: Some(LogFile {
                     name: "_unlinked".to_owned(),
                     directory: ".pipelight/_internals/logs".to_owned(),
                 }),
-                pattern: "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}".to_owned(),
-                level: self.internals.level,
+                ..self.internals.clone()
             },
             pipelines: LogInfo {
-                name: "pipelines".to_owned(),
                 file_info: Some(LogFile {
                     name: "_unlinked".to_owned(),
                     directory: ".pipelight/logs".to_owned(),
                 }),
-                pattern: "{m}{n}".to_owned(),
-                level: self.pipelines.level,
+                ..self.pipelines.clone()
             },
-        }
+        };
+        self.update();
+        logger
     }
-    pub fn partial(&mut self) -> Self {
-        Logger {
+    pub fn to_stdout(&mut self) -> Self {
+        let logger = Logger {
             handle: None,
             internals: LogInfo {
-                name: "internals".to_owned(),
                 file_info: None,
-                pattern: "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}".to_owned(),
-                level: self.internals.level,
+                ..self.internals.clone()
             },
             pipelines: LogInfo {
-                name: "pipelines".to_owned(),
                 file_info: None,
-                pattern: "{m}{n}".to_owned(),
-                level: self.pipelines.level,
+                ..self.pipelines.clone()
             },
-        }
+        };
+        self.update();
+        logger
     }
 }

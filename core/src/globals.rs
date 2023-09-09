@@ -31,10 +31,7 @@ pub fn full_hydrate_logger() -> Result<()> {
         portal = (*PORTAL).clone();
     };
     portal.teleport()?;
-    LOGGER
-        .lock()
-        .unwrap()
-        .full(&portal.target.directory_path.clone().unwrap());
+    LOGGER.lock().unwrap().to_file();
     portal.origin()?;
     Ok(())
 }
@@ -87,8 +84,8 @@ pub fn hydrate_config() -> Result<()> {
 // The main usage of teleport
 // Set every main globals
 pub fn set_globals() -> Result<()> {
+    early_hydrate_logger()?;
     trace!("Set globals");
-    // early_hydrate_logger()?;
     let cond;
     unsafe { cond = *CONFIG == Config::default() && *PORTAL == Portal::default() };
     if cond {

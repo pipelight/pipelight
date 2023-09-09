@@ -98,7 +98,7 @@ impl Config {
 
 impl Pipeline {
     pub fn log(&self) {
-        LOGGER.lock().unwrap().file(&self.uuid);
+        LOGGER.lock().unwrap().set_file(&self.uuid);
         let json = serde_json::to_string(&self).unwrap();
         info!(target: "pipeline_json","{}", json);
     }

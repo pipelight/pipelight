@@ -50,13 +50,13 @@ pub fn list() -> Result<()> {
     // Print headers
     match level {
         LevelFilter::Warn => {
-            warn!(target: "nude",
+            warn!(target: "pipelines_nude",
                 "{:<15} {:<25} {:<40}\n",
                 "status","date" ,"name"
             );
         }
         _ => {
-            info!(target: "nude",
+            info!(target: "pipelines_nude",
                 "{:<15} {:<15} {:<15} {:<25} {:<40}\n",
                 "status", "action", "branch","date" ,"name"
             );
@@ -88,17 +88,17 @@ pub fn list() -> Result<()> {
         }
         match level {
             LevelFilter::Warn => {
-                warn!(target: "nude",
+                warn!(target: "pipelines_nude",
                     "{:<15} {:<25} {:<40}\n",
                     status, date, pipeline.name);
             }
             LevelFilter::Error => {
-                error!(target: "nude",
+                error!(target: "pipelines_nude",
                     "{:<40}\n",
                      pipeline.name);
             }
             _ => {
-                info!(target: "nude",
+                info!(target: "pipelines_nude",
                     "{:<15} {:<15} {:<15} {:<25} {:<40}\n",
                     status, action, branch, date, pipeline.name
                 );
