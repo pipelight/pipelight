@@ -15,7 +15,7 @@ use exec::{Process, Status};
 use utils::git::Flag;
 
 // Enum workaround
-use strum::EnumIter;
+use strum::{EnumIter, IntoEnumIterator};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Fallback {
@@ -78,7 +78,7 @@ pub struct Step {
     // Fallback Hooks
     pub fallback: Option<Fallback>,
 }
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord, EnumIter)]
 #[serde(untagged)]
 pub enum Mode {
     StopOnFailure,

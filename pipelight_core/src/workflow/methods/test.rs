@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod trigger_match {
-    use crate::Trigger;
+    use crate::workflow::Trigger;
     use utils::git::{Flag, Hook, Special};
 
     #[test]

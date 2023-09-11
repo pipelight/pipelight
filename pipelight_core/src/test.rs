@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod serialize {
-    use crate::Trigger;
+    use crate::workflow::Trigger;
     use utils::git::{Flag, Hook, Special};
 
     #[test]

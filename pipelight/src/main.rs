@@ -3,7 +3,7 @@
 // #![allow(dead_code)]
 #![allow(unused_must_use)]
 
-use core::cli::Cli;
+use pipelight_core::cli::Cli;
 
 // Error Handling
 use log::trace;
