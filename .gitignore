@@ -1,4 +1,3 @@
 /target
-.pipelight/logs
-.pipelight/_internals
+.pipelight
 /packages/*
