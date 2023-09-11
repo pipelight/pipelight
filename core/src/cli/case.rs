@@ -36,6 +36,13 @@ impl Cli {
         unsafe {
             args = (*CLI).clone();
         };
+        // Set internal verbosity level
+        let verbosity = args.verbose.log_level_filter();
+        LOGGER.lock().unwrap().set_level(&verbosity)?;
+        // Set verbosity level
+        let verbosity = args.internal_verbose.log_level_filter();
+        LOGGER.lock().unwrap().set_internal_level(&verbosity)?;
+
         match args.commands {
             Commands::Ls(list) => {
                 // Set global config

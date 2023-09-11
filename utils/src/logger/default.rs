@@ -26,7 +26,7 @@ impl Default for Logger {
                 level: LevelFilter::Error,
             },
         };
-        logger.update();
+        logger.update().unwrap();
         logger
     }
 }
@@ -52,7 +52,7 @@ impl Logger {
                 ..self.pipelines.clone()
             },
         };
-        self.update();
+        self.update().unwrap();
         logger
     }
     pub fn to_stdout(&mut self) -> Self {
@@ -67,7 +67,7 @@ impl Logger {
                 ..self.pipelines.clone()
             },
         };
-        self.update();
+        self.update().unwrap();
         logger
     }
 }

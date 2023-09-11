@@ -33,12 +33,12 @@ pub struct LogFile {
 impl Logger {
     pub fn set_internal_level(&mut self, level: &LevelFilter) -> Result<Self> {
         self.internals.level = level.to_owned();
-        self.update();
+        self.update()?;
         Ok(self.to_owned())
     }
     pub fn set_level(&mut self, level: &LevelFilter) -> Result<Self> {
         self.pipelines.level = level.to_owned();
-        self.update();
+        self.update()?;
         Ok(self.to_owned())
     }
 
@@ -48,6 +48,7 @@ impl Logger {
             name: uuid.to_string(),
             ..self.pipelines.file_info.clone().unwrap()
         });
+        self.update().unwrap();
         self.to_owned()
     }
     /// Get handler to change logLevel at runtime
