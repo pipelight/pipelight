@@ -36,7 +36,7 @@ impl Logger {
     }
     pub fn to_file(&mut self) -> Self {
         let logger = Logger {
-            handle: None,
+            handle: self.handle.clone(),
             internals: LogInfo {
                 file_info: Some(LogFile {
                     name: "_unlinked".to_owned(),
@@ -52,12 +52,13 @@ impl Logger {
                 ..self.pipelines.clone()
             },
         };
+        *self = logger;
         self.update().unwrap();
-        logger
+        self.to_owned()
     }
     pub fn to_stdout(&mut self) -> Self {
         let logger = Logger {
-            handle: None,
+            handle: self.handle.clone(),
             internals: LogInfo {
                 file_info: None,
                 ..self.internals.clone()
@@ -67,7 +68,8 @@ impl Logger {
                 ..self.pipelines.clone()
             },
         };
+        *self = logger;
         self.update().unwrap();
-        logger
+        self.to_owned()
     }
 }

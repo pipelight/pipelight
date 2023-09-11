@@ -12,7 +12,7 @@ use miette::{Error, IntoDiagnostic, Result};
 use chrono::{DateTime, Local};
 
 // Standard libs
-use log::{info, warn};
+use log::{error, info, warn};
 
 //sys
 use rustix::process::{kill_process_group, test_kill_process, Pid, Signal};
@@ -98,9 +98,10 @@ impl Config {
 
 impl Pipeline {
     pub fn log(&self) {
+        // println!("{:#?}", LOGGER.lock().unwrap());
         LOGGER.lock().unwrap().set_file(&self.uuid);
         let json = serde_json::to_string(&self).unwrap();
-        info!(target: "pipeline_json","{}", json);
+        error!(target: "pipelines_to_file","{}", json);
     }
     // Add process stdout/stderr to runnnig pipeline logs.
     // Concurent std read/write while command is running

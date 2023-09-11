@@ -2,7 +2,7 @@ pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 
 use log4rs::{
     append::{console::ConsoleAppender, file::FileAppender},
-    config::{Appender, Config, Logger, Root},
+    config::{runtime::ConfigBuilder, Appender, Config, Logger, Root},
     encode::pattern::PatternEncoder,
     Handle,
 };
@@ -23,16 +23,32 @@ impl super::Logger {
         loggers.extend(self.pipelines.make_loggers()?);
         loggers.extend(self.internals.make_loggers()?);
 
-        let mut config = Config::builder();
+        let mut builder = Config::builder();
         for appender in appenders {
-            config = config.appender(appender);
+            builder = builder.appender(appender);
         }
         for logger in loggers {
-            config = config.logger(logger);
+            builder = builder.logger(logger);
         }
-        let config = config
-            .build(Root::builder().build(LevelFilter::Trace))
-            .into_diagnostic()?;
+        let config: Config;
+        if self.internals.file_info.is_some() {
+            config = builder
+                .build(
+                    Root::builder()
+                        .appender("internals_to_stdout")
+                        .appender("internals_to_file")
+                        .build(self.internals.level),
+                )
+                .into_diagnostic()?;
+        } else {
+            config = builder
+                .build(
+                    Root::builder()
+                        .appender("internals_to_stdout")
+                        .build(self.internals.level),
+                )
+                .into_diagnostic()?;
+        }
         if self.handle.is_some() {
             self.reinit(config);
         } else {
@@ -104,7 +120,7 @@ impl super::LogInfo {
             let logger = Logger::builder()
                 .additive(false)
                 .appender(&name)
-                .build(name, self.level);
+                .build(name, LevelFilter::Trace);
             loggers.push(logger);
         }
         // Stdout
