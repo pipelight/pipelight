@@ -9,40 +9,60 @@ use chrono::{DateTime, Local};
 // Error Handling
 use miette::{Error, IntoDiagnostic, Result};
 
-impl Getters<Pipeline> for Logs {
-    fn get() -> Result<Vec<Pipeline>> {
+// Global vars
+use once_cell::sync::Lazy;
+
+pub static mut LOGS: Lazy<Option<Vec<Pipeline>>> = Lazy::new(|| None);
+
+impl Logs {
+    fn hydrate() -> Result<()> {
         let portal;
+        let global_logs;
         unsafe {
             portal = (*PORTAL).clone();
+            global_logs = (*LOGS).clone();
         };
-        let logs: Vec<String> = cast::Logs::read(&format!(
-            "{}/.pipelight/logs/",
-            portal.target.directory_path.unwrap()
-        ))?;
-        let mut pipelines: Vec<Pipeline> = vec![];
-        for json in logs {
-            let pipeline = serde_json::from_str::<Pipeline>(&json).into_diagnostic()?;
-            pipelines.push(pipeline);
+        if global_logs.is_none() {
+            let logs: Vec<String> = cast::Logs::read(&format!(
+                "{}/.pipelight/logs/",
+                portal.target.directory_path.unwrap()
+            ))?;
+            let mut pipelines: Vec<Pipeline> = vec![];
+            for json in logs {
+                let pipeline = serde_json::from_str::<Pipeline>(&json).into_diagnostic()?;
+                pipelines.push(pipeline);
+            }
+            // Sort by date ascending
+            pipelines.sort_by(|a, b| {
+                let a_date = a
+                    .clone()
+                    .event
+                    .unwrap()
+                    .date
+                    .parse::<DateTime<Local>>()
+                    .unwrap();
+                let b_date = &b
+                    .clone()
+                    .event
+                    .unwrap()
+                    .date
+                    .parse::<DateTime<Local>>()
+                    .unwrap();
+                a_date.cmp(b_date)
+            });
+            unsafe {
+                *LOGS = Some(pipelines.clone());
+            }
         }
-        // Sort by date ascending
-        pipelines.sort_by(|a, b| {
-            let a_date = a
-                .clone()
-                .event
-                .unwrap()
-                .date
-                .parse::<DateTime<Local>>()
-                .unwrap();
-            let b_date = &b
-                .clone()
-                .event
-                .unwrap()
-                .date
-                .parse::<DateTime<Local>>()
-                .unwrap();
-            a_date.cmp(b_date)
-        });
-        Ok(pipelines)
+        Ok(())
+    }
+}
+impl Getters<Pipeline> for Logs {
+    fn get() -> Result<Vec<Pipeline>> {
+        Logs::hydrate()?;
+        let logs;
+        unsafe { logs = (*LOGS).clone().unwrap() }
+        Ok(logs)
     }
     fn get_by_name(name: &str) -> Result<Pipeline> {
         let pipelines = Logs::get()?;

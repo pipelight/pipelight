@@ -31,31 +31,6 @@ mod test;
 // Global var
 use crate::globals::TRIGGER_ENV;
 
-impl Trigger {
-    /// Return actual triggering env with a modified flag
-    pub fn flag(flag: Option<Flag>) -> Result<Trigger> {
-        let mut env;
-        unsafe {
-            env = (*TRIGGER_ENV).clone();
-        }
-        // Set git env
-        if Git::new().exists() {
-            env.branch = Git::new().get_branch()?;
-            env.tag = Git::new().get_tag()?;
-        }
-        if flag.is_some() {
-            env.action = flag;
-        } else if env.action.is_none() {
-            env.action = Some(Flag::default());
-        }
-        // Set the gloabl env
-        unsafe {
-            *TRIGGER_ENV = env.clone();
-        }
-        Ok(env)
-    }
-}
-
 impl Logs {
     /// Pretty print logs from json log file
     pub fn sanitize(pipelines: &mut [Pipeline]) -> Result<()> {
@@ -225,6 +200,28 @@ impl StepOrParallel {
     }
 }
 impl Trigger {
+    /// Return actual triggering env with a modified flag
+    pub fn flag(flag: Option<Flag>) -> Result<Trigger> {
+        let mut env;
+        unsafe {
+            env = (*TRIGGER_ENV).clone();
+        }
+        // Set git env
+        if Git::new().exists() {
+            env.branch = Git::new().get_branch()?;
+            env.tag = Git::new().get_tag()?;
+        }
+        if flag.is_some() {
+            env.action = flag;
+        } else if env.action.is_none() {
+            env.action = Some(Flag::default());
+        }
+        // Set the gloabl env
+        unsafe {
+            *TRIGGER_ENV = env.clone();
+        }
+        Ok(env)
+    }
     // Success if trigger has same action or None
     pub fn is_action_match(&self, trigger: Trigger) -> Result<()> {
         if trigger.action.is_none() || trigger.action == self.action {
