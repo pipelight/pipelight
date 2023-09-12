@@ -1,44 +1,75 @@
 // Relative paths
 use super::config;
-use super::Logger;
+use super::{LogFile, LogInfo, Logger};
+
+use log::LevelFilter;
 
 // Absolute paths
-use crate::git::Git;
-use crate::teleport::Teleport;
-use std::path::Path;
-
-use log::{error, trace, LevelFilter};
-use std::env;
+// use crate::git::Git;
+// use crate::teleport::Teleport;
+// use std::path::Path;
 
 impl Default for Logger {
     fn default() -> Self {
-        // Get Path With default values
-        let level = LevelFilter::Error;
-        let log_dir = ".pipelight/logs".to_owned();
-        let config = config::default(&level);
-        let handle = log4rs::init_config(config).expect("Couldn't init logger");
-
-        let exists = Path::new(&log_dir).exists();
-        if exists {
-            Logger {
-                directory: log_dir,
-                handle,
+        let mut logger = Logger {
+            handle: None,
+            internals: LogInfo {
+                name: "internals".to_owned(),
+                file_info: None,
+                pattern: "{d(%Y-%m-%d %H:%M:%S)} | {h({l}):5.5} | {f}:{L} — {m}{n}".to_owned(),
                 level: LevelFilter::Error,
-            }
-        } else {
-            let root = Teleport::new().origin;
-            let path_string = format!("{}/{}", &root, log_dir);
-            // Get default config
-            Logger {
-                directory: path_string,
-                handle,
+            },
+            pipelines: LogInfo {
+                name: "pipelines".to_owned(),
+                file_info: None,
+                pattern: "{m}{n}".to_owned(),
                 level: LevelFilter::Error,
-            }
-        }
+            },
+        };
+        logger.update().unwrap();
+        logger
     }
 }
 impl Logger {
     pub fn new() -> Self {
         Self::default()
+    }
+    pub fn to_file(&mut self) -> Self {
+        let logger = Logger {
+            handle: self.handle.clone(),
+            internals: LogInfo {
+                file_info: Some(LogFile {
+                    name: "_unlinked".to_owned(),
+                    directory: ".pipelight/_internals/logs".to_owned(),
+                }),
+                ..self.internals.clone()
+            },
+            pipelines: LogInfo {
+                file_info: Some(LogFile {
+                    name: "_unlinked".to_owned(),
+                    directory: ".pipelight/logs".to_owned(),
+                }),
+                ..self.pipelines.clone()
+            },
+        };
+        *self = logger;
+        self.update().unwrap();
+        self.to_owned()
+    }
+    pub fn to_stdout(&mut self) -> Self {
+        let logger = Logger {
+            handle: self.handle.clone(),
+            internals: LogInfo {
+                file_info: None,
+                ..self.internals.clone()
+            },
+            pipelines: LogInfo {
+                file_info: None,
+                ..self.pipelines.clone()
+            },
+        };
+        *self = logger;
+        self.update().unwrap();
+        self.to_owned()
     }
 }

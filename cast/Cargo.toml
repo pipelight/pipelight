@@ -6,15 +6,11 @@ edition = "2021"
 [dependencies]
 exec = {path = "../exec" }
 utils = {path = "../utils" }
-log = "0.4.17"
 serde = { version = "1.0.152" ,features = ["derive"] }
 serde_json = "1.0.93"
-convert_case = "0.6.0"
-miette = { version = "5.5.0", features = ["fancy"] }
+miette = { version = "5.5.0"}
 thiserror = "1.0.38"
-regex = "1.7.1"
 serde_yaml = "0.9.19"
-toml = "0.7.3"
-strum = { version = "0.24.1", features = ["derive"] }
-glob = "0.3.1"
+log = "0.4.17"
+toml = { version = "0.7.3", features = ["parse"] }
 

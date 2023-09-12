@@ -3,9 +3,8 @@ resolver = "2"
 members=[
   "utils",
   "exec",
-  "pipeline",
+  "pipelight_core",
   "cast",
-  "cli",
-  "pipelight"
+  "pipelight",
 ]
 

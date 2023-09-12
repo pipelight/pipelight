@@ -13,6 +13,7 @@ use std::io::BufReader;
 use std::io::Read;
 
 // Error Handling
+use log::info;
 use miette::{IntoDiagnostic, Result};
 use uuid::Uuid;
 
@@ -73,6 +74,7 @@ impl Process {
         Ok(self.to_owned())
     }
     pub fn run(&mut self) -> Result<()> {
+        info!("Run detached subprocess");
         let stdout = format!("{}/{}_stdout", self.os.directory, self.uuid);
         let stderr = format!("{}/{}_stderr", self.os.directory, self.uuid);
 

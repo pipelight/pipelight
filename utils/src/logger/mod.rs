@@ -1,4 +1,3 @@
-use log::Level;
 pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
 use log4rs;
 use log4rs::Handle;
@@ -6,48 +5,70 @@ use std::clone::Clone;
 use std::fs;
 use uuid::Uuid;
 
-// Global var
-// use arc_swap::ArcSwap;
-use once_cell::sync::Lazy;
-use std::sync::{Arc, Mutex};
-
 // Error Handling
-use miette::{miette, Diagnostic, Error, IntoDiagnostic, NamedSource, Report, Result, SourceSpan};
+use miette::{IntoDiagnostic, Result};
 
 pub mod config;
 pub mod default;
 
-pub static logger: Lazy<Arc<Mutex<Logger>>> = Lazy::new(|| Arc::new(Mutex::new(Logger::new())));
-
 #[derive(Debug, Clone)]
 pub struct Logger {
-    pub directory: String,
-    pub handle: Handle,
+    pub handle: Option<Handle>,
+    pub pipelines: LogInfo,
+    pub internals: LogInfo,
+}
+#[derive(Debug, Clone)]
+pub struct LogInfo {
+    file_info: Option<LogFile>,
+    pattern: String,
+    name: String,
     pub level: LevelFilter,
+}
+#[derive(Debug, Clone)]
+pub struct LogFile {
+    pub directory: String,
+    pub name: String,
 }
 
 impl Logger {
+    pub fn set_internal_level(&mut self, level: &LevelFilter) -> Result<Self> {
+        self.internals.level = level.to_owned();
+        self.update()?;
+        Ok(self.to_owned())
+    }
+    pub fn set_level(&mut self, level: &LevelFilter) -> Result<Self> {
+        self.pipelines.level = level.to_owned();
+        self.update()?;
+        Ok(self.to_owned())
+    }
+
     /// Set log level and logging file, and return handler to change logLevels at runtime
-    pub fn file(&self, uuid: &Uuid) -> Self {
-        let message = "Setting pipeline log file";
-        // info!("{}", message);
-        let level = self.level;
-        let config = config::default_with_file(&self.directory, &level, uuid);
-        self.handle.set_config(config);
+    pub fn set_file(&mut self, uuid: &Uuid) -> Self {
+        self.pipelines.file_info = Some(LogFile {
+            name: uuid.to_string(),
+            ..self.pipelines.file_info.clone().unwrap()
+        });
+        self.update().unwrap();
         self.to_owned()
     }
-
-    pub fn level(&mut self, level: &LevelFilter) -> Self {
-        let config = config::default(level);
-        self.handle.set_config(config);
-        self.level = level.to_owned();
-        self.to_owned()
-    }
-
     /// Get handler to change logLevel at runtime
+    ///
     /// Delete logs directory
     pub fn clear(&self) -> Result<()> {
-        fs::remove_dir_all(&self.directory).into_diagnostic()?;
+        let file_info = &self.pipelines.file_info;
+        if let Some(file_info) = file_info {
+            let dir = file_info.directory.clone();
+            fs::remove_dir_all(&dir).into_diagnostic()?;
+            let message = format!("Soft deleted log directory: {}", dir);
+            trace!("{}", message);
+        };
+        let file_info = &self.pipelines.file_info;
+        if let Some(file_info) = file_info {
+            let dir = file_info.directory.clone();
+            fs::remove_dir_all(&dir).into_diagnostic()?;
+            let message = format!("Soft deleted internal log directory: {}", dir);
+            trace!("{}", message);
+        };
         Ok(())
     }
 }

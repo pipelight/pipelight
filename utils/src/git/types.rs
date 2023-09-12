@@ -2,8 +2,7 @@
 use git2::Repository;
 use serde::{Deserialize, Serialize};
 // Enum workaround
-use std::string::ToString;
-use strum::{EnumIter, IntoEnumIterator};
+use strum::EnumIter;
 
 pub struct Git {
     pub repo: Option<Repository>,

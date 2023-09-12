@@ -9,9 +9,55 @@ Here will be a quick overview of the crate, functions and global variables roles
 
 ## Browsing the source code (must read)
 
-You can find READMEs inside project crates for better overview.
+You can find READMEs inside project crates for deep dive.
 
-## Functionning
+# Structure
+
+The pipelight source code is splitted into 5 crates.
+Every crate serves the one where all the logic happens,
+the **pipeline** crate.
+
+## Cast crate
+
+Mostly a wrapper around serde to get a config file parsed as Rust structs.
+And further check what is inside for type safty.
+
+## Utils crate
+
+Contains utility functions to lessen the pain when doing some trivial
+things across the source code.
+
+They are simple to use because they higly abstract the logic beneath.
+
+Divided in 3 main directories.
+
+- Git
+- Logger
+- Teleport
+
+### Git
+
+Contains functions to:
+
+- detect the git directory
+- create and ensure pipelight git hooks
+
+### Logger
+
+Contains functions to:
+
+- create and ensure a logger
+
+### Teleport
+
+Certainly the MVP of the utils crate.
+
+Contains functions to:
+
+- Recursively search a file in through the fs
+- Telepor back and forth to the file
+
+# Functionning
 
 When running a pipeline.
 This happens.

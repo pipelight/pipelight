@@ -1,0 +1,9 @@
+pipelines:
+  - name: simple_example
+    steps:
+      - commands:
+          - ls
+        name: list directory
+      - commands:
+          - pwd
+        name: get working directory

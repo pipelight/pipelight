@@ -10,9 +10,8 @@ repository="git@gitea.com:areska/pipelight.git"
 license="GPL2"
 
 [dependencies]
-cli = {path = "../cli" }
 exec = {path = "../exec" }
-pipeline = {path = "../pipeline" }
+pipelight_core = {path = "../pipelight_core" }
 utils = {path = "../utils" }
 log = "0.4.17"
 miette = { version = "5.5.0", features = ["fancy"] }

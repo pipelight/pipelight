@@ -1,51 +1,59 @@
 // Enum workaround
 use std::string::ToString;
-use strum::{EnumIter, IntoEnumIterator};
 // Standard libs
 use std::env;
-
-#[derive(Debug, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
-pub enum FileType {
-    TypeScript,
-    JavaScript,
-    Toml,
-    Tml,
-    Yaml,
-    Yml,
-}
+use std::path::Path;
+// Error Handling
+use miette::{Error, IntoDiagnostic, Result};
 
 #[derive(Default, Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
 /// Internal values to browse the fs
-pub struct Internal {
+pub struct Gate {
     /// Config file dir path and file path if founded.
     pub directory_path: Option<String>,
     pub file_path: Option<String>,
 }
-#[derive(Default, Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
-pub struct NaiveFileInfo {
-    pub preffix: Option<String>,
-    pub path: Option<String>,
+impl Gate {
+    pub fn file(&mut self, file_path: String) -> Result<Self> {
+        let path = Path::new(&file_path);
+        self.file_path = Some(path.display().to_string());
+        self.directory_path = Some(path.parent().unwrap().display().to_string());
+        Ok(self.to_owned())
+    }
+    pub fn directory(&mut self, file_path: String) -> Result<Self> {
+        let path = Path::new(&file_path);
+        self.directory_path = Some(path.display().to_string());
+        Ok(self.to_owned())
+    }
 }
+
 #[derive(Debug, Clone, PartialEq, PartialOrd, Eq, Ord)]
-pub struct Teleport {
-    pub internal: Internal,
-    pub file_info: NaiveFileInfo,
+pub struct Portal {
+    pub seed: Option<String>,
     /// Process origin path and current path
-    pub origin: String,
-    pub current: String,
+    pub origin: Gate,
+    pub current: Gate,
+    pub target: Gate,
 }
-impl Default for Teleport {
+impl Default for Portal {
     fn default() -> Self {
-        Teleport {
-            internal: Internal::default(),
-            origin: env::current_dir().unwrap().display().to_string(),
-            current: env::current_dir().unwrap().display().to_string(),
-            file_info: NaiveFileInfo::default(),
+        Portal {
+            origin: Gate::default(),
+            current: Gate::default(),
+            target: Gate::default(),
+            seed: None,
         }
     }
 }
-impl Teleport {
-    pub fn new() -> Self {
-        Teleport::default()
+impl Portal {
+    // Hydrate a default portal with current env
+    pub fn new() -> Result<Self> {
+        Ok(Portal {
+            target: Gate::default(),
+            origin: Gate::default().directory(env::current_dir().unwrap().display().to_string())?,
+            current: Gate::default()
+                .directory(env::current_dir().unwrap().display().to_string())?,
+            seed: None,
+        })
     }
 }
