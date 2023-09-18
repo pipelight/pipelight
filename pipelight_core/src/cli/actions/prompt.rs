@@ -1,15 +1,16 @@
 use crate::cli::actions::run;
-use crate::workflow::{Getters, Node, Pipeline};
+use crate::workflow::{Getters, Logs, Node, Pipeline};
 
 // Logging and verbosity
 use crate::globals::LOGGER;
 use log::LevelFilter;
+use log::{error, info};
 
 // Prompt
 use dialoguer::{console::Term, Select};
 
 // Error Handling
-use miette::{IntoDiagnostic, Result};
+use miette::{Error, IntoDiagnostic, Result};
 
 pub fn inspect_prompt() -> Result<()> {
     let pipelines = Pipeline::get()?;
@@ -49,8 +50,16 @@ pub fn run_prompt(attach: bool, flag: Option<String>) -> Result<()> {
     Ok(())
 }
 
-pub fn stop_prompt(attach: bool, flag: Option<String>) -> Result<()> {
-    let pipelines = Pipeline::get()?;
+pub fn stop_prompt() -> Result<()> {
+    let pipelines: Vec<Pipeline> = Logs::get()?
+        .into_iter()
+        .filter(|e| e.is_running().is_ok())
+        .collect();
+
+    if pipelines.is_empty() {
+        return Err(Error::msg("There is no running pipeline"));
+    }
+
     let items = pipelines.iter().map(|e| &e.name).collect::<Vec<&String>>();
     let selection = Select::new()
         .items(&items)
@@ -60,8 +69,8 @@ pub fn stop_prompt(attach: bool, flag: Option<String>) -> Result<()> {
 
     match selection {
         Some(index) => {
-            let name = &pipelines[index].name;
-            run::launch(name.to_owned(), attach, flag)?;
+            let pipeline = &mut pipelines[index].to_owned();
+            pipeline.stop()?;
         }
         None => println!("User did not select anything"),
     }

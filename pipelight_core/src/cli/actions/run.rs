@@ -70,7 +70,7 @@ pub fn run(p: &Pipeline) -> Result<()> {
     let mut pipeline = p.to_owned();
 
     // Action
-    pipeline.run();
+    pipeline.run()?;
     // Return status
     println!("{}", Node::from(&pipeline));
     match pipeline.status {

@@ -28,7 +28,7 @@ use crate::cli::actions::stop;
 use crate::cli::actions::trigger;
 use crate::cli::actions::watch;
 
-use crate::globals::{set_globals, CLI};
+use crate::globals::{early_hydrate_logger, set_globals, CLI};
 use clap_complete::shells::Shell;
 
 impl Cli {
@@ -39,13 +39,6 @@ impl Cli {
         unsafe {
             args = (*CLI).clone();
         };
-        // Set internal verbosity level
-        let verbosity = args.verbose.log_level_filter();
-        LOGGER.lock().unwrap().set_level(&verbosity)?;
-        // Set verbosity level
-        let verbosity = args.internal_verbose.log_level_filter();
-        LOGGER.lock().unwrap().set_internal_level(&verbosity)?;
-
         match args.commands {
             Commands::Ls(list) => {
                 // Set global config
@@ -102,12 +95,14 @@ impl Cli {
             }
             Commands::Stop(pipeline) => {
                 // Set global config
-                info!(
-                    "Stopping pipeline {:#?} with every attached and detached subprocess",
-                    pipeline.name
-                );
                 if pipeline.name.is_some() {
+                    info!(
+                        "Stopping pipeline {:#?} with every attached and detached subprocess",
+                        pipeline.name
+                    );
                     stop::stop(&pipeline.name.unwrap())?;
+                } else {
+                    prompt::stop_prompt()?;
                 }
             }
             Commands::Completion(shell) => {

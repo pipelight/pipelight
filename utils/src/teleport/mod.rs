@@ -17,7 +17,7 @@ use super::git::Git;
 use std::path::Path;
 
 // Error Handling
-use log::{debug, info};
+use log::{debug, info, trace};
 use miette::{Error, IntoDiagnostic, Result};
 
 impl Portal {
@@ -44,11 +44,18 @@ impl Portal {
         let seed = self.seed.clone();
         if let Some(seed) = seed {
             let path = Path::new(&seed);
-            if self.search_path().is_ok() {
+
+            // Sub portals
+            let mut path_portal = self.clone();
+            let mut file_portal = self.clone();
+            let mut prefix_portal = self.clone();
+
+            if path_portal.search_path().is_ok() {
                 return Ok(self.to_owned());
-            } else if self.search_file().is_ok() {
+            } else if file_portal.search_file().is_ok() {
                 return Ok(self.to_owned());
-            } else if self.search_prefix().is_ok() {
+            } else if prefix_portal.search_prefix().is_ok() {
+                *self = prefix_portal;
                 return Ok(self.to_owned());
             } else {
                 return Err(Error::msg(format!(
@@ -95,6 +102,7 @@ impl Portal {
         }
     }
     fn search_file(&mut self) -> Result<()> {
+        trace!("search file");
         // SafeGuard
         if self.seed.is_some() {
             let name = self.seed.clone().unwrap();
@@ -116,6 +124,7 @@ impl Portal {
         Ok(())
     }
     fn search_path(&mut self) -> Result<()> {
+        trace!("search path");
         let path_str = self.seed.clone();
         if let Some(..) = path_str {
             let mut path_str = path_str.unwrap();
@@ -142,6 +151,7 @@ impl Portal {
         }
     }
     fn search_prefix(&mut self) -> Result<()> {
+        trace!("search prefix");
         let mut exists = false;
         // Loop through file types
         for file_type in FileType::iter() {

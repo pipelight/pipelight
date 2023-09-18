@@ -21,7 +21,16 @@ pub static mut TRIGGER_ENV: Lazy<Trigger> = Lazy::new(Trigger::default);
 
 // Hydrate logs
 pub fn early_hydrate_logger() -> Result<()> {
-    let _logger = LOGGER.lock().unwrap();
+    let args;
+    unsafe {
+        args = (*CLI).clone();
+    };
+    // Set internal verbosity level
+    let verbosity = args.verbose.log_level_filter();
+    LOGGER.lock().unwrap().set_level(&verbosity)?;
+    // Set verbosity level
+    let verbosity = args.internal_verbose.log_level_filter();
+    LOGGER.lock().unwrap().set_internal_level(&verbosity)?;
     Ok(())
 }
 // Hydrate logs
@@ -84,13 +93,13 @@ pub fn hydrate_config() -> Result<()> {
 // The main usage of teleport
 // Set every main globals
 pub fn set_globals() -> Result<()> {
-    early_hydrate_logger()?;
     trace!("Set globals");
     let cond;
     unsafe { cond = *CONFIG == Config::default() && *PORTAL == Portal::default() };
     if cond {
         // hydrate the CLI global var
         hydrate_cli()?;
+        early_hydrate_logger()?;
         // hydrate the PORTAL global var
         hydrate_portal()?;
         // hydrate the CONFIG global var
