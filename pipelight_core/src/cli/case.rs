@@ -4,6 +4,9 @@ use miette::{Error, Result};
 use crate::globals::LOGGER;
 use log::{error, info};
 
+// Git Hooks
+use utils::git::Hook;
+
 // Colors
 use crate::workflow::traits::display::set_override;
 
@@ -117,6 +120,7 @@ impl Cli {
             }
             Commands::Init(_) => {
                 // create file
+                Hook::enable()?;
             }
             Commands::Logs(logs) => {
                 // Set colors
@@ -142,9 +146,8 @@ impl Cli {
                         }
                     }
                     Some(logs_cmd) => match logs_cmd {
-                        LogsCommands::Rm => {
-                            LOGGER.lock().unwrap().clear()?;
-                        }
+                        // LogsCommands::Rm => Logs::clean(),
+                        _ => {}
                     },
                 };
             }

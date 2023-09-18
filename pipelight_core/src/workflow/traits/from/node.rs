@@ -1,3 +1,7 @@
+// Convert the pipeline object into a prinatbale tree.
+// Every pipeline subcomponent such as step and commands are converted to
+// the node pretty printable type.
+
 use crate::globals::LOGGER;
 use crate::workflow::types::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel};
 use exec::{Statuable, Status};

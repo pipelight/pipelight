@@ -15,6 +15,7 @@ use once_cell::sync::Lazy;
 pub static mut LOGS: Lazy<Option<Vec<Pipeline>>> = Lazy::new(|| None);
 
 impl Logs {
+    // Read logs and store them into a global var
     fn hydrate() -> Result<()> {
         let portal;
         let global_logs;
