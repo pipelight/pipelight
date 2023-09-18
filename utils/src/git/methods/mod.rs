@@ -6,6 +6,7 @@ use std::string::ToString;
 use strum::IntoEnumIterator;
 
 // Error Handling
+use log::info;
 use miette::{Error, IntoDiagnostic, Result};
 
 // File systeme crates
@@ -63,6 +64,7 @@ impl Git {
 impl Hook {
     /// Ensure .git/hook folder
     pub fn enable() -> Result<()> {
+        info!("Enabling git hooks.");
         for hook in Hook::iter() {
             if Git::new().repo.is_some() {
                 Hook::create_script(&hook)?;
