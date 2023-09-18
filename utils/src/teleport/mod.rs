@@ -51,8 +51,10 @@ impl Portal {
             let mut prefix_portal = self.clone();
 
             if path_portal.search_path().is_ok() {
+                *self = path_portal;
                 return Ok(self.to_owned());
             } else if file_portal.search_file().is_ok() {
+                *self = file_portal;
                 return Ok(self.to_owned());
             } else if prefix_portal.search_prefix().is_ok() {
                 *self = prefix_portal;
