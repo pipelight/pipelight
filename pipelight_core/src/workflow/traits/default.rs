@@ -128,8 +128,13 @@ impl Default for Event {
         let pgid = getpgid(Some(pid)).unwrap();
         let sid = getsid(Some(pid)).unwrap();
 
+        // Get repo info if any
+        let git = Git::new();
+        let commit = git.get_commit().ok();
+
         Event {
             trigger: Trigger::flag(None).unwrap(),
+            commit: commit,
             // Local instead of UTC to better stick to
             // most time lib iso8601
             date: Local::now().to_string(),

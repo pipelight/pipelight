@@ -24,13 +24,13 @@ impl Pipeline {
     /** On demand,
     Add the current process stdout/stderr to a runnnig pipeline log.
     Beware: Concurent std read/write */
-    pub fn hydrate(&mut self) {
+    pub fn hydrate(&mut self) -> Result<()> {
         for step_or_parallel in &mut self.steps {
             match step_or_parallel {
                 StepOrParallel::Step(step) => {
                     for command in &mut step.commands {
                         if command.get_status() == Some(Status::Running) {
-                            let _ = command.process.read();
+                            let _ = command.process.read()?;
                         }
                     }
                 }
@@ -38,13 +38,14 @@ impl Pipeline {
                     for step in &mut parallel.steps {
                         for command in &mut step.commands {
                             if command.get_status() == Some(Status::Running) {
-                                let _ = command.process.read();
+                                let _ = command.process.read()?;
                             }
                         }
                     }
                 }
             }
         }
+        Ok(())
     }
     /** Check if pipeline can be triggered in the actual environment */
     pub fn is_triggerable(&self) -> Result<bool> {

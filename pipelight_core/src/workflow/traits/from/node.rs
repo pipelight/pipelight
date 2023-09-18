@@ -20,6 +20,11 @@ impl From<&Event> for String {
         let mut date = e.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
         date = format!("{}\n", date);
         string.push_str(&date);
+        if e.commit.is_some() {
+            let header = "commit: ";
+            let commit = format!("{}{}\n", header.white(), e.commit.clone().unwrap().white());
+            string.push_str(&commit);
+        }
         if e.trigger.tag.is_some() {
             let header = "tag: ";
             let tag = format!(

@@ -20,8 +20,8 @@ impl Trigger {
         }
         // Set git env
         if Git::new().exists() {
-            env.branch = Git::new().get_branch()?;
-            env.tag = Git::new().get_tag()?;
+            env.branch = Git::new().get_branch().ok();
+            env.tag = Git::new().get_tag().ok();
         }
         if flag.is_some() {
             env.action = flag;

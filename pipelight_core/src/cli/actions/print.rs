@@ -10,7 +10,7 @@ use miette::{IntoDiagnostic, Result};
 use crate::globals::LOGGER;
 use log::{error, info, warn, LevelFilter};
 
-/// Pretty print logs from json log file
+/// Pretty print pipeline logs from json log file
 pub fn pretty(pipelines: &mut Vec<Pipeline>) -> Result<()> {
     for pipeline in pipelines {
         if pipeline.get_status() == Some(Status::Running) {
