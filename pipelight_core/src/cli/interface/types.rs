@@ -85,12 +85,15 @@ pub enum WatchCommands {
 pub struct Init {
     /// The template style
     pub template: Option<String>,
+    /// The output file path
+    pub file: Option<String>,
 }
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Toggle {
-    /// The template style
+    /// Create git hooks
     #[arg(long, exclusive = true)]
     pub enable: bool,
+    /// Remove git hooks
     #[arg(long, exclusive = true)]
     pub disable: bool,
 }

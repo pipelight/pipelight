@@ -123,7 +123,7 @@ impl Cli {
                     Hook::enable()?;
                 }
                 if toggle.disable {
-                    // Hook::disable()?;
+                    Hook::disable()?;
                 }
             }
             Commands::Logs(logs) => {

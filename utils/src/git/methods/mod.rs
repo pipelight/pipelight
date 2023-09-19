@@ -62,15 +62,22 @@ impl Git {
 }
 
 impl Hook {
-    /// Ensure .git/hook folder
+    /// Ensure .git/hooks folder
     pub fn enable() -> Result<()> {
-        info!("Enabling git hooks.");
+        info!("enabling git hooks.");
         for hook in Hook::iter() {
             if Git::new().repo.is_some() {
                 Hook::create_script(&hook)?;
                 Hook::create_subscripts_caller(&hook)?;
             }
         }
+        Ok(())
+    }
+    /// Remove .git/hooks folder
+    pub fn disable() -> Result<()> {
+        info!("disabling git hooks.");
+        let dir = Path::new(".git/hooks/");
+        fs::remove_dir_all(&dir).into_diagnostic()?;
         Ok(())
     }
     /// Create a hook that will call scrpts from a hook.d subfolder
