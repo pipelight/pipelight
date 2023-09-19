@@ -1025,6 +1025,7 @@ dependencies = [
  "rustix 0.37.23",
  "serde",
  "serde_json",
+ "serde_plain",
  "strum",
  "sysinfo 0.28.4",
  "thiserror",

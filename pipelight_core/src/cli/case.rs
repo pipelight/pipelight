@@ -18,7 +18,7 @@ use clap::ValueEnum;
 // use std::str::FromStr;
 
 // Cli core types
-use crate::cli::interface::{Cli, ColoredOutput, Commands, LogsCommands, WatchCommands};
+use crate::cli::interface::{Cli, ColoredOutput, Commands, LogsCommands, Toggle, WatchCommands};
 
 // Cli core functions
 use crate::cli::actions::print;
@@ -117,12 +117,22 @@ impl Cli {
                 // create file
                 Hook::enable()?;
             }
+            Commands::Hooks(toggle) => {
+                // create file
+                if toggle.enable {
+                    Hook::enable()?;
+                }
+                if toggle.disable {
+                    // Hook::disable()?;
+                }
+            }
             Commands::Logs(logs) => {
                 // Set colors
                 if logs.display.color.is_some() {
                     match ColoredOutput::from(&logs.display.color.unwrap()) {
                         ColoredOutput::Always => set_override(true),
                         ColoredOutput::Never => set_override(false),
+                        ColoredOutput::Auto => {}
                     }
                 }
 

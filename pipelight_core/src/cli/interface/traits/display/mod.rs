@@ -3,7 +3,7 @@ mod test;
 
 use crate::cli::interface::{
     Cli, Commands, DisplayCommands, Init, InternalVerbosity, Logs, LogsCommands, Pipeline, Shell,
-    Trigger, Verbosity,
+    Toggle, Trigger, Verbosity,
 };
 
 use log::LevelFilter;
@@ -94,6 +94,21 @@ impl fmt::Display for Logs {
     }
 }
 
+impl fmt::Display for Toggle {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut string = "".to_owned();
+        if self.enable {
+            string += " ";
+            string += "enable";
+        }
+        if self.disable {
+            string += " ";
+            string += "disable";
+        }
+        write!(f, "{}", string)
+    }
+}
+
 impl fmt::Display for Trigger {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut string = "".to_owned();
@@ -143,6 +158,7 @@ impl fmt::Display for Commands {
             Commands::Ls(list) => format!("ls{}", list),
             Commands::Watch(_) => "watch".to_owned(),
             Commands::Init(_) => "init".to_owned(),
+            Commands::Hooks(toggle) => format!("hooks{}", toggle),
             Commands::Completion(shell) => format!("completion{}", shell),
         };
         write!(f, "{}", string)

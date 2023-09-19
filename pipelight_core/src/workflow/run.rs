@@ -37,7 +37,7 @@ impl Pipeline {
         }
         // Guards
         unsafe {
-            if (*ptr).is_running().is_ok() {
+            if (*ptr).has_homologous_already_running().is_ok() {
                 return Ok(());
             }
             if (*ptr).triggers.is_some() {}
