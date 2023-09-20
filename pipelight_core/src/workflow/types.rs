@@ -111,6 +111,7 @@ pub struct Trigger {
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Event {
     pub trigger: Trigger,
+    pub commit: Option<String>,
     pub date: String,
     pub pid: Option<u32>,
     pub pgid: Option<u32>,

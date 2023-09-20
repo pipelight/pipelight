@@ -1,0 +1,18 @@
+[package]
+name = "templates"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+utils = {path = "../utils" }
+serde = { version = "1.0.152" ,features = ["derive"] }
+serde_json = "1.0.93"
+miette = { version = "5.5.0"}
+thiserror = "1.0.38"
+serde_yaml = "0.9.19"
+log = "0.4.17"
+toml = { version = "0.7.3", features = ["parse"] }
+handlebars = "4.4.0"
+serde_plain = "1.0.2"
+convert_case = "0.6.0"
+

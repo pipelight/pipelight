@@ -20,7 +20,7 @@ const uploadPipeline: Pipeline = {
     {
       name: `update remote nginx configuration`,
       commands: [
-        `scp ./public/packages.pipelight.nginx.conf ${host}:/etc/nginx/sites-enabled/packages.pipelight.conf`,
+        `scp ./cicd/public/packages.pipelight.nginx.conf ${host}:/etc/nginx/sites-enabled/packages.pipelight.conf`,
         ...ssh(host, () => ["sudo nginx -t", "sudo systemctl restart nginx"]),
       ],
     },

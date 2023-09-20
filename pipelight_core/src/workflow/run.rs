@@ -2,8 +2,10 @@
 use crate::workflow::types::{
     Command, Duration, Event, Mode, Parallel, Pipeline, Step, StepOrParallel,
 };
-// Traits
-// use super::Getters;
+// Error Handling
+use crate::globals::LOGGER;
+use log::{error, info, warn};
+use miette::{Error, IntoDiagnostic, Result};
 
 use super::methods::std_duration_to_iso8601;
 
@@ -26,7 +28,7 @@ static mut PIPELINE: Lazy<Pipeline> = Lazy::new(Pipeline::new);
 
 impl Pipeline {
     /// Execute the pipeline
-    pub fn run(&mut self) {
+    pub fn run(&mut self) -> Result<()> {
         // Globals
         let ptr: *mut Pipeline;
         unsafe {
@@ -35,8 +37,8 @@ impl Pipeline {
         }
         // Guards
         unsafe {
-            if (*ptr).is_running() {
-                return;
+            if (*ptr).has_homologous_already_running().is_ok() {
+                return Ok(());
             }
             if (*ptr).triggers.is_some() {}
         }
@@ -139,6 +141,7 @@ impl Pipeline {
             let global_pipe = &mut (*ptr);
             *self = global_pipe.to_owned();
         }
+        Ok(())
     }
 }
 

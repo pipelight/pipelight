@@ -1,8 +1,9 @@
 // Enum workaround
 use strum::EnumIter;
 
-#[derive(Debug, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
+#[derive(Default, Debug, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
 pub enum FileType {
+    #[default]
     TypeScript,
     JavaScript,
     Toml,

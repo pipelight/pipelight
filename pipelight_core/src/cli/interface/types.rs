@@ -8,6 +8,9 @@ use std::io;
 pub use super::verbosity::external::Verbosity;
 pub use super::verbosity::internal::InternalVerbosity;
 
+// serde
+use serde::{Deserialize, Serialize};
+
 use clap::{builder::PossibleValue, Args, Command, FromArgMatches, Parser, Subcommand, ValueHint};
 use clap_complete::{generate, shells};
 
@@ -43,27 +46,29 @@ pub struct Cli {
 
 #[derive(Debug, Clone, Eq, PartialEq, Subcommand)]
 pub enum Commands {
-    /// Run a pipeline
+    /// Run a pipeline (interactive)
     Run(Pipeline),
-    /// Stop the pipeline execution (kill subprocess)
-    #[command(arg_required_else_help = true)]
+    /// Stop the pipeline execution and its every child processes
     Stop(Pipeline),
-    /// Display logs
+    /// Display pipelines logs
     Logs(Logs),
-    /// List pipelines
+    /// List available pipelines with a few more useful informations
     Ls(DisplayCommands),
-    /// List pipelines (intercative)
+    /// Displays pipelines with the maximum verbosity level (interactive)
     Inspect(DisplayCommands),
-    /// Manualy Triggers Pipelines
-    // #[command(hide = true)]
+    /// Manualy trigger pipelines
     Trigger(Trigger),
-    /// Launch a watcher on directory
-    // #[command(hide = true)]
+    /// Launch a watcher on the working directory
+    #[command(hide = true)]
     Watch(Watch),
-    /// Generate autocompletion script
+    /// Generate autocompletion script for most used shells (bash/zsh/fish)
+    #[command(hide = true)]
     Completion(Shell),
-    /// Create a pipeline template file
+    /// Create a `pipelight` config template file
     Init(Init),
+    /// Enable pipelight git hooks.
+    #[command(arg_required_else_help = true)]
+    Hooks(Toggle),
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
@@ -77,7 +82,21 @@ pub enum WatchCommands {
     Kill,
 }
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
-pub struct Init;
+pub struct Init {
+    /// The template style
+    pub template: Option<String>,
+    /// The output file path
+    pub file: Option<String>,
+}
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+pub struct Toggle {
+    /// Create git hooks
+    #[arg(long, exclusive = true)]
+    pub enable: bool,
+    /// Remove git hooks
+    #[arg(long, exclusive = true)]
+    pub disable: bool,
+}
 
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Pipeline {
@@ -91,7 +110,7 @@ pub struct Pipeline {
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Trigger {
     /// Manualy set a flag/action to bypass environment computation
-    #[arg(long)]
+    #[arg(long, ignore_case = true)]
     pub flag: Option<String>,
 }
 
@@ -116,7 +135,7 @@ pub struct DisplayCommands {
     pub json: bool,
 
     /// Ignore the environment and enforce/disable colored output
-    #[arg(long, default_missing_value = "always")]
+    #[arg(long)]
     pub color: Option<String>,
 }
 
@@ -126,15 +145,18 @@ pub enum LogsCommands {
     Rm,
 }
 
-#[derive(Debug, Clone, Eq, PartialEq)]
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum ColoredOutput {
     Always,
+    Auto,
     Never,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Shell {
     /// The shell name
+    #[arg(long, ignore_case = true)]
     pub name: String,
 }
 /// Build the cli
@@ -143,6 +165,15 @@ impl Cli {
         let mut cli = Command::new("pipelight");
         cli = Cli::augment_args(cli);
         cli = cli
+            .mut_subcommand("logs", |a| {
+                a.mut_arg("color", |e| {
+                    e.num_args(0..=1)
+                        .require_equals(true)
+                        .default_missing_value("always")
+                        .default_value("auto")
+                })
+            })
+            .mut_arg("config", |e| e.value_hint(ValueHint::FilePath))
             .mut_subcommand("completion", |a| {
                 a.mut_arg("name", |e| {
                     e.value_parser([
@@ -152,10 +183,6 @@ impl Cli {
                         PossibleValue::new("elvish"),
                     ])
                 })
-            })
-            .mut_arg("config", |e| e.value_hint(ValueHint::FilePath))
-            .mut_subcommand("logs", |a| {
-                a.mut_arg("color", |e| e.default_missing_value("always"))
             });
         Ok(cli)
     }

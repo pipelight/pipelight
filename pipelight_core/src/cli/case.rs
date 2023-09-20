@@ -4,6 +4,9 @@ use miette::{Error, Result};
 use crate::globals::LOGGER;
 use log::{error, info};
 
+// Git Hooks
+use utils::git::Hook;
+
 // Colors
 use crate::workflow::traits::display::set_override;
 
@@ -15,7 +18,7 @@ use clap::ValueEnum;
 // use std::str::FromStr;
 
 // Cli core types
-use crate::cli::interface::{Cli, ColoredOutput, Commands, LogsCommands, WatchCommands};
+use crate::cli::interface::{Cli, ColoredOutput, Commands, LogsCommands, Toggle, WatchCommands};
 
 // Cli core functions
 use crate::cli::actions::print;
@@ -25,8 +28,11 @@ use crate::cli::actions::stop;
 use crate::cli::actions::trigger;
 use crate::cli::actions::watch;
 
-use crate::globals::{set_globals, CLI};
+use crate::globals::{early_hydrate_logger, set_globals, CLI};
 use clap_complete::shells::Shell;
+
+// Template
+use templates::Template;
 
 impl Cli {
     /// Build and Launch the cli
@@ -36,13 +42,6 @@ impl Cli {
         unsafe {
             args = (*CLI).clone();
         };
-        // Set internal verbosity level
-        let verbosity = args.verbose.log_level_filter();
-        LOGGER.lock().unwrap().set_level(&verbosity)?;
-        // Set verbosity level
-        let verbosity = args.internal_verbose.log_level_filter();
-        LOGGER.lock().unwrap().set_internal_level(&verbosity)?;
-
         match args.commands {
             Commands::Ls(list) => {
                 // Set global config
@@ -99,12 +98,14 @@ impl Cli {
             }
             Commands::Stop(pipeline) => {
                 // Set global config
-                info!(
-                    "Stopping pipeline {:#?} with every attached and detached subprocess",
-                    pipeline.name
-                );
                 if pipeline.name.is_some() {
+                    info!(
+                        "Stopping pipeline {:#?} with every attached and detached subprocess",
+                        pipeline.name
+                    );
                     stop::stop(&pipeline.name.unwrap())?;
+                } else {
+                    prompt::stop_prompt()?;
                 }
             }
             Commands::Completion(shell) => {
@@ -115,8 +116,17 @@ impl Cli {
                     return Err(Error::msg("Couldn't determine shell"));
                 }
             }
-            Commands::Init(_) => {
+            Commands::Init(init) => {
                 // create file
+                Template::new(init.template, init.file)?.create()?;
+            }
+            Commands::Hooks(toggle) => {
+                if toggle.enable {
+                    Hook::enable()?;
+                }
+                if toggle.disable {
+                    Hook::disable()?;
+                }
             }
             Commands::Logs(logs) => {
                 // Set colors
@@ -124,6 +134,7 @@ impl Cli {
                     match ColoredOutput::from(&logs.display.color.unwrap()) {
                         ColoredOutput::Always => set_override(true),
                         ColoredOutput::Never => set_override(false),
+                        ColoredOutput::Auto => {}
                     }
                 }
 
@@ -142,9 +153,8 @@ impl Cli {
                         }
                     }
                     Some(logs_cmd) => match logs_cmd {
-                        LogsCommands::Rm => {
-                            LOGGER.lock().unwrap().clear()?;
-                        }
+                        // LogsCommands::Rm => Logs::clean(),
+                        _ => {}
                     },
                 };
             }

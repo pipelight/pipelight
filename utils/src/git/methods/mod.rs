@@ -6,7 +6,8 @@ use std::string::ToString;
 use strum::IntoEnumIterator;
 
 // Error Handling
-use miette::{IntoDiagnostic, Result};
+use log::info;
+use miette::{Error, IntoDiagnostic, Result};
 
 // File systeme crates
 use std::fs;
@@ -32,36 +33,51 @@ impl Git {
         self.repo.is_some()
     }
     /// Return actual attached branch
-    pub fn get_branch(&self) -> Result<Option<String>> {
+    pub fn get_branch(&self) -> Result<String> {
         // Only tested on attached HEAD
         // No edge case when head is a commit or else...
         let repo = self.repo.as_ref().unwrap();
         let head = repo.head().into_diagnostic()?;
-        let name = Some(head.shorthand().unwrap().to_owned());
+        let name = head.shorthand().unwrap().to_owned();
         Ok(name)
     }
     /// Return tag if its is latest commit
-    pub fn get_tag(&self) -> Result<Option<String>> {
+    pub fn get_tag(&self) -> Result<String> {
         let repo = self.repo.as_ref().unwrap();
         let head = repo.head().into_diagnostic()?;
-        let tag = if head.is_tag() {
-            Some(head.name().unwrap().to_string())
+        if head.is_tag() {
+            let tag = head.name().unwrap().to_string();
+            Ok(tag)
         } else {
-            None
-        };
-        Ok(tag)
+            Err(Error::msg("The current HEAD is not a tag"))
+        }
+    }
+    /// Return tag if its is latest commit
+    pub fn get_commit(&self) -> Result<String> {
+        let repo = self.repo.as_ref().unwrap();
+        let head = repo.head().into_diagnostic()?;
+        let commit_id = head.peel_to_commit().into_diagnostic()?.id().to_string();
+        Ok(commit_id)
     }
 }
 
 impl Hook {
-    /// Ensure .git/hook folder
+    /// Ensure .git/hooks folder
     pub fn enable() -> Result<()> {
+        info!("enabling git hooks.");
         for hook in Hook::iter() {
             if Git::new().repo.is_some() {
                 Hook::create_script(&hook)?;
                 Hook::create_subscripts_caller(&hook)?;
             }
         }
+        Ok(())
+    }
+    /// Remove .git/hooks folder
+    pub fn disable() -> Result<()> {
+        info!("disabling git hooks.");
+        let dir = Path::new(".git/hooks/");
+        fs::remove_dir_all(&dir).into_diagnostic()?;
         Ok(())
     }
     /// Create a hook that will call scrpts from a hook.d subfolder

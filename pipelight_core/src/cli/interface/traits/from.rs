@@ -5,24 +5,13 @@ use log::error;
 use std::process::exit;
 
 impl From<&String> for ColoredOutput {
-    fn from(action: &String) -> ColoredOutput {
-        let cased: &str = &action.to_case(Case::Kebab);
-        match cased {
-            "always" => ColoredOutput::Always,
-            "never" => ColoredOutput::Never,
-            _ => {
-                let message = "Couldn't convert arg to exploitable enum";
-                error!("{}", message);
-                exit(1);
-            }
-        }
+    fn from(option: &String) -> ColoredOutput {
+        let cased: &str = &option.to_case(Case::Kebab);
+        serde_plain::from_str(cased).unwrap()
     }
 }
 impl From<&ColoredOutput> for String {
-    fn from(action: &ColoredOutput) -> String {
-        match action {
-            ColoredOutput::Always => "always".to_owned(),
-            ColoredOutput::Never => "never".to_owned(),
-        }
+    fn from(option: &ColoredOutput) -> String {
+        serde_plain::to_string::<ColoredOutput>(option).unwrap()
     }
 }
