@@ -5,37 +5,13 @@ use log::{info, trace};
 use miette::{Error, IntoDiagnostic, Result};
 // File systeme crates
 use serde::{Deserialize, Serialize};
+use std::env;
 use std::fs;
 use std::io::Write;
 use std::path::Path;
 
+use crate::types::{Style, Template};
 use utils::files::FileType;
-
-#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
-#[serde(rename_all = "kebab-case")]
-pub enum Style {
-    #[default]
-    Objects,
-    Helpers,
-    Javascript,
-    Toml,
-    Yaml,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Template {
-    pub file_path: String,
-    pub style: Style,
-}
-
-impl Default for Template {
-    fn default() -> Self {
-        Template {
-            file_path: "pipelight.ts".to_owned(),
-            style: Style::default(),
-        }
-    }
-}
 
 impl Template {
     /**
@@ -54,15 +30,25 @@ impl Template {
             } else {
                 extension = String::from(&FileType::default());
             }
+            e.file_path = file;
         }
         if let Some(style) = style {
             let style = Style::from(&style);
             extension = String::from(&FileType::from(&style));
             e.style = style;
         }
+
+        // Generate file path
+        // Handle relative path
+        let cannonical;
+        if Path::new(&e.file_path).is_relative() {
+            cannonical = env::current_dir().unwrap().join(&e.file_path);
+        } else {
+        }
+
         e.file_path = format!(
             "{}/{}.{}",
-            &Path::new(&e.file_path).parent().unwrap().to_str().unwrap(),
+            &cannonical.parent().unwrap().to_str().unwrap(),
             &Path::new(&e.file_path)
                 .file_stem()
                 .unwrap()
@@ -75,6 +61,13 @@ impl Template {
     pub fn create(&self) -> Result<()> {
         let rendered = self.create_config_template()?;
         self.write_config_file(&rendered)?;
+        Ok(())
+    }
+    pub fn try_delete(&self) -> Result<()> {
+        let path = Path::new(&self.file_path)
+            .canonicalize()
+            .into_diagnostic()?;
+        _ = fs::remove_file(path).into_diagnostic().is_ok();
         Ok(())
     }
     fn create_config_template(&self) -> Result<String> {

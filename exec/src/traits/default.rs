@@ -27,7 +27,10 @@ impl Process {
 
 impl Default for Environment {
     fn default() -> Self {
-        let dir_path = ".pipelight/_internals/out";
+        let dir_path = format!(
+            "{}/.pipelight/_internals/out",
+            &env::current_dir().unwrap().to_str().unwrap()
+        );
         let path = Path::new(&dir_path);
         fs::create_dir_all(path).unwrap();
         Environment {

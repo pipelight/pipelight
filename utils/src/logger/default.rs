@@ -5,9 +5,8 @@ use super::{LogFile, LogInfo, Logger};
 use log::LevelFilter;
 
 // Absolute paths
-// use crate::git::Git;
-// use crate::teleport::Teleport;
 // use std::path::Path;
+use std::env;
 
 impl Default for Logger {
     fn default() -> Self {
@@ -40,14 +39,20 @@ impl Logger {
             internals: LogInfo {
                 file_info: Some(LogFile {
                     name: "_unlinked".to_owned(),
-                    directory: ".pipelight/_internals/logs".to_owned(),
+                    directory: format!(
+                        "{}/.pipelight/_internals/logs",
+                        &env::current_dir().unwrap().to_str().unwrap()
+                    ),
                 }),
                 ..self.internals.clone()
             },
             pipelines: LogInfo {
                 file_info: Some(LogFile {
                     name: "_unlinked".to_owned(),
-                    directory: ".pipelight/logs".to_owned(),
+                    directory: format!(
+                        "{}/.pipelight/logs",
+                        &env::current_dir().unwrap().to_str().unwrap()
+                    ),
                 }),
                 ..self.pipelines.clone()
             },
