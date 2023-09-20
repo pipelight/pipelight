@@ -1625,14 +1625,17 @@ dependencies = [
 name = "templates"
 version = "0.0.1"
 dependencies = [
+ "convert_case",
  "handlebars",
  "log",
  "miette",
  "serde",
  "serde_json",
+ "serde_plain",
  "serde_yaml 0.9.25",
  "thiserror",
  "toml",
+ "utils",
 ]
 
 [[package]]

@@ -31,6 +31,9 @@ use crate::cli::actions::watch;
 use crate::globals::{early_hydrate_logger, set_globals, CLI};
 use clap_complete::shells::Shell;
 
+// Template
+use templates::Template;
+
 impl Cli {
     /// Build and Launch the cli
     pub fn launch() -> Result<()> {
@@ -113,12 +116,11 @@ impl Cli {
                     return Err(Error::msg("Couldn't determine shell"));
                 }
             }
-            Commands::Init(_) => {
+            Commands::Init(init) => {
                 // create file
-                Hook::enable()?;
+                Template::new(init.template, init.file)?.create()?;
             }
             Commands::Hooks(toggle) => {
-                // create file
                 if toggle.enable {
                     Hook::enable()?;
                 }
