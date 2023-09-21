@@ -71,7 +71,6 @@ impl Pipeline {
                 .contains("pipelight")
             {
                 let name = sys.process(sysinfo_pid).unwrap().name();
-                println!("{:#?}", name);
                 return Ok(());
             }
         }
