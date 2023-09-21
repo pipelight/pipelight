@@ -11,7 +11,7 @@ use std::io::Write;
 use std::path::Path;
 
 use crate::types::{Style, Template};
-use utils::files::FileType;
+use utils::files::{is, FileType};
 
 impl Template {
     /**
@@ -22,6 +22,8 @@ impl Template {
         let mut e = Template::default();
         let mut extension = "ts".to_owned();
 
+        // If file defined, set the api style
+        // by looking up to the file extension
         if let Some(file) = file {
             let file_extension = &Path::new(&file).extension();
             if let Some(file_extension) = file_extension {
@@ -32,30 +34,23 @@ impl Template {
             }
             e.file_path = file;
         }
+        // If style defined, set the api style and modify file extension
         if let Some(style) = style {
             let style = Style::from(&style);
             extension = String::from(&FileType::from(&style));
             e.style = style;
         }
 
-        // Generate file path
-        // Handle relative path
-        let cannonical;
-        if Path::new(&e.file_path).is_relative() {
-            cannonical = env::current_dir().unwrap().join(&e.file_path);
-        } else {
+        // If the provided path is a filename
+        // Generate a file path exploitable by Handlebars
+        if is::is_filename(Path::new(&e.file_path)).is_ok() {
+            let absolute_path = format!(
+                "{}/{}",
+                env::current_dir().unwrap().to_str().unwrap(),
+                &e.file_path.clone()
+            );
+            e.file_path = absolute_path;
         }
-
-        e.file_path = format!(
-            "{}/{}.{}",
-            &cannonical.parent().unwrap().to_str().unwrap(),
-            &Path::new(&e.file_path)
-                .file_stem()
-                .unwrap()
-                .to_str()
-                .unwrap(),
-            &extension
-        );
         Ok(e)
     }
     pub fn create(&self) -> Result<()> {
@@ -70,7 +65,7 @@ impl Template {
         _ = fs::remove_file(path).into_diagnostic().is_ok();
         Ok(())
     }
-    fn create_config_template(&self) -> Result<String> {
+    pub fn create_config_template(&self) -> Result<String> {
         let style = &String::from(&self.style);
         let extension = &String::from(&FileType::from(&self.style));
         let mut handlebars = Handlebars::new();

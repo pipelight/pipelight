@@ -1,18 +1,32 @@
 #[cfg(test)]
 mod template {
     use crate::Template;
+    use std::env;
     use std::path::Path;
+
     pub fn get_test_dir() -> String {
+        // Test module dir
         let test_dir = Path::new(file!())
             .parent()
+            .unwrap()
+            .strip_prefix("templates")
             .unwrap()
             .to_str()
             .unwrap()
             .to_owned();
-        println!("test dir {}", test_dir);
+        println!("test_dir={:?}", test_dir);
+        // Test pwd
+        let pwd = env::current_dir().unwrap();
+        let pwd = pwd.to_str().unwrap();
+        println!("pwd={:?}", pwd);
+
         test_dir
     }
-
+    #[test]
+    fn handlebars_find_template_files() {
+        let res = Template::default().create_config_template();
+        assert!(res.is_ok())
+    }
     #[test]
     fn create_default_file() {
         let e = Template::new(
