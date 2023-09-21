@@ -104,10 +104,10 @@ pub struct Init {
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Toggle {
     /// Create git hooks
-    #[arg(long, exclusive = true)]
+    #[arg(long, conflicts_with = "disable")]
     pub enable: bool,
     /// Remove git hooks
-    #[arg(long, exclusive = true)]
+    #[arg(long, conflicts_with = "enable")]
     pub disable: bool,
 }
 
