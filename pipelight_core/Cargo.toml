@@ -30,6 +30,7 @@ dialoguer = "0.10.3"
 sysinfo = "0.28.1"
 assert_cmd = "2.0.11"
 serde_plain = "1.0.2"
+clap_mangen = "0.2.14"
 
 [build-dependencies]
 exec = {path = "../exec" }

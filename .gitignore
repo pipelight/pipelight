@@ -1,3 +1,9 @@
-/target
+# Pipelight internal api folder
 .pipelight
-/packages/*
+
+# Test artifacts
+test/*pipelight*
+
+# Build directories
+/packages
+/target

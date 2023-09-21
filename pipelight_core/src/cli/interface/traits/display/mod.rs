@@ -2,8 +2,8 @@
 mod test;
 
 use crate::cli::interface::{
-    Cli, Commands, DisplayCommands, Init, InternalVerbosity, Logs, LogsCommands, Pipeline, Shell,
-    Toggle, Trigger, Verbosity,
+    Cli, Commands, DisplayCommands, Init, InternalVerbosity, Logs, LogsCommands, Pipeline,
+    PostCommands, PreCommands, Shell, Toggle, Trigger, Verbosity,
 };
 
 use log::LevelFilter;
@@ -150,16 +150,20 @@ fn from_verbosity_to_string(e: Verbosity) -> String {
 impl fmt::Display for Commands {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let string = match self {
-            Commands::Run(pipeline) => format!("run{}", pipeline),
-            Commands::Stop(pipeline) => format!("stop{}", pipeline),
-            Commands::Trigger(trigger) => format!("trigger{}", trigger),
-            Commands::Logs(logs) => format!("logs{}", logs),
-            Commands::Inspect(pipeline) => format!("inspect{}", pipeline),
-            Commands::Ls(list) => format!("ls{}", list),
-            Commands::Watch(_) => "watch".to_owned(),
-            Commands::Init(_) => "init".to_owned(),
-            Commands::Hooks(toggle) => format!("hooks{}", toggle),
-            Commands::Completion(shell) => format!("completion{}", shell),
+            Commands::PreCommands(pre_commands) => match pre_commands {
+                PreCommands::Init(_) => "init".to_owned(),
+                PreCommands::Hooks(toggle) => format!("hooks{}", toggle),
+                PreCommands::Completion(shell) => format!("completion{}", shell),
+            },
+            Commands::PostCommands(post_commands) => match post_commands {
+                PostCommands::Run(pipeline) => format!("run{}", pipeline),
+                PostCommands::Stop(pipeline) => format!("stop{}", pipeline),
+                PostCommands::Trigger(trigger) => format!("trigger{}", trigger),
+                PostCommands::Logs(logs) => format!("logs{}", logs),
+                PostCommands::Inspect(pipeline) => format!("inspect{}", pipeline),
+                PostCommands::Ls(list) => format!("ls{}", list),
+                PostCommands::Watch(_) => "watch".to_owned(),
+            },
         };
         write!(f, "{}", string)
     }

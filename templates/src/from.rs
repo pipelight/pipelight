@@ -5,12 +5,18 @@ use utils::files::FileType;
 impl From<&String> for Style {
     fn from(e: &String) -> Self {
         let e: &String = &e.to_case(Case::Kebab);
-        serde_plain::from_str(e).unwrap()
+        match serde_plain::from_str(e) {
+            Ok(res) => res,
+            Err(_) => Style::default(),
+        }
     }
 }
 impl From<&Style> for String {
     fn from(e: &Style) -> Self {
-        serde_plain::to_string::<Style>(e).unwrap()
+        match serde_plain::to_string::<Style>(e) {
+            Ok(res) => res,
+            Err(_) => "objects".to_owned(),
+        }
     }
 }
 

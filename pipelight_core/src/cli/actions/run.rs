@@ -5,6 +5,7 @@ use exec::Status;
 use utils::git::Flag;
 
 use crate::cli::interface::types;
+use crate::cli::interface::{Commands, PostCommands};
 
 // Logger
 use log::{info, trace};
@@ -30,16 +31,16 @@ pub fn launch(pipeline_name: String, attach: bool, flag: Option<String>) -> Resu
     }
 
     // Set the detach command subcommand in case of pipeline name is prompted
-    let subcommand = types::Commands::Run(types::Pipeline {
+    let subcommand = Commands::PostCommands(PostCommands::Run(types::Pipeline {
         name: Some(pipeline_name.clone()),
         trigger: match args.commands {
-            types::Commands::Run(res) => res.trigger,
-            types::Commands::Trigger(res) => res,
+            Commands::PostCommands(PostCommands::Run(res)) => res.trigger,
+            Commands::PostCommands(PostCommands::Trigger(res)) => res,
             _ => types::Trigger {
                 flag: Some("manual".to_owned()),
             },
         },
-    });
+    }));
 
     // Ensure
     // Check if pipeline exists and give hints

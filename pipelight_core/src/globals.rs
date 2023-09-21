@@ -111,3 +111,14 @@ pub fn set_globals() -> Result<()> {
     }
     Ok(())
 }
+pub fn set_early_globals() -> Result<()> {
+    trace!("Set early globals");
+    let cond;
+    unsafe { cond = *CONFIG == Config::default() && *PORTAL == Portal::default() };
+    if cond {
+        // hydrate the CLI global var
+        hydrate_cli()?;
+        early_hydrate_logger()?;
+    }
+    Ok(())
+}
