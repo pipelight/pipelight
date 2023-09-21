@@ -35,7 +35,7 @@ mod template {
         )
         .unwrap();
         println!("{:?}", e);
-        e.create().unwrap();
+        assert!(e.create().is_ok());
     }
     #[test]
     fn create_helpers_api_file() {
@@ -45,6 +45,44 @@ mod template {
         )
         .unwrap();
         println!("{:?}", e);
-        e.create().unwrap();
+        assert!(e.create().is_ok());
+    }
+    #[test]
+    fn create_toml_file() {
+        let e = Template::new(
+            Some("toml".to_owned()),
+            Some(format!("{}/toml.pipelight.toml", get_test_dir())),
+        )
+        .unwrap();
+        println!("{:?}", e);
+        assert!(e.create().is_ok());
+    }
+    #[test]
+    fn create_yaml_file() {
+        let e = Template::new(
+            Some("yaml".to_owned()),
+            Some(format!("{}/yaml.pipelight.yaml", get_test_dir())),
+        )
+        .unwrap();
+        println!("{:?}", e);
+        assert!(e.create().is_ok());
+    }
+    #[test]
+    fn create_with_wrong_file_extension() {
+        let e = Template::new(None, Some(format!("{}/pipelight.fail", get_test_dir()))).unwrap();
+        println!("{:?}", e);
+        assert!(e.create().is_ok());
+    }
+    #[test]
+    fn create_with_default_params() {
+        let e = Template::new(None, None);
+        println!("{:?}", e);
+        assert!(e.is_ok());
+    }
+    #[test]
+    fn create_with_style_only() {
+        let e = Template::new(Some("helpers".to_owned()), None);
+        println!("{:?}", e);
+        assert!(e.is_ok());
     }
 }

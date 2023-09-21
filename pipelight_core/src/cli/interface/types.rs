@@ -46,6 +46,25 @@ pub struct Cli {
 
 #[derive(Debug, Clone, Eq, PartialEq, Subcommand)]
 pub enum Commands {
+    #[clap(flatten)]
+    PreCommands(PreCommands),
+    #[clap(flatten)]
+    PostCommands(PostCommands),
+}
+#[derive(Debug, Clone, Eq, PartialEq, Subcommand)]
+pub enum PreCommands {
+    /// Generate autocompletion script for most used shells (bash/zsh/fish)
+    #[command(hide = true)]
+    Completion(Shell),
+    /// Create a `pipelight` config template file
+    Init(Init),
+    /// Enable pipelight git hooks.
+    #[command(arg_required_else_help = true)]
+    Hooks(Toggle),
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Subcommand)]
+pub enum PostCommands {
     /// Run a pipeline (interactive)
     Run(Pipeline),
     /// Stop the pipeline execution and its every child processes
@@ -61,14 +80,6 @@ pub enum Commands {
     /// Launch a watcher on the working directory
     #[command(hide = true)]
     Watch(Watch),
-    /// Generate autocompletion script for most used shells (bash/zsh/fish)
-    #[command(hide = true)]
-    Completion(Shell),
-    /// Create a `pipelight` config template file
-    Init(Init),
-    /// Enable pipelight git hooks.
-    #[command(arg_required_else_help = true)]
-    Hooks(Toggle),
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
@@ -84,8 +95,10 @@ pub enum WatchCommands {
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Init {
     /// The template style
+    #[arg(long)]
     pub template: Option<String>,
     /// The output file path
+    #[arg(long)]
     pub file: Option<String>,
 }
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]

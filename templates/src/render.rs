@@ -41,6 +41,23 @@ impl Template {
             e.style = style;
         }
 
+        // Set the appropriate file extension
+        e.file_path = Path::new(&e.file_path)
+            .parent()
+            .unwrap()
+            .join(format!(
+                "{}.{}",
+                &Path::new(&e.file_path)
+                    .file_stem()
+                    .unwrap()
+                    .to_str()
+                    .unwrap(),
+                &extension
+            ))
+            .to_str()
+            .unwrap()
+            .to_owned();
+
         // If the provided path is a filename
         // Generate a file path exploitable by Handlebars
         if is::is_filename(Path::new(&e.file_path)).is_ok() {

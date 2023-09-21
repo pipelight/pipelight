@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod display {
     use crate::cli::interface::{
-        Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, Trigger,
+        Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, PostCommands, Trigger,
     };
     use crate::cli::interface::{InternalVerbosity, Verbosity};
 
@@ -11,12 +11,12 @@ mod display {
     fn pipeline_args() {
         // Define a cli struct
         let cli = Cli {
-            commands: Commands::Run(Pipeline {
+            commands: Commands::PostCommands(PostCommands::Run(Pipeline {
                 name: Some("test".to_owned()),
                 trigger: Trigger {
                     flag: Some("pre-push".to_owned()),
                 },
-            }),
+            })),
             attach: false,
             raw: None,
             config: None,
@@ -32,14 +32,14 @@ mod display {
     fn logs_args() {
         // Define a cli struct
         let cli = Cli {
-            commands: Commands::Logs(Logs {
+            commands: Commands::PostCommands(PostCommands::Logs(Logs {
                 commands: Some(LogsCommands::Rm),
                 display: DisplayCommands {
                     json: false,
                     name: None,
                     color: None,
                 },
-            }),
+            })),
             attach: false,
             raw: None,
             config: None,
@@ -54,11 +54,11 @@ mod display {
     fn internal_verbosity() {
         // Define a cli struct
         let cli = Cli {
-            commands: Commands::Ls(DisplayCommands {
+            commands: Commands::PostCommands(PostCommands::Ls(DisplayCommands {
                 json: false,
                 name: None,
                 color: None,
-            }),
+            })),
             attach: false,
             raw: None,
             config: None,
@@ -74,11 +74,11 @@ mod display {
     fn verbosity() {
         // Define a cli struct
         let cli = Cli {
-            commands: Commands::Ls(DisplayCommands {
+            commands: Commands::PostCommands(PostCommands::Ls(DisplayCommands {
                 json: false,
                 name: None,
                 color: None,
-            }),
+            })),
             attach: false,
             raw: None,
             config: None,
@@ -94,11 +94,11 @@ mod display {
     fn config_file() {
         // Define a cli struct
         let cli = Cli {
-            commands: Commands::Ls(DisplayCommands {
+            commands: Commands::PostCommands(PostCommands::Ls(DisplayCommands {
                 json: false,
                 name: None,
                 color: None,
-            }),
+            })),
             attach: false,
             raw: None,
             config: Some("test.pipelight.ts".to_owned()),
@@ -114,11 +114,11 @@ mod display {
     fn deno_args() {
         // Define a cli struct
         let cli = Cli {
-            commands: Commands::Ls(DisplayCommands {
+            commands: Commands::PostCommands(PostCommands::Ls(DisplayCommands {
                 json: false,
                 name: None,
                 color: None,
-            }),
+            })),
             attach: false,
             raw: Some(vec!["--host".to_owned(), "linode".to_owned()]),
             config: None,

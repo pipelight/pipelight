@@ -6,6 +6,7 @@ use std::thread;
 use utils::git::{Flag, Special};
 
 use crate::cli::interface::types;
+use crate::cli::interface::types::{Commands, PostCommands};
 
 // sys
 use clap::Parser;
@@ -60,9 +61,9 @@ pub fn watch() -> Result<()> {
         args = (*CLI).clone();
     }
     args.attach = true;
-    args.commands = types::Commands::Trigger(types::Trigger {
+    args.commands = Commands::PostCommands(PostCommands::Trigger(types::Trigger {
         flag: Some(String::from(&env.action.unwrap())),
-    });
+    }));
 
     #[cfg(debug_assertions)]
     let action = format!("cargo run --bin {} {}", &bin, &args);
@@ -89,7 +90,7 @@ pub fn can_watch() -> Result<()> {
         let parsed_cmd = types::Cli::try_parse_from(process.cmd());
         if parsed_cmd.is_ok()
             && parsed_cmd.into_diagnostic()?.commands
-                == types::Commands::Watch(types::Watch { commands: None })
+                == Commands::PostCommands(PostCommands::Watch(types::Watch { commands: None }))
             && process.cwd() == env::current_dir().into_diagnostic()?
             && pid != &get_current_pid().unwrap()
         {
@@ -102,7 +103,7 @@ pub fn can_watch() -> Result<()> {
 }
 /// Filter pipeline by trigger and run
 pub fn create_watcher() -> Result<()> {
-    let subcommand = types::Commands::Watch(types::Watch { commands: None });
+    let subcommand = Commands::PostCommands(PostCommands::Watch(types::Watch { commands: None }));
     if can_watch().is_ok() {
         detach(Some(subcommand))?;
     }
@@ -116,7 +117,7 @@ pub fn destroy_watcher() -> Result<()> {
         let parsed_cmd = types::Cli::try_parse_from(process.cmd());
         if parsed_cmd.is_ok()
             && parsed_cmd.into_diagnostic()?.commands
-                == types::Commands::Watch(types::Watch { commands: None })
+                == Commands::PostCommands(PostCommands::Watch(types::Watch { commands: None }))
             && process.cwd() == env::current_dir().into_diagnostic()?
             && pid != &get_current_pid().unwrap()
         {

@@ -16,8 +16,9 @@ impl From<&String> for FileType {
             "js" => FileType::JavaScript,
             _ => {
                 let message = format!("Couldn't parse file with extension .{}", extension);
+                let hint = format!("Assuming default typescript file");
                 error!("{}", message);
-                exit(1);
+                return FileType::TypeScript;
             }
         }
     }
