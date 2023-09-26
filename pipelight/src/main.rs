@@ -1,9 +1,9 @@
-#![allow(unused_variables)]
+// #![allow(unused_variables)]
 // #![allow(unused_imports)]
 // #![allow(dead_code)]
-#![allow(unused_must_use)]
+// #![allow(unused_must_use)]
 
-use pipelight_core::cli::Cli;
+use cli::Cli;
 
 // Error Handling
 use log::trace;

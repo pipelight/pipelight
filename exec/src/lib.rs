@@ -4,10 +4,12 @@
 #![allow(unused_must_use)]
 
 // Internal Imports
-mod subprocess;
+mod globals;
+mod io;
+mod processes;
 mod traits;
 mod types;
 
 // Re-export
 pub use traits::Statuable;
-pub use types::{Environment, Process, State, Status};
+pub use types::{Io, Process, State, Status};

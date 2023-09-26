@@ -5,7 +5,8 @@ members=[
   "exec",
   "cast",
   "templates",
-  "pipelight_core",
+  "workflow",
+  "cli",
   "pipelight",
 ]
 

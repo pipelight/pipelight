@@ -59,14 +59,14 @@ impl Logger {
         if let Some(file_info) = file_info {
             let dir = file_info.directory.clone();
             fs::remove_dir_all(&dir).into_diagnostic()?;
-            let message = format!("Soft deleted log directory: {}", dir);
+            let message = format!("Hard deleted log directory: {}", dir);
             trace!("{}", message);
         };
         let file_info = &self.pipelines.file_info;
         if let Some(file_info) = file_info {
             let dir = file_info.directory.clone();
             fs::remove_dir_all(&dir).into_diagnostic()?;
-            let message = format!("Soft deleted internal log directory: {}", dir);
+            let message = format!("Hard deleted internal log directory: {}", dir);
             trace!("{}", message);
         };
         Ok(())
