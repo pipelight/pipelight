@@ -1,19 +1,15 @@
 // Types
 use crate::types::{Pipeline, StepOrParallel};
-
 // Traits
-
 use exec::{Statuable, Status};
-
 // Error Handling
-use crate::globals::LOGGER;
-
 use log::error;
 use miette::{IntoDiagnostic, Result};
-
 //sys
 use rustix::process::{kill_process_group, Signal};
-use sysinfo::{ProcessExt, SystemExt};
+
+// Globals
+use crate::globals::LOGGER;
 
 pub mod filters;
 pub mod getters;
@@ -24,6 +20,7 @@ pub mod run;
 impl Pipeline {
     /** Print the pipeline status as JSON inside a log file. */
     pub fn log(&self) {
+        LOGGER.lock().unwrap().to_file();
         LOGGER.lock().unwrap().set_file(&self.uuid);
         let json = serde_json::to_string(&self).unwrap();
         error!(target: "pipelines_to_file","{}", json);
@@ -37,7 +34,7 @@ impl Pipeline {
                 StepOrParallel::Step(step) => {
                     for command in &mut step.commands {
                         if command.get_status() == Some(Status::Running) {
-                            let _ = command.process.read()?;
+                            let _ = command.process.io.read()?;
                         }
                     }
                 }
@@ -45,7 +42,7 @@ impl Pipeline {
                     for step in &mut parallel.steps {
                         for command in &mut step.commands {
                             if command.get_status() == Some(Status::Running) {
-                                let _ = command.process.read()?;
+                                let _ = command.process.io.read()?;
                             }
                         }
                     }

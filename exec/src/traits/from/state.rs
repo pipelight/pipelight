@@ -37,15 +37,11 @@ impl From<&Status> for String {
     }
 }
 
-impl From<&Output> for State {
-    fn from(output: &Output) -> State {
-        let status = match output.status.success() {
-            true => Some(Status::Succeeded),
-            false => Some(Status::Failed),
-        };
-        State {
-            status,
-            duration: None,
+impl From<&Output> for Status {
+    fn from(output: &Output) -> Status {
+        match output.status.success() {
+            true => Status::Succeeded,
+            false => Status::Failed,
         }
     }
 }

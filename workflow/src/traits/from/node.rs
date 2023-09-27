@@ -12,7 +12,6 @@ use colored::Colorize;
 
 // Duration
 use chrono::{DateTime, Local};
-use utils::dates::{compute_duration, std_duration_to_iso8601};
 
 impl From<&Event> for String {
     fn from(e: &Event) -> String {
@@ -73,15 +72,9 @@ impl From<&Pipeline> for Node {
 
         // Duration
         // If pipeline is_running
-        let mut computed_duration: Option<String> = None;
+        let mut duration: Option<String> = None;
         if e.duration.is_some() {
-            if e.duration.clone().unwrap().computed.is_none() {
-                computed_duration =
-                    std_duration_to_iso8601(compute_duration(e.duration.clone().unwrap()).unwrap())
-                        .ok();
-            } else {
-                computed_duration = e.duration.clone().unwrap().computed;
-            }
+            duration = Some(String::from(e.duration.as_ref().unwrap()));
         }
         // Fallback
         if e.fallback.is_some() {
@@ -120,7 +113,7 @@ impl From<&Pipeline> for Node {
         Node {
             value: Some(head),
             status: e.status.clone(),
-            duration: computed_duration,
+            duration,
             children: Some(children),
             ..Node::default()
         }
@@ -139,15 +132,9 @@ impl From<&Parallel> for Node {
         let mut children: Vec<Node> = e.steps.iter().map(Node::from).collect();
 
         // Duration
-        let mut computed_duration: Option<String> = None;
+        let mut duration: Option<String> = None;
         if e.duration.is_some() {
-            if e.duration.clone().unwrap().computed.is_none() {
-                computed_duration =
-                    std_duration_to_iso8601(compute_duration(e.duration.clone().unwrap()).unwrap())
-                        .ok();
-            } else {
-                computed_duration = e.duration.clone().unwrap().computed;
-            }
+            duration = Some(String::from(e.duration.as_ref().unwrap()));
         }
 
         // Fallback
@@ -187,7 +174,7 @@ impl From<&Parallel> for Node {
         Node {
             value: Some("parallel".to_owned()),
             status: e.status.clone(),
-            duration: computed_duration,
+            duration,
             children: Some(children),
             level: LevelFilter::Warn,
         }
@@ -199,15 +186,9 @@ impl From<&Step> for Node {
         let mut children: Vec<Node> = e.commands.iter().map(Node::from).collect();
 
         // Duration
-        let mut computed_duration: Option<String> = None;
+        let mut duration: Option<String> = None;
         if e.duration.is_some() {
-            if e.duration.clone().unwrap().computed.is_none() {
-                computed_duration =
-                    std_duration_to_iso8601(compute_duration(e.duration.clone().unwrap()).unwrap())
-                        .ok();
-            } else {
-                computed_duration = e.duration.clone().unwrap().computed;
-            }
+            duration = Some(String::from(e.duration.as_ref().unwrap()));
         }
 
         // Fallback
@@ -247,7 +228,7 @@ impl From<&Step> for Node {
         Node {
             value: Some(head),
             status: e.status.clone(),
-            duration: computed_duration,
+            duration,
             children: Some(children),
             level: LevelFilter::Warn,
         }
@@ -257,29 +238,23 @@ impl From<&Step> for Node {
 impl From<&Command> for Node {
     fn from(e: &Command) -> Self {
         // Duration
-        let mut computed_duration: Option<String> = None;
+        let mut duration: Option<String> = None;
         if e.duration.is_some() {
-            if e.duration.clone().unwrap().computed.is_none() {
-                computed_duration =
-                    std_duration_to_iso8601(compute_duration(e.duration.clone().unwrap()).unwrap())
-                        .ok();
-            } else {
-                computed_duration = e.duration.clone().unwrap().computed;
-            }
+            duration = Some(String::from(e.duration.as_ref().unwrap()));
         }
         let mut node = Node {
             level: LevelFilter::Info,
-            duration: computed_duration,
+            duration,
             ..Node::default()
         };
         // Convert command output as child node
-        if e.process.state.stdout.is_some() | e.process.state.stderr.is_some() {
-            let stdout = format!("stdout: {}", e.process.state.stdout.clone().unwrap());
-            let stderr = format!("stderr: {}", e.process.state.stderr.clone().unwrap());
+        if e.process.io.stdout.is_some() | e.process.io.stderr.is_some() {
+            let stdout = format!("stdout: {}", e.process.io.stdout.clone().unwrap());
+            let stderr = format!("stderr: {}", e.process.io.stderr.clone().unwrap());
 
             let out = match e.get_status() {
-                Some(Status::Succeeded) => e.process.state.stdout.clone(),
-                Some(Status::Failed) => e.process.state.stderr.clone(),
+                Some(Status::Succeeded) => e.process.io.stdout.clone(),
+                Some(Status::Failed) => e.process.io.stderr.clone(),
                 Some(Status::Started) => None,
                 Some(Status::Aborted) => None,
                 Some(Status::Running) => None,
@@ -312,7 +287,7 @@ impl From<&Command> for Node {
                 node.children = Some(vec![stdout, stderr]);
             }
         }
-        node.value = e.process.state.stdin.clone();
+        node.value = e.process.io.stdin.clone();
         node.status = e.get_status();
         node
     }

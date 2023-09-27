@@ -1,9 +1,6 @@
 // Types
 use crate::types::Node;
 
-// Date convertion utilities
-use utils::dates::iso8601_to_std_duration;
-
 // Caracteres
 use super::characters::Characters;
 
@@ -68,11 +65,7 @@ impl Node {
             if self.duration.is_some()
                 && LOGGER.lock().unwrap().pipelines.level >= LevelFilter::Error
             {
-                let duration = format_duration(
-                    iso8601_to_std_duration(self.duration.clone().unwrap()).unwrap(),
-                )
-                .unwrap();
-                let pretty = format!(" ({})", duration);
+                let pretty = format!(" ({})", self.duration.as_ref().unwrap());
                 value.push_str(&format!("{}", pretty.white()));
             }
             if self.level <= LevelFilter::Error {

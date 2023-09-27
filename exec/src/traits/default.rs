@@ -20,7 +20,9 @@ impl Process {
             state: State::default(),
         }
     }
-    pub fn default() -> Process {
+}
+impl Default for Process {
+    fn default() -> Process {
         let uuid = Some(Uuid::new_v4());
         Process {
             uuid,

@@ -19,7 +19,7 @@ pub enum Status {
     Aborted,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Process {
     pub uuid: Option<Uuid>,
     pub pid: Option<u32>,
@@ -27,7 +27,7 @@ pub struct Process {
     pub io: Io,
 }
 
-#[derive(Default, Debug, Serialize, Deserialize, Clone)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct State {
     pub duration: Option<Duration>,
     pub status: Option<Status>,
@@ -36,7 +36,7 @@ pub struct State {
 /**
 Process input/outputs
 */
-#[derive(Default, Debug, Serialize, Deserialize, Clone)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Io {
     pub uuid: Option<Uuid>,
     pub stdin: Option<String>,

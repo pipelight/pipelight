@@ -1,23 +1,16 @@
 // Types
-use crate::types::{Command, Duration, Event, Mode, Parallel, Pipeline, Step, StepOrParallel};
+use crate::types::{Command, Event, Mode, Parallel, Pipeline, Step, StepOrParallel};
+use utils::dates::Duration;
 // Error Handling
 use miette::Result;
-
-use utils::dates::std_duration_to_iso8601;
-
+// Traits
 use exec::{Statuable, Status};
-use std::clone::Clone;
-
 // Global var
 use once_cell::sync::Lazy;
-
 // Parallelism
 use rayon::prelude::*;
-
-// Duration
-// use chrono::Duration;
-use chrono::Local;
-use std::time::Instant;
+// Tests
+mod test;
 
 // Global var
 static mut PIPELINE: Lazy<Pipeline> = Lazy::new(Pipeline::new);
@@ -40,13 +33,10 @@ impl Pipeline {
         }
 
         // Duration
-        let start = Instant::now();
-        let now = Local::now();
+        let mut d = Duration::default();
+        d.start();
         unsafe {
-            (*ptr).duration = Some(Duration {
-                started_at: Some(now.to_string()),
-                computed: None,
-            });
+            (*ptr).duration = Some(d.clone());
         }
 
         // Event
@@ -75,12 +65,9 @@ impl Pipeline {
         }
 
         // Duration
-        let duration = start.elapsed();
+        d.stop();
         unsafe {
-            (*ptr).duration = Some(Duration {
-                started_at: Some(now.to_string()),
-                computed: std_duration_to_iso8601(duration).ok(),
-            });
+            (*ptr).duration = Some(d.clone());
         }
 
         // Set pipeline status to last Step status
@@ -125,11 +112,8 @@ impl Pipeline {
                     }
                 }
                 // Duration
-                let duration = start.elapsed();
-                (*ptr).duration = Some(Duration {
-                    started_at: Some(now.to_string()),
-                    computed: std_duration_to_iso8601(duration).ok(),
-                });
+                d.stop();
+                (*ptr).duration = Some(d);
                 (*ptr).log();
             }
         }
@@ -153,12 +137,9 @@ impl StepOrParallel {
 impl Parallel {
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
-        let start = Instant::now();
-        let now = Local::now();
-        self.duration = Some(Duration {
-            started_at: Some(now.to_string()),
-            computed: None,
-        });
+        let mut d = Duration::default();
+        d.start();
+        self.duration = Some(d.clone());
 
         self.set_status(Some(Status::Running));
 
@@ -182,12 +163,10 @@ impl Parallel {
         } else {
             self.set_status(Some(Status::Succeeded));
         }
+
         // Duration
-        let duration = start.elapsed();
-        self.duration = Some(Duration {
-            started_at: Some(now.to_string()),
-            computed: std_duration_to_iso8601(duration).ok(),
-        });
+        d.stop();
+        self.duration = Some(d);
 
         unsafe {
             (*ptr).log();
@@ -206,12 +185,9 @@ impl Step {
     }
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
-        let start = Instant::now();
-        let now = Local::now();
-        self.duration = Some(Duration {
-            started_at: Some(now.to_string()),
-            computed: None,
-        });
+        let mut d = Duration::default();
+        d.start();
+        self.duration = Some(d.clone());
 
         self.set_status(Some(Status::Running));
 
@@ -235,11 +211,8 @@ impl Step {
         }
 
         // Duration
-        let duration = start.elapsed();
-        self.duration = Some(Duration {
-            started_at: Some(now.to_string()),
-            computed: std_duration_to_iso8601(duration).ok(),
-        });
+        d.stop();
+        self.duration = Some(d);
 
         unsafe {
             (*ptr).log();
@@ -272,12 +245,9 @@ impl Step {
 impl Command {
     fn run(&mut self, ptr: *mut Pipeline) {
         // Duration
-        let start = Instant::now();
-        let now = Local::now();
-        self.duration = Some(Duration {
-            started_at: Some(now.to_string()),
-            computed: None,
-        });
+        let mut d = Duration::default();
+        d.start();
+        self.duration = Some(d.clone());
 
         self.set_status(Some(Status::Running));
         unsafe {
@@ -285,7 +255,7 @@ impl Command {
         }
 
         // Run process
-        let res = self.process.run();
+        let res = self.process.run_fs();
         let _ = match res {
             Ok(_) => Ok(()),
             Err(e) => {
@@ -295,11 +265,8 @@ impl Command {
         };
 
         // Duration
-        let duration = start.elapsed();
-        self.duration = Some(Duration {
-            started_at: Some(now.to_string()),
-            computed: std_duration_to_iso8601(duration).ok(),
-        });
+        d.stop();
+        self.duration = Some(d);
 
         unsafe {
             (*ptr).log();
