@@ -3,9 +3,6 @@ pub mod display;
 mod from;
 mod getters;
 mod statuable;
-
-// Tests
-mod test;
-
+// Re-export
+pub use exec::Statuable;
 pub use getters::Getters;
-// pub use statuable::Statuable;

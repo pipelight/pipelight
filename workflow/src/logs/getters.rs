@@ -1,5 +1,5 @@
 // use crate::globals::PORTAL;
-use crate::methods::pipeline::filters::Filters;
+use crate::pipeline::Filters;
 use crate::traits::Getters;
 use crate::types::{Logs, Pipeline};
 use cast;
@@ -103,45 +103,6 @@ impl Logs {
             Ok(pipelines)
         } else {
             let message = format!("Couldn't find a pipeline named {:?}, in logs", name);
-            Err(Error::msg(message))
-        }
-    }
-    pub fn _get_many_by_sid(sid: &u32) -> Result<Vec<Pipeline>> {
-        let pipelines = Logs::get()?;
-        let mut pipelines = pipelines
-            .iter()
-            .filter(|p| {
-                if p.event.clone().unwrap().sid.is_some() {
-                    let p_sid = p.event.clone().unwrap().sid.unwrap();
-                    &p_sid == sid
-                } else {
-                    false
-                }
-            })
-            .cloned()
-            .collect::<Vec<Pipeline>>();
-        if !pipelines.is_empty() {
-            pipelines.sort_by(|a, b| {
-                let a_date = a
-                    .clone()
-                    .event
-                    .unwrap()
-                    .date
-                    .parse::<DateTime<Local>>()
-                    .unwrap();
-
-                let b_date = &b
-                    .clone()
-                    .event
-                    .unwrap()
-                    .date
-                    .parse::<DateTime<Local>>()
-                    .unwrap();
-                a_date.cmp(b_date)
-            });
-            Ok(pipelines)
-        } else {
-            let message = format!("Couldn't find a pipeline with sid {:?}, in logs", sid);
             Err(Error::msg(message))
         }
     }

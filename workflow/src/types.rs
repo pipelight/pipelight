@@ -1,21 +1,13 @@
-// Struct for pipeline execution loggin.
-// Pipeline is parsed as json into a log file
-
 // Standard libs
 use log::LevelFilter;
 use serde::{Deserialize, Serialize};
-use std::clone::Clone;
 pub use utils::dates::Duration;
 use uuid::Uuid;
 
-// Divers methods
-// use super::methods;
-
-// External imports
-use exec::{Process, Status};
-use utils::git::Flag;
-
-// Enum workaround
+// Re-exports imports
+pub use exec::{Process, Status};
+pub use utils::git::Flag;
+// Traits - Enum workaround
 use strum::EnumIter;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]

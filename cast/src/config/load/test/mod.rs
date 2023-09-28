@@ -1,3 +1,6 @@
+// Serde conversion test
+mod conversion;
+
 #[cfg(test)]
 mod cast {
     use crate::{Config, Logs};

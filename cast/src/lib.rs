@@ -8,7 +8,6 @@
 mod config;
 mod error;
 mod logs;
-mod test;
 
 // Re-export
 pub use config::types::*;

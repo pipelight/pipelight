@@ -1,22 +1,13 @@
-// Types
+// Structs
 use crate::types::{Pipeline, StepOrParallel};
 // Traits
 use exec::{Statuable, Status};
-// Error Handling
-use log::error;
-use miette::{IntoDiagnostic, Result};
-//sys
-use rustix::process::{kill_process_group, Signal};
-
 // Globals
 use crate::globals::LOGGER;
+// Error Handling
+use log::error;
+use miette::Result;
 
-pub mod filters;
-pub mod getters;
-pub mod is;
-pub mod run;
-
-// Modifiers
 impl Pipeline {
     /** Print the pipeline status as JSON inside a log file. */
     pub fn log(&self) {
@@ -48,23 +39,6 @@ impl Pipeline {
                     }
                 }
             }
-        }
-        Ok(())
-    }
-    /**
-    Abort process execution
-    Kil the process group
-    */
-    pub fn stop(&mut self) -> Result<()> {
-        if self.event.is_some() && self.status == Some(Status::Running) {
-            let _pid = self.clone().event.unwrap().pid.unwrap();
-            unsafe {
-                let pgid_raw = self.event.clone().unwrap().pgid.unwrap();
-                let pgid = rustix::process::Pid::from_raw(pgid_raw).unwrap();
-                kill_process_group(pgid, Signal::Term).into_diagnostic()?
-            }
-            self.status = Some(Status::Aborted);
-            self.log();
         }
         Ok(())
     }

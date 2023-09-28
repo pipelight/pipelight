@@ -1,15 +1,17 @@
+// Tests
+mod test;
+
 mod markup;
 mod rules;
 mod typescript;
-
-// Error Handling
-// use log::warn;
-use miette::Result;
-
+// Structs
+use crate::Config;
+// Filesystem
 use std::path::Path;
 use utils::files::FileType;
+// Error Handling
+use miette::Result;
 
-use crate::Config;
 impl Config {
     /// Set the appropriated method to load the config according to the FileType
     /// (the file extension .ts, .toml, .yml...)

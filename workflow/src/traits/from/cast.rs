@@ -1,3 +1,4 @@
+use crate::pipeline::Filters;
 use crate::types::{
     Command, Config, Fallback, Mode, Parallel, Pipeline, Step, StepOrParallel, Trigger,
 };
@@ -17,16 +18,16 @@ impl From<&cast::Config> for Config {
     fn from(e: &cast::Config) -> Self {
         let mut config = Config::default();
         if e.pipelines.is_some() {
-            let pipelines = e
+            let mut pipelines = e
                 .clone()
                 .pipelines
                 .unwrap()
                 .iter()
                 .map(Pipeline::from)
                 .collect();
+            pipelines = Filters::dedup(pipelines).unwrap();
             config.pipelines = Some(pipelines);
             // Remove duplicates
-            config.dedup_pipelines();
         }
         config
     }

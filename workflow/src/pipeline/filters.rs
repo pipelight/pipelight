@@ -1,15 +1,15 @@
-// Error Handling
-use log::warn;
-use miette::{Result};
-//Types
-use crate::types::{Pipeline};
+// Structs
+use crate::types::Pipeline;
 use exec::Status;
 // Date and Time
 use chrono::{DateTime, Local};
+// Error Handling
+use log::warn;
+use miette::{Error, Result};
 
 pub struct Filters;
-
 impl Filters {
+    /// Remove one of the pipelines with the same name
     pub fn dedup(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>> {
         let mut pipelines = pipelines;
         let init_length = &pipelines.len();
@@ -77,5 +77,14 @@ impl Filters {
             .filter(|e| e.status == status)
             .collect();
         Ok(pipelines)
+    }
+    pub fn has_watch_flag(pipelines: Vec<Pipeline>) -> Result<()> {
+        for pipeline in pipelines.clone() {
+            if pipeline.is_watchable().is_ok() {
+                return Ok(());
+            }
+        }
+        let message = "no watchable pipelines";
+        Err(Error::msg(message))
     }
 }

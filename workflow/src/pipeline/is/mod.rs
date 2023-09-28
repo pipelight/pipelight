@@ -3,17 +3,17 @@ use crate::types::{Logs, Pipeline, Trigger};
 use utils::git::{Flag, Git, Special};
 
 // Traits
-
-use exec::{Status};
+use exec::Status;
 
 //sys
-use rustix::process::{test_kill_process};
+use rustix::process::test_kill_process;
 use sysinfo::{PidExt, ProcessExt, System, SystemExt};
 
 // Error Handling
-
-
 use miette::{Error, IntoDiagnostic, Result};
+
+// Test
+mod test;
 
 impl Pipeline {
     /// If the pid (extracted from logs) exists it means the pipeline is running

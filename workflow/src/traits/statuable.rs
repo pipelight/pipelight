@@ -1,5 +1,5 @@
-use crate::types::{Command, Parallel, Pipeline, Step, StepOrParallel};
-use exec::{Statuable, Status};
+use crate::types::{Command, Parallel, Pipeline, Status, Step, StepOrParallel};
+use exec::Statuable;
 
 impl Statuable for Command {
     fn get_status(&self) -> Option<Status> {

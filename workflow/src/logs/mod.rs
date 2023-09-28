@@ -10,9 +10,9 @@ mod test;
 use exec::{Statuable, Status};
 
 // Error Handling
-use miette::{Result};
+use miette::Result;
 
-use crate::methods::pipeline::filters::Filters;
+use crate::pipeline::Filters;
 
 impl Logs {
     /// Pretty print logs from json log file
@@ -29,7 +29,6 @@ impl Logs {
     }
     pub fn clean() -> Result<()> {
         let pipelines = Self::get()?;
-
         Ok(())
     }
 }

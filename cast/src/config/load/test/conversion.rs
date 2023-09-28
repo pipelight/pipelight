@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod type_conversion {
+mod conversion {
     mod triggers {
         use crate::{Trigger, TriggerBranch, TriggerTag};
 
