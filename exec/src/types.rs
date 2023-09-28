@@ -6,7 +6,7 @@ use utils::dates::Duration;
 use uuid::Uuid;
 
 /**
-Simplified process status to abstract process raw status
+Simplified process status to abstract process raw unix status
 */
 #[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Ord, PartialOrd)]
 #[serde(rename_all = "kebab-case")]
@@ -19,6 +19,9 @@ pub enum Status {
     Aborted,
 }
 
+/**
+Simplified process struct.
+*/
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Process {
     pub uuid: Option<Uuid>,
@@ -27,6 +30,9 @@ pub struct Process {
     pub io: Io,
 }
 
+/**
+The process sate is defined by its status(running, succeedded...) and its duration.
+*/
 #[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct State {
     pub duration: Option<Duration>,
@@ -34,7 +40,7 @@ pub struct State {
 }
 
 /**
-Process input/outputs
+Process self managed input/outputs struct.
 */
 #[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Io {

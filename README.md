@@ -66,6 +66,11 @@ Add automatic triggers to your pipeline.
 Run tests on file change.
 Push to production on new tag...
 
+```sh
+# enable git hook (now opt-in!)
+pipelight hooks --enable
+```
+
 ```ts
 pipeline.add_trigger({
   tags: ["v*"],
@@ -87,23 +92,25 @@ pipelight logs -vvvv
 
 <img width="500px" alt="pretty logs" src="https://pipelight.dev/images/log_level_trace.png"/>
 
-## Try it fast (ArchLinux)
+## Try it quick (ArchLinux)
+
+Install
 
 ```sh
 paru -S pipelight-git
 ```
 
-```sh
-touch pipelight.ts
-```
+Ensure the default configuration file.
 
-Past this skeleton in your configuration file.
+```sh
+pipelight init
+```
 
 ```ts
 // pipelight.ts
 import type { Pipeline } from "https://deno.land/x/pipelight/mod.ts";
 const my_pipeline: Pipeline = {
-  name: "template",
+  name: "example",
   steps: [
     {
       name: "list directory",
@@ -120,12 +127,16 @@ export default {
 };
 ```
 
-```sh
-pipelight run template
-```
+Try the harmless default pipeline
 
 ```sh
-pipelight logs
+pipelight run
+```
+
+Explore logs
+
+```sh
+pipelight logs (-vvvv)
 ```
 
 Licensed under GNU GPLv2

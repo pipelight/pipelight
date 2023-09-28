@@ -13,10 +13,18 @@ use utils::files::FileType;
 use miette::Result;
 
 impl Config {
-    /// Set the appropriated method to load the config according to the FileType
-    /// (the file extension .ts, .toml, .yml...)
+    /**
+    Choose the appropriated method to load the config file
+    according to the file extension(.ts, .toml, .yml...).
+
+    Arguments:
+      - file_path is the config file path
+      - args are only to be used with scripting language (typescript) to pass args to the underlying script.
+
+    Languages coming next after v1.0.0:
+      - Rust, Hcl, Kcl, Python...
+    */
     pub fn load(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
-        // println!("extensiFileType::from(
         let extension = &Path::new(file_path)
             .extension()
             .unwrap()

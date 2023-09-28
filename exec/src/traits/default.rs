@@ -7,6 +7,11 @@ use uuid::Uuid;
 use crate::globals::SHELL;
 
 impl Process {
+    /**
+    The prefered way to create a process struct.
+    Pass the stdin deep down the Io substruct.
+    and Pass the process uuid to its underlying Io substruct.
+    */
     pub fn new(stdin: &str) -> Process {
         let uuid = Some(Uuid::new_v4());
         Process {
@@ -22,6 +27,9 @@ impl Process {
     }
 }
 impl Default for Process {
+    /**
+    Pass the process uuid to its underlying Io substruct.
+    */
     fn default() -> Process {
         let uuid = Some(Uuid::new_v4());
         Process {

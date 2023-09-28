@@ -1,18 +1,21 @@
+// Filesystem - read files
+use std::fs;
+use std::path::Path;
+use utils::files::read_last_line;
+// Traits
+use serde::{Deserialize, Serialize};
 // Error Handling
 use log::{trace, warn};
 use miette::{Error, IntoDiagnostic, Result};
 
-// Read file
-use std::fs;
-use std::path::Path;
-use utils::files::read_last_line;
-
-// Traits
-use serde::{Deserialize, Serialize};
-
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
 pub struct Logs;
 
+/**
+Provide a directory path of valid JSON5 pipelight logs.
+It returns a list/vec of valid json strings
+further to be converted into Pipeline structs in the core("workflow") crate.
+*/
 impl Logs {
     pub fn read(directory_path: &str) -> Result<Vec<String>> {
         let mut logs: Vec<String> = vec![];

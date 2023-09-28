@@ -1,35 +1,33 @@
-// sys
-use std::process;
-use std::process::{Command, Stdio};
-// use subprocess::{Exec, NullFile, Popen, PopenConfig, Redirection};
-// use sysinfo::{PidExt, ProcessExt, System, SystemExt};
-
-// Types
+// Tests
+mod test;
+// Structs
 use crate::types::{Io, Process, State, Status};
 use utils::dates::Duration;
+use uuid::Uuid;
+// Unix process manipulation
+use std::process;
+use std::process::{Command, Stdio};
+// Deprecated crate usage
+// use sysinfo::{PidExt, ProcessExt, System, SystemExt};
 
 // File manipulation
 use std::fs::{create_dir_all, remove_file, File};
 use std::io::BufReader;
 use std::io::Read;
-
 // Error Handling
 use log::info;
 use miette::{IntoDiagnostic, Result};
-use uuid::Uuid;
-
 // Globals
-use crate::globals::{OUTDIR, SHELL};
-
-// Tests
-mod test;
-
-/// Convert popen files to strings
+use crate::globals::{get_shell, OUTDIR, SHELL};
 
 impl Process {
-    /// Execute in same process
-    /// Old name: simple
+    /**
+    Execute/Await a subprocess and pipe the outputs(stdout/stderr)
+    to the parent process.
+    */
     pub fn run_piped(&mut self) -> Result<()> {
+        info!("Run subprocess piped to parent");
+        get_shell()?;
         let mut duration = Duration::default();
         let child = Command::new(&(*SHELL.lock().unwrap()))
             .arg("-c")
@@ -55,8 +53,16 @@ impl Process {
         };
         Ok(())
     }
+
+    /**
+    Execute/Await a subprocess and pipe the outputs(stdout/stderr)
+    to files for further read/write while executing.
+    Suits long running processes for early inner inspection of outputs
+    whilst it still runs.
+    */
     pub fn run_fs(&mut self) -> Result<()> {
-        info!("Run detached subprocess");
+        info!("Run subprocess with output piped to pipelight managed files");
+        get_shell()?;
         let mut duration = Duration::default();
         // path definition
         create_dir_all(&(*OUTDIR.lock().unwrap())).into_diagnostic()?;
@@ -86,38 +92,13 @@ impl Process {
         Ok(())
     }
 
-    /// Execute in detached child sub
-    /// Old name: detached
-    pub fn run_muted(&mut self) -> Result<()> {
-        let mut duration = Duration::default();
-        let child = Command::new(&(*SHELL.lock().unwrap()))
-            .arg("-c")
-            .arg(&self.io.stdin.as_ref().unwrap())
-            .stdin(Stdio::null())
-            .stdout(Stdio::null())
-            .stderr(Stdio::null())
-            .spawn()
-            .into_diagnostic()?;
-
-        // Hydrate struct
-        duration.start();
-        let output = child.wait_with_output().into_diagnostic()?;
-        duration.stop();
-
-        self.io = Io {
-            uuid: self.io.uuid,
-            stdin: self.io.stdin.to_owned(),
-            ..Io::from(&output)
-        };
-        self.state = State {
-            duration: Some(duration),
-            status: Some(Status::from(&output)),
-        };
-        Ok(())
-    }
-    /// Execute in detached child sub
-    /// Old name: detached
+    /**
+    Execute/NoAwait a subprocess and mute the input(stdin) and  outputs(stdout/stderr).
+    NoAwait means it immediatly returns once the subprocess is succesfully spawned and don't waut for output.
+    */
     pub fn run_detached(&mut self) -> Result<()> {
+        info!("Run detached subprocess");
+        get_shell()?;
         let mut duration = Duration::default();
         duration.start();
         Command::new(&(*SHELL.lock().unwrap()))

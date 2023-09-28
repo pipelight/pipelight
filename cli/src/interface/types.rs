@@ -1,10 +1,9 @@
 // Clap - command line lib
-//
-// Error Handling
-use miette::{Result};
 // Standard I/O
 use std::io;
-
+// Error Handling
+use miette::Result;
+// Struct
 pub use super::verbosity::external::Verbosity;
 pub use super::verbosity::internal::InternalVerbosity;
 

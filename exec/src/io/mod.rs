@@ -1,4 +1,4 @@
-// Types
+// Structs
 use super::types::{Io, Process, State, Status};
 // Globals
 use crate::globals::OUTDIR;
@@ -12,6 +12,9 @@ use log::info;
 use miette::{IntoDiagnostic, Result};
 
 impl Io {
+    /**
+    Delete the files associated to the Io struct.
+    */
     pub fn clean(&self) -> Result<()> {
         // path definition
         let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
@@ -20,6 +23,10 @@ impl Io {
         remove_file(stderr_path).into_diagnostic()?;
         Ok(())
     }
+    /**
+    Read the files associated to the Io struct and hydrate
+    the Io stdout and stderr fields.
+    */
     pub fn read(&mut self) -> Result<()> {
         // path definition
         let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
