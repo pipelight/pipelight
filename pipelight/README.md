@@ -1,4 +1,4 @@
-# Pipelight crate
+# The pipelight(bin) crate
 
 ## What is inside ?
 

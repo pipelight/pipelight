@@ -1,13 +1,11 @@
-// Types
-use crate::types::{Io, Process, State, Status};
+// Structs
+use crate::types::Status;
+// Unix process output
 use std::process::Output;
 // Casing
 use convert_case::{Case, Casing};
 // Logger
-use log::{error, warn};
-
-// Error Handling
-use miette::{IntoDiagnostic, Result};
+use log::warn;
 
 impl From<&String> for Status {
     fn from(status: &String) -> Status {

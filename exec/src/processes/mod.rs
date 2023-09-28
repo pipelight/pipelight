@@ -3,22 +3,18 @@ mod test;
 // Structs
 use crate::types::{Io, Process, State, Status};
 use utils::dates::Duration;
-use uuid::Uuid;
 // Unix process manipulation
-use std::process;
 use std::process::{Command, Stdio};
 // Deprecated crate usage
 // use sysinfo::{PidExt, ProcessExt, System, SystemExt};
 
 // File manipulation
-use std::fs::{create_dir_all, remove_file, File};
-use std::io::BufReader;
-use std::io::Read;
+use std::fs::{create_dir_all, File};
+// Globals
+use crate::globals::{get_shell, OUTDIR, SHELL};
 // Error Handling
 use log::info;
 use miette::{IntoDiagnostic, Result};
-// Globals
-use crate::globals::{get_shell, OUTDIR, SHELL};
 
 impl Process {
     /**

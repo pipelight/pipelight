@@ -9,7 +9,9 @@ use miette::{Error, Result};
 
 pub struct Filters;
 impl Filters {
-    /// Remove one of the pipelines with the same name
+    /**
+    Keep only one pipeline among those which have the same name.
+    */
     pub fn dedup(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>> {
         let mut pipelines = pipelines;
         let init_length = &pipelines.len();
@@ -23,6 +25,11 @@ impl Filters {
         }
         Ok(pipelines)
     }
+    /**
+    Sort pipelines by ascending date.
+    The more recent pipeline is the last.
+    The oldes pipeline is the first.
+    */
     pub fn sort_by_date_asc(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>> {
         let mut pipelines = pipelines;
         // Sort by date ascending
@@ -45,6 +52,11 @@ impl Filters {
         });
         Ok(pipelines)
     }
+    /**
+    Sort pipelines by ascending date.
+    The more recent pipeline is the first.
+    The oldes pipeline is the last.
+    */
     pub fn sort_by_date_desc(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>> {
         let mut pipelines = pipelines;
         // Sort by date descending
@@ -67,6 +79,9 @@ impl Filters {
         });
         Ok(pipelines)
     }
+    /**
+    Return the pipelines that have the provided status
+    */
     pub fn filter_by_status(
         pipelines: Vec<Pipeline>,
         status: Option<Status>,

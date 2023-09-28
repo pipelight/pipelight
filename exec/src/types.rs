@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::clone::Clone;
 use std::cmp::PartialEq;
-use std::os::unix::io::RawFd;
 use utils::dates::Duration;
 use uuid::Uuid;
 

@@ -1,10 +1,6 @@
+// Structs
 use crate::types::{Io, Process, State};
-use std::env;
-use std::fs;
-use std::path::Path;
 use uuid::Uuid;
-
-use crate::globals::SHELL;
 
 impl Process {
     /**

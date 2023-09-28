@@ -1,6 +1,5 @@
 // Relative paths
-use super::config;
-use super::{LogFile, LogInfo, Logger};
+use crate::logger::types::{LogFile, LogInfo, Logger};
 
 use log::LevelFilter;
 

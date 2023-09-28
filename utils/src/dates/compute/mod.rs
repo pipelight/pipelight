@@ -1,24 +1,20 @@
-// Error Handling
-use miette::{Error, IntoDiagnostic, Result};
-
-//Duration
+// Test
+mod test;
+// Duration
 use super::Duration;
 use chrono::{DateTime, Local};
 use std::time;
-
-// Test
-mod test;
-
+// Convertion functions
 use crate::dates::convert::*;
+// Error Handling
+use miette::{IntoDiagnostic, Result};
 
-impl From<&Duration> for String {
-    fn from(e: &Duration) -> Self {
-        let mut e = e.clone();
-        let std = e.get().unwrap();
-        std_duration_to_iso8601(&std).unwrap()
-    }
-}
 impl Duration {
+    /**
+    The favorite way to get the duration as a standard duration struct(std::time::Duration).
+    Compute the duration from started/ended dates or
+    from started/now dates if the duration hasn't been stopped yet.
+    */
     pub fn get(&mut self) -> Result<time::Duration> {
         let duration: time::Duration;
         if self.computed.is_some() {
@@ -33,7 +29,31 @@ impl Duration {
         }
         Ok(duration)
     }
-    pub fn get_started_at(&self) -> Result<DateTime<Local>> {
+    /**
+    Set the duration start date to now.
+    Start the duration count.
+    */
+    pub fn start(&mut self) -> Result<()> {
+        let now = Local::now();
+        self.started_at = Some(now.to_string());
+        Ok(())
+    }
+    /**
+    Set the duration end date to now.
+    Stop the duration count.
+    */
+    pub fn stop(&mut self) -> Result<()> {
+        let now = Local::now();
+        self.ended_at = Some(now.to_string());
+        let diff = self.get_ended_at()? - self.get_started_at()?;
+        let diff = diff.to_std().unwrap();
+        self.computed = Some(std_duration_to_iso8601(&diff)?);
+        Ok(())
+    }
+    /**
+    Returns the started_at field as an exploitable DateTime.
+    */
+    fn get_started_at(&self) -> Result<DateTime<Local>> {
         let parsed = self
             .started_at
             .clone()
@@ -42,7 +62,10 @@ impl Duration {
             .into_diagnostic()?;
         Ok(parsed)
     }
-    pub fn get_ended_at(&self) -> Result<DateTime<Local>> {
+    /**
+    Returns the ended_at field as an exploitable DateTime.
+    */
+    fn get_ended_at(&self) -> Result<DateTime<Local>> {
         let parsed = self
             .ended_at
             .clone()
@@ -50,18 +73,5 @@ impl Duration {
             .parse::<DateTime<Local>>()
             .into_diagnostic()?;
         Ok(parsed)
-    }
-    pub fn start(&mut self) -> Result<()> {
-        let now = Local::now();
-        self.started_at = Some(now.to_string());
-        Ok(())
-    }
-    pub fn stop(&mut self) -> Result<()> {
-        let now = Local::now();
-        self.ended_at = Some(now.to_string());
-        let diff = self.get_ended_at()? - self.get_started_at()?;
-        let diff = diff.to_std().unwrap();
-        self.computed = Some(std_duration_to_iso8601(&diff)?);
-        Ok(())
     }
 }

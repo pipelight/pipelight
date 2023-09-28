@@ -1,68 +1,21 @@
+// Struct
 use crate::git::{Git, Hook};
-use git2::Repository;
-use std::env;
-// Enum workaround
-use std::string::ToString;
+// Tarit - Enum iteration workaround
 use strum::IntoEnumIterator;
-
-// Error Handling
-use log::info;
-use miette::{Error, IntoDiagnostic, Result};
-
-// File systeme crates
+// Filesystem manipulation
 use std::fs;
 use std::io::Write;
 use std::os::unix::fs::PermissionsExt;
 use std::path::Path;
-
-impl Default for Git {
-    fn default() -> Git {
-        let root = env::current_dir().unwrap();
-        Git {
-            // recursively browse through fs
-            repo: Repository::discover(root).ok(),
-        }
-    }
-}
-impl Git {
-    pub fn new() -> Self {
-        Self::default()
-    }
-    ///  Detect if inside a git repo
-    pub fn exists(&mut self) -> bool {
-        self.repo.is_some()
-    }
-    /// Return actual attached branch
-    pub fn get_branch(&self) -> Result<String> {
-        // Only tested on attached HEAD
-        // No edge case when head is a commit or else...
-        let repo = self.repo.as_ref().unwrap();
-        let head = repo.head().into_diagnostic()?;
-        let name = head.shorthand().unwrap().to_owned();
-        Ok(name)
-    }
-    /// Return tag if its is latest commit
-    pub fn get_tag(&self) -> Result<String> {
-        let repo = self.repo.as_ref().unwrap();
-        let head = repo.head().into_diagnostic()?;
-        if head.is_tag() {
-            let tag = head.name().unwrap().to_string();
-            Ok(tag)
-        } else {
-            Err(Error::msg("The current HEAD is not a tag"))
-        }
-    }
-    /// Return tag if its is latest commit
-    pub fn get_commit(&self) -> Result<String> {
-        let repo = self.repo.as_ref().unwrap();
-        let head = repo.head().into_diagnostic()?;
-        let commit_id = head.peel_to_commit().into_diagnostic()?.id().to_string();
-        Ok(commit_id)
-    }
-}
+// Error Handling
+use log::info;
+use miette::{IntoDiagnostic, Result};
 
 impl Hook {
-    /// Ensure .git/hooks folder
+    /**
+    Ensure the .git/hooks directory
+    with working hooks.
+    */
     pub fn enable() -> Result<()> {
         info!("enabling git hooks.");
         for hook in Hook::iter() {
@@ -73,14 +26,28 @@ impl Hook {
         }
         Ok(())
     }
-    /// Remove .git/hooks folder
+
+    /**
+    Remove the entire .git/hooks directory
+    and its pipelight auto-generated hooks.
+    */
     pub fn disable() -> Result<()> {
         info!("disabling git hooks.");
         let dir = Path::new(".git/hooks/");
         fs::remove_dir_all(&dir).into_diagnostic()?;
         Ok(())
     }
-    /// Create a hook that will call scrpts from a hook.d subfolder
+
+    /**
+    Generate the file structure under .git/hook for the given hook.
+    - Creates a `.d` directory that can contain multiple scripts.
+    - Creates a caller script to execute every script contained
+    under the `.d`.
+
+    .git/hooks
+    ├── pre-push
+    └── pre-psuh.d
+    */
     fn create_subscripts_caller(hook: &Hook) -> Result<()> {
         let git = Git::new();
         let action = String::from(hook);
@@ -111,6 +78,17 @@ impl Hook {
 
         Ok(())
     }
+
+    /**
+    Add a `_pipelight` caller script under the `.d`.
+    This script calls pipelight with the flag corresponding to
+    the actual hook.
+
+    .git/hooks
+    ├── pre-push
+    └── pre-psuh.d
+      └── _pipelight
+    */
     fn create_script(hook: &Hook) -> Result<()> {
         let hook = String::from(hook);
         #[cfg(debug_assertions)]

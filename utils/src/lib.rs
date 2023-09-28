@@ -1,6 +1,6 @@
 // Rules
-#![allow(unused_variables)]
-#![allow(unused_must_use)]
+// #![allow(unused_variables)]
+// #![allow(unused_must_use)]
 
 // Internal Imports
 pub mod dates;

@@ -15,7 +15,7 @@ use miette::Result;
 use crate::pipeline::Filters;
 
 impl Logs {
-    /// Pretty print logs from json log file
+    // Pretty print logs from json log file
     pub fn sanitize(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>> {
         let mut pipelines = pipelines;
         pipelines = Filters::filter_by_status(pipelines, Some(Status::Running))?;
@@ -28,7 +28,7 @@ impl Logs {
         Ok(pipelines)
     }
     pub fn clean() -> Result<()> {
-        let pipelines = Self::get()?;
+        let _pipelines = Self::get()?;
         Ok(())
     }
 }

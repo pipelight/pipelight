@@ -1,3 +1,4 @@
+// Struct
 use crate::types::{Process, Status};
 
 /**

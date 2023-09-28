@@ -1,6 +1,7 @@
-// Re-exports
-mod methods;
+mod git_query;
+mod hooks;
 mod traits;
 mod types;
-pub use methods::*;
+
+// Re-exports
 pub use types::{Flag, Git, Hook, Special};

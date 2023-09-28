@@ -7,22 +7,10 @@ pub mod actions;
 pub mod case;
 pub mod globals;
 pub mod interface;
-pub mod utils;
+mod utils;
 
 // Cli test
-pub mod test;
+mod test;
 
-pub use interface::{
-    // Every types are implicitly exported
-    Cli,
-    ColoredOutput,
-    Commands,
-    DisplayCommands,
-    Init,
-    Logs,
-    LogsCommands,
-    Pipeline,
-    Trigger,
-    Watch,
-    WatchCommands,
-};
+// Re-export
+pub use interface::*;

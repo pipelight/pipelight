@@ -4,9 +4,11 @@ use serde::{Deserialize, Serialize};
 pub use utils::dates::Duration;
 use uuid::Uuid;
 
-// Re-exports imports
-pub use exec::{Process, Status};
-pub use utils::git::Flag;
+// Structs
+use exec::Process;
+pub use exec::Status;
+use utils::git::Flag;
+
 // Traits - Enum workaround
 use strum::EnumIter;
 
@@ -93,16 +95,23 @@ pub struct Trigger {
     pub branch: Option<String>,
     pub tag: Option<String>,
 }
-
+/**
+The event/environment that triggered the piepline execution.
+*/
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Event {
     pub trigger: Trigger,
-    pub commit: Option<String>,
     pub date: String,
+    // The commit id
+    pub commit: Option<String>,
+    // Unix process info
     pub pid: Option<u32>,
     pub pgid: Option<u32>,
     pub sid: Option<u32>,
 }
 
+/**
+A struct that contains convenience Logs methods
+*/
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
 pub struct Logs;

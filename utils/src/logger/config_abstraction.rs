@@ -1,19 +1,16 @@
 pub use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
-
 use log4rs::{
     append::{console::ConsoleAppender, file::FileAppender},
-    config::{runtime::ConfigBuilder, Appender, Config, Logger, Root},
+    config::{Appender, Config, Root},
     encode::pattern::PatternEncoder,
     Handle,
 };
-use std::path::Path;
-
-// use super::Logger;
-
+// Struct
+use crate::logger::types::Logger;
 // Error Handling
-use miette::{Error, IntoDiagnostic, Result};
+use miette::{IntoDiagnostic, Result};
 
-impl super::Logger {
+impl Logger {
     pub fn update(&mut self) -> Result<()> {
         let mut appenders = vec![];
         appenders.extend(self.pipelines.make_appenders()?);
@@ -50,9 +47,9 @@ impl super::Logger {
                 .into_diagnostic()?;
         }
         if self.handle.is_some() {
-            self.reinit(config);
+            self.reinit(config)?;
         } else {
-            let handle = super::Logger::init(config)?;
+            let handle = Logger::init(config)?;
             self.handle = Some(handle);
         }
         Ok(())
@@ -110,14 +107,14 @@ impl super::LogInfo {
         appenders.push(appender);
         Ok(appenders)
     }
-    fn make_loggers(&mut self) -> Result<Vec<Logger>> {
+    fn make_loggers(&mut self) -> Result<Vec<log4rs::config::Logger>> {
         let mut loggers = vec![];
         let file_info = self.file_info.clone();
         if let Some(file_info) = file_info {
             // File
-            let path = format!("{}/{}.json", file_info.directory, file_info.name);
+            let _path = format!("{}/{}.json", file_info.directory, file_info.name);
             let name = format!("{}_to_file", self.name);
-            let logger = Logger::builder()
+            let logger = log4rs::config::Logger::builder()
                 .additive(false)
                 .appender(&name)
                 .build(name, LevelFilter::Trace);
@@ -125,7 +122,7 @@ impl super::LogInfo {
         }
         // Stdout
         let name = format!("{}_to_stdout", self.name);
-        let logger = Logger::builder()
+        let logger = log4rs::config::Logger::builder()
             .additive(false)
             .appender(&name)
             .build(name, self.level);
@@ -133,7 +130,7 @@ impl super::LogInfo {
 
         // Nude
         let name = format!("{}_nude", self.name);
-        let logger = Logger::builder()
+        let logger = log4rs::config::Logger::builder()
             .additive(false)
             .appender(&name)
             .build(name, self.level);

@@ -1,13 +1,22 @@
-// External Import
-use git2::Repository;
+// Traits
 use serde::{Deserialize, Serialize};
-// Enum workaround
+// Trait - Enum iteration workaround
 use strum::EnumIter;
+// Git repository manipulation
+use git2::Repository;
 
+/**
+Encapsulate the git repository struct to set it as optional
+and add top level convenience methods for easier querying.
+*/
 pub struct Git {
     pub repo: Option<Repository>,
 }
 
+/**
+An enumaration over the different types of flags(actions)
+that can trigger a pipeline run.
+*/
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
 #[serde(untagged)]
 pub enum Flag {
@@ -15,6 +24,10 @@ pub enum Flag {
     Special(Special),
 }
 
+/**
+An enumaration over the different types of git-hooks(sub-flags)
+that can trigger a pipeline run.
+*/
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
 #[serde(rename_all = "kebab-case")]
 pub enum Hook {
@@ -53,6 +66,11 @@ pub enum Hook {
     PushToCheckout,
 }
 
+/**
+An enumaration over the different types of special flags(sub-flags)
+that are external to git and involves other triggering methods
+and that can trigger a pipeline run.
+*/
 #[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
 #[serde(rename_all = "kebab-case")]
 pub enum Special {

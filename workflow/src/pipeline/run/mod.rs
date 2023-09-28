@@ -34,7 +34,7 @@ impl Pipeline {
 
         // Duration
         let mut d = Duration::default();
-        d.start();
+        d.start()?;
         unsafe {
             (*ptr).duration = Some(d.clone());
         }
@@ -54,8 +54,7 @@ impl Pipeline {
             (*ptr).log();
 
             for step in &mut (*ptr).steps {
-                step.run(ptr);
-
+                step.run(ptr)?;
                 if (step.get_status() != Some(Status::Succeeded))
                     && (step.mode().is_none() || step.mode() == Some(Mode::StopOnFailure))
                 {
@@ -65,7 +64,7 @@ impl Pipeline {
         }
 
         // Duration
-        d.stop();
+        d.stop()?;
         unsafe {
             (*ptr).duration = Some(d.clone());
         }
@@ -96,23 +95,23 @@ impl Pipeline {
                 if (*ptr).status == Some(Status::Failed) && fallback.on_failure.is_some() {
                     // let steps = (*ptr).on_failure.as_mut().unwrap();
                     for step in fallback.on_failure.as_mut().unwrap() {
-                        step.run(ptr);
+                        step.run(ptr)?;
                     }
                 }
                 if (*ptr).status == Some(Status::Succeeded) && fallback.on_failure.is_some() {
                     // let steps = (*ptr).on_failure.as_mut().unwrap();
                     for step in fallback.on_success.as_mut().unwrap() {
-                        step.run(ptr);
+                        step.run(ptr)?;
                     }
                 }
                 if (*ptr).status == Some(Status::Aborted) && fallback.on_success.is_some() {
                     // let steps = (*ptr).on_failure.as_mut().unwrap();
                     for step in fallback.on_abortion.as_mut().unwrap() {
-                        step.run(ptr);
+                        step.run(ptr)?;
                     }
                 }
                 // Duration
-                d.stop();
+                d.stop()?;
                 (*ptr).duration = Some(d);
                 (*ptr).log();
             }
@@ -126,7 +125,7 @@ impl Pipeline {
 }
 
 impl StepOrParallel {
-    fn run(&mut self, ptr: *mut Pipeline) {
+    fn run(&mut self, ptr: *mut Pipeline) -> Result<()> {
         match self {
             StepOrParallel::Step(res) => res.run(ptr),
             StepOrParallel::Parallel(res) => res.run(ptr),
@@ -135,10 +134,10 @@ impl StepOrParallel {
 }
 
 impl Parallel {
-    fn run(&mut self, ptr: *mut Pipeline) {
+    fn run(&mut self, ptr: *mut Pipeline) -> Result<()> {
         // Duration
         let mut d = Duration::default();
-        d.start();
+        d.start()?;
         self.duration = Some(d.clone());
 
         self.set_status(Some(Status::Running));
@@ -147,7 +146,7 @@ impl Parallel {
         let ptr_wrapper = PtrWrapper(ptr);
         self.steps
             .par_iter_mut()
-            .for_each(|e| e.unsafe_run(ptr_wrapper));
+            .for_each(|e| e.unsafe_run(ptr_wrapper).unwrap());
 
         // Set parallel global status
         let steps_res: Vec<Status> = self
@@ -165,12 +164,13 @@ impl Parallel {
         }
 
         // Duration
-        d.stop();
+        d.stop()?;
         self.duration = Some(d);
 
         unsafe {
             (*ptr).log();
         }
+        Ok(())
     }
 }
 
@@ -179,21 +179,21 @@ struct PtrWrapper(*mut Pipeline);
 unsafe impl Sync for PtrWrapper {}
 unsafe impl Send for PtrWrapper {}
 impl Step {
-    fn unsafe_run(&mut self, ptr: PtrWrapper) {
+    fn unsafe_run(&mut self, ptr: PtrWrapper) -> Result<()> {
         let ptr = ptr.0;
-        self.run(ptr);
+        self.run(ptr)
     }
-    fn run(&mut self, ptr: *mut Pipeline) {
+    fn run(&mut self, ptr: *mut Pipeline) -> Result<()> {
         // Duration
         let mut d = Duration::default();
-        d.start();
+        d.start()?;
         self.duration = Some(d.clone());
 
         self.set_status(Some(Status::Running));
 
         // Run commands
         for command in &mut self.commands {
-            command.run(ptr);
+            command.run(ptr)?;
 
             if (command.get_status().is_none() || command.get_status() != Some(Status::Succeeded))
                 && (self.mode.is_none() || self.mode != Some(Mode::ContinueOnFailure))
@@ -211,7 +211,7 @@ impl Step {
         }
 
         // Duration
-        d.stop();
+        d.stop()?;
         self.duration = Some(d);
 
         unsafe {
@@ -222,31 +222,32 @@ impl Step {
             let fallback = &mut self.fallback.as_mut().unwrap();
             if self.status == Some(Status::Failed) && fallback.on_failure.is_some() {
                 for step in fallback.on_failure.as_mut().unwrap() {
-                    step.run(ptr);
+                    step.run(ptr)?;
                 }
             }
             if self.status == Some(Status::Succeeded) && fallback.on_success.is_some() {
                 for step in fallback.on_success.as_mut().unwrap() {
-                    step.run(ptr);
+                    step.run(ptr)?;
                 }
             }
             if self.status == Some(Status::Aborted) && fallback.on_abortion.is_some() {
                 for step in fallback.on_success.as_mut().unwrap() {
-                    step.run(ptr);
+                    step.run(ptr)?;
                 }
             }
             unsafe {
                 (*ptr).log();
             }
         }
+        Ok(())
     }
 }
 
 impl Command {
-    fn run(&mut self, ptr: *mut Pipeline) {
+    fn run(&mut self, ptr: *mut Pipeline) -> Result<()> {
         // Duration
         let mut d = Duration::default();
-        d.start();
+        d.start()?;
         self.duration = Some(d.clone());
 
         self.set_status(Some(Status::Running));
@@ -265,11 +266,12 @@ impl Command {
         };
 
         // Duration
-        d.stop();
+        d.stop()?;
         self.duration = Some(d);
 
         unsafe {
             (*ptr).log();
         }
+        Ok(())
     }
 }

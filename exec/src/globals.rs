@@ -3,7 +3,7 @@ use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
 // Error Handling
 use log::trace;
-use miette::{IntoDiagnostic, Result};
+use miette::Result;
 
 use std::env;
 

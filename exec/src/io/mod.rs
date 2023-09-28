@@ -1,5 +1,5 @@
 // Structs
-use super::types::{Io, Process, State, Status};
+use super::types::Io;
 // Globals
 use crate::globals::OUTDIR;
 // File manipulation

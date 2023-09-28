@@ -1,21 +1,19 @@
 // Templating
 use handlebars::{Context, Handlebars};
 // Error Handling
-use log::{info, trace};
-use miette::{Error, IntoDiagnostic, Result};
+use miette::{IntoDiagnostic, Result};
 // File systeme crates
-use serde::{Deserialize, Serialize};
 use std::env;
 use std::fs;
 use std::io::Write;
 use std::path::Path;
 
 use crate::types::{Style, Template};
-use utils::files::{is, FileType};
+use utils::files::{is_filename, FileType};
 
 impl Template {
     /**
-    Create/Ensure a base `pipelight.ts` configuration file
+    Generate a base `pipelight.<extension>` configuration file
     in the current directory
     */
     pub fn new(style: Option<String>, file: Option<String>) -> Result<Self> {
@@ -60,7 +58,7 @@ impl Template {
 
         // If the provided path is a filename
         // Generate a file path exploitable by Handlebars
-        if is::is_filename(Path::new(&e.file_path)).is_ok() {
+        if is_filename(Path::new(&e.file_path)).is_ok() {
             let absolute_path = format!(
                 "{}/{}",
                 env::current_dir().unwrap().to_str().unwrap(),
@@ -82,6 +80,9 @@ impl Template {
         _ = fs::remove_file(path).into_diagnostic().is_ok();
         Ok(())
     }
+    /**
+    Generate in memory the config file template.
+    */
     pub fn create_config_template(&self) -> Result<String> {
         let style = &String::from(&self.style);
         let extension = &String::from(&FileType::from(&self.style));
@@ -94,6 +95,9 @@ impl Template {
             .into_diagnostic()?;
         Ok(rendered_string)
     }
+    /**
+    Write the config file template to filesystem.
+    */
     fn write_config_file(&self, code: &String) -> Result<()> {
         let path = Path::new(&self.file_path);
         // Guard: don't overwrite existing file
