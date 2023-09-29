@@ -87,10 +87,7 @@ impl Filters {
         status: Option<Status>,
     ) -> Result<Vec<Pipeline>> {
         let mut pipelines = pipelines;
-        pipelines = pipelines
-            .into_iter()
-            .filter(|e| e.status == status)
-            .collect();
+        pipelines.retain(|e| e.status == status);
         Ok(pipelines)
     }
     pub fn has_watch_flag(pipelines: Vec<Pipeline>) -> Result<()> {

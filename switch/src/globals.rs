@@ -4,7 +4,6 @@ use std::sync::{Arc, Mutex};
 // Teleport
 use utils::{logger::Logger, teleport::Portal};
 // Logs
-use cast;
 use workflow::{Config, Trigger};
 // Cli
 use clap::FromArgMatches;

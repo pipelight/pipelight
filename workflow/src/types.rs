@@ -113,5 +113,5 @@ pub struct Event {
 /**
 A struct that contains convenience Logs methods
 */
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
 pub struct Logs;

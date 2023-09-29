@@ -27,7 +27,7 @@ impl Process {
         let mut duration = Duration::default();
         let child = Command::new(&(*SHELL.lock().unwrap()))
             .arg("-c")
-            .arg(&self.io.stdin.as_ref().unwrap())
+            .arg(self.io.stdin.as_ref().unwrap())
             .stdin(Stdio::null())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
@@ -68,10 +68,10 @@ impl Process {
         // Ensure internal log dir exists
         let child = Command::new(&(*SHELL.lock().unwrap()))
             .arg("-c")
-            .arg(&self.io.stdin.as_ref().unwrap())
+            .arg(self.io.stdin.as_ref().unwrap())
             .stdin(Stdio::null())
-            .stdout(File::create(&stdout_path).into_diagnostic()?)
-            .stderr(File::create(&stderr_path).into_diagnostic()?)
+            .stdout(File::create(stdout_path).into_diagnostic()?)
+            .stderr(File::create(stderr_path).into_diagnostic()?)
             .spawn()
             .into_diagnostic()?;
 
@@ -99,7 +99,7 @@ impl Process {
         duration.start();
         Command::new(&(*SHELL.lock().unwrap()))
             .arg("-c")
-            .arg(&self.io.stdin.as_ref().unwrap())
+            .arg(self.io.stdin.as_ref().unwrap())
             .stdin(Stdio::null())
             .stdout(Stdio::null())
             .stderr(Stdio::null())

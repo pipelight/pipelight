@@ -91,7 +91,7 @@ impl Template {
             .register_template_file(style, format!("public/{}.{}", style, extension))
             .into_diagnostic()?;
         let rendered_string = handlebars
-            .render_with_context(&style, &Context::null())
+            .render_with_context(style, &Context::null())
             .into_diagnostic()?;
         Ok(rendered_string)
     }

@@ -14,9 +14,6 @@ use log::LevelFilter;
 use regex::Regex;
 use std::fmt;
 
-// Error Handling
-use miette::Result;
-
 static INDENT: &str = "  ";
 
 fn add_level(prefix: String) -> String {
@@ -34,7 +31,6 @@ fn add_level_phantom(prefix: String) -> String {
 impl Node {
     /// Add a leaf to prefix T from inside a vec of T of nth element
     pub fn leaf(&self, prefix: String, index: usize, length: usize) -> ColoredString {
-        let leaf: String;
         let leaf: String = if index == length {
             format!(
                 "{prefix:}{}\n{prefix:}{}{}",
@@ -100,28 +96,8 @@ impl Node {
     }
 }
 
-pub fn format_duration(duration: std::time::Duration) -> Result<String> {
-    let computed = chrono::Duration::from_std(duration).unwrap();
-    let mut res: String = "".to_owned();
-    // Res
-    let minutes = computed.num_minutes();
-    let seconds = computed.num_seconds() - minutes * 60;
-    let milliseconds = computed.num_milliseconds() - minutes * 60 * 1000 - seconds * 1000;
-
-    if minutes > 0 {
-        res = format!("{}{}m", res, minutes);
-    }
-    if seconds > 0 {
-        res = format!("{}{}s", res, seconds);
-    }
-    if milliseconds > 0 && minutes <= 0 {
-        res = format!("{}{}ms", res, milliseconds);
-    }
-    Ok(res)
-}
-
 impl fmt::Display for Node {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, _f: &mut fmt::Formatter) -> fmt::Result {
         // set_override(true);
         let prefix = "".to_owned();
         self.clone().display(prefix);

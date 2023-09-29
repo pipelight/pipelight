@@ -1,9 +1,8 @@
 // Structs
 use crate::types::{Pipeline, Status};
 // Error Handling
-use log::error;
 use miette::{IntoDiagnostic, Result};
-//sys
+// Unix process manipiulation
 use rustix::process::{kill_process_group, Signal};
 
 /**

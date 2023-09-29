@@ -56,13 +56,8 @@ impl Pipeline {
                 // Guard: check if it is a pipelight process
                 let mut sys = System::new_all();
                 sys.refresh_all();
-                if sys
-                    .process(sysinfo_pid)
-                    .unwrap()
-                    .name()
-                    .contains("pipelight")
-                {
-                    let name = sys.process(sysinfo_pid).unwrap().name();
+                let process_name = sys.process(sysinfo_pid).unwrap().name();
+                if process_name.contains("pipelight") {
                     return Ok(());
                 }
             }
@@ -92,13 +87,8 @@ impl Pipeline {
             // Guard: check if it is a pipelight process
             let mut sys = System::new_all();
             sys.refresh_all();
-            if sys
-                .process(sysinfo_pid)
-                .unwrap()
-                .name()
-                .contains("pipelight")
-            {
-                let name = sys.process(sysinfo_pid).unwrap().name();
+            let process_name = sys.process(sysinfo_pid).unwrap().name();
+            if process_name.contains("pipelight") {
                 return Ok(());
             }
         }
@@ -150,7 +140,7 @@ impl Pipeline {
                 unsafe {
                     let pid =
                         rustix::process::Pid::from_raw(self.event.clone().unwrap().pid.unwrap());
-                    return test_kill_process(pid.unwrap()).is_err();
+                    test_kill_process(pid.unwrap()).is_err()
                 }
             } else {
                 false

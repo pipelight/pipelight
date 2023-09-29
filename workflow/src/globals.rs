@@ -1,15 +1,17 @@
 // Global vars
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
-// Types
+pub use utils::globals::LOGGER;
+// Struct
 use crate::{Config, Trigger};
-// Error Handling
-use log::{info, trace, LevelFilter};
-use miette::{IntoDiagnostic, Result};
 use utils::logger::Logger;
+// Error Handling
+use log::{trace, LevelFilter};
+use miette::Result;
 
-pub static LOGGER: Lazy<Arc<Mutex<Logger>>> = Lazy::new(|| Arc::new(Mutex::new(Logger::new())));
-pub static mut CONFIG: Lazy<Config> = Lazy::new(Config::default);
+pub static CONFIG: Lazy<Arc<Mutex<Config>>> = Lazy::new(|| Arc::new(Mutex::new(Config::default())));
+pub static TRIGGER_ENV: Lazy<Arc<Mutex<Trigger>>> =
+    Lazy::new(|| Arc::new(Mutex::new(Trigger::default())));
 
 // Hydrate logs
 pub fn full_hydrate_logger() -> Result<()> {
@@ -32,7 +34,7 @@ pub fn default_globals() -> Result<()> {
 // Set every main globals
 pub fn set_globals(config: Option<Config>, logger: Option<Logger>) -> Result<()> {
     if let Some(config) = config {
-        unsafe { *CONFIG = config }
+        *CONFIG.lock().unwrap() = config;
     }
     if let Some(logger) = logger {
         *LOGGER.lock().unwrap() = logger;
@@ -43,8 +45,7 @@ pub fn set_globals(config: Option<Config>, logger: Option<Logger>) -> Result<()>
 
 impl Config {
     pub fn get() -> Result<Self> {
-        let config;
-        unsafe { config = (*CONFIG).clone() };
+        let config = CONFIG.lock().unwrap().clone();
         Ok(config)
     }
 }

@@ -1,21 +1,14 @@
+// Structs
 use crate::types::{
     Command, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
 };
-// External imports
 use exec::Process;
-use utils::git::{Git};
+use log::LevelFilter;
+use utils::git::Git;
+use uuid::Uuid;
 // Date and time
 use chrono::Local;
-//Logs
-
-use log::LevelFilter;
-
-use uuid::Uuid;
-
-// Error Handling
-
-
-// sys
+// Unix process structs
 use rustix::process::{getpgid, getpid, getsid, Pid};
 
 impl Default for Node {
@@ -55,9 +48,9 @@ impl Pipeline {
         Self::default()
     }
 }
+
 impl Default for StepOrParallel {
     fn default() -> Self {
-        let commands = vec![Command::default()];
         let step = Step::default();
         StepOrParallel::Step(step)
     }
@@ -84,6 +77,7 @@ impl Parallel {
         Self::default()
     }
 }
+
 impl Default for Step {
     fn default() -> Self {
         let commands = vec![Command::default()];
@@ -102,6 +96,7 @@ impl Step {
         Self::default()
     }
 }
+
 impl Command {
     pub fn new(stdin: &str) -> Command {
         Command {
@@ -110,11 +105,7 @@ impl Command {
         }
     }
 }
-impl Default for Logs {
-    fn default() -> Self {
-        Logs
-    }
-}
+
 impl Logs {
     pub fn new() -> Self {
         Self::default()
@@ -134,7 +125,7 @@ impl Default for Event {
 
         Event {
             trigger: Trigger::flag(None).unwrap(),
-            commit: commit,
+            commit,
             // Local instead of UTC to better stick to
             // most time lib iso8601
             date: Local::now().to_string(),

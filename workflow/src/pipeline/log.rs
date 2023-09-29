@@ -25,7 +25,7 @@ impl Pipeline {
                 StepOrParallel::Step(step) => {
                     for command in &mut step.commands {
                         if command.get_status() == Some(Status::Running) {
-                            let _ = command.process.io.read()?;
+                            command.process.io.read()?;
                         }
                     }
                 }
@@ -33,7 +33,7 @@ impl Pipeline {
                     for step in &mut parallel.steps {
                         for command in &mut step.commands {
                             if command.get_status() == Some(Status::Running) {
-                                let _ = command.process.io.read()?;
+                                command.process.io.read()?;
                             }
                         }
                     }

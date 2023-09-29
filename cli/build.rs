@@ -1,5 +1,5 @@
 // Clap completion script generation
-use clap_complete::{generate_to, shells::Shell};
+use clap_complete::{generate_to, shells};
 use std::env;
 // Filesystem manipulation
 // use std::fs;
@@ -25,7 +25,12 @@ fn main() -> Result<()> {
 
     let mut cmd = Cli::build()?;
     let name = cmd.get_name().to_string();
-    let shells = vec![Shell::Bash, Shell::Zsh, Shell::Fish, Shell::Elvish];
+    let shells = vec![
+        shells::Shell::Bash,
+        shells::Shell::Zsh,
+        shells::Shell::Fish,
+        shells::Shell::Elvish,
+    ];
     for shell in shells {
         let path = generate_to(
             shell,

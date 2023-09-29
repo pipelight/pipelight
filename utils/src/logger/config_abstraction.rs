@@ -27,25 +27,24 @@ impl Logger {
         for logger in loggers {
             builder = builder.logger(logger);
         }
-        let config: Config;
-        if self.internals.file_info.is_some() {
-            config = builder
+        let config: Config = if self.internals.file_info.is_some() {
+            builder
                 .build(
                     Root::builder()
                         .appender("internals_to_stdout")
                         .appender("internals_to_file")
                         .build(self.internals.level),
                 )
-                .into_diagnostic()?;
+                .into_diagnostic()?
         } else {
-            config = builder
+            builder
                 .build(
                     Root::builder()
                         .appender("internals_to_stdout")
                         .build(self.internals.level),
                 )
-                .into_diagnostic()?;
-        }
+                .into_diagnostic()?
+        };
         if self.handle.is_some() {
             self.reinit(config)?;
         } else {
@@ -73,7 +72,7 @@ impl super::LogInfo {
             let path = format!("{}/{}.json", file_info.directory, file_info.name);
             let name = format!("{}_to_file", self.name);
             let appender = Appender::builder().build(
-                &name,
+                name,
                 Box::new(
                     FileAppender::builder()
                         .encoder(Box::new(PatternEncoder::new(&self.pattern)))
@@ -86,7 +85,7 @@ impl super::LogInfo {
         // Stdout
         let name = format!("{}_to_stdout", self.name);
         let appender = Appender::builder().build(
-            &name,
+            name,
             Box::new(
                 ConsoleAppender::builder()
                     .encoder(Box::new(PatternEncoder::new(&self.pattern)))
@@ -97,7 +96,7 @@ impl super::LogInfo {
         // Nude
         let name = format!("{}_nude", self.name);
         let appender = Appender::builder().build(
-            &name,
+            name,
             Box::new(
                 ConsoleAppender::builder()
                     .encoder(Box::new(PatternEncoder::new("{m}")))

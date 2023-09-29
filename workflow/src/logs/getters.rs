@@ -1,44 +1,34 @@
-// use crate::globals::PORTAL;
+// Structs
 use crate::pipeline::Filters;
-use crate::traits::Getters;
 use crate::types::{Logs, Pipeline};
-use cast;
-
+// Trait
+use crate::traits::Getters;
 // Date and Time
 use chrono::{DateTime, Local};
-
 // Error Handling
 use miette::{Error, IntoDiagnostic, Result};
-
 // Global vars
 use once_cell::sync::Lazy;
+use std::sync::{Arc, Mutex};
 
-pub static mut LOGS: Lazy<Option<Vec<Pipeline>>> = Lazy::new(|| None);
+pub static LOGS: Lazy<Arc<Mutex<Option<Vec<Pipeline>>>>> = Lazy::new(|| Arc::new(Mutex::new(None)));
 
 impl Logs {
-    // Read logs and store them into a global var
+    /**
+    Read logs and store them into a global variable.
+    Sorted by ascending date by default.
+    */
     fn hydrate() -> Result<()> {
-        // let portal;
-        let global_logs;
-        unsafe {
-            // portal = (*PORTAL).clone();
-            global_logs = (*LOGS).clone();
-        };
+        let global_logs = LOGS.lock().unwrap().clone();
         if global_logs.is_none() {
-            let logs: Vec<String> = cast::Logs::read(&format!(
-                // "{}/.pipelight/logs/",
-                ".pipelight/logs/" // ,portal.target.directory_path.unwrap()
-            ))?;
+            let logs: Vec<String> = cast::Logs::read(".pipelight/logs/")?;
             let mut pipelines: Vec<Pipeline> = vec![];
             for json in logs {
                 let pipeline = serde_json::from_str::<Pipeline>(&json).into_diagnostic()?;
                 pipelines.push(pipeline);
             }
-            // Sort by date ascending
             pipelines = Filters::sort_by_date_asc(pipelines)?;
-            unsafe {
-                *LOGS = Some(pipelines.clone());
-            }
+            *LOGS.lock().unwrap() = Some(pipelines.clone());
         }
         Ok(())
     }
@@ -48,8 +38,7 @@ impl Logs {
 impl Getters<Pipeline> for Logs {
     fn get() -> Result<Vec<Pipeline>> {
         Logs::hydrate()?;
-        let logs;
-        unsafe { logs = (*LOGS).clone().unwrap() }
+        let logs = LOGS.lock().unwrap().clone().unwrap();
         Ok(logs)
     }
     fn get_by_name(name: &str) -> Result<Pipeline> {

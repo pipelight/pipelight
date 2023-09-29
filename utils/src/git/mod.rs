@@ -1,7 +1,7 @@
 mod git_query;
 mod hooks;
 mod traits;
-mod types;
+pub mod types;
 
 // Re-exports
-pub use types::{Flag, Git, Hook, Special};
+pub use types::*;

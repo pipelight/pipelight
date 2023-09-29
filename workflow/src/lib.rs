@@ -2,7 +2,7 @@
 // #![allow(unused_variables)]
 // #![allow(unused_must_use)]
 
-mod globals;
+pub mod globals;
 
 // Methods
 mod logs;

@@ -17,10 +17,10 @@ pub fn read_last_line(path: &Path) -> Result<String> {
     let mut lines = buf.lines();
     let last_line = lines.next();
     if let Some(last_line) = last_line {
-        return Ok(last_line.into_diagnostic()?);
+        Ok(last_line.into_diagnostic()?)
     } else {
         let message = format!("Empty file: {}", path.display());
         debug!("{}", message);
-        return Err(Error::msg(message));
+        Err(Error::msg(message))
     }
 }

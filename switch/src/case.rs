@@ -4,8 +4,9 @@ use utils::git::Hook;
 // Colors
 use workflow::traits::display::set_override;
 
-// Pipeline types
-use workflow::{Config, Getters, Logs, Pipeline};
+// Structs
+use utils::git::Flag;
+use workflow::{Config, Getters, Logs, Pipeline, Trigger};
 
 // Clap - command line lib
 use clap::ValueEnum;
@@ -30,19 +31,6 @@ use log::info;
 use miette::{Error, Result};
 
 pub struct Switch;
-
-impl Switch {
-    // Hydrate cli
-    pub fn hydrate_global() -> Result<()> {
-        let cli = Cli::build()?;
-        let matches = cli.get_matches();
-        let args = Cli::from_arg_matches(&matches)
-            .map_err(|err| err.exit())
-            .unwrap();
-        unsafe { *CLI = args.clone() };
-        Ok(())
-    }
-}
 
 impl Switch {
     /// Build and Launch the cli
@@ -85,11 +73,11 @@ impl Switch {
                     PostCommands::Ls(list) => {
                         // Set global config
                         // Launch watcher
-                        if Config::get()?.has_watch_flag().is_ok() {
-                            watch::create_watcher()?;
-                        } else {
-                            watch::destroy_watcher()?;
-                        }
+                        // if Config::get()?.has_watch_flag().is_ok() {
+                        // watch::create_watcher()?;
+                        // } else {
+                        // watch::destroy_watcher()?;
+                        // }
                         if list.name.is_some() {
                             let pipeline = Pipeline::get_by_name(&list.name.unwrap())?;
                             print::inspect(&pipeline, list.json)?;
@@ -112,11 +100,11 @@ impl Switch {
                             // Set global config
                             None => {
                                 info!("Watching for changes");
-                                watch::launch(args.attach)?;
+                                // watch::launch(args.attach)?;
                             }
                             Some(watch_cmd) => match watch_cmd {
                                 WatchCommands::Kill => {
-                                    watch::destroy_watcher()?;
+                                    // watch::destroy_watcher()?;
                                 }
                             },
                         }
@@ -127,16 +115,17 @@ impl Switch {
                         trigger::launch(args.attach, trigger.flag)?;
                     }
                     PostCommands::Run(pipeline) => {
+                        // Set triggering env action
+                        let flag = pipeline.trigger.flag;
+                        if let Some(flag) = flag {
+                            Trigger::flag(Some(Flag::from(&flag.clone())))?;
+                        }
                         // Set global config
                         if pipeline.name.is_some() {
                             info!("Running pipeline {:#?}", pipeline.name.clone().unwrap());
-                            run::launch(
-                                pipeline.name.unwrap(),
-                                args.attach,
-                                pipeline.trigger.flag,
-                            )?;
+                            run::launch(pipeline.name.unwrap(), args.attach, flag.clone())?;
                         } else {
-                            prompt::run_prompt(args.attach, pipeline.trigger.flag)?;
+                            prompt::run_prompt(args.attach, flag)?;
                         }
                     }
                     PostCommands::Stop(pipeline) => {

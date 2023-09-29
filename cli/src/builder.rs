@@ -43,6 +43,17 @@ impl Cli {
         Ok(cli)
     }
 
+    // Hydrate cli
+    // pub fn hydrate_global() -> Result<()> {
+    // let cli = Cli::build()?;
+    // let matches = cli.get_matches();
+    // let args = Cli::from_arg_matches(&matches)
+    // .map_err(|err| err.exit())
+    // .unwrap();
+    // unsafe { *CLI = args.clone() };
+    // Ok(())
+    // }
+
     /**
     Prints the provided shell pipelight completion script
     on the standard stdout.

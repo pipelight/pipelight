@@ -104,8 +104,6 @@ impl From<&cast::Step> for Step {
         if e.mode.is_some() {
             mode = Some(Mode::from(e.mode.as_ref().unwrap()));
         }
-
-        let default_step = Step::new();
         Step {
             name: e.clone().name,
             mode,

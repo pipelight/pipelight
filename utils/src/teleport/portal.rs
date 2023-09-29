@@ -61,15 +61,13 @@ impl Portal {
         Ok(self.to_owned())
     }
     fn parent(&mut self) -> Result<Self> {
-        if !self.has_reached_root()? {
-            if self.current.directory_path.is_some() {
-                let current = self.current.directory_path.clone().unwrap();
-                let parent = Path::new(&current).parent();
-                if let Some(parent) = parent {
-                    self.current.directory_path = Some(parent.display().to_string());
-                } else {
-                    return Err(Error::msg("File has no parent"));
-                }
+        if !self.has_reached_root()? && self.current.directory_path.is_some() {
+            let current = self.current.directory_path.clone().unwrap();
+            let parent = Path::new(&current).parent();
+            if let Some(parent) = parent {
+                self.current.directory_path = Some(parent.display().to_string());
+            } else {
+                return Err(Error::msg("File has no parent"));
             }
         }
         Ok(self.to_owned())
@@ -120,8 +118,7 @@ impl Portal {
     pub fn search_path(&mut self) -> Result<()> {
         trace!("search path");
         let path_str = self.seed.clone();
-        if let Some(..) = path_str {
-            let mut path_str = path_str.unwrap();
+        if let Some(mut path_str) = path_str {
             let mut path = Path::new(&path_str);
             if path.is_relative() {
                 path_str = path.canonicalize().into_diagnostic()?.display().to_string();

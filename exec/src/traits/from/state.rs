@@ -18,7 +18,7 @@ impl From<&String> for Status {
             "aborted" => Status::Aborted,
             _ => {
                 warn!("unexpected string, assuminng default state");
-                return Status::default();
+                Status::default()
             }
         }
     }

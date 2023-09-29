@@ -1,4 +1,6 @@
+// Trait
 use crate::traits::Getters;
+
 impl Getters<Trigger> for Trigger {
     fn get() -> Result<Vec<Trigger>> {
         let pipelines = Pipeline::get()?;
