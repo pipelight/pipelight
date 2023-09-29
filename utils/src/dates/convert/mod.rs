@@ -58,3 +58,23 @@ pub fn iso8601_to_std_duration(duration: &str) -> Result<std::time::Duration> {
     }
     Err(Error::msg("Couldn't parse duration: Bad iso8601 duration"))
 }
+
+/**
+*/
+pub fn std_duration_to_human_duration(duration: std::time::Duration) -> Result<String> {
+    let computed = chrono::Duration::from_std(duration).unwrap();
+    let mut res: String = "".to_owned();
+    let minutes = computed.num_minutes();
+    let seconds = computed.num_seconds() - minutes * 60;
+    let milliseconds = computed.num_milliseconds() - minutes * 60 * 1000 - seconds * 1000;
+    if minutes > 0 {
+        res = format!("{}{}m", res, minutes);
+    }
+    if seconds > 0 {
+        res = format!("{}{}s", res, seconds);
+    }
+    if milliseconds > 0 && minutes <= 0 {
+        res = format!("{}{}ms", res, milliseconds);
+    }
+    Ok(res)
+}

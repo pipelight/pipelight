@@ -1,5 +1,5 @@
 mod compute;
-mod convert;
+pub mod convert;
 mod types;
 
 // Re-exports

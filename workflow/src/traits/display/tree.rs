@@ -1,18 +1,19 @@
-// Types
-use crate::types::Node;
-
 // Caracteres
 use super::characters::Characters;
-
 // Colors
 pub use colored::control::set_override;
 use colored::{ColoredString, Colorize};
-
+// Structs
+use crate::types::Node;
 use exec::Status;
 use log::LevelFilter;
 use regex::Regex;
 use std::fmt;
+// Globals
 use utils::globals::LOGGER;
+
+// Date utilities
+use utils::dates::convert::*;
 
 static INDENT: &str = "  ";
 
@@ -61,7 +62,11 @@ impl Node {
             if self.duration.is_some()
                 && LOGGER.lock().unwrap().pipelines.level >= LevelFilter::Error
             {
-                let pretty = format!(" ({})", self.duration.as_ref().unwrap());
+                let human_duration = std_duration_to_human_duration(
+                    iso8601_to_std_duration(self.duration.as_ref().unwrap()).unwrap(),
+                )
+                .unwrap();
+                let pretty = format!(" ({})", human_duration);
                 value.push_str(&format!("{}", pretty.white()));
             }
             if self.level <= LevelFilter::Error {
