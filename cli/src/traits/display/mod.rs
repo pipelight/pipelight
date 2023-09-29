@@ -1,13 +1,12 @@
-// import tests
+// Tests
 mod test;
-
-use crate::interface::{
+// Structs
+use crate::types::{
     Cli, Commands, DisplayCommands, Init, InternalVerbosity, Logs, LogsCommands, Pipeline,
     PostCommands, PreCommands, Shell, Toggle, Trigger, Verbosity,
 };
 
 use log::LevelFilter;
-
 use std::fmt;
 
 impl fmt::Display for Cli {

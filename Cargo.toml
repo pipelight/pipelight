@@ -6,7 +6,9 @@ members=[
   "cast",
   "templates",
   "workflow",
+  "actions",
   "cli",
+  "switch",
   "pipelight",
 ]
 

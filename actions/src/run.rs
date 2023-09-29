@@ -4,8 +4,8 @@ use exec::Status;
 use utils::git::Flag;
 use workflow::{Getters, Node, Pipeline, Trigger};
 
-use crate::interface::types;
-use crate::interface::{Commands, PostCommands};
+use cli::types;
+use cli::types::{Commands, PostCommands};
 
 // Logger
 use log::{info, trace};
@@ -26,9 +26,7 @@ pub fn launch(pipeline_name: String, attach: bool, flag: Option<String>) -> Resu
     }
 
     let args;
-    unsafe {
-        args = (*CLI).clone();
-    }
+    args = CLI.lock().unwrap().clone();
 
     // Set the detach command subcommand in case of pipeline name is prompted
     let subcommand = Commands::PostCommands(PostCommands::Run(types::Pipeline {

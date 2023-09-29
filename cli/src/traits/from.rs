@@ -1,8 +1,5 @@
-use crate::interface::types::ColoredOutput;
+use crate::types::ColoredOutput;
 use convert_case::{Case, Casing};
-
-
-
 
 impl From<&String> for ColoredOutput {
     fn from(option: &String) -> ColoredOutput {

@@ -1,26 +1,30 @@
 // Clap - command line lib
-// Standard I/O
-use std::io;
-// Error Handling
-use miette::Result;
+use clap::{Parser, Subcommand, ValueHint};
 // Struct
-pub use super::verbosity::external::Verbosity;
-pub use super::verbosity::internal::InternalVerbosity;
-
-// serde
+pub use crate::verbosity::external::Verbosity;
+pub use crate::verbosity::internal::InternalVerbosity;
+// Serde
 use serde::{Deserialize, Serialize};
 
-use clap::{builder::PossibleValue, Args, Command, FromArgMatches, Parser, Subcommand, ValueHint};
-use clap_complete::{generate, shells};
+/**
+The Cli struct is the entrypoint for command line argument parsing:
+It casts arguments into the appropriate struct.
 
-// Globals
-pub use crate::globals::CLI;
+let args = Cli::from_arg_matches(&matches)
 
+*/
 #[derive(Debug, Clone, Parser)]
 pub struct Cli {
+    /**
+    The set of subcommands.
+    */
     #[command(subcommand)]
     pub commands: Commands,
 
+    /**
+    The folowing args are global arguments available
+    for every subcommands.
+    */
     /// Set a config file
     #[arg(long, global = true, hide = true, value_name="FILE" ,value_hint = ValueHint::FilePath)]
     pub config: Option<String>,
@@ -43,6 +47,11 @@ pub struct Cli {
     pub raw: Option<Vec<String>>,
 }
 
+/**
+An enumaration over the differen types of commands available:
+- PreCommand that only needs a partial env to run,
+- PostCommands that needs the full env to be loaded to run.
+*/
 #[derive(Debug, Clone, Eq, PartialEq, Subcommand)]
 pub enum Commands {
     #[clap(flatten)]
@@ -50,6 +59,11 @@ pub enum Commands {
     #[clap(flatten)]
     PostCommands(PostCommands),
 }
+
+/**
+Commands that does not need the config to be found and loaded.
+Leads to fastest execution time.
+*/
 #[derive(Debug, Clone, Eq, PartialEq, Subcommand)]
 pub enum PreCommands {
     /// Generate autocompletion script for most used shells (bash/zsh/fish)
@@ -62,6 +76,10 @@ pub enum PreCommands {
     Hooks(Toggle),
 }
 
+/**
+Commands that need the config file to be found and loaded
+Leads to a slowest execution time
+*/
 #[derive(Debug, Clone, Eq, PartialEq, Subcommand)]
 pub enum PostCommands {
     /// Run a pipeline (interactive)
@@ -91,6 +109,10 @@ pub struct Watch {
 pub enum WatchCommands {
     Kill,
 }
+
+/**
+Arguments for initial config file template creation.
+*/
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Init {
     /// The template style
@@ -100,6 +122,10 @@ pub struct Init {
     #[arg(long)]
     pub file: Option<String>,
 }
+
+/**
+Whether the git hooks should be enabled or disabled.
+*/
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Toggle {
     /// Create git hooks
@@ -110,22 +136,32 @@ pub struct Toggle {
     pub disable: bool,
 }
 
+/**
+Argument for pipeline execution.
+- name: pipeline name,
+- trigger: multiple triggering environment arguments.
+*/
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Pipeline {
     /// The pipeline name
     pub name: Option<String>,
-    /// Attach command to standard I/O
     #[command(flatten)]
     pub trigger: Trigger,
 }
 
+/**
+Arguments to set/modify the triggering environment.
+*/
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 pub struct Trigger {
-    /// Manualy set a flag/action to bypass environment computation
+    /// Manualy set a flag/action to bypass environment computation.
     #[arg(long, ignore_case = true)]
     pub flag: Option<String>,
 }
 
+/**
+Arguments to query logs.
+*/
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct Logs {
@@ -170,50 +206,4 @@ pub struct Shell {
     /// The shell name
     #[arg(long, ignore_case = true)]
     pub name: String,
-}
-/// Build the cli
-impl Cli {
-    pub fn build() -> Result<Command> {
-        let mut cli = Command::new("pipelight");
-        cli = Cli::augment_args(cli);
-        cli = cli
-            .mut_subcommand("logs", |a| {
-                a.mut_arg("color", |e| {
-                    e.num_args(0..=1)
-                        .require_equals(true)
-                        .default_missing_value("always")
-                        .default_value("auto")
-                })
-            })
-            .mut_arg("config", |e| e.value_hint(ValueHint::FilePath))
-            .mut_subcommand("completion", |a| {
-                a.mut_arg("name", |e| {
-                    e.value_parser([
-                        PossibleValue::new("bash"),
-                        PossibleValue::new("zsh"),
-                        PossibleValue::new("fish"),
-                        PossibleValue::new("elvish"),
-                    ])
-                })
-            });
-        Ok(cli)
-    }
-    pub fn print_completion(shell: shells::Shell) -> Result<()> {
-        // Build client and generate autocompletion script
-        let mut cmd = Cli::build()?;
-        let name = cmd.get_name().to_string();
-        generate(shell, &mut cmd, name, &mut io::stdout());
-
-        Ok(())
-    }
-    // Hydrate cli
-    pub fn hydrate_global() -> Result<()> {
-        let cli = Cli::build()?;
-        let matches = cli.get_matches();
-        let args = Cli::from_arg_matches(&matches)
-            .map_err(|err| err.exit())
-            .unwrap();
-        unsafe { *CLI = args.clone() };
-        Ok(())
-    }
 }

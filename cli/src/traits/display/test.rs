@@ -5,8 +5,7 @@ mod display {
     };
     use crate::interface::{InternalVerbosity, Verbosity};
 
-    // Test Cli struct to bash string reversion
-    //
+    // Test Cli struct to bash string convertion.
     #[test]
     fn pipeline_args() {
         // Define a cli struct

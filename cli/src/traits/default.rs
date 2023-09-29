@@ -1,6 +1,4 @@
-use crate::interface::types::{
-    Cli, Commands, DisplayCommands, InternalVerbosity, PostCommands, Verbosity,
-};
+use crate::types::{Cli, Commands, DisplayCommands, InternalVerbosity, PostCommands, Verbosity};
 
 impl Cli {
     pub fn new() -> Cli {

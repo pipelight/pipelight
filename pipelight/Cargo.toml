@@ -10,7 +10,7 @@ repository="git@gitea.com:areska/pipelight.git"
 license="GPL2"
 
 [dependencies]
-cli = {path = "../cli" }
+switch = {path = "../switch" }
 log = "0.4.17"
 miette = { version = "5.5.0", features = ["fancy"] }
 

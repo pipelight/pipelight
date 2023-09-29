@@ -1,4 +1,4 @@
-use crate::actions::run;
+use crate::run;
 use workflow::{Getters, Logs, Node, Pipeline};
 
 // Logging and verbosity

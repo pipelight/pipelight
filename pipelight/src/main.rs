@@ -5,7 +5,7 @@
 // #![allow(unused_must_use)]
 
 // Structs
-use cli::Cli;
+use switch::Cli;
 // Error Handling
 use log::trace;
 use miette::{MietteHandlerOpts, Result, RgbColors};

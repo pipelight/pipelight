@@ -5,8 +5,8 @@ use std::thread;
 use utils::git::{Flag, Special};
 use workflow::{Config, Trigger};
 
-use crate::interface::types;
-use crate::interface::types::{Commands, PostCommands};
+use cli::types;
+use cli::types::{Commands, PostCommands};
 
 // sys
 use clap::Parser;
@@ -76,7 +76,7 @@ pub fn watch() -> Result<()> {
     let command = format!("watchexec -w {} {}", &directory, &action);
 
     if can_watch().is_ok() {
-        Process::new(&command).simple()?;
+        Process::new(&command).run_piped()?;
     }
     Ok(())
 }

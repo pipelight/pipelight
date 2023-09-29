@@ -2,13 +2,11 @@
 use chrono::{DateTime, Local};
 use exec::{Statuable, Status};
 use workflow::{Config, Getters, Logs, Node, Pipeline};
-
-// Error Handling
-use miette::{IntoDiagnostic, Result};
-
 //Logger
 use crate::globals::LOGGER;
 use log::{error, info, warn, LevelFilter};
+// Error Handling
+use miette::{IntoDiagnostic, Result};
 
 /// Pretty print pipeline logs from json log file
 pub fn pretty(pipelines: &mut Vec<Pipeline>) -> Result<()> {

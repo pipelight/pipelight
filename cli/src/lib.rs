@@ -3,14 +3,14 @@
 // #![allow(unused_imports)]
 // #![allow(dead_code)]
 
-pub mod actions;
-pub mod case;
-pub mod globals;
-pub mod interface;
-mod utils;
+mod builder;
+mod traits;
+pub mod types;
+mod verbosity;
 
 // Cli test
 mod test;
 
 // Re-export
-pub use interface::*;
+pub use types::*;
+pub use verbosity::*;

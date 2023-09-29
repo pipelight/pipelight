@@ -1,7 +1,7 @@
 // Error Handling
 use miette::Result;
 
-use crate::interface::types::Commands;
+use cli::types::Commands;
 
 // sys
 use exec::Process;
@@ -18,9 +18,7 @@ pub fn detach(subcommand: Option<Commands>) -> Result<()> {
     trace!("Create detached subprocess");
     let bin = "pipelight";
     let mut args;
-    unsafe {
-        args = (*CLI).clone();
-    }
+    args = CLI.lock().unwrap().clone();
 
     args.attach = true;
     if let Some(subcommand) = subcommand {
@@ -33,6 +31,6 @@ pub fn detach(subcommand: Option<Commands>) -> Result<()> {
     #[cfg(not(debug_assertions))]
     let command = format!("{} {}", &bin, &args);
 
-    Process::new(&command).detached()?;
+    Process::new(&command).run_detached()?;
     Ok(())
 }

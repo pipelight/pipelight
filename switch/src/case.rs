@@ -1,9 +1,3 @@
-// Error Handling
-use miette::{Error, Result};
-// Logger
-
-use log::info;
-
 // Git Hooks
 use utils::git::Hook;
 
@@ -18,25 +12,39 @@ use clap::ValueEnum;
 // use std::str::FromStr;
 
 // Cli core types
-use crate::interface::{
+use cli::types::{
     Cli, ColoredOutput, Commands, LogsCommands, PostCommands, PreCommands, WatchCommands,
 };
 
 // Cli core functions
-use crate::actions::print;
-use crate::actions::prompt;
-use crate::actions::run;
-use crate::actions::stop;
-use crate::actions::trigger;
-use crate::actions::watch;
+use actions::*;
 
 use crate::globals::{set_early_globals, set_globals, CLI};
+
 use clap_complete::shells::Shell;
 
 // Template
 use templates::Template;
+// Error Handling
+use log::info;
+use miette::{Error, Result};
 
-impl Cli {
+pub struct Switch;
+
+impl Switch {
+    // Hydrate cli
+    pub fn hydrate_global() -> Result<()> {
+        let cli = Cli::build()?;
+        let matches = cli.get_matches();
+        let args = Cli::from_arg_matches(&matches)
+            .map_err(|err| err.exit())
+            .unwrap();
+        unsafe { *CLI = args.clone() };
+        Ok(())
+    }
+}
+
+impl Switch {
     /// Build and Launch the cli
     pub fn launch() -> Result<()> {
         // Doesn't read config file
