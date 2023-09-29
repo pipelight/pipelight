@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod display {
-    use crate::interface::{
+    use crate::types::{
         Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, PostCommands, Trigger,
     };
-    use crate::interface::{InternalVerbosity, Verbosity};
+    use crate::types::{InternalVerbosity, Verbosity};
 
     // Test Cli struct to bash string convertion.
     #[test]

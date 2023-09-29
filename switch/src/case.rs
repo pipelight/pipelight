@@ -1,37 +1,28 @@
 // Git Hooks
 use utils::git::Hook;
-
 // Colors
 use workflow::traits::display::set_override;
-
 // Structs
-use utils::git::Flag;
-use workflow::{Config, Getters, Logs, Pipeline, Trigger};
-
-// Clap - command line lib
-use clap::ValueEnum;
-// use std::str::FromStr;
-
-// Cli core types
 use cli::types::{
     Cli, ColoredOutput, Commands, LogsCommands, PostCommands, PreCommands, WatchCommands,
 };
-
-// Cli core functions
-use actions::*;
-
+use utils::git::Flag;
+use workflow::{Config, Getters, Logs, Pipeline, Trigger};
+// Actions
 use crate::globals::{set_early_globals, set_globals, CLI};
-
+use actions::*;
+use clap::ValueEnum;
 use clap_complete::shells::Shell;
-
 // Template
 use templates::Template;
 // Error Handling
 use log::info;
 use miette::{Error, Result};
 
-pub struct Switch;
+// Global vars
+use workflow::globals::TRIGGER_ENV;
 
+pub struct Switch;
 impl Switch {
     /// Build and Launch the cli
     pub fn launch() -> Result<()> {
@@ -117,7 +108,7 @@ impl Switch {
                     PostCommands::Run(pipeline) => {
                         // Set triggering env action
                         let flag = pipeline.trigger.flag;
-                        if let Some(flag) = flag {
+                        if let Some(flag) = flag.clone() {
                             Trigger::flag(Some(Flag::from(&flag.clone())))?;
                         }
                         // Set global config
@@ -125,7 +116,7 @@ impl Switch {
                             info!("Running pipeline {:#?}", pipeline.name.clone().unwrap());
                             run::launch(pipeline.name.unwrap(), args.attach, flag.clone())?;
                         } else {
-                            prompt::run_prompt(args.attach, flag)?;
+                            // prompt::run_prompt(args.attach, flag)?;
                         }
                     }
                     PostCommands::Stop(pipeline) => {

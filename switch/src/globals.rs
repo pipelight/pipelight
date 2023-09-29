@@ -12,11 +12,11 @@ use cli::types::Cli;
 use log::{info, trace};
 use miette::Result;
 
+// Global vars
+use utils::globals::LOGGER;
 pub static mut CLI: Lazy<Cli> = Lazy::new(Cli::new);
-pub static LOGGER: Lazy<Arc<Mutex<Logger>>> = Lazy::new(|| Arc::new(Mutex::new(Logger::new())));
 pub static mut CONFIG: Lazy<Config> = Lazy::new(Config::default);
 pub static mut PORTAL: Lazy<Portal> = Lazy::new(Portal::default);
-pub static mut TRIGGER_ENV: Lazy<Trigger> = Lazy::new(Trigger::default);
 
 // Hydrate logs
 pub fn early_hydrate_logger() -> Result<()> {

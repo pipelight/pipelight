@@ -5,7 +5,7 @@
 // #![allow(unused_must_use)]
 
 // Structs
-use switch::Cli;
+use switch::Switch;
 // Error Handling
 use log::trace;
 use miette::{MietteHandlerOpts, Result, RgbColors};
@@ -17,7 +17,7 @@ This main function is the first function to be executed when launching pipelight
 fn main() -> Result<()> {
     trace!("Launch process.");
     make_handler()?;
-    Cli::launch()?;
+    Switch::launch()?;
     trace!("Process clean exit.");
     Ok(())
 }

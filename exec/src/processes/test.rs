@@ -11,13 +11,6 @@ mod basic {
         assert_eq!(Some(Status::Succeeded), process.state.status);
     }
     #[test]
-    fn run_muted() {
-        let mut process = Process::new("echo test");
-        process.run_muted().unwrap();
-        assert_eq!(None, process.io.stdout.as_deref());
-        assert_eq!(Some(Status::Succeeded), process.state.status);
-    }
-    #[test]
     fn run_fs() {
         let mut process = Process::new("echo test");
         process.run_fs().unwrap();
