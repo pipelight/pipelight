@@ -1,13 +1,11 @@
 use crate::run;
+// Struct
 use workflow::{Getters, Logs, Node, Pipeline};
-
 // Logging and verbosity
-use crate::globals::LOGGER;
 use log::LevelFilter;
-
+use utils::globals::LOGGER;
 // Prompt
 use dialoguer::{console::Term, Select};
-
 // Error Handling
 use miette::{Error, IntoDiagnostic, Result};
 

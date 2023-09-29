@@ -8,11 +8,11 @@ use super::characters::Characters;
 pub use colored::control::set_override;
 use colored::{ColoredString, Colorize};
 
-use crate::globals::LOGGER;
 use exec::Status;
 use log::LevelFilter;
 use regex::Regex;
 use std::fmt;
+use utils::globals::LOGGER;
 
 static INDENT: &str = "  ";
 

@@ -14,8 +14,8 @@ use miette::Result;
 
 // Global vars
 use utils::globals::LOGGER;
+use workflow::globals::CONFIG;
 pub static mut CLI: Lazy<Cli> = Lazy::new(Cli::new);
-pub static mut CONFIG: Lazy<Config> = Lazy::new(Config::default);
 pub static mut PORTAL: Lazy<Portal> = Lazy::new(Portal::default);
 
 // Hydrate logs
@@ -85,7 +85,7 @@ pub fn hydrate_config() -> Result<()> {
     };
     let casted_config = cast::Config::load(&portal.target.file_path.unwrap(), args.raw.clone())?;
     let config = Config::from(&casted_config);
-    unsafe { *CONFIG = config.clone() };
+    *CONFIG.lock().unwrap() = config;
     Ok(())
 }
 
@@ -94,7 +94,7 @@ pub fn hydrate_config() -> Result<()> {
 pub fn set_globals() -> Result<()> {
     trace!("Set globals");
     let cond;
-    unsafe { cond = *CONFIG == Config::default() && *PORTAL == Portal::default() };
+    unsafe { cond = *CONFIG.lock().unwrap() == Config::default() && *PORTAL == Portal::default() };
     if cond {
         // hydrate the CLI global var
         hydrate_cli()?;
@@ -113,7 +113,7 @@ pub fn set_globals() -> Result<()> {
 pub fn set_early_globals() -> Result<()> {
     trace!("Set early globals");
     let cond;
-    unsafe { cond = *CONFIG == Config::default() && *PORTAL == Portal::default() };
+    unsafe { cond = *CONFIG.lock().unwrap() == Config::default() && *PORTAL == Portal::default() };
     if cond {
         // hydrate the CLI global var
         hydrate_cli()?;
@@ -121,11 +121,3 @@ pub fn set_early_globals() -> Result<()> {
     }
     Ok(())
 }
-
-// impl Config {
-// pub fn get() -> Result<Self> {
-// let config;
-// unsafe { config = (*CONFIG).clone() };
-// Ok(config)
-// }
-// }

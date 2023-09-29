@@ -13,16 +13,4 @@ mod pipeline {
         };
         assert!(p.run().is_ok());
     }
-    #[test]
-    fn concistent_logs() {
-        // Set a logger
-        let mut p = Pipeline {
-            steps: vec![StepOrParallel::Step(Step {
-                commands: vec![Command::new("echo test")],
-                ..Step::default()
-            })],
-            ..Pipeline::default()
-        };
-        p.run().unwrap();
-    }
 }

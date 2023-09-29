@@ -1,7 +1,7 @@
 // Global vars
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
-pub use utils::globals::LOGGER;
+use utils::globals::LOGGER;
 // Struct
 use crate::{Config, Trigger};
 use utils::logger::Logger;

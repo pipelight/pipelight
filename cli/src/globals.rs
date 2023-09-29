@@ -14,11 +14,3 @@ use log::{info, trace};
 use miette::Result;
 
 pub static mut CLI: Lazy<Cli> = Lazy::new(Cli::new);
-
-// impl Config {
-// pub fn get() -> Result<Self> {
-// let config;
-// unsafe { config = (*CONFIG).clone() };
-// Ok(config)
-// }
-// }

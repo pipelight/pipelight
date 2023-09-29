@@ -19,9 +19,6 @@ use templates::Template;
 use log::info;
 use miette::{Error, Result};
 
-// Global vars
-use workflow::globals::TRIGGER_ENV;
-
 pub struct Switch;
 impl Switch {
     /// Build and Launch the cli
@@ -116,7 +113,7 @@ impl Switch {
                             info!("Running pipeline {:#?}", pipeline.name.clone().unwrap());
                             run::launch(pipeline.name.unwrap(), args.attach, flag.clone())?;
                         } else {
-                            // prompt::run_prompt(args.attach, flag)?;
+                            prompt::run_prompt(args.attach, flag)?;
                         }
                     }
                     PostCommands::Stop(pipeline) => {

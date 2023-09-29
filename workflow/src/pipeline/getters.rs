@@ -2,7 +2,7 @@ use crate::traits::Getters;
 use crate::types::{Config, Pipeline};
 
 // Error Handling
-use log::{warn};
+use log::warn;
 use miette::{Error, Result};
 
 impl Getters<Pipeline> for Pipeline {

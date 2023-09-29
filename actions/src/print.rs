@@ -3,8 +3,8 @@ use chrono::{DateTime, Local};
 use exec::{Statuable, Status};
 use workflow::{Config, Getters, Logs, Node, Pipeline};
 //Logger
-use crate::globals::LOGGER;
 use log::{error, info, warn, LevelFilter};
+use utils::globals::LOGGER;
 // Error Handling
 use miette::{IntoDiagnostic, Result};
 
@@ -12,7 +12,7 @@ use miette::{IntoDiagnostic, Result};
 pub fn pretty(pipelines: &mut Vec<Pipeline>) -> Result<()> {
     for pipeline in pipelines {
         if pipeline.get_status() == Some(Status::Running) {
-            pipeline.hydrate();
+            pipeline.hydrate()?;
         }
         let node = Node::from(&pipeline.clone());
         println!("{}", node);

@@ -9,6 +9,8 @@ use log4rs::{
 use crate::logger::types::Logger;
 // Error Handling
 use miette::{IntoDiagnostic, Result};
+// Globals
+use crate::globals::LOGGER;
 
 impl Logger {
     pub fn update(&mut self) -> Result<()> {

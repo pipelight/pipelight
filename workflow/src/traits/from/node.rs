@@ -1,15 +1,16 @@
-// Convert the pipeline object into a prinatbale tree.
-// Every pipeline subcomponent such as step and commands are converted to
-// the node pretty printable type.
-
-use crate::globals::LOGGER;
+/**
+Convert the pipeline object into a printable tree.
+Every pipeline subcomponent such as step and commands are converted to
+the node pretty printable type.
+*/
+// Struct
 use crate::types::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel};
 use exec::{Statuable, Status};
 use log::LevelFilter;
-
+// Globals
+use utils::globals::LOGGER;
 // Colorize
 use colored::Colorize;
-
 // Duration
 use chrono::{DateTime, Local};
 
