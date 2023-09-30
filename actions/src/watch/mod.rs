@@ -10,11 +10,13 @@ use miette::{IntoDiagnostic, Result};
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    let file_name = ".pipelightignore";
+
     let mut init = InitConfig::default();
     init.on_error(PrintDebug(std::io::stderr()));
 
     let mut runtime = RuntimeConfig::default();
-    runtime.pathset(["watchexec.conf"]);
+    runtime.pathset([file_name]);
 
     let conf = YourConfigFormat::load_from_file("watchexec.conf").await?;
     conf.apply(&mut runtime);

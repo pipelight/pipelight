@@ -1,5 +1,7 @@
 // Enum iteration workaround
 use strum::EnumIter;
+// Ignore file
+use ignore_files::IgnoreFilter;
 
 /**
 An enum representing the file extention accepted/recognized by pipelight
@@ -13,4 +15,12 @@ pub enum FileType {
     Tml,
     Yaml,
     Yml,
+}
+
+/**
+Ignore file filtering utility
+*/
+#[derive(Debug, Clone)]
+pub struct Ignore {
+    pub filter: IgnoreFilter,
 }

@@ -11,7 +11,6 @@ use regex::Regex;
 use std::fmt;
 // Globals
 use utils::globals::LOGGER;
-
 // Date utilities
 use utils::dates::convert::*;
 
