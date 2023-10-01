@@ -4,6 +4,9 @@ mod template {
     use std::env;
     use std::path::Path;
 
+    /**
+    Retrieve the parent directory of this test file
+    */
     pub fn get_test_dir() -> String {
         // Test module dir
         let test_dir = Path::new(file!())
@@ -22,6 +25,7 @@ mod template {
 
         test_dir
     }
+
     #[test]
     fn handlebars_find_template_files() {
         let res = Template::default().create_config_template();

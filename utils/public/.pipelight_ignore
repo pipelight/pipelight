@@ -1,0 +1,6 @@
+
+# Cargo build dir 
+/target
+
+# Test files dir
+public/

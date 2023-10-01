@@ -2857,6 +2857,7 @@ version = "0.2.0"
 dependencies = [
  "chrono",
  "convert_case",
+ "futures",
  "git2",
  "ignore-files",
  "iso8601-duration",
@@ -2872,6 +2873,7 @@ dependencies = [
  "signal-hook",
  "strum",
  "thiserror",
+ "tokio",
  "uuid",
  "watchexec",
  "watchexec-events",
