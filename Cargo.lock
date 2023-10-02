@@ -2856,6 +2856,7 @@ name = "utils"
 version = "0.2.0"
 dependencies = [
  "chrono",
+ "console",
  "convert_case",
  "futures",
  "git2",

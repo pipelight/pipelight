@@ -17,7 +17,7 @@ This main function is the first function to be executed when launching pipelight
 fn main() -> Result<()> {
     trace!("Launch process.");
     make_handler()?;
-    Switch::launch()?;
+    Switch::case()?;
     trace!("Process clean exit.");
     Ok(())
 }

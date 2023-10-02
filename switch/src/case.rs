@@ -9,7 +9,7 @@ use cli::types::{
 use utils::git::Flag;
 use workflow::{Config, Getters, Logs, Pipeline, Trigger};
 // Actions
-use crate::globals::{set_early_globals, set_globals, CLI};
+use crate::globals::{set_early_globals, set_globals};
 use actions::*;
 use clap::ValueEnum;
 use clap_complete::shells::Shell;
@@ -18,17 +18,17 @@ use templates::Template;
 // Error Handling
 use log::info;
 use miette::{Error, Result};
+// Global vars
+use actions::globals::CLI;
 
 pub struct Switch;
 impl Switch {
     /// Build and Launch the cli
-    pub fn launch() -> Result<()> {
+    pub fn case() -> Result<()> {
         // Doesn't read config file
         set_early_globals()?;
         let args;
-        unsafe {
-            args = (*CLI).clone();
-        };
+        args = CLI.lock().unwrap().clone();
         match args.commands {
             Commands::PreCommands(pre_commands) => {
                 match pre_commands {

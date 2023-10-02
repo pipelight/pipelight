@@ -6,6 +6,9 @@ use log::warn;
 use miette::{Error, Result};
 
 impl Getters<Pipeline> for Pipeline {
+    /**
+    Return pipelines from config file.
+    */
     fn get() -> Result<Vec<Pipeline>> {
         let config = Config::get()?;
         let optional = config.pipelines;
@@ -17,6 +20,9 @@ impl Getters<Pipeline> for Pipeline {
             }
         }
     }
+    /**
+    Check if pipeline with name exists, and return it.
+    */
     fn get_by_name(name: &str) -> Result<Pipeline> {
         let pipelines = Pipeline::get()?;
         let optional = pipelines.iter().find(|p| p.name == name);

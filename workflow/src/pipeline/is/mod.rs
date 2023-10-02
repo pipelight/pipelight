@@ -99,7 +99,6 @@ impl Pipeline {
     */
     pub fn is_triggerable(&self) -> Result<bool> {
         let env = Trigger::flag(None)?;
-
         // If in git repo
         if Git::new().exists() {
             if self.triggers.is_some() {

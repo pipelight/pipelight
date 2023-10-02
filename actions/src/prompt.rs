@@ -17,7 +17,6 @@ pub fn inspect_prompt() -> Result<()> {
         .default(0)
         .interact_on_opt(&Term::stderr())
         .into_diagnostic()?;
-
     match selection {
         Some(index) => {
             LOGGER.lock().unwrap().pipelines.level = LevelFilter::max();

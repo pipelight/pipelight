@@ -1,4 +1,3 @@
-
 use crate::utils::detach;
 
 use exec::Status;
@@ -21,11 +20,6 @@ use miette::{Error, Result};
 /// Either spawn a detached new process or spawn an attached thread
 /// to run the pipeline
 pub fn launch(pipeline_name: String, attach: bool, flag: Option<String>) -> Result<()> {
-    // Set triggering env action
-    if flag.is_some() {
-        Trigger::flag(Some(Flag::from(&flag.unwrap())))?;
-    }
-
     let args;
     args = CLI.lock().unwrap().clone();
 
@@ -42,7 +36,6 @@ pub fn launch(pipeline_name: String, attach: bool, flag: Option<String>) -> Resu
     }));
 
     // Ensure
-    // Check if pipeline exists and give hints
     let pipeline = Pipeline::get_by_name(&pipeline_name)?;
     if !pipeline.is_triggerable()? {
         let message = "Pipeline can not be triggered in this environment";

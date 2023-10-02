@@ -1,3 +1,5 @@
+// Struct
+use utils::git::Flag;
 // Global vars
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
@@ -8,22 +10,21 @@ use workflow::{Config, Trigger};
 // Cli
 use clap::FromArgMatches;
 use cli::types::Cli;
+use cli::types::{Commands, PostCommands};
 // Error Handling
 use log::{info, trace};
 use miette::Result;
 
 // Global vars
+use actions::globals::CLI;
 use utils::globals::LOGGER;
 use workflow::globals::CONFIG;
-pub static mut CLI: Lazy<Cli> = Lazy::new(Cli::new);
-pub static mut PORTAL: Lazy<Portal> = Lazy::new(Portal::default);
+pub static PORTAL: Lazy<Arc<Mutex<Portal>>> = Lazy::new(|| Arc::new(Mutex::new(Portal::default())));
 
 // Hydrate logs
 pub fn early_hydrate_logger() -> Result<()> {
     let args;
-    unsafe {
-        args = (*CLI).clone();
-    };
+    args = CLI.lock().unwrap().clone();
     // Set internal verbosity level
     let verbosity = args.verbose.log_level_filter();
     LOGGER.lock().unwrap().set_level(&verbosity)?;
@@ -34,10 +35,7 @@ pub fn early_hydrate_logger() -> Result<()> {
 }
 // Hydrate logs
 pub fn full_hydrate_logger() -> Result<()> {
-    let mut portal;
-    unsafe {
-        portal = (*PORTAL).clone();
-    };
+    let mut portal = PORTAL.lock().unwrap();
     portal.teleport()?;
     LOGGER.lock().unwrap().to_file();
     portal.origin()?;
@@ -51,14 +49,39 @@ pub fn hydrate_cli() -> Result<()> {
     let args = Cli::from_arg_matches(&matches)
         .map_err(|err| err.exit())
         .unwrap();
-    unsafe { *CLI = args.clone() };
+    *CLI.lock().unwrap() = args.clone();
+    hydrate_trigger()?;
+    Ok(())
+}
+
+// Hydrate trigger
+pub fn hydrate_trigger() -> Result<()> {
+    let args;
+    args = CLI.lock().unwrap().clone();
+    let mut flag = None;
+    match args.commands {
+        Commands::PostCommands(post_commands) => match post_commands.clone() {
+            PostCommands::Trigger(trigger) => {
+                flag = trigger.flag;
+            }
+            PostCommands::Run(pipeline) => {
+                flag = pipeline.trigger.flag;
+            }
+            _ => {}
+        },
+        _ => {}
+    }
+    if let Some(flag) = flag {
+        Trigger::flag(Some(Flag::from(&flag)))?;
+    }
     Ok(())
 }
 
 // Hydrate portal
 pub fn hydrate_portal() -> Result<()> {
     let args;
-    unsafe { args = (*CLI).clone() };
+    args = CLI.lock().unwrap().clone();
+
     let seed = if args.config.is_some() {
         args.config.unwrap()
     } else {
@@ -69,9 +92,7 @@ pub fn hydrate_portal() -> Result<()> {
         "Found config file at: {}",
         portal.target.file_path.clone().unwrap()
     );
-    unsafe {
-        *PORTAL = portal.clone();
-    };
+    *PORTAL.lock().unwrap() = portal;
     Ok(())
 }
 
@@ -79,41 +100,45 @@ pub fn hydrate_portal() -> Result<()> {
 pub fn hydrate_config() -> Result<()> {
     let portal;
     let args;
-    unsafe {
-        portal = (*PORTAL).clone();
-        args = (*CLI).clone();
-    };
+    args = CLI.lock().unwrap().clone();
+    portal = PORTAL.lock().unwrap().clone();
+
     let casted_config = cast::Config::load(&portal.target.file_path.unwrap(), args.raw.clone())?;
     let config = Config::from(&casted_config);
     *CONFIG.lock().unwrap() = config;
     Ok(())
 }
 
-// The main usage of teleport
-// Set every main globals
+/**
+Read the command line and the config file
+then hydrate every globals.
+*/
 pub fn set_globals() -> Result<()> {
-    trace!("Set globals");
-    let cond;
-    unsafe { cond = *CONFIG.lock().unwrap() == Config::default() && *PORTAL == Portal::default() };
+    trace!("Set globals [full]");
+    let cond = *CONFIG.lock().unwrap() == Config::default()
+        && *PORTAL.lock().unwrap() == Portal::default();
     if cond {
         // hydrate the CLI global var
         hydrate_cli()?;
-        early_hydrate_logger()?;
+        // early_hydrate_logger()?;
         // hydrate the PORTAL global var
         hydrate_portal()?;
         // hydrate the CONFIG global var
-        unsafe {
-            (*PORTAL).teleport()?;
-        }
+        (*PORTAL.lock().unwrap()).teleport()?;
         full_hydrate_logger()?;
         hydrate_config()?;
     }
     Ok(())
 }
+
+/**
+Only read the command line and ignore the config file
+then hydrate globals that can be hydrated.
+*/
 pub fn set_early_globals() -> Result<()> {
-    trace!("Set early globals");
-    let cond;
-    unsafe { cond = *CONFIG.lock().unwrap() == Config::default() && *PORTAL == Portal::default() };
+    trace!("Set globals [early]");
+    let cond = *CONFIG.lock().unwrap() == Config::default()
+        && *PORTAL.lock().unwrap() == Portal::default();
     if cond {
         // hydrate the CLI global var
         hydrate_cli()?;

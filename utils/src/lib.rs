@@ -8,4 +8,5 @@ pub mod dates;
 pub mod files;
 pub mod git;
 pub mod logger;
+pub mod signal;
 pub mod teleport;

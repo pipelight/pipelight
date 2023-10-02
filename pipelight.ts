@@ -21,7 +21,7 @@ const config: Config = {
       triggers: [
         {
           branches: ["dev"],
-          actions: ["pre-push", "manual"],
+          actions: ["watch", "pre-push", "manual"],
         },
       ],
     },
