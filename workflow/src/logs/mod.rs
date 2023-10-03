@@ -35,10 +35,10 @@ impl Logs {
     Delete every logs but the ones from running pipelines
     */
     pub fn clean(&mut self) -> Result<()> {
-        let pipelines = Self::new().hydrate()?.sanitize()?.get()?;
+        let pipelines: Vec<Pipeline> = self.hydrate()?.sanitize()?.get()?;
         for pipeline in pipelines {
-            if !pipeline.is_running().is_ok() {
-                pipeline.clean();
+            if pipeline.is_running().is_err() {
+                pipeline.clean()?;
             }
         }
         Ok(())

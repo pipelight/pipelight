@@ -9,13 +9,13 @@ use std::fs;
 use std::path::Path;
 // Error Handling
 use log::error;
-use miette::Result;
+use miette::{IntoDiagnostic, Result};
 
 impl Pipeline {
     /**
     Delete the pipeline log file.
     */
-    pub fn clean(&self) {
+    pub fn clean(&self) -> Result<()> {
         LOGGER.lock().unwrap().to_file();
         LOGGER.lock().unwrap().set_file(&self.uuid);
         let logger = LOGGER.lock().unwrap().clone();
@@ -24,9 +24,10 @@ impl Pipeline {
             let path = format!("{}/{}.json", file.directory, file.name);
             let path = Path::new(&path);
             if path.is_file() {
-                fs::remove_file(path).unwrap();
+                fs::remove_file(path).into_diagnostic()?;
             }
         }
+        Ok(())
     }
     /**
     Print the pipeline status as JSON inside a log file.

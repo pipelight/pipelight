@@ -52,18 +52,21 @@ impl Logs {
         Ok(pipelines)
     }
     pub fn get_by_name(&self, name: &str) -> Result<Pipeline> {
-        if let Some(pipelines) = self.pipelines.clone() {
-            let mut pipelines = pipelines
-                .iter()
-                .filter(|p| p.name == *name)
-                .cloned()
-                .collect::<Vec<Pipeline>>();
-            pipelines = Filters::sort_by_date_asc(pipelines)?;
-            let pipeline = pipelines.pop().unwrap();
-            Ok(pipeline)
-        } else {
-            let message = format!("Couldn't find a pipeline named {:?}, in logs", name);
-            Err(Error::msg(message))
+        let mut pipelines = self
+            .pipelines
+            .clone()
+            .unwrap()
+            .iter()
+            .filter(|p| p.name == *name)
+            .cloned()
+            .collect::<Vec<Pipeline>>();
+        pipelines = Filters::sort_by_date_asc(pipelines)?;
+        match pipelines.pop() {
+            None => {
+                let message = format!("Couldn't find a pipeline named {:?}, in logs", name);
+                Err(Error::msg(message))
+            }
+            Some(p) => Ok(p),
         }
     }
 }
@@ -71,17 +74,21 @@ impl Logs {
 // More getters
 impl Logs {
     pub fn get_many_by_name(&self, name: &str) -> Result<Vec<Pipeline>> {
-        if let Some(pipelines) = self.pipelines.clone() {
-            let mut pipelines = pipelines
-                .iter()
-                .filter(|p| p.name == *name)
-                .cloned()
-                .collect::<Vec<Pipeline>>();
-            pipelines = Filters::sort_by_date_asc(pipelines)?;
-            Ok(pipelines)
-        } else {
-            let message = format!("Couldn't find a pipeline named {:?}, in logs", name);
-            Err(Error::msg(message))
+        let mut pipelines = self
+            .pipelines
+            .clone()
+            .unwrap()
+            .iter()
+            .filter(|p| p.name == *name)
+            .cloned()
+            .collect::<Vec<Pipeline>>();
+        pipelines = Filters::sort_by_date_asc(pipelines)?;
+        match pipelines.is_empty() {
+            false => Ok(pipelines),
+            true => {
+                let message = format!("Couldn't find a pipeline named {:?}, in logs", name);
+                Err(Error::msg(message))
+            }
         }
     }
 }

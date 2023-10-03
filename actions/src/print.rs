@@ -45,6 +45,8 @@ pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<()> {
 pub fn list() -> Result<()> {
     let level = LOGGER.lock().unwrap().pipelines.level;
     let config = Config::get()?;
+    let logs = Logs::new().hydrate()?;
+
     // Print headers
     match level {
         LevelFilter::Warn => {
@@ -67,23 +69,20 @@ pub fn list() -> Result<()> {
         let mut action = "".to_owned();
         let mut branch = "".to_owned();
         // Retrieve logs data if any
-        let logs = Logs::new().hydrate()?;
-        if logs.get().is_ok() {
-            let last_log = logs.get_by_name(&pipeline.name);
-            if let Ok(last_log) = last_log {
-                status = String::from(&last_log.status.clone().unwrap());
-                let event = last_log.event.clone().unwrap();
-                if event.trigger.branch.is_some() {
-                    branch = String::from(&event.trigger.branch.unwrap());
-                }
-                action = String::from(&event.trigger.action.unwrap());
-                let str_date = &event.date;
-                date = str_date
-                    .parse::<DateTime<Local>>()
-                    .unwrap()
-                    .format("%Y-%m-%d %H:%M:%S")
-                    .to_string();
+        let last_log = logs.get_by_name(&pipeline.name);
+        if let Ok(last_log) = last_log {
+            status = String::from(&last_log.status.clone().unwrap());
+            let event = last_log.event.clone().unwrap();
+            if event.trigger.branch.is_some() {
+                branch = String::from(&event.trigger.branch.unwrap());
             }
+            action = String::from(&event.trigger.action.unwrap());
+            let str_date = &event.date;
+            date = str_date
+                .parse::<DateTime<Local>>()
+                .unwrap()
+                .format("%Y-%m-%d %H:%M:%S")
+                .to_string();
         }
         match level {
             LevelFilter::Warn => {
