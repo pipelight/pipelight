@@ -137,15 +137,15 @@ impl Switch {
                             }
                         }
 
+                        let mut _logs = Logs::new().hydrate()?;
                         match logs.commands.clone() {
                             None => {
                                 let mut pipelines;
                                 if logs.display.name.is_some() {
-                                    pipelines = Logs::get_many_by_name(
-                                        &logs.display.name.clone().unwrap(),
-                                    )?;
+                                    pipelines = _logs
+                                        .get_many_by_name(&logs.display.name.clone().unwrap())?;
                                 } else {
-                                    pipelines = Logs::get()?;
+                                    pipelines = _logs.get()?;
                                 }
                                 if logs.display.json {
                                     print::json(&pipelines)?;
@@ -154,7 +154,7 @@ impl Switch {
                                 }
                             }
                             Some(logs_cmd) => match logs_cmd {
-                                LogsCommands::Rm => Logs::clean()?,
+                                LogsCommands::Rm => _logs.clean()?,
                             },
                         };
                     }

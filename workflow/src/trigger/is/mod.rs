@@ -9,7 +9,7 @@ use glob::Pattern;
 
 impl Trigger {
     /**
-    Success if trigger has same action or None
+    Return uccess if trigger has same action or None
     */
     pub fn is_action_match(&self, trigger: Trigger) -> Result<()> {
         if trigger.action.is_none() || trigger.action == self.action {

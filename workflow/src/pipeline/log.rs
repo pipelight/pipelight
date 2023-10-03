@@ -4,11 +4,30 @@ use crate::types::{Pipeline, StepOrParallel};
 use exec::{Statuable, Status};
 // Globals
 use utils::globals::LOGGER;
+// Fylesystem manipulation
+use std::fs;
+use std::path::Path;
 // Error Handling
 use log::error;
 use miette::Result;
 
 impl Pipeline {
+    /**
+    Delete the pipeline log file.
+    */
+    pub fn clean(&self) {
+        LOGGER.lock().unwrap().to_file();
+        LOGGER.lock().unwrap().set_file(&self.uuid);
+        let logger = LOGGER.lock().unwrap().clone();
+        let file = logger.pipelines.file_info;
+        if let Some(file) = file {
+            let path = format!("{}/{}.json", file.directory, file.name);
+            let path = Path::new(&path);
+            if path.is_file() {
+                fs::remove_file(path).unwrap();
+            }
+        }
+    }
     /**
     Print the pipeline status as JSON inside a log file.
     */

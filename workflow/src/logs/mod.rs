@@ -15,20 +15,32 @@ use miette::Result;
 use crate::pipeline::Filters;
 
 impl Logs {
-    // Pretty print logs from json log file
-    pub fn sanitize(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>> {
-        let mut pipelines = pipelines;
-        pipelines = Filters::filter_by_status(pipelines, Some(Status::Running))?;
-        for mut pipeline in pipelines.clone() {
-            if pipeline.is_running().is_err() {
-                pipeline.set_status(Some(Status::Aborted));
-                println!("{}", Node::from(&pipeline));
+    /**
+    Find unreported aborted pipelines and update logs
+    */
+    pub fn sanitize(&mut self) -> Result<Self> {
+        let mut pipelines: Vec<Pipeline> = vec![];
+        if let Some(e) = self.pipelines.clone() {
+            pipelines = Filters::filter_by_status(e, Some(Status::Running))?;
+            for mut pipeline in pipelines.clone() {
+                if pipeline.is_running().is_err() {
+                    pipeline.set_status(Some(Status::Aborted));
+                    pipeline.log();
+                }
             }
         }
-        Ok(pipelines)
+        Ok(self.to_owned())
     }
-    pub fn clean() -> Result<()> {
-        let _pipelines = Self::get()?;
+    /**
+    Delete every logs but the ones from running pipelines
+    */
+    pub fn clean(&mut self) -> Result<()> {
+        let pipelines = Self::new().hydrate()?.sanitize()?.get()?;
+        for pipeline in pipelines {
+            if !pipeline.is_running().is_ok() {
+                pipeline.clean();
+            }
+        }
         Ok(())
     }
 }

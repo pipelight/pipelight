@@ -32,24 +32,26 @@ impl Filters {
     */
     pub fn sort_by_date_asc(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>> {
         let mut pipelines = pipelines;
-        // Sort by date ascending
-        pipelines.sort_by(|a, b| {
-            let a_date = a
-                .clone()
-                .event
-                .unwrap()
-                .date
-                .parse::<DateTime<Local>>()
-                .unwrap();
-            let b_date = &b
-                .clone()
-                .event
-                .unwrap()
-                .date
-                .parse::<DateTime<Local>>()
-                .unwrap();
-            a_date.cmp(b_date)
-        });
+        if !pipelines.is_empty() {
+            // Sort by date ascending
+            pipelines.sort_by(|a, b| {
+                let a_date = a
+                    .clone()
+                    .event
+                    .unwrap()
+                    .date
+                    .parse::<DateTime<Local>>()
+                    .unwrap();
+                let b_date = &b
+                    .clone()
+                    .event
+                    .unwrap()
+                    .date
+                    .parse::<DateTime<Local>>()
+                    .unwrap();
+                a_date.cmp(b_date)
+            });
+        }
         Ok(pipelines)
     }
     /**
@@ -59,24 +61,26 @@ impl Filters {
     */
     pub fn sort_by_date_desc(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>> {
         let mut pipelines = pipelines;
-        // Sort by date descending
-        pipelines.sort_by(|a, b| {
-            let a_date = a
-                .clone()
-                .event
-                .unwrap()
-                .date
-                .parse::<DateTime<Local>>()
-                .unwrap();
-            let b_date = &b
-                .clone()
-                .event
-                .unwrap()
-                .date
-                .parse::<DateTime<Local>>()
-                .unwrap();
-            a_date.cmp(b_date).reverse()
-        });
+        if !pipelines.is_empty() {
+            // Sort by date descending
+            pipelines.sort_by(|a, b| {
+                let a_date = a
+                    .clone()
+                    .event
+                    .unwrap()
+                    .date
+                    .parse::<DateTime<Local>>()
+                    .unwrap();
+                let b_date = &b
+                    .clone()
+                    .event
+                    .unwrap()
+                    .date
+                    .parse::<DateTime<Local>>()
+                    .unwrap();
+                a_date.cmp(b_date).reverse()
+            });
+        }
         Ok(pipelines)
     }
     /**

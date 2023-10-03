@@ -2,10 +2,10 @@
 mod test;
 // Structs
 use crate::types::{
-    Cli, DisplayCommands, Init, InternalVerbosity, Logs, LogsCommands, Pipeline, Shell, Toggle,
-    Trigger, Verbosity,
+    Cli, DisplayCommands, Init, Logs, LogsCommands, Pipeline, Shell, Toggle, Trigger,
 };
 use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
+use crate::types::{InternalVerbosity, Verbosity};
 
 use log::LevelFilter;
 use std::fmt;

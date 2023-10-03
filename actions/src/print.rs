@@ -67,8 +67,9 @@ pub fn list() -> Result<()> {
         let mut action = "".to_owned();
         let mut branch = "".to_owned();
         // Retrieve logs data if any
-        if Logs::get().is_ok() {
-            let last_log = Logs::get_by_name(&pipeline.name);
+        let logs = Logs::new().hydrate()?;
+        if logs.get().is_ok() {
+            let last_log = logs.get_by_name(&pipeline.name);
             if let Ok(last_log) = last_log {
                 status = String::from(&last_log.status.clone().unwrap());
                 let event = last_log.event.clone().unwrap();

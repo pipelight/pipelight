@@ -1,8 +1,10 @@
 #[cfg(test)]
 mod display {
+    // Structs
     use crate::types::{
-        Cli, Commands, DisplayCommands, Logs, LogsCommands, Pipeline, PostCommands, Trigger,
+        Cli, DisplayCommands, Init, Logs, LogsCommands, Pipeline, Shell, Toggle, Trigger,
     };
+    use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
     use crate::types::{InternalVerbosity, Verbosity};
 
     // Test Cli struct to bash string convertion.
@@ -10,12 +12,14 @@ mod display {
     fn pipeline_args() {
         // Define a cli struct
         let cli = Cli {
-            commands: Commands::PostCommands(PostCommands::Run(Pipeline {
-                name: Some("test".to_owned()),
-                trigger: Trigger {
-                    flag: Some("pre-push".to_owned()),
-                },
-            })),
+            commands: Commands::PostCommands(PostCommands::DetachableCommands(
+                DetachableCommands::Run(Pipeline {
+                    name: Some("test".to_owned()),
+                    trigger: Trigger {
+                        flag: Some("pre-push".to_owned()),
+                    },
+                }),
+            )),
             attach: false,
             raw: None,
             config: None,

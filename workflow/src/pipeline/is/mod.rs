@@ -39,7 +39,7 @@ impl Pipeline {
     If those conditions are met we assume the pipeline has an already running instance.
     */
     pub fn has_homologous_already_running(&self) -> Result<()> {
-        let mut pipelines = Logs::get_many_by_name(&self.name)?;
+        let mut pipelines = Logs::new().hydrate()?.get_many_by_name(&self.name)?;
         pipelines.reverse();
         let pipeline = pipelines.first();
         if let Some(pipeline) = pipeline {
@@ -99,16 +99,7 @@ impl Pipeline {
     */
     pub fn is_triggerable(&self) -> Result<bool> {
         let env = Trigger::flag(None)?;
-        // If in git repo
-        if Git::new().exists() {
-            if self.triggers.is_some() {
-                Ok(env.is_match(self.triggers.clone().unwrap()).is_ok())
-            } else {
-                Ok(true)
-            }
-        } else {
-            Ok(true)
-        }
+        Ok(env.is_match(self.triggers.clone().unwrap()).is_ok())
     }
     /**
     Check if the pipeline has a trigger that contains a "watch" flag

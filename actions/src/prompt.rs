@@ -68,7 +68,9 @@ pub fn inspect_prompt() -> Result<()> {
 }
 
 pub fn stop_prompt() -> Result<()> {
-    let pipelines: Vec<Pipeline> = Logs::get()?
+    let pipelines: Vec<Pipeline> = Logs::new()
+        .hydrate()?
+        .get()?
         .into_iter()
         .filter(|e| e.is_running().is_ok())
         .collect();

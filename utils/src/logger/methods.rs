@@ -37,7 +37,7 @@ impl Logger {
     /**
     Delete logs directories
     */
-    pub fn clear(&self) -> Result<()> {
+    pub fn force_clean(&self) -> Result<()> {
         let file_info = &self.pipelines.file_info;
         if let Some(file_info) = file_info {
             let dir = file_info.directory.clone();

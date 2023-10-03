@@ -1,49 +1,24 @@
 use super::run;
+// Detach
 use crate::utils::detach;
+// Traits
 use log::{debug, trace};
 use utils::git::Flag;
-use workflow::{Config, Trigger};
-
+use workflow::traits::Getters;
+// Struct
+use workflow::{Pipeline, Trigger};
 // Error Handling
 use miette::Result;
-
-/// Function to be called from the cli.
-/// Either spawn detached new processes or spawn attached threads
-/// to run the triggerable pipelines
-pub fn launch(attach: bool, flag: Option<String>) -> Result<()> {
-    trace!("Create detached subprocess");
-    // Run or Fork
-    match attach {
-        true => {
-            trigger(attach, flag)?;
-        }
-        false => detach()?,
-    }
-    Ok(())
-}
+// Parallelism
+use rayon::prelude::*;
 
 /// Filter pipeline by trigger and run
-pub fn trigger(attach: bool, flag: Option<String>) -> Result<()> {
-    let config = Config::get()?;
-
-    // Set triggering env action
-    Trigger::default();
-    if flag.is_some() {
-        Trigger::flag(Some(Flag::from(&flag.clone().unwrap())))?;
-    }
-
-    if config.pipelines.is_none() {
-        let message = "No pipeline found";
-        debug!("{}", message);
-        return Ok(());
-    }
-    for pipeline in &config.pipelines.unwrap() {
-        if pipeline.clone().triggers.is_none() {
-            let message = format!("No triggers defined for pipeline: {:?}", &pipeline.name);
-            debug!("{}", message)
-        } else if pipeline.is_triggerable()? {
-            // run::launch(pipeline.clone().name, attach, flag.clone())?;
+pub fn trigger() -> Result<()> {
+    let mut pipelines = Pipeline::get()?;
+    pipelines.par_iter_mut().for_each(|pipeline| {
+        if pipeline.is_triggerable().is_ok() {
+            pipeline.run().unwrap();
         }
-    }
+    });
     Ok(())
 }

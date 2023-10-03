@@ -113,5 +113,7 @@ pub struct Event {
 /**
 A struct that contains convenience Logs methods
 */
-#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
-pub struct Logs;
+#[derive(Default, Debug, Serialize, Deserialize, Clone)]
+pub struct Logs {
+    pub pipelines: Option<Vec<Pipeline>>,
+}
