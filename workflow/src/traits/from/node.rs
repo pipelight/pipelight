@@ -20,35 +20,38 @@ impl From<&Event> for String {
         let mut date = e.date.parse::<DateTime<Local>>().unwrap().to_rfc2822();
         date = format!("{}\n", date);
         string.push_str(&date);
-        if e.commit.is_some() {
+
+        // Set the commit id
+        let commit = e.commit.clone();
+        if let Some(commit) = commit {
             let header = "commit: ";
-            let commit = format!("{}{}\n", header.white(), e.commit.clone().unwrap().white());
+            let commit = format!("{}{}\n", header.white(), &commit.white());
             string.push_str(&commit);
         }
-        if e.trigger.tag.is_some() {
+
+        // Set the tag name
+        let tag = e.trigger.clone().tag;
+        if let Some(tag) = tag {
             let header = "tag: ";
-            let tag = format!(
-                "{}{}\n",
-                header.white(),
-                String::from(&e.trigger.clone().tag.unwrap()).white()
-            );
+            let tag = format!("{}{}\n", header.white(), String::from(&tag).white());
             string.push_str(&tag);
-        } else if e.trigger.branch.is_some() {
+        }
+
+        // Set the branch name
+        let branch = e.trigger.clone().branch;
+        if let Some(branch) = branch {
             let header = "branch: ";
-            let branch = format!(
-                "{}{}\n",
-                header.white(),
-                String::from(&e.trigger.clone().branch.unwrap()).white()
-            );
+            let branch = format!("{}{}\n", header.white(), String::from(&branch).white());
             string.push_str(&branch);
         }
-        let header = "action: ";
-        let action = format!(
-            "{}{}\n",
-            header.white(),
-            String::from(&e.trigger.clone().action.unwrap()).white()
-        );
-        string.push_str(&action);
+
+        // Set the action
+        let action = e.trigger.clone().action;
+        if let Some(action) = action {
+            let header = "action: ";
+            let action = format!("{}{}\n", header.white(), String::from(&action).white());
+            string.push_str(&action);
+        }
         string
     }
 }

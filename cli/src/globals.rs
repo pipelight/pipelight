@@ -1,16 +1,9 @@
 // Global vars
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
-// Teleport
-use utils::{logger::Logger, teleport::Portal};
-// Logs
-use cast;
-use workflow::{Config, Trigger};
-// Cli
+// Struct
 use crate::types::Cli;
-use clap::FromArgMatches;
 // Error Handling
 use log::{info, trace};
-use miette::Result;
 
-pub static mut CLI: Lazy<Cli> = Lazy::new(Cli::new);
+pub static CLI: Lazy<Arc<Mutex<Cli>>> = Lazy::new(|| Arc::new(Mutex::new(Cli::new())));

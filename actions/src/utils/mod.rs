@@ -1,3 +1,3 @@
-pub mod detach;
+mod detach;
 // Re-export
-pub use detach::detach;
+pub use detach::*;

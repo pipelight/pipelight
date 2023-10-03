@@ -4,7 +4,8 @@ use utils::git::Hook;
 use workflow::traits::display::set_override;
 // Structs
 use cli::types::{
-    Cli, ColoredOutput, Commands, LogsCommands, PostCommands, PreCommands, WatchCommands,
+    Cli, ColoredOutput, Commands, DetachableCommands, LogsCommands, PostCommands, PreCommands,
+    WatchCommands,
 };
 use utils::git::Flag;
 use workflow::{Config, Getters, Logs, Pipeline, Trigger};
@@ -17,9 +18,9 @@ use clap_complete::shells::Shell;
 use templates::Template;
 // Error Handling
 use log::info;
-use miette::{Error, Result};
+use miette::{Error, IntoDiagnostic, Result};
 // Global vars
-use actions::globals::CLI;
+use cli::globals::CLI;
 
 pub struct Switch;
 impl Switch {
@@ -27,9 +28,9 @@ impl Switch {
     pub fn case() -> Result<()> {
         // Doesn't read config file
         set_early_globals()?;
-        let args;
-        args = CLI.lock().unwrap().clone();
-        match args.commands {
+        // let args;
+        let mut args = CLI.lock().unwrap().clone();
+        match &mut args.commands {
             Commands::PreCommands(pre_commands) => {
                 match pre_commands {
                     PreCommands::Completion(shell) => {
@@ -42,7 +43,7 @@ impl Switch {
                     }
                     PreCommands::Init(init) => {
                         // create file
-                        Template::new(init.template, init.file)?.create()?;
+                        Template::new(init.template.clone(), init.file.clone())?.create()?;
                     }
                     PreCommands::Hooks(toggle) => {
                         if toggle.enable {
@@ -58,6 +59,37 @@ impl Switch {
                 // Read config file
                 set_globals()?;
                 match post_commands {
+                    PostCommands::DetachableCommands(detachable_commands) => {
+                        match detachable_commands {
+                            DetachableCommands::Watch(watch) => {
+                                match watch.commands.clone() {
+                                    // Set global config
+                                    None => {
+                                        info!("Watching for changes");
+                                        // watch::launch(args.attach)?;
+                                    }
+                                    Some(watch_cmd) => match watch_cmd {
+                                        WatchCommands::Kill => {
+                                            // watch::destroy_watcher()?;
+                                        }
+                                    },
+                                }
+                            }
+                            DetachableCommands::Trigger(trigger) => {
+                                // Set global config
+                                info!("Triggering pipelines");
+                                // trigger::launch(args.attach, trigger.flag)?;
+                            }
+                            DetachableCommands::Run(pipeline) => {
+                                if pipeline.name.is_some() {
+                                    info!("Running pipeline {:#?}", pipeline.name.clone().unwrap());
+                                    run::launch(&pipeline.name.as_ref().unwrap())?;
+                                } else {
+                                    prompt::run_prompt()?;
+                                }
+                            }
+                        }
+                    }
                     PostCommands::Ls(list) => {
                         // Set global config
                         // Launch watcher
@@ -67,7 +99,7 @@ impl Switch {
                         // watch::destroy_watcher()?;
                         // }
                         if list.name.is_some() {
-                            let pipeline = Pipeline::get_by_name(&list.name.unwrap())?;
+                            let pipeline = Pipeline::get_by_name(&list.name.clone().unwrap())?;
                             print::inspect(&pipeline, list.json)?;
                         } else {
                             print::list()?;
@@ -77,43 +109,10 @@ impl Switch {
                         // Set global config
                         // info!("Listing piplines");
                         if list.name.is_some() {
-                            let pipeline = Pipeline::get_by_name(&list.name.unwrap())?;
+                            let pipeline = Pipeline::get_by_name(&list.name.clone().unwrap())?;
                             print::inspect(&pipeline, list.json)?;
                         } else {
                             prompt::inspect_prompt()?;
-                        }
-                    }
-                    PostCommands::Watch(watch) => {
-                        match watch.commands {
-                            // Set global config
-                            None => {
-                                info!("Watching for changes");
-                                // watch::launch(args.attach)?;
-                            }
-                            Some(watch_cmd) => match watch_cmd {
-                                WatchCommands::Kill => {
-                                    // watch::destroy_watcher()?;
-                                }
-                            },
-                        }
-                    }
-                    PostCommands::Trigger(trigger) => {
-                        // Set global config
-                        info!("Triggering pipelines");
-                        trigger::launch(args.attach, trigger.flag)?;
-                    }
-                    PostCommands::Run(pipeline) => {
-                        // Set triggering env action
-                        let flag = pipeline.trigger.flag;
-                        if let Some(flag) = flag.clone() {
-                            Trigger::flag(Some(Flag::from(&flag.clone())))?;
-                        }
-                        // Set global config
-                        if pipeline.name.is_some() {
-                            info!("Running pipeline {:#?}", pipeline.name.clone().unwrap());
-                            run::launch(pipeline.name.unwrap(), args.attach, flag.clone())?;
-                        } else {
-                            prompt::run_prompt(args.attach, flag)?;
                         }
                     }
                     PostCommands::Stop(pipeline) => {
@@ -123,7 +122,7 @@ impl Switch {
                         "Stopping pipeline {:#?} with every attached and detached subprocess",
                         pipeline.name
                     );
-                            stop::stop(&pipeline.name.unwrap())?;
+                            stop::stop(&pipeline.name.clone().unwrap())?;
                         } else {
                             prompt::stop_prompt()?;
                         }
@@ -131,19 +130,20 @@ impl Switch {
                     PostCommands::Logs(logs) => {
                         // Set colors
                         if logs.display.color.is_some() {
-                            match ColoredOutput::from(&logs.display.color.unwrap()) {
+                            match ColoredOutput::from(&logs.display.color.clone().unwrap()) {
                                 ColoredOutput::Always => set_override(true),
                                 ColoredOutput::Never => set_override(false),
                                 ColoredOutput::Auto => {}
                             }
                         }
 
-                        match logs.commands {
+                        match logs.commands.clone() {
                             None => {
                                 let mut pipelines;
                                 if logs.display.name.is_some() {
-                                    pipelines =
-                                        Logs::get_many_by_name(&logs.display.name.unwrap())?;
+                                    pipelines = Logs::get_many_by_name(
+                                        &logs.display.name.clone().unwrap(),
+                                    )?;
                                 } else {
                                     pipelines = Logs::get()?;
                                 }

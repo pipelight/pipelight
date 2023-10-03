@@ -1,5 +1,5 @@
 use super::run;
-use crate::utils::detach::detach;
+use crate::utils::detach;
 use log::{debug, trace};
 use utils::git::Flag;
 use workflow::{Config, Trigger};
@@ -17,7 +17,7 @@ pub fn launch(attach: bool, flag: Option<String>) -> Result<()> {
         true => {
             trigger(attach, flag)?;
         }
-        false => detach(None)?,
+        false => detach()?,
     }
     Ok(())
 }
@@ -42,7 +42,7 @@ pub fn trigger(attach: bool, flag: Option<String>) -> Result<()> {
             let message = format!("No triggers defined for pipeline: {:?}", &pipeline.name);
             debug!("{}", message)
         } else if pipeline.is_triggerable()? {
-            run::launch(pipeline.clone().name, attach, flag.clone())?;
+            // run::launch(pipeline.clone().name, attach, flag.clone())?;
         }
     }
     Ok(())

@@ -1,6 +1,3 @@
-// Globals
-pub mod globals;
-
 // Actions
 pub mod print;
 pub mod prompt;

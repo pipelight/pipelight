@@ -1,3 +1,4 @@
+use crate::error::IsError;
 use crate::traits::Getters;
 use crate::types::{Config, Pipeline};
 
@@ -30,8 +31,8 @@ impl Getters<Pipeline> for Pipeline {
             Some(res) => Ok(res.to_owned()),
             None => {
                 let message = format!("Couldn't find pipeline: {:?}", name);
-                warn!("{}", message);
-                Err(Error::msg(message))
+                let hint = "You may have made a typo (pipeline names must not contain spaces)";
+                Err(IsError::new(&message, &hint)?.into())
             }
         }
     }

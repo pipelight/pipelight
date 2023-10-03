@@ -2,9 +2,10 @@
 mod test;
 // Structs
 use crate::types::{
-    Cli, Commands, DisplayCommands, Init, InternalVerbosity, Logs, LogsCommands, Pipeline,
-    PostCommands, PreCommands, Shell, Toggle, Trigger, Verbosity,
+    Cli, DisplayCommands, Init, InternalVerbosity, Logs, LogsCommands, Pipeline, Shell, Toggle,
+    Trigger, Verbosity,
 };
+use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
 
 use log::LevelFilter;
 use std::fmt;
@@ -155,13 +156,15 @@ impl fmt::Display for Commands {
                 PreCommands::Completion(shell) => format!("completion{}", shell),
             },
             Commands::PostCommands(post_commands) => match post_commands {
-                PostCommands::Run(pipeline) => format!("run{}", pipeline),
+                PostCommands::DetachableCommands(detachable_command) => match detachable_command {
+                    DetachableCommands::Run(pipeline) => format!("run{}", pipeline),
+                    DetachableCommands::Trigger(trigger) => format!("trigger{}", trigger),
+                    DetachableCommands::Watch(_) => "watch".to_owned(),
+                },
                 PostCommands::Stop(pipeline) => format!("stop{}", pipeline),
-                PostCommands::Trigger(trigger) => format!("trigger{}", trigger),
                 PostCommands::Logs(logs) => format!("logs{}", logs),
                 PostCommands::Inspect(pipeline) => format!("inspect{}", pipeline),
                 PostCommands::Ls(list) => format!("ls{}", list),
-                PostCommands::Watch(_) => "watch".to_owned(),
             },
         };
         write!(f, "{}", string)

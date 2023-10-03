@@ -10,13 +10,13 @@ use workflow::{Config, Trigger};
 // Cli
 use clap::FromArgMatches;
 use cli::types::Cli;
-use cli::types::{Commands, PostCommands};
+use cli::types::{Commands, DetachableCommands, PostCommands};
 // Error Handling
 use log::{info, trace};
 use miette::Result;
 
 // Global vars
-use actions::globals::CLI;
+use cli::globals::CLI;
 use utils::globals::LOGGER;
 use workflow::globals::CONFIG;
 pub static PORTAL: Lazy<Arc<Mutex<Portal>>> = Lazy::new(|| Arc::new(Mutex::new(Portal::default())));
@@ -44,12 +44,19 @@ pub fn full_hydrate_logger() -> Result<()> {
 
 // Hydrate cli
 pub fn hydrate_cli() -> Result<()> {
+    trace!("hydrate cli");
     let cli = Cli::build()?;
     let matches = cli.get_matches();
     let args = Cli::from_arg_matches(&matches)
         .map_err(|err| err.exit())
         .unwrap();
-    *CLI.lock().unwrap() = args.clone();
+
+    *CLI.lock().unwrap() = args;
+    // let mut borrow = CLI.lock().unwrap();
+    // *borrow = args;
+    // drop(borrow);
+
+    trace!("hydrate cli");
     hydrate_trigger()?;
     Ok(())
 }
@@ -60,13 +67,16 @@ pub fn hydrate_trigger() -> Result<()> {
     args = CLI.lock().unwrap().clone();
     let mut flag = None;
     match args.commands {
-        Commands::PostCommands(post_commands) => match post_commands.clone() {
-            PostCommands::Trigger(trigger) => {
-                flag = trigger.flag;
-            }
-            PostCommands::Run(pipeline) => {
-                flag = pipeline.trigger.flag;
-            }
+        Commands::PostCommands(post_commands) => match post_commands {
+            PostCommands::DetachableCommands(detachable_commands) => match detachable_commands {
+                DetachableCommands::Trigger(trigger) => {
+                    flag = trigger.flag;
+                }
+                DetachableCommands::Run(pipeline) => {
+                    flag = pipeline.trigger.flag;
+                }
+                _ => {}
+            },
             _ => {}
         },
         _ => {}
@@ -79,6 +89,7 @@ pub fn hydrate_trigger() -> Result<()> {
 
 // Hydrate portal
 pub fn hydrate_portal() -> Result<()> {
+    trace!("hydrate portal");
     let args;
     args = CLI.lock().unwrap().clone();
 
@@ -98,6 +109,7 @@ pub fn hydrate_portal() -> Result<()> {
 
 // Hydrate config
 pub fn hydrate_config() -> Result<()> {
+    trace!("hydrate config");
     let portal;
     let args;
     args = CLI.lock().unwrap().clone();

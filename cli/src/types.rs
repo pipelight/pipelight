@@ -6,7 +6,7 @@ pub use crate::verbosity::internal::InternalVerbosity;
 // Serde
 use serde::{Deserialize, Serialize};
 
-/**
+/*
 The Cli struct is the entrypoint for command line argument parsing:
 It casts arguments into the appropriate struct.
 
@@ -29,8 +29,8 @@ pub struct Cli {
     #[arg(long, global = true, hide = true, value_name="FILE" ,value_hint = ValueHint::FilePath)]
     pub config: Option<String>,
 
-    #[arg(global = true, long)]
     /// Attach command to standard I/O
+    #[arg(global = true, long)]
     pub attach: bool,
 
     /// Set verbosity level
@@ -47,7 +47,7 @@ pub struct Cli {
     pub raw: Option<Vec<String>>,
 }
 
-/**
+/*
 An enumaration over the differen types of commands available:
 - PreCommand that only needs a partial env to run,
 - PostCommands that needs the full env to be loaded to run.
@@ -60,7 +60,7 @@ pub enum Commands {
     PostCommands(PostCommands),
 }
 
-/**
+/*
 Commands that does not need the config to be found and loaded.
 Leads to fastest execution time.
 */
@@ -76,14 +76,14 @@ pub enum PreCommands {
     Hooks(Toggle),
 }
 
-/**
+/*
 Commands that need the config file to be found and loaded
 Leads to a slowest execution time
 */
 #[derive(Debug, Clone, Eq, PartialEq, Subcommand)]
 pub enum PostCommands {
-    /// Run a pipeline (interactive)
-    Run(Pipeline),
+    #[clap(flatten)]
+    DetachableCommands(DetachableCommands),
     /// Stop the pipeline execution and its every child processes
     Stop(Pipeline),
     /// Display pipelines logs
@@ -92,6 +92,15 @@ pub enum PostCommands {
     Ls(DisplayCommands),
     /// Displays pipelines with the maximum verbosity level (interactive)
     Inspect(DisplayCommands),
+}
+
+/*
+Commands that can be run in background
+*/
+#[derive(Debug, Clone, Eq, PartialEq, Subcommand)]
+pub enum DetachableCommands {
+    /// Run a pipeline (interactive)
+    Run(Pipeline),
     /// Manualy trigger pipelines
     Trigger(Trigger),
     /// Launch a watcher on the working directory

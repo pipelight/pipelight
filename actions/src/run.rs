@@ -1,70 +1,26 @@
-use crate::utils::detach;
-
+// Detach
+use crate::utils::should_detach;
+// Struct
 use exec::Status;
-use utils::git::Flag;
-use workflow::{Getters, Node, Pipeline, Trigger};
-
-use cli::types;
-use cli::types::{Commands, PostCommands};
-
-// Logger
-use log::{info, trace};
-
-// Global
-use crate::globals::CLI;
-
+use workflow::{Getters, Node, Pipeline};
 // Error Handling
 use miette::{Error, Result};
 
-/// To be called from the cli.
-/// Either spawn a detached new process or spawn an attached thread
-/// to run the pipeline
-pub fn launch(pipeline_name: String, attach: bool, flag: Option<String>) -> Result<()> {
-    let args;
-    args = CLI.lock().unwrap().clone();
-
-    // Set the detach command subcommand in case of pipeline name is prompted
-    let subcommand = Commands::PostCommands(PostCommands::Run(types::Pipeline {
-        name: Some(pipeline_name.clone()),
-        trigger: match args.commands {
-            Commands::PostCommands(PostCommands::Run(res)) => res.trigger,
-            Commands::PostCommands(PostCommands::Trigger(res)) => res,
-            _ => types::Trigger {
-                flag: Some("manual".to_owned()),
-            },
-        },
-    }));
-
-    // Ensure
-    let pipeline = Pipeline::get_by_name(&pipeline_name)?;
-    if !pipeline.is_triggerable()? {
-        let message = "Pipeline can not be triggered in this environment";
-        let hint = "Either verify the triggers you set for this pipeline, \
-        checkout branch, \
-        or add actions like \"manual\" \n";
-
-        info!(target:"nude", "{}", hint);
-        return Err(Error::msg(message));
-    }
-    // Run or Fork
-    match attach {
-        true => {
-            // Lauch in attached thread
-            trace!("Run pipeline in attached thread");
-            run(&pipeline)?;
-        }
-        false => detach(Some(subcommand))?,
-    }
-    Ok(())
-}
-
-/// Launch attached thread
-pub fn run(p: &Pipeline) -> Result<()> {
-    let mut pipeline = p.to_owned();
+/**
+Run the pipeline.
+Detach it if needed.
+and return fancy log to stdout.
+*/
+pub fn launch(pipeline_name: &str) -> Result<()> {
+    // Guard
+    let mut pipeline = Pipeline::get_by_name(&pipeline_name)?;
+    pipeline.is_triggerable()?;
+    should_detach()?;
 
     // Action
     pipeline.run()?;
-    // Return status
+
+    // Return pipeline log
     println!("{}", Node::from(&pipeline));
     match pipeline.status {
         Some(Status::Succeeded) => Ok(()),

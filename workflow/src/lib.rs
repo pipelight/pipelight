@@ -3,7 +3,8 @@
 // #![allow(unused_must_use)]
 
 pub mod globals;
-
+// Error struct
+pub mod error;
 // Methods
 mod logs;
 mod pipeline;

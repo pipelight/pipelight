@@ -20,13 +20,17 @@ impl Trigger {
         // Get the global
         let mut env: Trigger = TRIGGER_ENV.lock().unwrap().clone();
 
+        // Get git info
         if Git::new().exists() {
             env.branch = Git::new().get_branch().ok();
             env.tag = Git::new().get_tag().ok();
         }
+        // Set env action to flag
         if flag.is_some() {
             env.action = flag;
-        } else if env.action.is_none() {
+        } else
+        // Set env action to default
+        if env.action.is_none() {
             env.action = Some(Flag::default());
         }
 
