@@ -8,6 +8,8 @@ use exec::Process;
 use log::trace;
 // Global
 use cli::globals::CLI;
+// Async
+use std::future::Future;
 
 /**
 Clone the pipelight instance and detach the clone.
@@ -19,8 +21,7 @@ Thus the clone can run and persist in the background even on tty close.
 pub fn detach() -> Result<()> {
     // global vars
     let bin = "pipelight";
-    let mut args;
-    args = CLI.lock().unwrap().clone();
+    let args = CLI.lock().unwrap().clone();
 
     // Dev env or production env
     #[cfg(debug_assertions)]
@@ -37,12 +38,13 @@ pub fn detach() -> Result<()> {
 Inspect the parsed command line arguments (CLI global, attach flag)
 and determine wheteher to detach the subprocess or not.
 */
-pub fn should_detach() -> Result<()> {
+pub fn should_detach() -> Result<bool> {
     let mut args;
     args = CLI.lock().unwrap().clone();
-    match args.attach {
+    match args.attach.clone() {
         true => {
             trace!("pipelight process is attached");
+            Ok(true)
         }
         false => {
             trace!("detach pipelight process");
@@ -52,7 +54,20 @@ pub fn should_detach() -> Result<()> {
             *CLI.lock().unwrap() = args;
             // Detach process
             detach()?;
+            Ok(false)
         }
     }
-    Ok(())
+}
+
+#[macro_export]
+macro_rules! should_detach {
+  ( $( $x:expr ),* ) => {
+    {
+      let mut temp_vec = Vec::new();
+      $(
+        temp_vec.push($x);
+        )*
+        temp_vec
+    }
+  };
 }

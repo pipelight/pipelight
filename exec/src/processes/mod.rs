@@ -32,7 +32,7 @@ impl Process {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()
-            .into_diagnostic()?;
+            .expect("Couldn't spawn a detached subprocess");
 
         // Hydrate struct
         duration.start();
@@ -90,7 +90,7 @@ impl Process {
 
     /**
     Execute/NoAwait a subprocess and mute the input(stdin) and  outputs(stdout/stderr).
-    NoAwait means it immediatly returns once the subprocess is succesfully spawned and don't waut for output.
+    NoAwait means it immediatly returns once the subprocess is succesfully spawned and don't wait for output.
     */
     pub fn run_detached(&mut self) -> Result<()> {
         info!("Run detached subprocess");
@@ -103,8 +103,8 @@ impl Process {
             .stdin(Stdio::null())
             .stdout(Stdio::null())
             .stderr(Stdio::null())
-            .spawn()
-            .into_diagnostic()?;
+            .spawn();
+        // .into_diagnostic()?;
         duration.stop();
         self.state = State {
             duration: Some(duration),

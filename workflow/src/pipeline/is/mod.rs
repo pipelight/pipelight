@@ -99,7 +99,12 @@ impl Pipeline {
     */
     pub fn is_triggerable(&self) -> Result<bool> {
         let env = Trigger::flag(None)?;
-        Ok(env.is_match(self.triggers.clone().unwrap()).is_ok())
+        // If pipeline has defined triggers
+        if let Some(triggers) = self.triggers.clone() {
+            Ok(env.is_match(triggers).is_ok())
+        } else {
+            Ok(true)
+        }
     }
     /**
     Check if the pipeline has a trigger that contains a "watch" flag
