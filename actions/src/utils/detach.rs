@@ -8,8 +8,6 @@ use exec::Process;
 use log::trace;
 // Global
 use cli::globals::CLI;
-// Async
-use std::future::Future;
 
 /**
 Clone the pipelight instance and detach the clone.
@@ -44,7 +42,7 @@ pub fn should_detach() -> Result<bool> {
     match args.attach.clone() {
         true => {
             trace!("pipelight process is attached");
-            Ok(true)
+            Ok(false)
         }
         false => {
             trace!("detach pipelight process");
@@ -54,20 +52,7 @@ pub fn should_detach() -> Result<bool> {
             *CLI.lock().unwrap() = args;
             // Detach process
             detach()?;
-            Ok(false)
+            Ok(true)
         }
     }
-}
-
-#[macro_export]
-macro_rules! should_detach {
-  ( $( $x:expr ),* ) => {
-    {
-      let mut temp_vec = Vec::new();
-      $(
-        temp_vec.push($x);
-        )*
-        temp_vec
-    }
-  };
 }

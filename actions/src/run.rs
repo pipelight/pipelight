@@ -5,8 +5,6 @@ use exec::Status;
 use workflow::{Getters, Node, Pipeline};
 // Error Handling
 use miette::{Error, Result};
-// Async
-use std::future::Future;
 
 /**
 Run the pipeline.

@@ -103,8 +103,8 @@ impl Process {
             .stdin(Stdio::null())
             .stdout(Stdio::null())
             .stderr(Stdio::null())
-            .spawn();
-        // .into_diagnostic()?;
+            .spawn()
+            .into_diagnostic()?;
         duration.stop();
         self.state = State {
             duration: Some(duration),
