@@ -91,13 +91,6 @@ impl Switch {
                         }
                     }
                     PostCommands::Ls(list) => {
-                        // Set global config
-                        // Launch watcher
-                        // if Config::get()?.has_watch_flag().is_ok() {
-                        // watch::create_watcher()?;
-                        // } else {
-                        // watch::destroy_watcher()?;
-                        // }
                         if list.name.is_some() {
                             let pipeline = Pipeline::get_by_name(&list.name.clone().unwrap())?;
                             print::inspect(&pipeline, list.json)?;

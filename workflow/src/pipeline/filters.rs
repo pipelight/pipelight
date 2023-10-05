@@ -1,8 +1,11 @@
 // Structs
 use crate::types::Pipeline;
 use exec::Status;
+use uuid::Uuid;
 // Date and Time
 use chrono::{DateTime, Local};
+// Collections
+use std::collections::HashMap;
 // Error Handling
 use log::warn;
 use miette::{Error, Result};
@@ -102,5 +105,9 @@ impl Filters {
         }
         let message = "no watchable pipelines";
         Err(Error::msg(message))
+    }
+    pub fn to_hashmap(pipelines: Vec<Pipeline>) -> HashMap<Uuid, Pipeline> {
+        let map: HashMap<_, _> = pipelines.iter().map(|e| (e.uuid, e.to_owned())).collect();
+        map
     }
 }

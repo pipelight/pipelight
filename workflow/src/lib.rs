@@ -6,6 +6,7 @@ pub mod globals;
 // Error struct
 pub mod error;
 // Methods
+mod config;
 mod logs;
 mod pipeline;
 mod step;

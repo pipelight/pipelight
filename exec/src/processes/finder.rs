@@ -1,6 +1,6 @@
 // Unix process manipulation
 use rustix::process::{getpgid, kill_process_group, test_kill_process_group, Signal};
-use std::collections::HashMap;
+// use std::collections::HashMap;
 use sysinfo::get_current_pid;
 use sysinfo::{PidExt, Process, ProcessExt, System, SystemExt};
 // Error handling

@@ -52,11 +52,6 @@ pub fn hydrate_cli() -> Result<()> {
         .unwrap();
 
     *CLI.lock().unwrap() = args;
-    // let mut borrow = CLI.lock().unwrap();
-    // *borrow = args;
-    // drop(borrow);
-
-    trace!("hydrate cli");
     hydrate_trigger()?;
     Ok(())
 }
@@ -118,6 +113,8 @@ pub fn hydrate_config() -> Result<()> {
     let casted_config = cast::Config::load(&portal.target.file_path.unwrap(), args.raw.clone())?;
     let config = Config::from(&casted_config);
     *CONFIG.lock().unwrap() = config;
+    // Do aditionnal work
+    // like launching watcher
     Ok(())
 }
 
