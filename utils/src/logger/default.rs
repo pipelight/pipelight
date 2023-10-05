@@ -36,13 +36,17 @@ impl Logger {
         let logger = Logger {
             handle: self.handle.clone(),
             internals: LogInfo {
-                file_info: Some(LogFile {
-                    name: "_unlinked".to_owned(),
-                    directory: format!(
-                        "{}/.pipelight/_internals/logs",
-                        &env::current_dir().unwrap().to_str().unwrap()
-                    ),
-                }),
+                file_info: None,
+                // Uncomment to log internals to file
+                //
+                // Some(LogFile {
+                // name: "_unlinked".to_owned(),
+                // directory: format!(
+                // "{}/.pipelight/_internals/logs",
+                // &env::current_dir().unwrap().to_str().unwrap()
+                // ),
+                // }),
+                //
                 ..self.internals.clone()
             },
             pipelines: LogInfo {

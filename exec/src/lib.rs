@@ -6,10 +6,10 @@
 // Internal Imports
 mod globals;
 mod io;
-mod processes;
+pub mod processes;
 mod traits;
 mod types;
 
 // Re-export
 pub use traits::Statuable;
-pub use types::{Io, Process, State, Status};
+pub use types::*;

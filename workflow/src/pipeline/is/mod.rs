@@ -1,13 +1,16 @@
 // Test
 mod test;
+// Unix process manipulation
+use rustix::process::{
+    getpgid, kill_process_group, test_kill_process, test_kill_process_group, Pid, Signal,
+};
 // Structs
 use crate::types::{Logs, Pipeline, Trigger};
 use utils::git::{Flag, Git, Special};
 // Traits
 use exec::Status;
-// Unix process management
-use rustix::process::test_kill_process;
-use sysinfo::{PidExt, ProcessExt, System, SystemExt};
+// Env
+use std::env;
 // Error Handling
 use miette::{Error, IntoDiagnostic, Result};
 
@@ -41,28 +44,13 @@ impl Pipeline {
     pub fn has_homologous_already_running(&self) -> Result<()> {
         let mut pipelines = Logs::new().hydrate()?.get_many_by_name(&self.name)?;
         pipelines.reverse();
-        let pipeline = pipelines.first();
-        if let Some(pipeline) = pipeline {
-            let event = &pipeline.event;
-            if event.is_some() {
-                let raw_pid = &event.clone().unwrap().pid;
-                let rustix_pid;
-                unsafe { rustix_pid = rustix::process::Pid::from_raw(raw_pid.unwrap()) };
-                let sysinfo_pid = sysinfo::Pid::from_u32(raw_pid.unwrap());
-
-                // Guard: check if pid exists
-                test_kill_process(rustix_pid.unwrap()).into_diagnostic()?;
-
-                // Guard: check if it is a pipelight process
-                let mut sys = System::new_all();
-                sys.refresh_all();
-                let process_name = sys.process(sysinfo_pid).unwrap().name();
-                if process_name.contains("pipelight") {
-                    return Ok(());
-                }
+        for pipeline in pipelines {
+            if pipeline.is_running().is_ok() {
+                return Ok(());
             }
         }
-        Err(Error::msg("Pipeline is not running"))
+        let message = "pipeline has no homologous already running";
+        Err(Error::msg(message))
     }
     /**
     Check if the pipeline instance(loaded from logs) is running.
@@ -74,25 +62,15 @@ impl Pipeline {
     If those conditions are met we assume the pipeline is running.
     */
     pub fn is_running(&self) -> Result<()> {
-        let event = self.event.clone();
-        if event.is_some() {
-            let raw_pid = &event.clone().unwrap().pid;
-            let rustix_pid;
-            unsafe { rustix_pid = rustix::process::Pid::from_raw(raw_pid.unwrap()) };
-            let sysinfo_pid = sysinfo::Pid::from_u32(raw_pid.unwrap());
-
-            // Guard: check if pid exists
-            test_kill_process(rustix_pid.unwrap()).into_diagnostic()?;
-
-            // Guard: check if it is a pipelight process
-            let mut sys = System::new_all();
-            sys.refresh_all();
-            let process_name = sys.process(sysinfo_pid).unwrap().name();
-            if process_name.contains("pipelight") {
-                return Ok(());
+        if let Some(event) = self.event.clone() {
+            unsafe {
+                let pid = rustix::process::Pid::from_raw(event.pid.unwrap());
+                test_kill_process(pid.unwrap()).into_diagnostic()
             }
+        } else {
+            let message = "pipeline is not running";
+            Err(Error::msg(message))
         }
-        Err(Error::msg("Pipeline is not running"))
     }
     /**
     Check if the pipeline can be triggered in the actual environment

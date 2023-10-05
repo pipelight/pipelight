@@ -35,6 +35,7 @@ dependencies = [
  "utils",
  "uuid",
  "watchexec",
+ "watchexec-events",
  "workflow",
 ]
 
@@ -2860,6 +2861,7 @@ dependencies = [
  "convert_case",
  "futures",
  "git2",
+ "ignore",
  "ignore-files",
  "iso8601-duration",
  "log",

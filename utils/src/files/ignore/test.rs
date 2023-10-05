@@ -4,7 +4,8 @@ mod ignore {
 
     #[tokio::test]
     async fn from_ignore_file() {
-        let ignore = Ignore::new("./public/.pipelight_ignore").await.unwrap();
+        let res = Ignore::new("./public/.pipelight_ignore");
         // println!("{:#?}", ignore);
+        assert!(res.is_ok());
     }
 }

@@ -66,7 +66,7 @@ impl Switch {
                                     // Set global config
                                     None => {
                                         info!("Watching for changes");
-                                        watch::launch()?;
+                                        watcher::launch()?;
                                     }
                                     Some(watch_cmd) => match watch_cmd {
                                         WatchCommands::Kill => {

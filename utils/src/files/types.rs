@@ -1,7 +1,7 @@
 // Enum iteration workaround
 use strum::EnumIter;
 // Ignore file
-use ignore_files::IgnoreFilter;
+use ignore::gitignore::Gitignore;
 
 /**
 An enum representing the file extention accepted/recognized by pipelight
@@ -22,5 +22,5 @@ Ignore file filtering utility
 */
 #[derive(Debug, Clone)]
 pub struct Ignore {
-    pub filter: IgnoreFilter,
+    pub filter: Gitignore,
 }
