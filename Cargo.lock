@@ -700,6 +700,7 @@ version = "0.2.0"
 dependencies = [
  "colored",
  "convert_case",
+ "itertools",
  "log",
  "miette",
  "once_cell",

@@ -16,7 +16,8 @@ impl Watcher {
         // Search homologous
         let mut finder = Finder::new()
             .cwd(env::current_dir().into_diagnostic()?.to_str().unwrap())
-            .seed("pipelight watch")
+            .seed("pipelight")
+            .seed("watch")
             .search()?;
 
         if finder.matches.is_some() {
@@ -31,7 +32,8 @@ impl Watcher {
         // Search homologous
         let mut finder = Finder::new()
             .cwd(env::current_dir().into_diagnostic()?.to_str().unwrap())
-            .seed("pipelight watch")
+            .seed("pipelight")
+            .seed("watch")
             .search()?
             .kill()?;
         Ok(())

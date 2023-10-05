@@ -8,7 +8,9 @@ use utils::globals::LOGGER;
 // Error Handling
 use miette::{IntoDiagnostic, Result};
 
-/// Pretty print pipeline logs from json log file
+/**
+Pretty print pipelines as a tree
+*/
 pub fn pretty(pipelines: &mut Vec<Pipeline>) -> Result<()> {
     for pipeline in pipelines {
         if pipeline.get_status() == Some(Status::Running) {
@@ -20,7 +22,9 @@ pub fn pretty(pipelines: &mut Vec<Pipeline>) -> Result<()> {
     Ok(())
 }
 
-/// Print pipeline from json log file
+/**
+Pretty print pipelines as json
+*/
 pub fn json(pipelines: &Vec<Pipeline>) -> Result<()> {
     for pipeline in pipelines {
         let pipeline_json = serde_json::to_string_pretty::<Pipeline>(pipeline).into_diagnostic()?;
@@ -28,6 +32,7 @@ pub fn json(pipelines: &Vec<Pipeline>) -> Result<()> {
     }
     Ok(())
 }
+
 /// Print pipeline from config file
 pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<()> {
     LOGGER.lock().unwrap().pipelines.level = LevelFilter::max();
@@ -41,7 +46,9 @@ pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<()> {
     Ok(())
 }
 
-/// Print a flatten list of pipelines present in config file
+/**
+Print a flatten list of pipelines from the config file
+*/
 pub fn list() -> Result<()> {
     let level = LOGGER.lock().unwrap().pipelines.level;
     let config = Config::get()?;

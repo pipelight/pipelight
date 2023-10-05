@@ -1,17 +1,19 @@
 // Unix process manipulation
-use rustix::process::{getpgid, kill_process_group, test_kill_process_group, Pid, Signal};
+use rustix::process::{getpgid, kill_process_group, test_kill_process_group, Signal};
+use std::collections::HashMap;
 use sysinfo::get_current_pid;
-use sysinfo::{PidExt, ProcessExt, System, SystemExt};
+use sysinfo::{PidExt, Process, ProcessExt, System, SystemExt};
 // Error handling
 use miette::{IntoDiagnostic, Result};
 // Env
+use itertools::Itertools;
 use std::env;
 
 // Utilities to find a running process easily
 #[derive(Default, Debug, Clone)]
 pub struct Finder {
     // Search arguments
-    seed: Option<String>,
+    pub seeds: Option<Vec<String>>,
     cwd: Option<String>,
     pid: Option<u32>,
     // Search results
@@ -37,7 +39,12 @@ impl Finder {
     Restrict search result by seed.
     */
     pub fn seed(&mut self, cmd: &str) -> Self {
-        self.seed = Some(cmd.to_owned());
+        if let Some(mut seeds) = self.seeds.clone() {
+            seeds.push(cmd.to_owned());
+            self.seeds = Some(seeds);
+        } else {
+            self.seeds = Some(vec![cmd.to_owned()]);
+        }
         self.to_owned()
     }
     /**
@@ -46,6 +53,18 @@ impl Finder {
     pub fn pid(&mut self, pid: &u32) -> Self {
         self.pid = Some(pid.to_owned());
         self.to_owned()
+    }
+    pub fn is_match_seeds(&mut self, process: &Process) -> Result<bool> {
+        // Guard - Ensure command contains some seed(string)
+        if let Some(seeds) = self.seeds.clone() {
+            for seed in seeds {
+                if !process.cmd().iter().join(" ").contains(&seed) {
+                    // println!("{:#?}", process.cmd());
+                    return Ok(false);
+                }
+            }
+        }
+        Ok(true)
     }
 
     /**
@@ -56,36 +75,38 @@ impl Finder {
         sys.refresh_processes();
         // Loop through process list
         let mut matches: Vec<u32> = vec![];
-        for (pid, process) in sys.processes() {
-            // Guard - Ensure processes are running in same directory
-            let mut cond_pwd = true;
-            if let Some(cwd) = self.cwd.clone() {
-                cond_pwd = cwd == env::current_dir().into_diagnostic()?.to_str().unwrap();
+        if let Some(pid) = self.pid {
+            let sysinfo_pid = sysinfo::Pid::from_u32(pid);
+            if let Some(process) = sys.processes().get(&sysinfo_pid) {
+                if self.is_match_seeds(process)? {
+                    matches.push(pid);
+                }
             }
+        } else {
+            for (pid, process) in sys.processes() {
+                // Guard - Ensure processes are running in same directory
+                let mut cond_pwd = true;
+                if let Some(cwd) = self.cwd.clone() {
+                    cond_pwd = cwd == env::current_dir().into_diagnostic()?.to_str().unwrap();
+                }
 
-            // Guard - Ensure command contains some seed(string)
-            let mut cond_seed = true;
-            if let Some(seed) = self.seed.clone() {
-                cond_seed = process.cmd().contains(&seed);
-            };
+                // Guard - Ensure command contains some seed(string)
+                let mut cond_seed = true;
+                if let Some(seeds) = self.seeds.clone() {
+                    cond_seed = self.is_match_seeds(process)?;
+                };
 
-            // Guard - Ensure process has pid
-            let mut cond_pid = true;
-            if let Some(self_pid) = self.pid {
-                let self_pid = sysinfo::Pid::from_u32(self_pid);
-                cond_pid = pid == &self_pid;
-            }
-            // println!("{:#?}", cond_pid);
+                // Guard - Ensure different process from the one alredy running
+                let cond_other = pid != &get_current_pid().unwrap();
 
-            // Guard - Ensure different process from the one alredy running
-            let cond_other = pid != &get_current_pid().unwrap();
+                // Guard: check if pid link to a running programm
+                // test_kill_process(rustix_pid).into_diagnostic()?;
 
-            // Guard: check if pid link to a running programm
-            // test_kill_process(rustix_pid).into_diagnostic()?;
-
-            // Final resolution
-            if cond_pwd && cond_seed && cond_other && cond_pid {
-                matches.push(pid.as_u32());
+                // println!("{:#?}", process.cmd());
+                // Final resolution
+                if cond_pwd && cond_seed && cond_other {
+                    matches.push(pid.as_u32());
+                }
             }
         }
         if !matches.is_empty() {
@@ -105,7 +126,7 @@ impl Finder {
 
                 let pgid = getpgid(rustix_pid).into_diagnostic()?;
                 if test_kill_process_group(pgid).is_ok() {
-                    kill_process_group(pgid, Signal::Term).into_diagnostic()?;
+                    kill_process_group(pgid, Signal::Kill).into_diagnostic()?;
                 }
             }
         }
