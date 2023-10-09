@@ -1,9 +1,6 @@
 // Test
 mod test;
 // Detach
-// use crate::utils::should_detach;
-// Globals
-use std::sync::Arc;
 // Watchexec
 use watchexec::{
     action::{Action, Outcome},
@@ -20,22 +17,19 @@ mod build;
 pub use build::*;
 mod is;
 
+#[derive(Debug)]
+pub struct Watcher {
+    watchexec: Option<Watchexec>,
+    runtime: Option<RuntimeConfig>,
+    builded: bool,
+}
 
 impl Watcher {
-pub fn launch() -> Result<()> {
-    match should_detach(None)? {
-        false => start()?,
-        true => {}
-    };
-    Ok(())
-}
 
 pub fn kill() -> Result<()> {
     Watcher::kill_homologous()?;
     Ok(())
 }
-}
-
 /**
 Build and launch the custom watcher
 */
@@ -47,4 +41,6 @@ pub async fn start() -> Result<()> {
     we.main().await.into_diagnostic()?;
     Ok(())
 }
+}
+
 

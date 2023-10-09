@@ -1,24 +1,21 @@
+// Traits
+use workflow::traits::Getters;
 // Struct
-use cli::types::Cli;
+use crate::types::Action;
+use workflow::Pipeline;
 // Error Handling
 use miette::Result;
+// Parallelism
+use rayon::prelude::*;
 
-#[derive(Debug, Clone)]
-pub enum Action {
-    // Parameter: pipeline name
-    Run(Option<String>),
-    // Parameter: flag name
-    Trigger(Option<String>),
-    Watch,
-}
-
-#[derive(Debug, Clone)]
-pub struct Run;
+pub struct Triggerer;
 
 impl Action {
     pub fn start(&self) -> Result<()> {
         match self {
-            Action::Trigger(flag) => {
+            Action::Trigger() => {
+                // Should set global flag here ??
+                // Action::Trigger(flag) => {
                 /**
                 Filter pipeline by trigger and run
                 */

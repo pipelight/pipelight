@@ -1,8 +1,8 @@
 // Actions
 pub mod print;
-pub mod types;
-// pub mod prompt;
-pub mod run;
-// pub mod trigger;
-// pub mod watch;
+pub mod prompt;
+pub mod runner;
 pub mod stop;
+pub mod triggerer;
+pub mod types;
+pub mod watcher;

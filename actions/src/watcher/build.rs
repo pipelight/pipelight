@@ -98,6 +98,6 @@ Set the watch flag to the triggering env and try to trigger pipelines.
 */
 pub fn watch_trigger() -> Result<()> {
   Trigger::flag(Some(Flag::Special(Special::Watch)))?;
-  trigger::launch()?;
+  // trigger::launch()?;
   Ok(())
 }
