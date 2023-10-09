@@ -29,7 +29,7 @@ pub fn run_prompt() -> Result<()> {
     match selection {
         Some(index) => {
             let name = &pipelines[index].name;
-            let mut args = CLI.lock().unwrap().clone();
+            // let mut args = CLI.lock().unwrap().clone();
             match args.commands {
                 Commands::PostCommands(ref mut post) => match post {
                     PostCommands::DetachableCommands(detach) => match detach {

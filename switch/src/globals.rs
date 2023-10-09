@@ -19,6 +19,7 @@ use miette::Result;
 use cli::globals::CLI;
 use utils::globals::LOGGER;
 use workflow::globals::CONFIG;
+
 pub static PORTAL: Lazy<Arc<Mutex<Portal>>> = Lazy::new(|| Arc::new(Mutex::new(Portal::default())));
 
 // Hydrate logs
@@ -39,20 +40,6 @@ pub fn full_hydrate_logger() -> Result<()> {
     portal.teleport()?;
     LOGGER.lock().unwrap().to_file();
     portal.origin()?;
-    Ok(())
-}
-
-// Hydrate cli
-pub fn hydrate_cli() -> Result<()> {
-    trace!("hydrate cli");
-    let cli = Cli::build()?;
-    let matches = cli.get_matches();
-    let args = Cli::from_arg_matches(&matches)
-        .map_err(|err| err.exit())
-        .unwrap();
-
-    *CLI.lock().unwrap() = args;
-    hydrate_trigger()?;
     Ok(())
 }
 
@@ -113,8 +100,6 @@ pub fn hydrate_config() -> Result<()> {
     let casted_config = cast::Config::load(&portal.target.file_path.unwrap(), args.raw.clone())?;
     let config = Config::from(&casted_config);
     *CONFIG.lock().unwrap() = config;
-    // Do aditionnal work
-    // like launching watcher
     Ok(())
 }
 
@@ -128,7 +113,8 @@ pub fn set_globals() -> Result<()> {
         && *PORTAL.lock().unwrap() == Portal::default();
     if cond {
         // hydrate the CLI global var
-        hydrate_cli()?;
+        Cli::hydrate()?;
+        hydrate_trigger()?;
         // early_hydrate_logger()?;
         // hydrate the PORTAL global var
         hydrate_portal()?;

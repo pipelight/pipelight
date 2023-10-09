@@ -2,13 +2,13 @@
 // #![allow(unused_variables)]
 // #![allow(unused_must_use)]
 
-pub mod globals;
 // Error struct
 pub mod error;
 // Methods
 mod config;
+pub mod globals;
 mod logs;
-mod pipeline;
+pub mod pipeline;
 mod step;
 mod trigger;
 

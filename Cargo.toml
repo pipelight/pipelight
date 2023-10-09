@@ -1,14 +1,18 @@
 [workspace]
 resolver = "2"
 members=[
+  ## Dependencies small utilities crates
   "utils",
   "exec",
   "cast",
   "templates",
+  ## Core crates with interdependencies
   "workflow",
   "actions",
+  "services",
   "cli",
   "switch",
+  ## Bin package
   "pipelight",
 ]
 

@@ -5,12 +5,10 @@ use workflow::traits::display::set_override;
 // Structs
 use cli::types::{
     Cli, ColoredOutput, Commands, DetachableCommands, LogsCommands, PostCommands, PreCommands,
-    WatchCommands,
 };
 use utils::git::Flag;
 use workflow::{Config, Getters, Logs, Pipeline, Trigger};
 // Actions
-use crate::globals::{set_early_globals, set_globals};
 use actions::*;
 use clap::ValueEnum;
 use clap_complete::shells::Shell;
@@ -20,6 +18,7 @@ use templates::Template;
 use log::info;
 use miette::{Error, IntoDiagnostic, Result};
 // Global vars
+use crate::globals::{set_early_globals, set_globals};
 use cli::globals::CLI;
 
 pub struct Switch;
@@ -62,17 +61,20 @@ impl Switch {
                     PostCommands::DetachableCommands(detachable_commands) => {
                         match detachable_commands {
                             DetachableCommands::Watch(watch) => {
-                                match watch.commands.clone() {
-                                    // Set global config
+                                // Set global config
+                                match watch.toggle.clone() {
                                     None => {
                                         info!("Watching for changes");
                                         watcher::launch()?;
                                     }
-                                    Some(watch_cmd) => match watch_cmd {
-                                        WatchCommands::Kill => {
-                                            // watch::destroy_watcher()?;
+                                    Some(toggle) => {
+                                        if toggle.enable {
+                                            watcher::launch()?;
                                         }
-                                    },
+                                        if toggle.disable {
+                                            watcher::kill()?;
+                                        }
+                                    }
                                 }
                             }
                             DetachableCommands::Trigger(trigger) => {

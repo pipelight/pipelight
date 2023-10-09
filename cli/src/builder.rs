@@ -1,11 +1,15 @@
 // Struct
 use crate::types::Cli;
 // Clap - command line lib
+use clap::FromArgMatches;
 use clap::{builder::PossibleValue, Args, Command, ValueHint};
 use clap_complete::{generate, shells};
 // Standard I/O
+use crate::globals::CLI;
 use std::io;
 // Error Handling
+use crate::traits::from::string_to_command;
+use log::trace;
 use miette::Result;
 
 impl Cli {
@@ -43,17 +47,6 @@ impl Cli {
         Ok(cli)
     }
 
-    // Hydrate cli
-    // pub fn hydrate_global() -> Result<()> {
-    // let cli = Cli::build()?;
-    // let matches = cli.get_matches();
-    // let args = Cli::from_arg_matches(&matches)
-    // .map_err(|err| err.exit())
-    // .unwrap();
-    // unsafe { *CLI = args.clone() };
-    // Ok(())
-    // }
-
     /**
     Prints the provided shell pipelight completion script
     on the standard stdout.
@@ -64,6 +57,18 @@ impl Cli {
         let name = cmd.get_name().to_string();
         generate(shell, &mut cmd, name, &mut io::stdout());
 
+        Ok(())
+    }
+
+    pub fn hydrate() -> Result<()> {
+        let cli = Self::build()?;
+        let matches = cli.get_matches();
+        let args = Self::from_arg_matches(&matches)
+            .map_err(|err| err.exit())
+            .unwrap();
+
+        // Hydrate global
+        *CLI.lock().unwrap() = args;
         Ok(())
     }
 }

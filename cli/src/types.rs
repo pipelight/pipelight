@@ -71,9 +71,9 @@ pub enum PreCommands {
     Completion(Shell),
     /// Create a `pipelight` config template file
     Init(Init),
-    /// Enable pipelight git hooks.
-    #[command(arg_required_else_help = true)]
-    Hooks(Toggle),
+    // Enable pipelight git hooks.
+    // #[command(arg_required_else_help = true, hide = true)]
+    // Hooks(Toggle),
 }
 
 /*
@@ -104,19 +104,15 @@ pub enum DetachableCommands {
     /// Manualy trigger pipelines
     Trigger(Trigger),
     /// Launch a watcher on the working directory
-    #[command(hide = true)]
+    // #[command(hide = true)]
     Watch(Watch),
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct Watch {
-    #[command(subcommand)]
-    pub commands: Option<WatchCommands>,
-}
-#[derive(Debug, Clone, Eq, PartialEq, Parser)]
-pub enum WatchCommands {
-    Kill,
+    #[command(flatten)]
+    pub toggle: Option<Toggle>,
 }
 
 /**

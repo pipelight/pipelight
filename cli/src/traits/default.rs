@@ -1,8 +1,21 @@
-use crate::types::{Cli, Commands, DisplayCommands, InternalVerbosity, PostCommands, Verbosity};
+use crate::types::{Cli, Commands, DisplayCommands, PostCommands};
+use crate::types::{InternalVerbosity, Verbosity};
+use crate::types::{Pipeline, Trigger};
 
 impl Cli {
     pub fn new() -> Cli {
         Self::default()
+    }
+}
+
+impl Default for Pipeline {
+    fn default() -> Self {
+        Pipeline {
+            name: Some("default".to_owned()),
+            trigger: Trigger {
+                flag: Some("blank".to_owned()),
+            },
+        }
     }
 }
 

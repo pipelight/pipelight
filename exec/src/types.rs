@@ -18,6 +18,9 @@ pub enum Status {
     Aborted,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+pub struct SelfProcess;
+
 /**
 Simplified process struct.
 */
