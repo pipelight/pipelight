@@ -11,7 +11,6 @@ dependencies = [
  "chrono",
  "clap",
  "clap_complete",
- "cli",
  "colored",
  "convert_case",
  "dialoguer",
@@ -402,6 +401,7 @@ dependencies = [
 name = "cli"
 version = "0.4.0"
 dependencies = [
+ "actions",
  "assert_cmd",
  "cast",
  "chrono",

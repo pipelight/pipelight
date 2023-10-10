@@ -2,11 +2,12 @@
 use exec::Status;
 use workflow::{Getters, Node, Pipeline};
 // Error Handling
+use log::error;
 use miette::{Error, Result};
 
-pub fn launch(pipeline_name: &str) -> Result<()> {
+pub fn launch(name: &str) -> Result<()> {
     // Guard
-    let mut pipeline = Pipeline::get_by_name(&pipeline_name)?;
+    let mut pipeline = Pipeline::get_by_name(&name)?;
     if pipeline.is_triggerable().is_ok() {
         // Action
         pipeline.run()?;

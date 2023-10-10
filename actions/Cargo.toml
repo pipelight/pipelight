@@ -4,7 +4,6 @@ version = "0.4.2"
 edition = "2021"
 
 [dependencies]
-cli = {path = "../cli" }
 workflow = {path = "../workflow" }
 templates = {path = "../templates" }
 exec = {path = "../exec" }

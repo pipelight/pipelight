@@ -9,7 +9,7 @@ use cli::types::{
 use utils::git::Flag;
 use workflow::{Config, Getters, Logs, Pipeline, Trigger};
 // Actions
-use actions::*;
+use actions::Action;
 use clap::ValueEnum;
 use clap_complete::shells::Shell;
 // Template
@@ -78,21 +78,18 @@ impl Switch {
                                 }
                             }
                             DetachableCommands::Trigger(trigger) => {
-                                // Set global config
                                 info!("Triggering pipelines");
                                 // trigger::launch(args.attach, trigger.flag)?;
                             }
                             DetachableCommands::Run(pipeline) => {
-                                if pipeline.name.is_some() {
                                     info!("Running pipeline {:#?}", pipeline.name.clone().unwrap());
-                                    run::launch(&pipeline.name.as_ref().unwrap())?;
-                                } else {
-                                    prompt::run_prompt()?;
+                                    Action::Run(pipeline)?;
                                 }
                             }
                         }
                     }
                     PostCommands::Ls(list) => {
+                        action::print::list(list);
                         if list.name.is_some() {
                             let pipeline = Pipeline::get_by_name(&list.name.clone().unwrap())?;
                             print::inspect(&pipeline, list.json)?;
@@ -110,18 +107,7 @@ impl Switch {
                             prompt::inspect_prompt()?;
                         }
                     }
-                    PostCommands::Stop(pipeline) => {
-                        // Set global config
-                        if pipeline.name.is_some() {
-                            info!(
-                        "Stopping pipeline {:#?} with every attached and detached subprocess",
-                        pipeline.name
-                    );
-                            stop::stop(&pipeline.name.clone().unwrap())?;
-                        } else {
-                            prompt::stop_prompt()?;
-                        }
-                    }
+                    PostCommands::Stop(pipeline) => Action::stop(pipeline),
                     PostCommands::Logs(logs) => {
                         // Set colors
                         if logs.display.color.is_some() {

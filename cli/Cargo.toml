@@ -5,6 +5,7 @@ edition = "2021"
 build = "build.rs"
 
 [dependencies]
+actions = {path = "../actions" }
 workflow = {path = "../workflow" }
 templates = {path = "../templates" }
 exec = {path = "../exec" }

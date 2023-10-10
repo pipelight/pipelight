@@ -1,7 +1,7 @@
 // Structs
 use utils::git::{Flag, Special};
 use workflow::types::{Trigger};
-use crate::trigger;
+// use crate::trigger;
 // Globals
 use std::sync::Arc;
 // Watchexec

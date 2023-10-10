@@ -34,13 +34,17 @@ pub fn json(pipelines: &Vec<Pipeline>) -> Result<()> {
 }
 
 /// Print pipeline from config file
-pub fn inspect(pipeline: &Pipeline, json: bool) -> Result<()> {
+pub fn inspect(name: &str, json: bool) -> Result<()> {
+    // Set logger level
     LOGGER.lock().unwrap().pipelines.level = LevelFilter::max();
+    let pipeline = Pipeline::get_by_name(&name)?;
+
     if json {
-        let pipeline_json = serde_json::to_string_pretty::<Pipeline>(pipeline).into_diagnostic()?;
+        let pipeline_json =
+            serde_json::to_string_pretty::<Pipeline>(&pipeline).into_diagnostic()?;
         println!("{}", pipeline_json);
     } else {
-        let node = Node::from(pipeline);
+        let node = Node::from(&pipeline);
         println!("{}", node);
     }
     Ok(())

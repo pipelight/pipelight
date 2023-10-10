@@ -1,8 +1,9 @@
+// Test
 // Actions
 pub mod print;
-pub mod prompt;
-pub mod runner;
+pub mod run;
 pub mod stop;
-pub mod triggerer;
-pub mod types;
-pub mod watcher;
+pub mod trigger;
+pub mod watch;
+// Utils
+pub mod prompt;
