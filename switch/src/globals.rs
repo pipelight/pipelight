@@ -136,7 +136,7 @@ pub fn set_early_globals() -> Result<()> {
         && *PORTAL.lock().unwrap() == Portal::default();
     if cond {
         // hydrate the CLI global var
-        hydrate_cli()?;
+        Cli::hydrate()?;
         early_hydrate_logger()?;
     }
     Ok(())

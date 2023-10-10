@@ -1,6 +1,7 @@
 // Struct
-use actions::types::Action;
-use cli::types::Cli;
+use cli::types::{Cli, Commands};
+// Traits
+use crate::traits::Parser;
 // Error Handling
 use miette::Result;
 
@@ -12,12 +13,12 @@ use Actions directly.
 #[derive(Debug, Clone)]
 pub struct Service {
     pub args: Option<Cli>,
-    pub action: Action,
+    pub cmd: Commands,
 }
 
 impl Service {
-    pub fn new(action: Action, args: Option<Cli>) -> Result<Self> {
-        let mut service = Service { action, args };
+    pub fn new(cmd: Commands, args: Option<Cli>) -> Result<Self> {
+        let mut service = Service { cmd, args };
         service.convert()?;
         Ok(service)
     }

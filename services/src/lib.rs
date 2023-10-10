@@ -1,4 +1,3 @@
-mod new;
 mod types;
 // Traits
 mod traits;

@@ -72,8 +72,8 @@ pub enum PreCommands {
     /// Create a `pipelight` config template file
     Init(Init),
     // Enable pipelight git hooks.
-    // #[command(arg_required_else_help = true, hide = true)]
-    // Hooks(Toggle),
+    #[command(arg_required_else_help = true, hide = true)]
+    Hooks(Toggle),
 }
 
 /*

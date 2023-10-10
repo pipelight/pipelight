@@ -429,7 +429,6 @@ dependencies = [
  "thiserror",
  "utils",
  "uuid",
- "workflow",
 ]
 
 [[package]]

@@ -5,11 +5,11 @@
 
 mod builder;
 pub mod globals;
-pub mod start;
-pub mod traits;
 pub mod types;
 mod verbosity;
-
+// Traits
+mod start;
+pub mod traits;
 // Cli test
 mod test;
 

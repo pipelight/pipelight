@@ -110,4 +110,9 @@ impl Filters {
         let map: HashMap<_, _> = pipelines.iter().map(|e| (e.uuid, e.to_owned())).collect();
         map
     }
+    pub fn filter_by_name(pipelines: Vec<Pipeline>, name: &str) -> Result<Vec<Pipeline>> {
+        let mut pipelines = pipelines;
+        pipelines.retain(|e| e.name == name);
+        Ok(pipelines)
+    }
 }

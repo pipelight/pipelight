@@ -169,7 +169,7 @@ impl From<&Commands> for String {
         let string = match e {
             Commands::PreCommands(pre_commands) => match pre_commands {
                 PreCommands::Init(_) => "init".to_owned(),
-                // PreCommands::Hooks(toggle) => format!("hooks{}", toggle),
+                PreCommands::Hooks(toggle) => format!("hooks{}", toggle),
                 PreCommands::Completion(shell) => format!("completion{}", shell),
             },
             Commands::PostCommands(post_commands) => match post_commands {

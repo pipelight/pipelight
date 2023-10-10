@@ -6,7 +6,6 @@ build = "build.rs"
 
 [dependencies]
 actions = {path = "../actions" }
-workflow = {path = "../workflow" }
 templates = {path = "../templates" }
 exec = {path = "../exec" }
 utils = {path = "../utils" }
@@ -36,6 +35,8 @@ serde_plain = "1.0.2"
 clap_mangen = "0.2.14"
 
 [build-dependencies]
+actions = {path = "../actions" }
+templates = {path = "../templates" }
 exec = {path = "../exec" }
 utils = {path = "../utils" }
 chrono = "0.4.23"
@@ -52,5 +53,6 @@ thiserror = "1.0.40"
 once_cell = "1.18.0"
 rustix = { version = "0.37.20", features = ["process"] }
 clap_complete = "4.3.1"
+colored = "2.0.0"
 convert_case = "0.6.0"
 assert_cmd = "2.0.11"

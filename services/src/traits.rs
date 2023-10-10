@@ -1,6 +1,5 @@
 // Struct
 use crate::types::Service;
-use actions::types::Action;
 use cli::types::{Cli, Commands, DetachableCommands, PostCommands};
 use cli::types::{Pipeline, Trigger, Watch};
 use exec::Status;
@@ -89,8 +88,8 @@ impl Parser for Service {
                                 flag = pipeline.trigger.flag;
                                 name = pipeline.name;
                             }
-                            DetachableCommands::Watch(oldtoggle) => {
-                                toggle = oldtoggle;
+                            DetachableCommands::Watch(watch) => {
+                                toggle = watch.toggle;
                             }
                         }
                     }
@@ -101,8 +100,10 @@ impl Parser for Service {
         }
 
         // Rewrite the arg according to action
-        match self.action {
-            Action::Run(_) => {
+        match self.cmd {
+            Commands::PostCommands(PostCommands::DetachableCommands(DetachableCommands::Run(
+                _,
+            ))) => {
                 if let Some(ref mut args) = self.args {
                     args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
                         DetachableCommands::Run(Pipeline {
@@ -112,20 +113,25 @@ impl Parser for Service {
                     ));
                 }
             }
-            Action::Trigger(_) => {
+            Commands::PostCommands(PostCommands::DetachableCommands(
+                DetachableCommands::Trigger(_),
+            )) => {
                 if let Some(ref mut args) = self.args {
                     args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
                         DetachableCommands::Trigger(Trigger { flag }),
                     ))
                 }
             }
-            Action::Watch => {
+            Commands::PostCommands(PostCommands::DetachableCommands(
+                DetachableCommands::Watch(_),
+            )) => {
                 if let Some(ref mut args) = self.args {
                     args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
                         DetachableCommands::Watch(Watch { toggle }),
                     ))
                 }
             }
+            _ => {}
         };
         Ok(())
     }
