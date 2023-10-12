@@ -82,15 +82,22 @@ impl DetachableCommands {
                     }
                 }
             }
-            DetachableCommands::Trigger(e) => {
-                if let Some(e) = e.flag.clone() {
-                    // Set global args flag ??
+            DetachableCommands::Trigger(_) => match args.attach {
+                false => {
+                    Service::new(Actions::Trigger, Some(args))?.should_detach()?;
                 }
-                trigger::launch()?;
-            }
-            DetachableCommands::Watch(e) => {
-                watch::Watcher::start()?;
-            }
+                true => {
+                    trigger::launch()?;
+                }
+            },
+            DetachableCommands::Watch => match args.attach {
+                false => {
+                    Service::new(Actions::Watch, Some(args))?.should_detach()?;
+                }
+                true => {
+                    watch::Watcher::start()?;
+                }
+            },
         }
         Ok(())
     }

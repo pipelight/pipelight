@@ -25,8 +25,6 @@ impl Parser for Service {
         let mut flag = Some(String::from(&Flag::default()));
         // Run options
         let mut name = None;
-        // Watch options
-        let mut toggle = None;
 
         // Retrieve reusable arguments and mutate the defaults
         if let Some(args) = self.args.clone() {
@@ -41,9 +39,7 @@ impl Parser for Service {
                                 flag = pipeline.trigger.flag;
                                 name = pipeline.name;
                             }
-                            DetachableCommands::Watch(watch) => {
-                                toggle = watch.toggle;
-                            }
+                            _ => {}
                         }
                     }
                     _ => {}
@@ -74,7 +70,7 @@ impl Parser for Service {
             Actions::Watch => {
                 if let Some(ref mut args) = self.args {
                     args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
-                        DetachableCommands::Watch(Watch { toggle }),
+                        DetachableCommands::Watch,
                     ))
                 }
             }

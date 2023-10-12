@@ -159,7 +159,7 @@ impl fmt::Display for Commands {
                 PostCommands::DetachableCommands(detachable_command) => match detachable_command {
                     DetachableCommands::Run(pipeline) => format!("run{}", pipeline),
                     DetachableCommands::Trigger(trigger) => format!("trigger{}", trigger),
-                    DetachableCommands::Watch(_) => "watch".to_owned(),
+                    DetachableCommands::Watch => "watch".to_owned(),
                 },
                 PostCommands::Stop(pipeline) => format!("stop{}", pipeline),
                 PostCommands::Logs(logs) => format!("logs{}", logs),

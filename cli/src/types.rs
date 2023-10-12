@@ -105,14 +105,14 @@ pub enum DetachableCommands {
     Trigger(Trigger),
     /// Launch a watcher on the working directory
     // #[command(hide = true)]
-    Watch(Watch),
+    Watch,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
 #[command(args_conflicts_with_subcommands = true)]
 pub struct Watch {
-    #[command(flatten)]
-    pub toggle: Option<Toggle>,
+    // #[command(flatten)]
+    // pub toggle: Option<Toggle>,
 }
 
 /**
