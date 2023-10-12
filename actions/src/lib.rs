@@ -1,6 +1,7 @@
 // Test
 // Actions
-pub mod print;
+pub mod logs;
+pub mod pipeline;
 pub mod run;
 pub mod stop;
 pub mod trigger;

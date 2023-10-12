@@ -15,7 +15,7 @@ impl Logs {
     Read logs and store them into a global variable.
     Sorted by ascending date by default.
     */
-    pub fn hydrate() -> Result<()> {
+    pub fn hydrate(&mut self) -> Result<Self> {
         // Get global
         let global_logs = LOGS.lock().unwrap().clone();
         if global_logs.is_none() {
@@ -29,17 +29,17 @@ impl Logs {
             pipelines = Filters::sort_by_date_asc(pipelines)?;
             // Set global
             *LOGS.lock().unwrap() = Some(pipelines);
+            self.pipelines = LOGS.lock().unwrap().clone();
         }
-        Ok(())
+        Ok(self.to_owned())
     }
 }
 
 // Basic getters
 impl Getters<Pipeline> for Logs {
     fn get() -> Result<Vec<Pipeline>> {
-        Logs::hydrate()?;
-        let logs = LOGS.lock().unwrap().clone();
-        match logs {
+        let logs = Logs::new().hydrate()?.sanitize()?;
+        match logs.pipelines {
             Some(mut pipelines) => {
                 pipelines = Filters::sort_by_date_asc(pipelines)?;
                 Ok(pipelines)

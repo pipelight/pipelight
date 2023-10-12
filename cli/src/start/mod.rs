@@ -1,7 +1,9 @@
+// Struct
+use crate::services::types::{Actions, Service};
 use crate::types::Cli;
 use crate::types::{ColoredOutput, LogsCommands};
 use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
-use actions::{print, prompt, run, stop, trigger, watch};
+use actions::{logs, pipeline, prompt, run, stop, trigger, watch};
 use utils::git::Hook;
 // Clap
 use clap::ValueEnum;
@@ -11,8 +13,12 @@ use templates::Template;
 // Colors
 use colored::control::set_override;
 use colored::{ColoredString, Colorize};
+// Traits
+use crate::services::traits::FgBg;
 // Error Handling
 use miette::{Error, Result};
+// Globals
+use crate::globals::CLI;
 
 impl Commands {
     pub fn start(&self) -> Result<()> {
@@ -57,15 +63,23 @@ impl PreCommands {
 }
 
 impl DetachableCommands {
-    pub fn start(&self) -> Result<()> {
+    pub fn start(&mut self) -> Result<()> {
+        let mut args = CLI.lock().unwrap().clone();
         match self {
             DetachableCommands::Run(e) => {
-                if let Some(name) = e.name.clone() {
-                    run::launch(&name)?;
-                } else {
-                    // Select prompt
-                    let name = prompt::pipeline()?;
-                    run::launch(&name)?;
+                if e.name.is_none() {
+                    e.name = Some(prompt::pipeline()?);
+                    args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
+                        DetachableCommands::Run(e.to_owned()),
+                    ))
+                }
+                match args.attach {
+                    false => {
+                        Service::new(Actions::Run, Some(args))?.should_detach()?;
+                    }
+                    true => {
+                        run::launch(&e.name.clone().unwrap())?;
+                    }
                 }
             }
             DetachableCommands::Trigger(e) => {
@@ -95,6 +109,13 @@ impl PostCommands {
                 }
             }
             PostCommands::Logs(e) => {
+                if let Some(commands) = e.commands.clone() {
+                    match commands {
+                        LogsCommands::Rm => {
+                            logs::clean()?;
+                        }
+                    };
+                }
                 // Set colors
                 if e.display.color.is_some() {
                     match ColoredOutput::from(&e.display.color.clone().unwrap()) {
@@ -104,33 +125,33 @@ impl PostCommands {
                     }
                 }
                 if e.display.json {
-                    actions::print::logs::json(e.display.name.clone())?;
+                    logs::json(e.display.name.clone())?;
                 } else {
-                    actions::print::logs::pretty(e.display.name.clone())?;
+                    logs::pretty(e.display.name.clone())?;
                 }
             }
             PostCommands::Ls(e) => {
                 if e.name.is_some() {
                     if e.json {
-                        actions::print::pipeline::json(e.name.clone())?;
+                        pipeline::json(e.name.clone())?;
                     } else {
-                        actions::print::pipeline::pretty(e.name.clone())?;
+                        pipeline::pretty(e.name.clone())?;
                     }
                 } else {
-                    actions::print::pipeline::default()?;
+                    pipeline::default()?;
                 }
             }
             PostCommands::Inspect(e) => {
                 if let Some(name) = e.name.clone() {
-                    print::pipeline::inspect(&name, e.json)?;
+                    pipeline::inspect(&name, e.json)?;
                 } else {
                     // Select prompt
                     let name = prompt::pipeline()?;
-                    print::pipeline::inspect(&name, e.json)?;
+                    pipeline::inspect(&name, e.json)?;
                 }
             }
             PostCommands::DetachableCommands(e) => {
-                e.start()?;
+                e.clone().start()?;
             }
         };
         Ok(())

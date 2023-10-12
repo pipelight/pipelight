@@ -2,7 +2,6 @@
 use cli::types::{
     Cli, ColoredOutput, Commands, DetachableCommands, LogsCommands, PostCommands, PreCommands,
 };
-use services::types::Service;
 use workflow::{Config, Getters, Logs, Pipeline, Trigger};
 // Error Handling
 use log::info;
@@ -17,17 +16,15 @@ impl Switch {
     pub fn case() -> Result<()> {
         set_early_globals()?;
         let mut args = CLI.lock().unwrap().clone();
-        match args.attach {
-            true => match &mut args.commands {
-                Commands::PreCommands(pre_commands) => {
-                    pre_commands.start()?;
-                }
-                Commands::PostCommands(post_commands) => {
-                    set_globals()?;
-                    post_commands.start()?;
-                }
-            },
-        }
+        match &mut args.commands {
+            Commands::PreCommands(pre_commands) => {
+                pre_commands.start()?;
+            }
+            Commands::PostCommands(post_commands) => {
+                set_globals()?;
+                post_commands.start()?;
+            }
+        };
         Ok(())
     }
 }

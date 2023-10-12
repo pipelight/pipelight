@@ -1,6 +1,6 @@
 // Struct
 pub mod types;
 // Traits
-mod traits;
+pub mod traits;
 // Tests
 mod test;

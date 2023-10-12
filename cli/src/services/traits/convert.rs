@@ -1,5 +1,5 @@
 // Struct
-use crate::services::types::Service;
+use crate::services::types::{Actions, Service};
 use crate::types::{Cli, Commands, DetachableCommands, PostCommands};
 use crate::types::{Pipeline, Trigger, Watch};
 use exec::Status;
@@ -10,22 +10,6 @@ use exec::SelfProcess;
 use log::trace;
 use miette::Result;
 
-pub trait FgBg {
-    /**
-    Fork action/process end send to background
-    */
-    fn detach(&mut self) -> Result<()>;
-    /**
-    Fork action/process end keep in foreground
-    */
-    fn attach(&mut self) -> Result<()>;
-    /**
-    Inspect the parsed command line arguments (CLI global, attach flag)
-    and determine whether to detach the subprocess or not.
-    */
-    fn should_detach(&mut self) -> Result<()>;
-}
-
 pub trait Parser {
     /**
     Take the command line arguments and recycle every arguments that can be
@@ -34,37 +18,6 @@ pub trait Parser {
     fn convert(&mut self) -> Result<()>;
 }
 
-impl FgBg for Service {
-    fn attach(&mut self) -> Result<()> {
-        if let Some(args) = self.args.clone() {
-            SelfProcess::run_fg_with_cmd(&String::from(&args))?;
-        }
-        Ok(())
-    }
-    fn detach(&mut self) -> Result<()> {
-        if let Some(args) = self.args.clone() {
-            SelfProcess::run_bg_with_cmd(&String::from(&args))?;
-        }
-        Ok(())
-    }
-    fn should_detach(&mut self) -> Result<()> {
-        if let Some(mut args) = self.args.clone() {
-            match args.attach.clone() {
-                true => {
-                    trace!("pipelight process is attached");
-                    self.attach()?;
-                }
-                false => {
-                    trace!("detach pipelight process");
-                    // Exit the detach loop
-                    args.attach = true;
-                    self.detach()?;
-                }
-            };
-        }
-        Ok(())
-    }
-}
 impl Parser for Service {
     fn convert(&mut self) -> Result<()> {
         // Default arguments
@@ -101,9 +54,7 @@ impl Parser for Service {
 
         // Rewrite the arg according to action
         match self.cmd {
-            Commands::PostCommands(PostCommands::DetachableCommands(DetachableCommands::Run(
-                _,
-            ))) => {
+            Actions::Run => {
                 if let Some(ref mut args) = self.args {
                     args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
                         DetachableCommands::Run(Pipeline {
@@ -113,25 +64,20 @@ impl Parser for Service {
                     ));
                 }
             }
-            Commands::PostCommands(PostCommands::DetachableCommands(
-                DetachableCommands::Trigger(_),
-            )) => {
+            Actions::Trigger => {
                 if let Some(ref mut args) = self.args {
                     args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
                         DetachableCommands::Trigger(Trigger { flag }),
                     ))
                 }
             }
-            Commands::PostCommands(PostCommands::DetachableCommands(
-                DetachableCommands::Watch(_),
-            )) => {
+            Actions::Watch => {
                 if let Some(ref mut args) = self.args {
                     args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
                         DetachableCommands::Watch(Watch { toggle }),
                     ))
                 }
             }
-            _ => {}
         };
         Ok(())
     }
