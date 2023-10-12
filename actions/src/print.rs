@@ -1,4 +1,4 @@
-pub mod log {
+pub mod logs {
     // Types
     use chrono::{DateTime, Local};
     use exec::{Statuable, Status};
@@ -13,7 +13,7 @@ pub mod log {
     Pretty print pipelines as a tree
     */
     pub fn pretty(name: Option<String>) -> Result<()> {
-        let mut pipelines = Pipeline::get()?;
+        let mut pipelines = Logs::get()?;
         if let Some(name) = name {
             pipelines = Filters::filter_by_name(pipelines, &name)?;
         }
@@ -31,7 +31,7 @@ pub mod log {
     Pretty print pipelines as json
     */
     pub fn json(name: Option<String>) -> Result<()> {
-        let mut pipelines = Pipeline::get()?;
+        let mut pipelines = Logs::get()?;
         if let Some(name) = name {
             pipelines = Filters::filter_by_name(pipelines, &name)?;
         }
@@ -111,7 +111,7 @@ pub mod pipeline {
     pub fn default() -> Result<()> {
         let level = LOGGER.lock().unwrap().pipelines.level;
         let config = Config::get()?;
-        let logs = Logs::new().hydrate()?;
+        let logs = Logs::get()?;
 
         // Print headers
         match level {
@@ -135,7 +135,7 @@ pub mod pipeline {
             let mut action = "".to_owned();
             let mut branch = "".to_owned();
             // Retrieve logs data if any
-            let last_log = logs.get_by_name(&pipeline.name);
+            let last_log = Logs::get_by_name(&pipeline.name);
             if let Ok(last_log) = last_log {
                 status = String::from(&last_log.status.clone().unwrap());
                 let event = last_log.event.clone().unwrap();

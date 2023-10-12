@@ -9,7 +9,6 @@ members=[
   ## Core crates with interdependencies
   "workflow",
   "actions",
-  "services",
   "cli",
   "switch",
   ## Bin package

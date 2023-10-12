@@ -3,8 +3,8 @@ mod service {
     // Struct
     use crate::types::Service;
     use actions::types::Action;
-    use cli::Pipeline;
-    use cli::{Cli, Commands, DetachableCommands, PostCommands};
+    use crate::Pipeline;
+    use crate::{Cli, Commands, DetachableCommands, PostCommands};
     // Error Handling
     use miette::{IntoDiagnostic, Result};
 

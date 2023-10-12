@@ -5,6 +5,7 @@
 
 mod builder;
 pub mod globals;
+mod services;
 pub mod types;
 mod verbosity;
 // Traits

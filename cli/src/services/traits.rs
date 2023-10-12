@@ -1,7 +1,7 @@
 // Struct
-use crate::types::Service;
-use cli::types::{Cli, Commands, DetachableCommands, PostCommands};
-use cli::types::{Pipeline, Trigger, Watch};
+use crate::services::types::Service;
+use crate::types::{Cli, Commands, DetachableCommands, PostCommands};
+use crate::types::{Pipeline, Trigger, Watch};
 use exec::Status;
 use utils::git::Flag;
 // Process manipulation

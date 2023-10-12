@@ -1,7 +1,6 @@
 // Struct
-use cli::types::{Cli, Commands};
-// Traits
-use crate::traits::Parser;
+use crate::services::traits::Parser;
+use crate::types::{Cli, Commands};
 // Error Handling
 use miette::Result;
 

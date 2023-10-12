@@ -42,7 +42,7 @@ impl Pipeline {
     If those conditions are met we assume the pipeline has an already running instance.
     */
     pub fn has_homologous_already_running(&self) -> Result<()> {
-        let mut pipelines = Logs::new().hydrate()?.get_many_by_name(&self.name)?;
+        let mut pipelines = Logs::get_many_by_name(&self.name)?;
         pipelines.reverse();
         for pipeline in pipelines {
             if pipeline.is_running().is_ok() {

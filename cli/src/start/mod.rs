@@ -103,14 +103,10 @@ impl PostCommands {
                         ColoredOutput::Auto => {}
                     }
                 }
-                if e.display.name.is_some() {
-                    if e.display.json {
-                        actions::print::pipeline::json(e.display.name.clone())?;
-                    } else {
-                        actions::print::pipeline::pretty(e.display.name.clone())?;
-                    }
+                if e.display.json {
+                    actions::print::logs::json(e.display.name.clone())?;
                 } else {
-                    actions::print::pipeline::default()?;
+                    actions::print::logs::pretty(e.display.name.clone())?;
                 }
             }
             PostCommands::Ls(e) => {
