@@ -17,18 +17,10 @@ impl Config {
     /**
     Check if any of the pipelines have a trigger with "watch" flag.
     */
-    pub fn has_watch_flag(&self) -> Result<bool> {
+    pub fn has_watchable(&self) -> Result<bool> {
         if let Some(pipelines) = self.pipelines.clone() {
             let mut pipelines = Filters::to_hashmap(pipelines);
-            pipelines.retain(|_, pipeline| {
-                if let Some(triggers) = pipeline.triggers.clone() {
-                    triggers
-                        .iter()
-                        .any(|e| e.action == Some(Flag::Special(Special::Watch)))
-                } else {
-                    false
-                }
-            });
+            pipelines.retain(|_, pipeline| pipeline.is_watchable().unwrap());
             return Ok(!pipelines.is_empty());
         }
         Ok(false)
@@ -42,7 +34,7 @@ impl Config {
             pipelines.retain(|_, pipeline| {
                 if let Some(triggers) = pipeline.triggers.clone() {
                     triggers.iter().any(|e| {
-                        if let Some(action) = e.action.clone() {
+                        if let Some(action) = e.get_action().unwrap().clone() {
                             match action {
                                 Flag::Hook(_) => true,
                                 _ => false,

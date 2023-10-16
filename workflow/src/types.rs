@@ -89,10 +89,20 @@ pub struct Command {
     pub process: Process,
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
+#[serde(untagged)]
+pub enum Trigger {
+    TriggerBranch(TriggerBranch),
+    TriggerTag(TriggerTag),
+}
 #[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
-pub struct Trigger {
+pub struct TriggerBranch {
     pub action: Option<Flag>,
     pub branch: Option<String>,
+}
+#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
+pub struct TriggerTag {
+    pub action: Option<Flag>,
     pub tag: Option<String>,
 }
 /**

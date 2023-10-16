@@ -1,37 +1,38 @@
 #[cfg(test)]
 mod config {
-    use crate::types::{Config, Pipeline, Trigger};
+    use crate::types::{Config, Pipeline};
+    use crate::{Trigger, TriggerBranch, TriggerTag};
     use utils::git::{Flag, Special};
     // Error Handling
     use miette::Result;
 
     #[test]
-    fn has_watch_any_flag() {
+    fn has_any_watch_flag() {
         let config = Config {
             pipelines: Some(vec![Pipeline {
-                triggers: Some(vec![Trigger {
+                triggers: Some(vec![Trigger::TriggerBranch(TriggerBranch {
                     action: Some(Flag::Special(Special::Watch)),
-                    ..Trigger::default()
-                }]),
+                    ..TriggerBranch::default()
+                })]),
                 ..Pipeline::default()
             }]),
         };
-        let boolean = config.has_watch_flag().unwrap();
+        let boolean = config.has_watchable().unwrap();
         assert!(boolean);
     }
 
     #[test]
-    fn has_watch_no_flag() {
+    fn has_no_watch_flag() {
         let config = Config {
             pipelines: Some(vec![Pipeline {
-                triggers: Some(vec![Trigger {
+                triggers: Some(vec![Trigger::TriggerBranch(TriggerBranch {
                     action: Some(Flag::Special(Special::Manual)),
-                    ..Trigger::default()
-                }]),
+                    ..TriggerBranch::default()
+                })]),
                 ..Pipeline::default()
             }]),
         };
-        let boolean = config.has_watch_flag().unwrap();
+        let boolean = config.has_watchable().unwrap();
         assert!(!boolean);
     }
 }

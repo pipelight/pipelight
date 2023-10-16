@@ -1,7 +1,6 @@
 use crate::pipeline::Filters;
-use crate::types::{
-    Command, Config, Fallback, Mode, Parallel, Pipeline, Step, StepOrParallel, Trigger,
-};
+use crate::types::{Command, Config, Fallback, Mode, Parallel, Pipeline, Step, StepOrParallel};
+use crate::types::{Trigger, TriggerBranch, TriggerTag};
 use exec::Process;
 
 use convert_case::{Case, Casing};
@@ -212,30 +211,27 @@ impl Trigger {
             cast::Trigger::TriggerBranch(res) => {
                 if res.branches.is_none() {
                     for action in res.actions.clone().unwrap() {
-                        tuplelist.push(Trigger {
+                        tuplelist.push(Trigger::TriggerBranch(TriggerBranch {
                             action: Some(Flag::from(&action)),
                             branch: None,
-                            tag: None,
-                        })
+                        }))
                     }
                 }
                 if res.actions.is_none() {
                     for branch in res.branches.clone().unwrap() {
-                        tuplelist.push(Trigger {
+                        tuplelist.push(Trigger::TriggerBranch(TriggerBranch {
                             action: None,
                             branch: Some(branch.to_owned()),
-                            tag: None,
-                        })
+                        }))
                     }
                 }
                 if res.branches.is_some() && res.actions.is_some() {
                     for branch in res.branches.clone().unwrap() {
                         for action in res.actions.clone().unwrap() {
-                            tuplelist.push(Trigger {
+                            tuplelist.push(Trigger::TriggerBranch(TriggerBranch {
                                 action: Some(Flag::from(&action)),
                                 branch: Some(branch.to_owned()),
-                                tag: None,
-                            })
+                            }))
                         }
                     }
                 }
@@ -243,30 +239,27 @@ impl Trigger {
             cast::Trigger::TriggerTag(res) => {
                 if res.tags.is_none() {
                     for action in res.actions.clone().unwrap() {
-                        tuplelist.push(Trigger {
+                        tuplelist.push(Trigger::TriggerTag(TriggerTag {
                             action: Some(Flag::from(&action)),
                             tag: None,
-                            branch: None,
-                        })
+                        }))
                     }
                 }
                 if res.actions.is_none() {
                     for tag in res.tags.clone().unwrap() {
-                        tuplelist.push(Trigger {
+                        tuplelist.push(Trigger::TriggerTag(TriggerTag {
                             action: None,
                             tag: Some(tag.to_owned()),
-                            branch: None,
-                        })
+                        }))
                     }
                 }
                 if res.tags.is_some() && res.actions.is_some() {
                     for tag in res.tags.clone().unwrap() {
                         for action in res.actions.clone().unwrap() {
-                            tuplelist.push(Trigger {
+                            tuplelist.push(Trigger::TriggerTag(TriggerTag {
                                 action: Some(Flag::from(&action)),
                                 tag: Some(tag.to_owned()),
-                                branch: None,
-                            })
+                            }))
                         }
                     }
                 }

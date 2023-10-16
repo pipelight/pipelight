@@ -120,6 +120,7 @@ impl PostCommands {
                     match commands {
                         LogsCommands::Rm => {
                             logs::clean()?;
+                            return Ok(());
                         }
                     };
                 }

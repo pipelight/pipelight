@@ -4,9 +4,10 @@ Every pipeline subcomponent such as step and commands are converted to
 the node pretty printable type.
 */
 // Struct
-use crate::types::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel};
+use crate::types::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 use exec::{Statuable, Status};
 use log::LevelFilter;
+use utils::git::Flag;
 // Globals
 use utils::globals::LOGGER;
 // Colorize
@@ -29,8 +30,19 @@ impl From<&Event> for String {
             string.push_str(&commit);
         }
 
+        let mut tag: Option<String> = None;
+        let mut branch: Option<String> = None;
+        let action: Option<Flag> = e.trigger.get_action().unwrap();
+        match e.trigger.clone() {
+            Trigger::TriggerTag(trigger_tag) => {
+                tag = trigger_tag.tag;
+            }
+            Trigger::TriggerBranch(trigger_branch) => {
+                branch = trigger_branch.branch;
+            }
+        }
+
         // Set the tag name
-        let tag = e.trigger.clone().tag;
         if let Some(tag) = tag {
             let header = "tag: ";
             let tag = format!("{}{}\n", header.white(), String::from(&tag).white());
@@ -38,7 +50,6 @@ impl From<&Event> for String {
         }
 
         // Set the branch name
-        let branch = e.trigger.clone().branch;
         if let Some(branch) = branch {
             let header = "branch: ";
             let branch = format!("{}{}\n", header.white(), String::from(&branch).white());
@@ -46,7 +57,6 @@ impl From<&Event> for String {
         }
 
         // Set the action
-        let action = e.trigger.clone().action;
         if let Some(action) = action {
             let header = "action: ";
             let action = format!("{}{}\n", header.white(), String::from(&action).white());

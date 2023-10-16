@@ -1,7 +1,6 @@
 // Structs
-use crate::types::{
-    Command, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger,
-};
+use crate::types::{Command, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel};
+use crate::types::{Trigger, TriggerBranch};
 use exec::Process;
 use log::LevelFilter;
 use utils::git::Git;
@@ -75,6 +74,17 @@ impl Default for Parallel {
 impl Parallel {
     pub fn new() -> Self {
         Self::default()
+    }
+}
+
+impl Trigger {
+    pub fn new() -> Self {
+        Self::default()
+    }
+}
+impl Default for Trigger {
+    fn default() -> Self {
+        Trigger::TriggerBranch(TriggerBranch::default())
     }
 }
 

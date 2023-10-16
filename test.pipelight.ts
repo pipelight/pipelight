@@ -8,7 +8,7 @@ const flags = parse(Deno.args, {
   },
 });
 
-const config = {
+const config: Config = {
   pipelines: [
     {
       name: "test",

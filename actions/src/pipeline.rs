@@ -1,7 +1,7 @@
 // Types
 use chrono::{DateTime, Local};
 use exec::{Statuable, Status};
-use workflow::{pipeline::Filters, Config, Getters, Logs, Node, Pipeline};
+use workflow::{pipeline::Filters, Config, Getters, Logs, Node, Pipeline, Trigger};
 //Logger
 use log::{error, info, warn, LevelFilter};
 use utils::globals::LOGGER;
@@ -92,11 +92,17 @@ pub fn default() -> Result<()> {
         let last_log = Logs::get_by_name(&pipeline.name);
         if let Ok(last_log) = last_log {
             status = String::from(&last_log.status.clone().unwrap());
+
             let event = last_log.event.clone().unwrap();
-            if event.trigger.branch.is_some() {
-                branch = String::from(&event.trigger.branch.unwrap());
-            }
-            action = String::from(&event.trigger.action.unwrap());
+            match event.trigger.clone() {
+                Trigger::TriggerBranch(trigger_branch) => {
+                    if let Some(binding_branch) = trigger_branch.branch {
+                        branch = String::from(&binding_branch);
+                    }
+                }
+                _ => {}
+            };
+            action = String::from(&event.trigger.get_action()?.unwrap());
             let str_date = &event.date;
             date = str_date
                 .parse::<DateTime<Local>>()

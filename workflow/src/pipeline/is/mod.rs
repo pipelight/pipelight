@@ -79,7 +79,19 @@ impl Pipeline {
         let env = Trigger::flag(None)?;
         // If pipeline has defined triggers
         if let Some(triggers) = self.triggers.clone() {
-            Ok(env.is_match(triggers).is_ok())
+            Ok(env.has_match(triggers)?)
+        } else {
+            Ok(true)
+        }
+    }
+    /**
+    Check if the pipeline can be triggered in the actual environment
+    */
+    pub fn is_triggerable_strict(&self) -> Result<bool> {
+        let env = Trigger::flag(None)?;
+        // If pipeline has defined triggers
+        if let Some(triggers) = self.triggers.clone() {
+            Ok(env.has_match(triggers)?)
         } else {
             Ok(true)
         }
@@ -87,16 +99,15 @@ impl Pipeline {
     /**
     Check if the pipeline has a trigger that contains a "watch" flag
     */
-    pub fn is_watchable(&self) -> Result<()> {
-        if self.triggers.is_some() {
-            for trigger in self.triggers.clone().unwrap() {
-                if trigger.action == Some(Flag::Special(Special::Watch)) {
-                    return Ok(());
-                }
-            }
+    pub fn is_watchable(&self) -> Result<bool> {
+        if let Some(triggers) = self.triggers.clone() {
+            let is = triggers
+                .iter()
+                .any(|e| e.get_action().unwrap() == Some(Flag::Special(Special::Watch)));
+            Ok(is)
+        } else {
+            Ok(false)
         }
-        let message = "no watchable pipelines";
-        Err(Error::msg(message))
     }
     /**
     Tells if the pipeline execution has been aborted.
