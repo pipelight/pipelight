@@ -45,7 +45,7 @@ impl Trigger {
 }
 impl TriggerBranch {
     pub fn is_match_strict(&self, trigger: &Self) -> Result<bool> {
-        Ok(self.is_action_match_strict(trigger)? && self.is_branch_match_strict(trigger)?)
+        Ok(self.is_action_match_strict(trigger)? && self.is_branch_match(trigger)?)
     }
     fn is_action_match_strict(&self, trigger: &Self) -> Result<bool> {
         if trigger.action.is_some() && self.action.is_some() && trigger.action == self.action {
@@ -54,48 +54,16 @@ impl TriggerBranch {
             Ok(false)
         }
     }
-    fn is_branch_match_strict(&self, trigger: &Self) -> Result<bool> {
-        // If the project is not a git repo
-        // OR
-        // If the pipeline has no defined triggering branch
-        if trigger.branch.is_none() || self.branch.is_none() {
-            return Ok(true);
-        }
-        // Globbing pattern matching
-        let glob = Pattern::new(&trigger.branch.clone().unwrap()).into_diagnostic()?;
-        let glob_match = glob.matches(&self.clone().branch.unwrap());
-        if glob_match {
-            Ok(true)
-        } else {
-            Ok(false)
-        }
-    }
 }
 impl TriggerTag {
     pub fn is_match_strict(&self, trigger: &Self) -> Result<bool> {
-        Ok(self.is_action_match_strict(trigger)? && self.is_tag_match_strict(trigger)?)
+        Ok(self.is_action_match_strict(trigger)? && self.is_tag_match(trigger)?)
     }
     /**
     Return success if trigger has same action or None
     */
     pub fn is_action_match_strict(&self, trigger: &Self) -> Result<bool> {
         if trigger.action.is_some() && self.action.is_some() && trigger.action == self.action {
-            Ok(true)
-        } else {
-            Ok(false)
-        }
-    }
-    pub fn is_tag_match_strict(&self, trigger: &Self) -> Result<bool> {
-        // If the project is not a git repo
-        // OR
-        // If the pipeline has no defined triggering tag
-        if trigger.tag.is_none() || self.tag.is_none() {
-            return Ok(true);
-        }
-        // Globbing pattern matching
-        let glob = Pattern::new(&trigger.tag.clone().unwrap()).into_diagnostic()?;
-        let glob_match = glob.matches(&self.clone().tag.unwrap());
-        if glob_match {
             Ok(true)
         } else {
             Ok(false)

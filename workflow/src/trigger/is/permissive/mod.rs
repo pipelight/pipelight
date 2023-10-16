@@ -55,7 +55,7 @@ impl TriggerBranch {
             Ok(false)
         }
     }
-    fn is_branch_match(&self, trigger: &Self) -> Result<bool> {
+    pub fn is_branch_match(&self, trigger: &Self) -> Result<bool> {
         // If the project is not a git repo
         // OR
         // If the pipeline has no defined triggering branch
@@ -86,7 +86,7 @@ impl TriggerTag {
             Ok(false)
         }
     }
-    fn is_tag_match(&self, trigger: &Self) -> Result<bool> {
+    pub fn is_tag_match(&self, trigger: &Self) -> Result<bool> {
         // If the project is not a git repo
         // OR
         // If the pipeline has no defined triggering tag

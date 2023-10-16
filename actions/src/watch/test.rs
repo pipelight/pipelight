@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod watcher {
     // Globals
-    use crate::watcher::build;
+    use crate::watch::build;
     use std::sync::Arc;
     // Watchexec
     use utils::files::Ignore;

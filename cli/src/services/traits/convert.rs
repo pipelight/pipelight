@@ -1,5 +1,5 @@
 // Struct
-use crate::services::types::{Actions, Service};
+use crate::services::types::{Action, Service};
 use crate::types::{Cli, Commands, DetachableCommands, PostCommands};
 use crate::types::{Pipeline, Trigger, Watch};
 use exec::Status;
@@ -50,7 +50,7 @@ impl Parser for Service {
 
         // Rewrite the arg according to action
         match self.cmd {
-            Actions::Run => {
+            Action::Run => {
                 if let Some(ref mut args) = self.args {
                     args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
                         DetachableCommands::Run(Pipeline {
@@ -60,14 +60,14 @@ impl Parser for Service {
                     ));
                 }
             }
-            Actions::Trigger => {
+            Action::Trigger => {
                 if let Some(ref mut args) = self.args {
                     args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
                         DetachableCommands::Trigger(Trigger { flag }),
                     ))
                 }
             }
-            Actions::Watch => {
+            Action::Watch => {
                 if let Some(ref mut args) = self.args {
                     args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
                         DetachableCommands::Watch,

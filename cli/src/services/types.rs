@@ -5,7 +5,7 @@ use crate::types::{Cli, Commands};
 use miette::Result;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
-pub enum Actions {
+pub enum Action {
     Run,
     Trigger,
     Watch,
@@ -19,11 +19,11 @@ use Actions directly.
 #[derive(Debug, Clone)]
 pub struct Service {
     pub args: Option<Cli>,
-    pub cmd: Actions,
+    pub cmd: Action,
 }
 
 impl Service {
-    pub fn new(cmd: Actions, args: Option<Cli>) -> Result<Self> {
+    pub fn new(cmd: Action, args: Option<Cli>) -> Result<Self> {
         let mut service = Service { cmd, args };
         // println!("{:#?}", service);
         service.convert()?;

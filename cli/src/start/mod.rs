@@ -1,5 +1,5 @@
 // Struct
-use crate::services::types::{Actions, Service};
+use crate::services::types::{Action, Service};
 use crate::types::Cli;
 use crate::types::{ColoredOutput, LogsCommands};
 use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
@@ -75,7 +75,7 @@ impl DetachableCommands {
                 }
                 match args.attach {
                     false => {
-                        Service::new(Actions::Run, Some(args))?.should_detach()?;
+                        Service::new(Action::Run, Some(args))?.should_detach()?;
                     }
                     true => {
                         run::launch(&e.name.clone().unwrap())?;
@@ -84,7 +84,7 @@ impl DetachableCommands {
             }
             DetachableCommands::Trigger(_) => match args.attach {
                 false => {
-                    Service::new(Actions::Trigger, Some(args))?.should_detach()?;
+                    Service::new(Action::Trigger, Some(args))?.should_detach()?;
                 }
                 true => {
                     trigger::launch()?;
@@ -92,7 +92,7 @@ impl DetachableCommands {
             },
             DetachableCommands::Watch => match args.attach {
                 false => {
-                    Service::new(Actions::Watch, Some(args))?.should_detach()?;
+                    Service::new(Action::Watch, Some(args))?.should_detach()?;
                 }
                 true => {
                     watch::Watcher::start()?;

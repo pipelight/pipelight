@@ -1,5 +1,5 @@
 // Struct
-use crate::services::types::{Actions, Service};
+use crate::services::types::{Action, Service};
 use crate::types::{Cli, Commands, DetachableCommands, PostCommands};
 use crate::types::{Pipeline, Trigger, Watch};
 use exec::Status;
@@ -14,11 +14,11 @@ pub trait FgBg {
     /**
     Fork action/process end send to background
     */
-    fn detach(&mut self) -> Result<()>;
+    fn detach(&self) -> Result<()>;
     /**
     Fork action/process end keep in foreground
     */
-    fn attach(&mut self) -> Result<()>;
+    fn attach(&self) -> Result<()>;
     /**
     Inspect the parsed command line arguments (CLI global, attach flag)
     and determine whether to detach the subprocess or not.
@@ -27,13 +27,13 @@ pub trait FgBg {
 }
 
 impl FgBg for Service {
-    fn attach(&mut self) -> Result<()> {
+    fn attach(&self) -> Result<()> {
         if let Some(args) = self.args.clone() {
             SelfProcess::run_fg_with_cmd(&String::from(&args))?;
         }
         Ok(())
     }
-    fn detach(&mut self) -> Result<()> {
+    fn detach(&self) -> Result<()> {
         if let Some(args) = self.args.clone() {
             SelfProcess::run_bg_with_cmd(&String::from(&args))?;
         }

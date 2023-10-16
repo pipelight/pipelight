@@ -1,10 +1,11 @@
 #[cfg(test)]
 mod service {
     // Struct
-    use crate::types::Service;
-    use actions::types::Action;
+    use crate::services::types::{Action, Service};
     use crate::Pipeline;
     use crate::{Cli, Commands, DetachableCommands, PostCommands};
+    // Traits
+    use crate::services::traits::FgBg;
     // Error Handling
     use miette::{IntoDiagnostic, Result};
 
@@ -27,7 +28,7 @@ mod service {
         if let Some(ref mut args) = args {
             args.attach = true;
         }
-        let service = Service::new(Action::Run(None), args)?;
+        let service = Service::new(Action::Run, args)?;
         println!("{:#?}", service);
         Ok(())
     }
@@ -47,7 +48,7 @@ mod service {
         if let Some(ref mut args) = args {
             args.attach = true;
         }
-        let service = Service::new(Action::Run(None), args)?;
+        let service = Service::new(Action::Run, args)?;
         service.detach()?;
         Ok(())
     }
