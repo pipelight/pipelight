@@ -35,6 +35,7 @@ dependencies = [
  "uuid",
  "watchexec",
  "watchexec-events",
+ "watchexec-signals",
  "workflow",
 ]
 
@@ -2880,6 +2881,7 @@ dependencies = [
  "uuid",
  "watchexec",
  "watchexec-events",
+ "watchexec-signals",
 ]
 
 [[package]]

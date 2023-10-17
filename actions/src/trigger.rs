@@ -15,7 +15,7 @@ Filter pipeline by trigger and run
 pub fn launch() -> Result<()> {
     let mut pipelines = Pipeline::get()?;
     pipelines.par_iter_mut().for_each(|pipeline| {
-        if pipeline.is_triggerable().is_ok() {
+        if pipeline.is_triggerable_strict().is_ok() {
             pipeline.run().unwrap();
         }
     });

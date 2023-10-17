@@ -75,6 +75,18 @@ impl Pipeline {
     /**
     Check if the pipeline can be triggered in the actual environment
     */
+    pub fn is_triggerable_strict(&self) -> Result<bool> {
+        let env = Trigger::flag(None)?;
+        // If pipeline has defined triggers
+        if let Some(triggers) = self.triggers.clone() {
+            Ok(env.has_match_strict(triggers)?)
+        } else {
+            Ok(true)
+        }
+    }
+    /**
+    Check if the pipeline can be triggered in the actual environment
+    */
     pub fn is_triggerable(&self) -> Result<bool> {
         let env = Trigger::flag(None)?;
         // If pipeline has defined triggers

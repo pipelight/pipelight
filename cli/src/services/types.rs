@@ -25,9 +25,7 @@ pub struct Service {
 impl Service {
     pub fn new(cmd: Action, args: Option<Cli>) -> Result<Self> {
         let mut service = Service { cmd, args };
-        // println!("{:#?}", service);
         service.convert()?;
-        // println!("{:#?}", service);
         Ok(service)
     }
 }

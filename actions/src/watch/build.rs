@@ -6,6 +6,7 @@ use workflow::types::{Trigger};
 use std::sync::Arc;
 // Watchexec
 use watchexec_events::Event;
+use watchexec_signals::Signal;
 use watchexec::{
     action::{Action, Outcome},
     config::{InitConfig, RuntimeConfig},
@@ -15,6 +16,8 @@ use watchexec::{
 use utils::files::Ignore;
 // Env
 use std::env;
+use std::process;
+use std::future::Future;
 // Error handling
 use miette::{IntoDiagnostic, Result, Diagnostic};
 use thiserror::Error; 
@@ -36,45 +39,54 @@ pub fn build() -> Result<(Arc<Watchexec>, RuntimeConfig)> {
   let mut init = InitConfig::default();
   init.on_error(PrintDebug(std::io::stderr()));
 
-  let mut runtime = RuntimeConfig::default();
 
   // Set Filter
   // Parse ignore file into watchexec filter
   let ignorefile = ".pipelight_ignore";
-  let ignore = Ignore::new(ignorefile)?;
-  runtime.filterer(Arc::new(ignore));
+  let ignore = Ignore::new(ignorefile).unwrap();
 
+  let mut runtime = RuntimeConfig::default();
+  runtime.filterer(Arc::new(ignore));
   // Watch cwd only
   runtime.pathset(vec![env::current_dir().unwrap()]);
 
   // Create WE instance
-  let watchexec = Watchexec::new(init, runtime.clone())?;
-
+  let watchexec = Watchexec::new(init, runtime.clone()).unwrap();
   let w_clone = watchexec.clone();
   let r_clone = runtime.clone();
 
   runtime.on_action(move |action: Action| {
     let w_clone = w_clone.clone();
     let r_clone = r_clone.clone();
-    async move {
-      // Reconfigure
-      reconfigure(&w_clone, &r_clone, &action, ignorefile).unwrap();
-      // Pipeline execution
-      watch_trigger().unwrap();
 
+    async move {
+      // Self reconfigure on ignore file change
+      reconfigure(&w_clone, &r_clone, &action, ignorefile).unwrap();
+      // Handle Stop signals
+			let sigs = action
+				.events
+				.iter()
+				.flat_map(Event::signals)
+				.collect::<Vec<_>>();
+      if sigs.iter().any(|sig| sig == &Signal::Interrupt) {
+        action.outcome(Outcome::Exit);
+      } else{
+      
+      // Pipeline execution
+      // watch_trigger().unwrap();
+      
       action.outcome(Outcome::if_running(
           Outcome::DoNothing,
           Outcome::both(Outcome::Clear, Outcome::Start),
       ));
+      }
       Ok(())
       // (not normally required! ignore this when implementing)
       as std::result::Result<_, MietteStub>
     }
   });
-
   Ok((watchexec,runtime))
 }
-
 
 /**
 Self reconfigure when the IgnoreFile changes.

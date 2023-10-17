@@ -9,6 +9,8 @@ use utils::{logger::Logger, teleport::Portal};
 use workflow::{Config, Trigger};
 // Cli
 use clap::FromArgMatches;
+use cli::services::FgBg;
+use cli::services::{Action, Service};
 use cli::types::Cli;
 use cli::types::{Commands, DetachableCommands, PostCommands};
 // Error Handling
@@ -99,7 +101,8 @@ pub fn hydrate_config() -> Result<()> {
 
     let casted_config = cast::Config::load(&portal.target.file_path.unwrap(), args.raw.clone())?;
     let config = Config::from(&casted_config);
-    *CONFIG.lock().unwrap() = config;
+    *CONFIG.lock().unwrap() = config.clone();
+
     Ok(())
 }
 

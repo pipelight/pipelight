@@ -12,7 +12,6 @@ mod service {
     use assert_cmd::prelude::*; // Add methods on commands
     use std::process::Command; // Run commnds
 
-    /// Run pipeline but no config found
     #[test]
     fn create_service() -> Result<()> {
         let mut args = Some(Cli {
@@ -32,7 +31,6 @@ mod service {
         println!("{:#?}", service);
         Ok(())
     }
-    /// Run pipeline but no config found
     #[test]
     fn start_detached_service() -> Result<()> {
         let mut args = Some(Cli {
@@ -49,6 +47,23 @@ mod service {
             args.attach = true;
         }
         let service = Service::new(Action::Run, args)?;
+        service.detach()?;
+        Ok(())
+    }
+    /// Run watcher
+    #[test]
+    fn start_detached_watcher() -> Result<()> {
+        let mut args = Some(Cli {
+            commands: Commands::PostCommands(PostCommands::DetachableCommands(
+                DetachableCommands::Watch,
+            )),
+            ..Cli::default()
+        });
+        // println!("{:#?}", args);
+        if let Some(ref mut args) = args {
+            args.attach = true;
+        }
+        let service = Service::new(Action::Watch, args)?;
         service.detach()?;
         Ok(())
     }

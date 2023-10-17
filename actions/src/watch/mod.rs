@@ -38,6 +38,8 @@ pub async fn start() -> Result<()> {
     // Kill already running watcher
     Watcher::kill_homologous()?;
     let (we, runtime) = build()?;
+
+    we.reconfigure(runtime)?;
     we.main().await.into_diagnostic()?;
     Ok(())
 }
