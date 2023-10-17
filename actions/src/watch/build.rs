@@ -1,6 +1,7 @@
 // Structs
 use utils::git::{Flag, Special};
 use workflow::types::{Trigger};
+use crate::trigger;
 // use crate::trigger;
 // Globals
 use std::sync::Arc;
@@ -73,7 +74,7 @@ pub fn build() -> Result<(Arc<Watchexec>, RuntimeConfig)> {
       } else{
       
       // Pipeline execution
-      // watch_trigger().unwrap();
+      watch_trigger().unwrap();
       
       action.outcome(Outcome::if_running(
           Outcome::DoNothing,
@@ -110,6 +111,6 @@ Set the watch flag to the triggering env and try to trigger pipelines.
 */
 pub fn watch_trigger() -> Result<()> {
   Trigger::flag(Some(Flag::Special(Special::Watch)))?;
-  // trigger::launch()?;
+  trigger::launch()?;
   Ok(())
 }
