@@ -31,7 +31,7 @@ impl Getters<Pipeline> for Pipeline {
             Some(res) => Ok(res.to_owned()),
             None => {
                 let message = format!("Couldn't find pipeline: {:?}", name);
-                let hint = "You may have made a typo (pipeline names must not contain spaces)";
+                let hint = "You may have made a typo";
                 Err(IsError::new(&message, &hint)?.into())
             }
         }

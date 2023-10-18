@@ -95,12 +95,12 @@ pub enum Trigger {
     TriggerBranch(TriggerBranch),
     TriggerTag(TriggerTag),
 }
-#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
 pub struct TriggerBranch {
     pub action: Option<Flag>,
     pub branch: Option<String>,
 }
-#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
 pub struct TriggerTag {
     pub action: Option<Flag>,
     pub tag: Option<String>,

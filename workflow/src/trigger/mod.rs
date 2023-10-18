@@ -8,6 +8,7 @@ use crate::globals::TRIGGER_ENV;
 // Error Handling
 use miette::Result;
 
+mod display;
 mod getters;
 mod is;
 

@@ -13,9 +13,11 @@ Pretty print pipelines as a tree
 */
 pub fn pretty(name: Option<String>) -> Result<()> {
     let mut pipelines = Logs::get()?;
+
     if let Some(name) = name {
         pipelines = Filters::filter_by_name(pipelines, &name)?;
     }
+
     for mut pipeline in pipelines {
         if pipeline.get_status() == Some(Status::Running) {
             pipeline.hydrate()?;

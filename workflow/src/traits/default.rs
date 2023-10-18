@@ -1,9 +1,10 @@
 // Structs
 use crate::types::{Command, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel};
-use crate::types::{Trigger, TriggerBranch};
+use crate::types::{Trigger, TriggerBranch, TriggerTag};
 use exec::Process;
 use log::LevelFilter;
 use utils::git::Git;
+use utils::git::{Flag, Special};
 use uuid::Uuid;
 // Date and time
 use chrono::Local;
@@ -85,6 +86,22 @@ impl Trigger {
 impl Default for Trigger {
     fn default() -> Self {
         Trigger::TriggerBranch(TriggerBranch::default())
+    }
+}
+impl Default for TriggerBranch {
+    fn default() -> Self {
+        TriggerBranch {
+            action: Some(Flag::Special(Special::Manual)),
+            branch: None,
+        }
+    }
+}
+impl Default for TriggerTag {
+    fn default() -> Self {
+        TriggerTag {
+            action: Some(Flag::Special(Special::Manual)),
+            tag: None,
+        }
     }
 }
 
