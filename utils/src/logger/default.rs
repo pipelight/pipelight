@@ -1,7 +1,7 @@
 // Relative paths
 use crate::logger::types::{LogFile, LogInfo, Logger};
-
 use log::LevelFilter;
+use log::{debug, info, trace};
 
 // Absolute paths
 // use std::path::Path;
@@ -33,6 +33,12 @@ impl Logger {
         Self::default()
     }
     pub fn to_file(&mut self) -> Self {
+        let directory = format!(
+            "{}/.pipelight/logs",
+            &env::current_dir().unwrap().to_str().unwrap()
+        );
+        debug!("Logging to {}", directory);
+
         let logger = Logger {
             handle: self.handle.clone(),
             internals: LogInfo {
@@ -52,14 +58,12 @@ impl Logger {
             pipelines: LogInfo {
                 file_info: Some(LogFile {
                     name: "_unlinked".to_owned(),
-                    directory: format!(
-                        "{}/.pipelight/logs",
-                        &env::current_dir().unwrap().to_str().unwrap()
-                    ),
+                    directory,
                 }),
                 ..self.pipelines.clone()
             },
         };
+
         *self = logger;
         self.update().unwrap();
         self.to_owned()

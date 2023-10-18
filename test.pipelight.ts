@@ -32,10 +32,10 @@ const config: Config = {
       tags: ["*"],
       actions: ["manual"],
     }),
-    pipeline("test_git_hooks", () => [
-      step(`kill decendent subprocess`, () => ["pwd", "ls"]),
+    pipeline("test_git_hooks(pre-push)", () => [
+      step(`run harmless commands`, () => ["pwd", "sleep 30", "ls"]),
     ]).add_trigger({
-      actions: ["pre-commit"],
+      actions: ["pre-push"],
     }),
     pipeline("test_rw", () => [
       step(`kill decendent subprocess`, () => ["ppwd", "ls"]).set_mode(
@@ -43,13 +43,8 @@ const config: Config = {
       ),
       step(`kill decendent subprocess`, () => ["pwd", "ls", "sleep 10"]),
     ]),
-    pipeline("test_kill", () => [
-      step(`kill decendent subprocess`, () => [
-        "pwd",
-        "ls",
-        "sleep 120",
-        "pwd",
-      ]),
+    pipeline("test_long_running_pipeline", () => [
+      step(`run and sleep`, () => ["pwd", "ls", "sleep 120", "pwd"]),
     ]),
     pipeline("test_deno_additional_arguments", () => [
       step(`host -> ${flags.host}`, () => ["cargo test --package pipeline"]),

@@ -15,9 +15,9 @@ impl Trigger {
             // then compare
             Trigger::TriggerTag(self_trigger_tag) => {
                 for trigger in list {
-                    let is = match trigger {
+                    let is: Result<bool> = match trigger {
                         Trigger::TriggerTag(trigger_tag) => {
-                            self_trigger_tag.is_match_strict(&trigger_tag)
+                            Ok(self_trigger_tag.is_match_strict(&trigger_tag)?)
                         }
                         _ => Ok(false),
                     };
@@ -28,9 +28,9 @@ impl Trigger {
             }
             Trigger::TriggerBranch(self_trigger_branch) => {
                 for trigger in list {
-                    let is = match trigger {
+                    let is: Result<bool> = match trigger {
                         Trigger::TriggerBranch(trigger_branch) => {
-                            self_trigger_branch.is_match_strict(&trigger_branch)
+                            Ok(self_trigger_branch.is_match_strict(&trigger_branch)?)
                         }
                         _ => Ok(false),
                     };

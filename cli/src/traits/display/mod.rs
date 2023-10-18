@@ -39,7 +39,7 @@ impl fmt::Display for Pipeline {
 
         if self.name.is_some() {
             string += " ";
-            string += &self.name.clone().unwrap();
+            string += &format!("\"{}\"", &self.name.clone().unwrap());
         }
         if self.trigger.flag.is_some() {
             string += " ";

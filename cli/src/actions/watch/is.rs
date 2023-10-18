@@ -1,5 +1,5 @@
 // Struct
-use crate::watch::Watcher;
+use crate::actions::watch::Watcher;
 // Env
 use std::env;
 // Process finder
@@ -14,7 +14,7 @@ watching the current working directory.
 impl Watcher {
     pub fn has_homologous_already_running() -> Result<()> {
         // Search homologous
-        let mut finder = Finder::new()
+        let finder = Finder::new()
             .cwd(env::current_dir().into_diagnostic()?.to_str().unwrap())
             .seed("pipelight")
             .seed("watch")
@@ -30,7 +30,7 @@ impl Watcher {
     }
     pub fn kill_homologous() -> Result<()> {
         // Search homologous
-        let mut finder = Finder::new()
+        let finder = Finder::new()
             .cwd(env::current_dir().into_diagnostic()?.to_str().unwrap())
             .seed("pipelight")
             .seed("watch")

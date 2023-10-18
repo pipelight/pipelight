@@ -38,10 +38,7 @@ pub fn early_hydrate_logger() -> Result<()> {
 }
 // Hydrate logs
 pub fn full_hydrate_logger() -> Result<()> {
-    let mut portal = PORTAL.lock().unwrap();
-    portal.teleport()?;
     LOGGER.lock().unwrap().to_file();
-    portal.origin()?;
     Ok(())
 }
 
@@ -66,7 +63,7 @@ pub fn hydrate_trigger() -> Result<()> {
         _ => {}
     }
     if let Some(flag) = flag {
-        Trigger::flag(Some(Flag::from(&flag)))?;
+        Trigger::set(Some(Flag::from(&flag)))?;
     }
     Ok(())
 }

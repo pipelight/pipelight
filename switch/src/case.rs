@@ -1,5 +1,5 @@
 // Structs
-use actions::watch::Watcher;
+use cli::actions::watch::Watcher;
 use cli::services::{Action, FgBg, Service};
 use cli::types::{
     Cli, ColoredOutput, Commands, DetachableCommands, LogsCommands, PostCommands, PreCommands,
@@ -28,7 +28,7 @@ impl Switch {
                 set_globals()?;
                 match post_commands {
                     PostCommands::DetachableCommands(detachable_commands) => {
-                        detachable_commands.start()?;
+                        detachable_commands.start()?
                     }
                     _ => {
                         // Set watcher

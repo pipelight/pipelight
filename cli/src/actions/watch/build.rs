@@ -1,7 +1,8 @@
 // Structs
 use utils::git::{Flag, Special};
-use workflow::types::{Trigger};
-use crate::trigger;
+use crate::services::{Service, Action as SAction, FgBg};
+use crate::types::{Cli, Commands, DetachableCommands, PostCommands};
+use crate::types::{Trigger};
 // use crate::trigger;
 // Globals
 use std::sync::Arc;
@@ -19,6 +20,8 @@ use utils::files::Ignore;
 use std::env;
 use std::process;
 use std::future::Future;
+// Globals
+use crate::globals::CLI;
 // Error handling
 use miette::{IntoDiagnostic, Result, Diagnostic};
 use thiserror::Error; 
@@ -110,7 +113,11 @@ pub fn reconfigure(watchexec: &Arc<Watchexec>, runtime: &RuntimeConfig, action: 
 Set the watch flag to the triggering env and try to trigger pipelines.
 */
 pub fn watch_trigger() -> Result<()> {
-  Trigger::flag(Some(Flag::Special(Special::Watch)))?;
-  trigger::launch()?;
+  let flag = Some(String::from(&Flag::Special(Special::Watch)));
+  let mut args = CLI.lock().unwrap().clone();
+  args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
+      DetachableCommands::Trigger(Trigger { flag }),
+  ));
+  Service::new(SAction::Trigger, Some(args))?.should_detach()?;
   Ok(())
 }

@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod watcher {
     // Globals
-    use crate::watch::{Watcher,build};
+    use crate::actions::watch::{Watcher,build};
     use utils::teleport::Portal;
     // Error handling
     use miette::{Diagnostic, IntoDiagnostic, Result};

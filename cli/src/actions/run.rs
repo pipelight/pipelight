@@ -14,12 +14,12 @@ pub fn launch(name: &str) -> Result<()> {
         // Return pipeline log
         println!("{}", Node::from(&pipeline));
         match pipeline.status {
-            Some(Status::Succeeded) => Ok(()),
+            Some(Status::Succeeded) => return Ok(()),
             Some(Status::Failed) => {
                 let message = "Pipeline status: Failed";
-                Err(Error::msg(message))
+                return Err(Error::msg(message));
             }
-            _ => Ok(()),
+            _ => return Ok(()),
         };
     }
     Ok(())

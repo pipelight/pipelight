@@ -8,7 +8,6 @@ members=[
   "templates",
   ## Core crates with interdependencies
   "workflow",
-  "actions",
   "cli",
   "switch",
   ## Bin package

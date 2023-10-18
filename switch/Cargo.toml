@@ -5,7 +5,6 @@ edition = "2021"
 
 [dependencies]
 cli = {path = "../cli" }
-actions = {path = "../actions" }
 workflow = {path = "../workflow" }
 templates = {path = "../templates" }
 exec = {path = "../exec" }

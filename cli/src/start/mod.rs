@@ -1,10 +1,12 @@
 // Struct
+use crate::actions::{logs, pipeline, prompt, run, stop, trigger, watch};
 use crate::services::types::{Action, Service};
 use crate::types::Cli;
 use crate::types::{ColoredOutput, LogsCommands};
-use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
-use actions::{logs, pipeline, prompt, run, stop, trigger, watch};
+use crate::types::{Commands, DetachableCommands, Pipeline, PostCommands, PreCommands};
 use utils::git::Hook;
+use workflow::Getters;
+use workflow::Trigger;
 // Clap
 use clap::ValueEnum;
 use clap_complete::shells::Shell;
@@ -74,29 +76,17 @@ impl DetachableCommands {
                     ))
                 }
                 match args.attach {
-                    false => {
-                        Service::new(Action::Run, Some(args))?.should_detach()?;
-                    }
-                    true => {
-                        run::launch(&e.name.clone().unwrap())?;
-                    }
+                    false => Service::new(Action::Run, Some(args))?.should_detach()?,
+                    true => run::launch(&e.name.clone().unwrap())?,
                 }
             }
-            DetachableCommands::Trigger(_) => match args.attach {
-                false => {
-                    Service::new(Action::Trigger, Some(args))?.should_detach()?;
-                }
-                true => {
-                    trigger::launch()?;
-                }
-            },
             DetachableCommands::Watch => match args.attach {
-                false => {
-                    Service::new(Action::Watch, Some(args))?.should_detach()?;
-                }
-                true => {
-                    watch::Watcher::start()?;
-                }
+                false => Service::new(Action::Watch, Some(args))?.should_detach()?,
+                true => watch::Watcher::start()?,
+            },
+            DetachableCommands::Trigger(trigger) => match args.attach {
+                false => Service::new(Action::Trigger, Some(args))?.should_detach()?,
+                true => trigger::launch(trigger)?,
             },
         }
         Ok(())
@@ -111,7 +101,7 @@ impl PostCommands {
                     stop::launch(&name)?;
                 } else {
                     // Select prompt
-                    let name = prompt::pipeline()?;
+                    let name = prompt::running_pipeline()?;
                     stop::launch(&name)?;
                 }
             }

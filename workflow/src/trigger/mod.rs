@@ -55,19 +55,17 @@ mod is;
 //
 
 impl Trigger {
-    /**
-    Return the computed triggering env when flag set to None.
-    or
-    Return the modified triggering env when flag is set.
-    */
-    pub fn flag(flag: Option<Flag>) -> Result<Trigger> {
+    pub fn get() -> Result<Trigger> {
+        let mut env: Trigger = TRIGGER_ENV.lock().unwrap().clone();
+        Ok(env)
+    }
+    pub fn set(flag: Option<Flag>) -> Result<Trigger> {
         // Get the global
-        // let mut env: Trigger = TRIGGER_ENV.lock().unwrap().clone();
+        let mut env: Trigger = TRIGGER_ENV.lock().unwrap().clone();
 
         let mut branch = None;
         let mut tag = None;
         let mut action = None;
-        let env: Trigger;
 
         // Get git info
         if Git::new().exists() {

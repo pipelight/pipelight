@@ -3,43 +3,6 @@
 version = 3
 
 [[package]]
-name = "actions"
-version = "0.4.2"
-dependencies = [
- "assert_cmd",
- "cast",
- "chrono",
- "clap",
- "clap_complete",
- "colored",
- "convert_case",
- "dialoguer",
- "exec",
- "glob",
- "iso8601-duration",
- "log",
- "miette",
- "once_cell",
- "rayon",
- "regex",
- "rustix 0.37.23",
- "serde",
- "serde_json",
- "serde_plain",
- "strum",
- "sysinfo 0.28.4",
- "templates",
- "thiserror",
- "tokio",
- "utils",
- "uuid",
- "watchexec",
- "watchexec-events",
- "watchexec-signals",
- "workflow",
-]
-
-[[package]]
 name = "addr2line"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -402,7 +365,6 @@ dependencies = [
 name = "cli"
 version = "0.4.0"
 dependencies = [
- "actions",
  "assert_cmd",
  "cast",
  "chrono",
@@ -428,8 +390,13 @@ dependencies = [
  "sysinfo 0.28.4",
  "templates",
  "thiserror",
+ "tokio",
  "utils",
  "uuid",
+ "watchexec",
+ "watchexec-events",
+ "watchexec-signals",
+ "workflow",
 ]
 
 [[package]]
@@ -2400,7 +2367,6 @@ dependencies = [
 name = "switch"
 version = "0.4.2"
 dependencies = [
- "actions",
  "assert_cmd",
  "cast",
  "chrono",

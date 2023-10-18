@@ -5,6 +5,7 @@ use uuid::Uuid;
 // Fylesystem
 use std::fs;
 // Error Handling
+use log::debug;
 use miette::{IntoDiagnostic, Result};
 
 impl Logger {
