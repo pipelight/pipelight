@@ -18,7 +18,7 @@ impl Logs {
     pub fn sanitize(&mut self) -> Result<Self> {
         self.pipelines.as_mut().map(|e| {
             e.iter_mut().map(|pipeline| {
-                if pipeline.get_status() == Some(Status::Running) && pipeline.is_running().is_err()
+                if pipeline.get_status() == Some(Status::Running) && !pipeline.is_running().unwrap()
                 {
                     pipeline.set_status(Some(Status::Aborted));
                     pipeline.log();
@@ -33,7 +33,7 @@ impl Logs {
     pub fn clean() -> Result<()> {
         let pipelines = Logs::get()?;
         for pipeline in pipelines {
-            if pipeline.is_running().is_err() {
+            if pipeline.get_status() != Some(Status::Running) {
                 pipeline.clean()?;
             }
         }

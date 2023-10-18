@@ -45,7 +45,7 @@ impl Pipeline {
         let mut pipelines = Logs::get_many_by_name(&self.name)?;
         pipelines.reverse();
         for pipeline in pipelines {
-            if pipeline.is_running().is_ok() {
+            if pipeline.is_running()? {
                 return Ok(());
             }
         }
@@ -61,15 +61,14 @@ impl Pipeline {
 
     If those conditions are met we assume the pipeline is running.
     */
-    pub fn is_running(&self) -> Result<()> {
+    pub fn is_running(&self) -> Result<bool> {
         if let Some(event) = self.event.clone() {
             unsafe {
                 let pid = rustix::process::Pid::from_raw(event.pid.unwrap());
-                test_kill_process(pid.unwrap()).into_diagnostic()
+                Ok(test_kill_process(pid.unwrap()).is_ok())
             }
         } else {
-            let message = "pipeline is not running";
-            Err(Error::msg(message))
+            Ok(false)
         }
     }
     /**

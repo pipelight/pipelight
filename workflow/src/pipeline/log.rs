@@ -19,6 +19,8 @@ impl Pipeline {
         LOGGER.lock().unwrap().to_file();
         LOGGER.lock().unwrap().set_file(&self.uuid);
         let logger = LOGGER.lock().unwrap().clone();
+
+        // Pipeline main file
         let file = logger.pipelines.file_info;
         if let Some(file) = file {
             let path = format!("{}/{}.json", file.directory, file.name);
