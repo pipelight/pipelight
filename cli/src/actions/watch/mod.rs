@@ -3,15 +3,13 @@ mod test;
 // Detach
 // Watchexec
 use watchexec::{
-    action::{Action, Outcome},
+    action::{Outcome},
     config::{InitConfig, RuntimeConfig},
     handler::{Handler as _, PrintDebug},
     Watchexec,
 };
-use utils::files::Ignore;
 // Error handling
-use miette::{IntoDiagnostic, Result, Diagnostic};
-use thiserror::Error; 
+use miette::{IntoDiagnostic, Result};
 
 mod build;
 // mod builder;

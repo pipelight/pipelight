@@ -19,7 +19,7 @@ use watchexec::{
     handler::{Handler as _, PrintDebug},
     Watchexec,
 };
-use ignore_files::{ IgnoreFilter, IgnoreFile};
+use ignore_files::{ IgnoreFilter, IgnoreFile };
 // Env
 use std::env;
 use std::path::{Path, PathBuf};
@@ -106,6 +106,9 @@ pub async fn reconfigure(watchexec: &Arc<Watchexec>, runtime: &RuntimeConfig, ac
   }
   Ok(())
 }
+/**
+Create action filter
+ */
 pub async fn filter_configuration(path: &str)-> Result<IgnoreFilterer> {
   let path = Path::new(path);
   // Set Filter
@@ -122,8 +125,6 @@ pub async fn filter_configuration(path: &str)-> Result<IgnoreFilterer> {
   let filterer = IgnoreFilterer(filter);
   Ok(filterer)
 }
-
-
 
 /**
 Set the watch flag to the triggering env and try to trigger pipelines.

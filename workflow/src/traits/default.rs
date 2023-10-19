@@ -151,7 +151,7 @@ impl Default for Event {
         let commit = git.get_commit().ok();
 
         Event {
-            trigger: Trigger::set(None).unwrap(),
+            trigger: Trigger::get().unwrap(),
             commit,
             // Local instead of UTC to better stick to
             // most time lib iso8601
