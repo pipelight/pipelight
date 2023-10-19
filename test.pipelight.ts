@@ -17,12 +17,10 @@ const config: Config = {
       step(`launch a pipeline`, () => [
         "cargo run --bin pipelight run test_rw --config test.pipelight.ts --attach",
       ]),
-    ]).add_trigger({
-      actions: ["manual", "update"],
-    }),
+    ]),
     // Triggers
     pipeline("test_watch", () => [
-      step(`kill decendent subprocess`, () => ["pwd", "ls"]),
+      step(`run harmless commands`, () => ["pwd", "sleep 30", "ls"]),
     ]).add_trigger({
       actions: ["watch"],
     }),

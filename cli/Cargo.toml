@@ -37,6 +37,7 @@ tokio = "1.32.0"
 watchexec = "2.3.0"
 watchexec-events = "1.0.0"
 watchexec-signals = "1.0.0"
+async-priority-channel = "0.1.0"
 
 [build-dependencies]
 workflow = {path = "../workflow" }
@@ -65,3 +66,4 @@ rayon = "1.6.1"
 watchexec = "2.3.0"
 watchexec-events = "1.0.0"
 watchexec-signals = "1.0.0"
+async-priority-channel = "0.1.0"

@@ -14,6 +14,7 @@ use miette::{IntoDiagnostic, Result, Diagnostic};
 use thiserror::Error; 
 
 mod build;
+mod builder;
 pub use build::*;
 mod is;
 
