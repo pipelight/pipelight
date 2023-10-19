@@ -38,7 +38,6 @@ impl Template {
             extension = String::from(&FileType::from(&style));
             e.style = style;
         }
-
         // Set the appropriate file extension
         e.file_path = Path::new(&e.file_path)
             .parent()
@@ -87,8 +86,9 @@ impl Template {
         let style = &String::from(&self.style);
         let extension = &String::from(&FileType::from(&self.style));
         let mut handlebars = Handlebars::new();
+        let path = format!("templates_static/{}.{}", style, extension);
         handlebars
-            .register_template_file(style, format!("public/{}.{}", style, extension))
+            .register_template_file(style, path)
             .into_diagnostic()?;
         let rendered_string = handlebars
             .render_with_context(style, &Context::null())

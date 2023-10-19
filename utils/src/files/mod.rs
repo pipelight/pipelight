@@ -1,5 +1,4 @@
 mod from;
-mod ignore;
 mod is;
 mod methods;
 mod types;

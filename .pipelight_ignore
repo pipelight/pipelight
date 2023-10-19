@@ -1,11 +1,13 @@
 # Cargo build dir 
-/target
+/target/
 .cargo/
 
+.pipelight/
+.git/
 # Test files dir
 public/
 
 # Cicd files
-/cicd
+/cicd/
 pipelight.ts
 test.pipelight.ts

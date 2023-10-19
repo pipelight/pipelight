@@ -10,17 +10,19 @@ use std::sync::Arc;
 // Watchexec
 use watchexec_events::Event;
 use watchexec_signals::Signal;
+use watchexec_filterer_ignore::IgnoreFilterer;
 use watchexec::{
+    // Trait
+    filter::Filterer,
     action::{Action, Outcome},
     config::{InitConfig, RuntimeConfig},
     handler::{Handler as _, PrintDebug},
     Watchexec,
 };
-use utils::files::Ignore;
+use ignore_files::{ IgnoreFilter, IgnoreFile};
 // Env
 use std::env;
-use std::process;
-use std::future::Future;
+use std::path::{Path, PathBuf};
 // Globals
 use crate::globals::CLI;
 // Error handling
@@ -40,19 +42,15 @@ Build an appropriate watcher that:
 - ignores pipelight generated tmp files
 - can trigger pipelines
 */
-pub fn build() -> Result<(Arc<Watchexec>, RuntimeConfig)> {
+pub async fn build() -> Result<(Arc<Watchexec>, RuntimeConfig)> {
   // Default config
   let mut init = InitConfig::default();
   init.on_error(PrintDebug(std::io::stderr()));
 
-
-  // Set Filter
-  // Parse ignore file into watchexec filter
-  let ignorefile = ".pipelight_ignore";
-  let ignore = Ignore::new(ignorefile).unwrap();
-
   let mut runtime = RuntimeConfig::default();
-  runtime.filterer(Arc::new(ignore));
+  let ignore_path = ".pipelight_ignore";
+  let filterer = filter_configuration(ignore_path).await?;
+  runtime.filterer(Arc::new(filterer));
   // Watch cwd only
   runtime.pathset(vec![env::current_dir().unwrap()]);
 
@@ -65,12 +63,11 @@ pub fn build() -> Result<(Arc<Watchexec>, RuntimeConfig)> {
     let w_clone = w_clone.clone();
     let r_clone = r_clone.clone();
 
-    // Pipeline execution
-    // watch_trigger().unwrap();
-      
     async move {
       // Self reconfigure on ignore file change
-      reconfigure(&w_clone, &r_clone, &action, ignorefile).unwrap();
+      reconfigure(&w_clone, &r_clone, &action, ignore_path).await.unwrap();
+      // Pipeline execution
+      watch_trigger().unwrap();
       // Handle Stop signals
 			let sigs = action
 				.events
@@ -80,11 +77,10 @@ pub fn build() -> Result<(Arc<Watchexec>, RuntimeConfig)> {
       if sigs.iter().any(|sig| sig == &Signal::Interrupt) {
         action.outcome(Outcome::Exit);
       } else{
-      
-      action.outcome(Outcome::if_running(
-          Outcome::DoNothing,
-          Outcome::both(Outcome::Clear, Outcome::Start),
-      ));
+        action.outcome(Outcome::if_running(
+            Outcome::DoNothing,
+            Outcome::both(Outcome::Clear, Outcome::Start),
+        ));
       }
       Ok(())
       // (not normally required! ignore this when implementing)
@@ -97,19 +93,37 @@ pub fn build() -> Result<(Arc<Watchexec>, RuntimeConfig)> {
 /**
 Self reconfigure when the IgnoreFile changes.
 */
-pub fn reconfigure(watchexec: &Arc<Watchexec>, runtime: &RuntimeConfig, action: &Action, ignorefile: &str) -> Result<()> {
+pub async fn reconfigure(watchexec: &Arc<Watchexec>, runtime: &RuntimeConfig, action: &Action, ignorefile: &str) -> Result<()> {
   for event in action.events.iter() {
       if event.paths().any(|(p, _)| p.ends_with(ignorefile)) {
-        let ignore = Ignore::new(ignorefile).unwrap();
         // Set Filter
+        let filterer = filter_configuration(ignorefile).await?;
         let mut r = runtime.clone();
-        r.filterer(Arc::new(ignore));
+        r.filterer(Arc::new(filterer));
         watchexec.reconfigure(r).unwrap();
         break;
       }
   }
   Ok(())
 }
+pub async fn filter_configuration(path: &str)-> Result<IgnoreFilterer> {
+  let path = Path::new(path);
+  // Set Filter
+  let applies_in = env::current_dir().into_diagnostic()?;
+  let file = IgnoreFile {
+      path: path.into(),
+      applies_in: Some(applies_in.clone()),
+      applies_to: None,
+  };
+  let globs = [".pipelight/*", ".git", ".cargo"];
+  let mut filter: IgnoreFilter = IgnoreFilter::empty(applies_in.clone());
+  filter.add_globs(&globs, Some(&applies_in)).into_diagnostic()?;
+  filter.add_file(&file).await.into_diagnostic()?;
+  let filterer = IgnoreFilterer(filter);
+  Ok(filterer)
+}
+
+
 
 /**
 Set the watch flag to the triggering env and try to trigger pipelines.

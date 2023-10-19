@@ -5,8 +5,7 @@ use crate::types::Cli;
 use crate::types::{ColoredOutput, LogsCommands};
 use crate::types::{Commands, DetachableCommands, Pipeline, PostCommands, PreCommands};
 use utils::git::Hook;
-use workflow::Getters;
-use workflow::Trigger;
+use workflow::Config;
 // Clap
 use clap::ValueEnum;
 use clap_complete::shells::Shell;
@@ -17,6 +16,7 @@ use colored::control::set_override;
 use colored::{ColoredString, Colorize};
 // Traits
 use crate::services::traits::FgBg;
+use workflow::Getters;
 // Error Handling
 use miette::{Error, Result};
 // Globals
@@ -50,6 +50,19 @@ impl PreCommands {
             PreCommands::Init(e) => {
                 // create file
                 Template::new(e.template.clone(), e.file.clone())?.create()?;
+                // Set watcher
+                // let args = CLI.lock().unwrap().clone();
+                // if Config::get()?.has_watchable()? {
+                // Service::new(Action::Watch, Some(args))?.should_detach()?;
+                // } else {
+                // watch::Watcher::kill()?;
+                // }
+                // Set git hooks
+                // if Config::get()?.has_git_flag()? {
+                // Hook::enable()?;
+                // } else {
+                // Hook::disable()?;
+                // }
             }
             PreCommands::Hooks(toggle) => {
                 if toggle.enable {

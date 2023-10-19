@@ -14,7 +14,8 @@ use miette::{IntoDiagnostic, Result, Diagnostic};
 use thiserror::Error; 
 
 mod build;
-mod builder;
+// mod builder;
+// pub use builder::*;
 pub use build::*;
 mod is;
 
@@ -37,9 +38,9 @@ impl Watcher {
   pub async fn start() -> Result<()> {
       // Kill already running watcher
       Watcher::kill_homologous()?;
-      let (we, runtime) = build()?;
+      let (we, runtime) = build().await?;
       we.reconfigure(runtime)?;
-      we.main().await.into_diagnostic()?;
+      we.main().await.into_diagnostic()??;
       Ok(())
   }
 }

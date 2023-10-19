@@ -1,5 +1,5 @@
 // Structs
-use cli::actions::watch::Watcher;
+use cli::actions::watch;
 use cli::services::{Action, FgBg, Service};
 use cli::types::{
     Cli, ColoredOutput, Commands, DetachableCommands, LogsCommands, PostCommands, PreCommands,
@@ -19,33 +19,31 @@ impl Switch {
     pub fn case() -> Result<()> {
         set_early_globals()?;
         let mut args = CLI.lock().unwrap().clone();
-        let args_binding = CLI.lock().unwrap().clone();
         match &mut args.commands {
-            Commands::PreCommands(pre_commands) => {
-                pre_commands.start()?;
-            }
-            Commands::PostCommands(post_commands) => {
-                set_globals()?;
-                match post_commands {
-                    PostCommands::DetachableCommands(detachable_commands) => {
-                        detachable_commands.start()?
+            Commands::PreCommands(pre_commands) => match pre_commands {
+                PreCommands::Init(e) => {
+                    pre_commands.start()?;
+                    set_globals()?;
+
+                    // Set watcher
+                    let args = CLI.lock().unwrap().clone();
+                    if Config::get()?.has_watchable()? {
+                        Service::new(Action::Watch, Some(args))?.should_detach()?;
+                    } else {
+                        watch::Watcher::kill()?;
                     }
-                    _ => {
-                        // Set watcher
-                        if Config::get()?.has_watchable()? {
-                            Service::new(Action::Watch, Some(args_binding))?.should_detach()?;
-                        } else {
-                            Watcher::kill()?;
-                        }
-                        // Set git hooks
-                        if Config::get()?.has_git_flag()? {
-                            Hook::enable()?;
-                        } else {
-                            Hook::disable()?;
-                        }
-                        post_commands.start()?;
+                    // Set git hooks
+                    if Config::get()?.has_git_flag()? {
+                        Hook::enable()?;
+                    } else {
+                        Hook::disable()?;
                     }
                 }
+                _ => pre_commands.start()?,
+            },
+            Commands::PostCommands(post_commands) => {
+                set_globals()?;
+                post_commands.start()?;
             }
         };
         Ok(())

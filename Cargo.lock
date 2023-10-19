@@ -377,6 +377,7 @@ dependencies = [
  "dialoguer",
  "exec",
  "glob",
+ "ignore-files",
  "iso8601-duration",
  "log",
  "miette",
@@ -396,6 +397,7 @@ dependencies = [
  "uuid",
  "watchexec",
  "watchexec-events",
+ "watchexec-filterer-ignore",
  "watchexec-signals",
  "workflow",
 ]
@@ -3005,6 +3007,20 @@ checksum = "01603bbe02fd75918f010dadad456d47eda14fb8fdcab276b0b4b8362f142ae3"
 dependencies = [
  "nix",
  "notify",
+ "watchexec-signals",
+]
+
+[[package]]
+name = "watchexec-filterer-ignore"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f345f020367ccdb7a19fcd59cafe5b8e99acdaf937b19d5847a6a1b81fd44ea3"
+dependencies = [
+ "dunce",
+ "ignore",
+ "ignore-files",
+ "tracing",
+ "watchexec",
  "watchexec-signals",
 ]
 

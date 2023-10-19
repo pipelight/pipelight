@@ -29,7 +29,7 @@ mod display {
         };
         // print it
         let result = format!("{}", cli);
-        assert_eq!(result, "run test --flag pre-push");
+        assert_eq!(result, "run \"test\" --flag pre-push");
     }
     #[test]
     fn logs_args() {
