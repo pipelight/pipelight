@@ -12,7 +12,7 @@ mod watcher {
         // Teleport
         Portal::new()?.seed("test.pipelight").search()?.teleport()?;
         // Build watcher
-        let res = build();
+        let res = build().await;
         assert!(res.is_ok());
         Ok(())
     }
@@ -21,7 +21,7 @@ mod watcher {
         // Teleport
         Portal::new()?.seed("test.pipelight").search()?.teleport()?;
         // Watcher::start()?;
-        let (we, runtime) = build()?;
+        let (we, runtime) = build().await?;
         we.main().await.into_diagnostic()?;
         Ok(())
     }
