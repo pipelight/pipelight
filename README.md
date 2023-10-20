@@ -67,8 +67,8 @@ Run tests on file change.
 Push to production on new tag...
 
 ```sh
-# enable git hook (now opt-in!)
-pipelight hooks --enable
+# enable watcher and git hooks (now opt-in!)
+pipelight init
 ```
 
 ```ts
@@ -106,6 +106,8 @@ Ensure the default configuration file.
 pipelight init
 ```
 
+Will generate this default typescript configuration file.
+
 ```ts
 // pipelight.ts
 import type { Pipeline } from "https://deno.land/x/pipelight/mod.ts";
@@ -136,7 +138,7 @@ pipelight run
 Explore logs
 
 ```sh
-pipelight logs (-vvvv)
+pipelight logs -vvvv
 ```
 
 Licensed under GNU GPLv2

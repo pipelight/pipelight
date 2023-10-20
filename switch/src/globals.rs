@@ -64,6 +64,8 @@ pub fn hydrate_trigger() -> Result<()> {
     }
     if let Some(flag) = flag {
         Trigger::set(Some(Flag::from(&flag)))?;
+    } else {
+        Trigger::set(None)?;
     }
     Ok(())
 }
