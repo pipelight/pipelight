@@ -3,7 +3,6 @@ use crate::traits::Getters;
 use crate::types::{Config, Pipeline};
 use exec::Process;
 // Error Handling
-use log::warn;
 use miette::{Error, Result};
 
 impl Getters<Pipeline> for Pipeline {
@@ -32,7 +31,7 @@ impl Getters<Pipeline> for Pipeline {
             None => {
                 let message = format!("Couldn't find pipeline: {:?}", name);
                 let hint = "You may have made a typo";
-                Err(IsError::new(&message, &hint)?.into())
+                Err(IsError::new(&message, hint)?.into())
             }
         }
     }

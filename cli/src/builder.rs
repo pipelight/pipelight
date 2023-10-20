@@ -8,8 +8,6 @@ use clap_complete::{generate, shells};
 use crate::globals::CLI;
 use std::io;
 // Error Handling
-use crate::traits::from::string_to_command;
-use log::trace;
 use miette::Result;
 
 impl Cli {

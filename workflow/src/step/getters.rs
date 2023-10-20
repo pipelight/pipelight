@@ -1,5 +1,5 @@
 // Structs
-use crate::types::{Fallback, Mode, Parallel, Step, StepOrParallel};
+use crate::types::{Fallback, Parallel, Step, StepOrParallel};
 use exec::Process;
 // Error Handling
 use miette::Result;

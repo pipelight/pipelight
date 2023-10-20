@@ -3,8 +3,6 @@ use crate::pipeline::Filters;
 use crate::types::{Logs, Pipeline};
 // Trait
 use crate::traits::Getters;
-// Date and Time
-use chrono::{DateTime, Local};
 // Error Handling
 use miette::{Error, IntoDiagnostic, Result};
 // Global vars

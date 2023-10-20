@@ -2,8 +2,7 @@
 use utils::git::{Flag, Special};
 use crate::services::{Service, FgBg};
 use crate::services;
-use crate::types::{Cli, Commands, DetachableCommands, PostCommands};
-use crate::types::{Trigger};
+use crate::types::{Commands, DetachableCommands, PostCommands, Trigger};
 // use crate::trigger;
 // Globals
 use std::sync::Arc;
@@ -13,16 +12,15 @@ use watchexec_signals::Signal;
 use watchexec_filterer_ignore::IgnoreFilterer;
 use watchexec::{
     // Trait
-    filter::Filterer,
     action::{Action, Outcome},
     config::{InitConfig, RuntimeConfig},
-    handler::{Handler as _, PrintDebug},
+    handler::{PrintDebug},
     Watchexec,
 };
 use ignore_files::{ IgnoreFilter, IgnoreFile };
 // Env
 use std::env;
-use std::path::{Path, PathBuf};
+use std::path::{Path};
 // Globals
 use crate::globals::CLI;
 // Error handling

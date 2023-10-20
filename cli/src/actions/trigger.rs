@@ -1,7 +1,6 @@
 // Struct
 use crate::services::types::{Action, Service};
-use crate::types::{Commands, DetachableCommands, Pipeline, PostCommands, PreCommands, Trigger};
-use exec::Status;
+use crate::types::{Commands, DetachableCommands, Pipeline, PostCommands, Trigger};
 use workflow;
 // Traits
 use crate::services::traits::FgBg;
@@ -11,8 +10,7 @@ use rayon::prelude::*;
 // Globals
 use crate::globals::CLI;
 // Error Handling
-use log::error;
-use miette::{Error, Result};
+use miette::Result;
 
 pub fn launch(trigger: &Trigger) -> Result<()> {
     let mut pipelines = workflow::Pipeline::get()?;

@@ -8,7 +8,6 @@ use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
 use crate::types::{InternalVerbosity, Verbosity};
 // Traits
 use clap::FromArgMatches;
-use clap::{Command, Parser};
 
 // Error Handling
 use log::LevelFilter;
@@ -91,15 +90,21 @@ impl From<&Shell> for String {
 
 impl From<&Init> for String {
     fn from(e: &Init) -> String {
-        let string = "".to_owned();
+        let mut string = "".to_owned();
+        if let Some(template) = e.template.clone() {
+            string += &template;
+        }
+        if let Some(file) = e.file.clone() {
+            string += &file;
+        }
         string
     }
 }
 impl From<&Logs> for String {
     fn from(e: &Logs) -> String {
         let mut string = "".to_owned();
-        if e.commands.is_some() {
-            match e.commands.clone().unwrap() {
+        if let Some(commands) = e.commands.clone() {
+            match commands {
                 LogsCommands::Rm => {
                     string += " ";
                     string += "rm";
@@ -166,7 +171,7 @@ fn from_verbosity_to_string(e: Verbosity) -> String {
 
 impl From<&Commands> for String {
     fn from(e: &Commands) -> String {
-        let string = match e {
+        match e {
             Commands::PreCommands(pre_commands) => match pre_commands {
                 PreCommands::Init(_) => "init".to_owned(),
                 PreCommands::Hooks(toggle) => format!("hooks{}", toggle),
@@ -183,12 +188,11 @@ impl From<&Commands> for String {
                 PostCommands::Inspect(pipeline) => format!("inspect{}", pipeline),
                 PostCommands::Ls(list) => format!("ls{}", list),
             },
-        };
-        string
+        }
     }
 }
-pub fn string_to_command(e: &String) -> Result<Commands> {
-    let os_str: Vec<&str> = e.split(" ").collect();
+pub fn string_to_command(e: &str) -> Result<Commands> {
+    let os_str: Vec<&str> = e.split(' ').collect();
     let cli = Cli::build()?;
     let matches = cli.get_matches_from(os_str);
     let args = Cli::from_arg_matches(&matches)

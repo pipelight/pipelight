@@ -46,8 +46,7 @@ pub fn json(name: Option<String>) -> Result<()> {
 pub fn inspect(name: &str, json: bool) -> Result<()> {
     // Set logger level
     LOGGER.lock().unwrap().pipelines.level = LevelFilter::max();
-    let pipeline = Pipeline::get_by_name(&name)?;
-
+    let pipeline = Pipeline::get_by_name(name)?;
     if json {
         let pipeline_json =
             serde_json::to_string_pretty::<Pipeline>(&pipeline).into_diagnostic()?;
@@ -65,8 +64,6 @@ Print a flatten list of pipelines from the config file
 pub fn default() -> Result<()> {
     let level = LOGGER.lock().unwrap().pipelines.level;
     let config = Config::get()?;
-    let logs = Logs::get()?;
-
     // Print headers
     match level {
         LevelFilter::Warn => {
@@ -93,13 +90,10 @@ pub fn default() -> Result<()> {
         if let Ok(last_log) = last_log {
             status = String::from(&last_log.status.clone().unwrap());
             let event = last_log.event.clone().unwrap();
-            match event.trigger.clone() {
-                Trigger::TriggerBranch(trigger_branch) => {
-                    if let Some(binding_branch) = trigger_branch.branch {
-                        branch = String::from(&binding_branch);
-                    }
+            if let Trigger::TriggerBranch(trigger_branch) = event.trigger.clone() {
+                if let Some(binding_branch) = trigger_branch.branch {
+                    branch = String::from(&binding_branch);
                 }
-                _ => {}
             };
             action = String::from(&event.trigger.get_action()?.unwrap());
             let str_date = &event.date;

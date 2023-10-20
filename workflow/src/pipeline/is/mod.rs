@@ -1,18 +1,14 @@
 // Test
 mod test;
 // Unix process manipulation
-use rustix::process::{
-    getpgid, kill_process_group, test_kill_process, test_kill_process_group, Pid, Signal,
-};
+use rustix::process::test_kill_process;
 // Structs
 use crate::types::{Logs, Pipeline, Trigger};
-use utils::git::{Flag, Git, Special};
+use utils::git::{Flag, Special};
 // Traits
 use exec::Status;
-// Env
-use std::env;
 // Error Handling
-use miette::{Error, IntoDiagnostic, Result};
+use miette::{Error, Result};
 
 /**
 The following methods returns informations about pipeline states.

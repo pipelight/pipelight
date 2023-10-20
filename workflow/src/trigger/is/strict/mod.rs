@@ -4,9 +4,7 @@ mod test;
 // Struct
 use crate::types::{Trigger, TriggerBranch, TriggerTag};
 // Error Handling
-use miette::{Error, IntoDiagnostic, Result};
-// Globbing
-use glob::Pattern;
+use miette::Result;
 
 impl Trigger {
     pub fn has_match_strict(&self, list: Vec<Self>) -> Result<bool> {

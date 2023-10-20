@@ -1,14 +1,11 @@
 // Structs
 use cli::actions::watch;
 use cli::services::{Action, FgBg, Service};
-use cli::types::{
-    Cli, ColoredOutput, Commands, DetachableCommands, LogsCommands, PostCommands, PreCommands,
-};
+use cli::types::{Commands, PreCommands};
 use utils::git::Hook;
-use workflow::{Config, Getters, Logs, Pipeline, Trigger};
+use workflow::Config;
 // Error Handling
-use log::info;
-use miette::{Error, IntoDiagnostic, Result};
+use miette::Result;
 // Global vars
 use crate::globals::{set_early_globals, set_globals};
 use cli::globals::CLI;
@@ -21,10 +18,9 @@ impl Switch {
         let mut args = CLI.lock().unwrap().clone();
         match &mut args.commands {
             Commands::PreCommands(pre_commands) => match pre_commands {
-                PreCommands::Init(e) => {
+                PreCommands::Init(_) => {
                     pre_commands.start()?;
                     set_globals()?;
-
                     // Set watcher
                     let args = CLI.lock().unwrap().clone();
                     if Config::get()?.has_watchable()? {

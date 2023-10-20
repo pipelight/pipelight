@@ -30,7 +30,7 @@ impl Watcher {
     }
     pub fn kill_homologous() -> Result<()> {
         // Search homologous
-        let finder = Finder::new()
+        Finder::new()
             .cwd(env::current_dir().into_diagnostic()?.to_str().unwrap())
             .seed("pipelight")
             .seed("watch")
