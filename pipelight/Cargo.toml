@@ -1,6 +1,6 @@
 [package]
 name = "pipelight"
-version = "0.3.0"
+version = "0.6.19"
 edition = "2021"
 default-run = "pipelight"
 authors = ["areskul"]
@@ -10,9 +10,7 @@ repository="git@gitea.com:areska/pipelight.git"
 license="GPL2"
 
 [dependencies]
-exec = {path = "../exec" }
-pipelight_core = {path = "../pipelight_core" }
-utils = {path = "../utils" }
+switch = {path = "../switch" }
 log = "0.4.17"
 miette = { version = "5.5.0", features = ["fancy"] }
 

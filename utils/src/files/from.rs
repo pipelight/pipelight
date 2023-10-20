@@ -1,9 +1,9 @@
 use super::FileType;
 use log::error;
 
-// Error Handling
-use std::process::exit;
-
+/**
+Convert the file extension into a FileType struct
+*/
 impl From<&String> for FileType {
     fn from(extension: &String) -> FileType {
         let extension: &str = extension;
@@ -16,13 +16,16 @@ impl From<&String> for FileType {
             "js" => FileType::JavaScript,
             _ => {
                 let message = format!("Couldn't parse file with extension .{}", extension);
-                let hint = format!("Assuming default typescript file");
+                let _hint = "Assuming default typescript file";
                 error!("{}", message);
-                return FileType::TypeScript;
+                FileType::TypeScript
             }
         }
     }
 }
+/**
+Convert the FileType struct into a file  extension string
+*/
 impl From<&FileType> for String {
     fn from(file_type: &FileType) -> String {
         match file_type {

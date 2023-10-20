@@ -1,17 +1,23 @@
 # Internal API
 
-Pipelight has well matured since its first prototype in 2021 (Simpcicd fully written in typescript/nodejs).
-The command line interface won't change as often as before and as the number of users grows,
-the software is getting more and more structured, tested and documented.
-
-I feel it is now time for the internal functionning to be explained with schemas and all.
 Here will be a quick overview of the crate, functions and global variables roles and interdependencies explanation.
+
+## Architectural choices
+
+### Synchronous rust
+
+Rust async is like learning rust another time.
+Althought I love using async,
+I want to keep the code as simple as possibe, and found that async wasn't needed here.
+
+Keeping the code synchronous allow for better error catching
+and fresh contributors understanding.
 
 ## Browsing the source code (must read)
 
-You can find READMEs inside project crates for deep dive.
+You can find READMEs everywhere for better crate by crate exploration.
 
-# Structure
+# The source code structure
 
 The pipelight source code is splitted into 5 crates.
 Every crate serves the one where all the logic happens,
@@ -56,6 +62,14 @@ Contains functions to:
 
 - Recursively search a file in through the fs
 - Telepor back and forth to the file
+
+### Dates
+
+Abstraction over date convertion and duration computation.
+
+### Files
+
+Abstraction over file reading, filepath (std::path::Path) usage...
 
 # Functionning
 

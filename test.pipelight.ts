@@ -1,4 +1,5 @@
 import type { Config, Pipeline } from "https://deno.land/x/pipelight/mod.ts";
+import { pipeline, step, parallel } from "https://deno.land/x/pipelight/mod.ts";
 import { parse } from "https://deno.land/std/flags/mod.ts";
 
 const flags = parse(Deno.args, {
@@ -8,135 +9,51 @@ const flags = parse(Deno.args, {
   },
 });
 
-const config = {
+const config: Config = {
   pipelines: [
-    {
-      name: "test",
-      steps: [
-        {
-          name: `test`,
-          commands: ["pwd"],
-        },
-      ],
-    },
-    {
-      name: "test_empty",
-      steps: [
-        {
-          name: `launch a pipeline`,
-          commands: ["pwd"],
-        },
-      ],
-    },
-    {
-      name: "test_attached_pipelines",
-      steps: [
-        {
-          name: `launch a pipeline`,
-          commands: [
-            "cargo run --bin pipelight run test_rw --config test.pipelight.ts --attach",
-          ],
-        },
-      ],
-      triggers: [
-        {
-          actions: ["manual", "update"],
-        },
-      ],
-    },
-    {
-      name: "test_watch",
-      steps: [
-        {
-          name: `kill decendent subprocess`,
-          commands: ["pwd", "ls"],
-        },
-      ],
-      triggers: [
-        {
-          actions: ["watch"],
-        },
-      ],
-    },
-    {
-      name: "test_rw",
-      steps: [
-        {
-          name: `kill decendent subprocess`,
-          commands: ["ppwd", "ls"],
-          mode: "jump_next",
-        },
-        {
-          name: `kill decendent subprocess`,
-          commands: ["pwd", "ls", "sleep 10"],
-        },
-      ],
-    },
-    {
-      name: "test_kill",
-      steps: [
-        {
-          name: `kill decendent subprocess`,
-          commands: ["pwd", "ls", "sleep 120", "pwd"],
-        },
-      ],
-    },
-    {
-      name: "test_flags",
-      steps: [
-        {
-          name: `host -> ${flags.host}`,
-          commands: ["cargo test --package pipeline"],
-        },
-      ],
-    },
-    {
-      name: "test_tags",
-      steps: [
-        {
-          name: `test tags`,
-          commands: ["ls -l"],
-        },
-      ],
-      triggers: [
-        {
-          tags: ["*"],
-          actions: ["manual"],
-        },
-      ],
-    },
-    {
-      name: "crago_tests",
-      steps: [
-        {
-          name: "test",
-          commands: ["cargo test"],
-        },
-      ],
-    },
-    {
-      name: "test_parallel_modes",
-      steps: [
-        {
-          parallel: [
-            {
-              name: "test",
-              commands: ["llls"],
-              mode: "continue",
-            },
-          ],
-          mode: "continue",
-        },
-        {
-          parallel: [
-            {
-              name: "test",
-              commands: ["ls"],
-            },
-          ],
-        },
-      ],
-    },
+    pipeline("test", () => [step(`test`, () => ["pwd"])]),
+    pipeline("test_empty", () => [step(`launch a pipeline`, () => ["pwd"])]),
+    pipeline("test_attached_pipelines", () => [
+      step(`launch a pipeline`, () => [
+        "cargo run --bin pipelight run test_rw --config test.pipelight.ts --attach",
+      ]),
+    ]),
+    // Triggers
+    pipeline("test_watch", () => [
+      step(`run harmless commands`, () => ["pwd", "sleep 30", "ls"]),
+    ]).add_trigger({
+      actions: ["watch"],
+    }),
+    pipeline("test_tags_trigger", () => [
+      step(`test tags`, () => ["ls -l"]),
+    ]).add_trigger({
+      tags: ["*"],
+      actions: ["manual"],
+    }),
+    pipeline("test_git_hooks(pre-push)", () => [
+      step(`run harmless commands`, () => ["pwd", "sleep 30", "ls"]),
+    ]).add_trigger({
+      actions: ["pre-push"],
+    }),
+    pipeline("test_rw", () => [
+      step(`kill decendent subprocess`, () => ["ppwd", "ls"]).set_mode(
+        "jump_next"
+      ),
+      step(`kill decendent subprocess`, () => ["pwd", "ls", "sleep 10"]),
+    ]),
+    pipeline("test_long_running_pipeline", () => [
+      step(`run and sleep`, () => ["pwd", "ls", "sleep 120", "pwd"]),
+    ]),
+    pipeline("test_deno_additional_arguments", () => [
+      step(`host -> ${flags.host}`, () => ["cargo test --package pipeline"]),
+    ]),
+    pipeline("crago_tests", () => [step("test", () => ["cargo test"])]),
+    pipeline("test_parallel_modes", () => [
+      parallel(() => [
+        step("test", () => ["llls"]).set_mode("continue"),
+      ]).set_mode("continue"),
+      parallel(() => [step("test", () => ["ls"]).set_mode("continue")]),
+    ]),
   ],
 };
 

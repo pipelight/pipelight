@@ -1,9 +1,13 @@
+// Structs
 use crate::types::Status;
+// Colors and Formatting
 use colored::Colorize;
-// use convert_case::{Case, Casing};
 use std::fmt;
-pub use std::process::Output;
+// use convert_case::{Case, Casing};
 
+/**
+Displays a nice colorful status string.
+*/
 impl fmt::Display for Status {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let icon = "●";

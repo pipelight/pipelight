@@ -1,67 +1,41 @@
-use crate::types::{Environment, Process, State};
-use std::env;
-use std::fs;
-use std::path::Path;
+// Structs
+use crate::types::{Io, Process, State};
 use uuid::Uuid;
 
-impl Default for Process {
-    fn default() -> Self {
-        Process {
-            uuid: Uuid::new_v4(),
-            state: State::default(),
-            os: Environment::default(),
-        }
-    }
-}
 impl Process {
+    /**
+    The prefered way to create a process struct.
+    Pass the stdin deep down the Io substruct.
+    and Pass the process uuid to its underlying Io substruct.
+    */
     pub fn new(stdin: &str) -> Process {
+        let uuid = Some(Uuid::new_v4());
         Process {
-            state: State {
-                stdin: Some(stdin.to_owned()),
-                ..State::default()
-            },
-            ..Self::default()
-        }
-    }
-}
-
-impl Default for Environment {
-    fn default() -> Self {
-        let dir_path = format!(
-            "{}/.pipelight/_internals/out",
-            &env::current_dir().unwrap().to_str().unwrap()
-        );
-        let path = Path::new(&dir_path);
-        fs::create_dir_all(path).unwrap();
-        Environment {
-            directory: dir_path.to_owned(),
-            shell: "sh".to_owned(),
-            attached: true,
+            uuid,
             pid: None,
+            io: Io {
+                uuid,
+                stdin: Some(stdin.to_owned()),
+                ..Io::default()
+            },
+            state: State::default(),
         }
     }
 }
-impl Environment {
-    pub fn new() -> Environment {
-        let mut os_env = Environment { ..Self::default() };
-        os_env.get_shell();
-        os_env
-    }
-    /// Return user session shell when possible
-    fn get_shell(&mut self) -> String {
-        let shell_result = env::var("SHELL");
-        match shell_result {
-            Ok(res) => {
-                self.shell = res;
-                self.shell.clone()
-            }
-            Err(_) => self.shell.clone(),
+impl Default for Process {
+    /**
+    Pass the process uuid to its underlying Io substruct.
+    */
+    fn default() -> Process {
+        let uuid = Some(Uuid::new_v4());
+        Process {
+            uuid,
+            pid: None,
+            io: Io {
+                uuid,
+                ..Io::default()
+            },
+            state: State::default(),
         }
-    }
-}
-
-impl State {
-    pub fn new() -> State {
-        Self::default()
     }
 }

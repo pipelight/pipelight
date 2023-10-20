@@ -1,0 +1,53 @@
+{
+  "uuid": "ea5ab6a1-2a60-49f0-83c8-520255abdad6",
+  "name": "default",
+  "status": "succeeded",
+  "event": {
+    "trigger": {
+      "action": "manual",
+      "branch": "dev",
+      "tag": null
+    },
+    "commit": "ad7558ea5a4fcdd0896e1a1cd10933f8fe74d55a",
+    "date": "2023-09-27 14:53:04.783324740 +02:00",
+    "pid": 91043,
+    "pgid": 90711,
+    "sid": 50977
+  },
+  "duration": null,
+  "triggers": null,
+  "fallback": null,
+  "steps": [{
+    "name": "default",
+    "status": "succeeded",
+    "duration": {
+      "started_at": "2023-09-27 14:53:04.784425900 +02:00",
+      "ended_at": "2023-09-27 14:53:04.791069094 +02:00"
+    },
+    "commands": [{
+      "duration": {
+        "started_at": "2023-09-27 14:53:04.784437872 +02:00",
+        "ended_at": "2023-09-27 14:53:04.790227219 +02:00"
+      },
+      "process": {
+        "uuid": "093556c2-3832-4e15-ac29-e4a1e023bdab",
+        "pid": null,
+        "state": {
+          "duration": {
+            "started_at": "2023-09-27 14:53:04.785789951 +02:00",
+            "ended_at": "2023-09-27 14:53:04.789867897 +02:00"
+          },
+          "status": "succeeded"
+        },
+        "io": {
+          "uuid": "093556c2-3832-4e15-ac29-e4a1e023bdab",
+          "stdin": "echo test",
+          "stdout": "test\n",
+          "stderr": ""
+        }
+      }
+    }],
+    "mode": null,
+    "fallback": null
+  }]
+}

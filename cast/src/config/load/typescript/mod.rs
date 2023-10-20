@@ -24,8 +24,9 @@ impl Config {
         } else {
             format!("{} {}", executable, script)
         };
-        let p = Process::new(&command).simple()?;
-        let json = p.state.stdout.unwrap();
+        let mut p = Process::new(&command);
+        p.run_piped()?;
+        let json = p.io.stdout.unwrap();
         let res = serde_json::from_str::<Config>(&json);
         match res {
             Ok(res) => Ok(res),
@@ -44,11 +45,12 @@ impl Config {
             --quiet {}",
             file
         );
-        let p = Process::new(&command).simple()?;
-        if p.state.stderr.is_none() {
+        let mut p = Process::new(&command);
+        p.run_piped()?;
+        if p.io.stderr.is_none() {
             Ok(())
         } else {
-            let message = p.state.stderr.unwrap();
+            let message = p.io.stderr.unwrap();
             Err(Error::msg(message))
         }
     }
@@ -70,12 +72,13 @@ impl Config {
             command = format!("{} {}", command, args.unwrap().join(" "));
         }
 
-        let p = Process::new(&command).simple()?;
+        let mut p = Process::new(&command);
+        p.run_piped()?;
 
-        if p.state.stderr.is_none() {
+        if p.io.stderr.is_none() {
             Ok(())
         } else {
-            let message = p.state.stderr.unwrap();
+            let message = p.io.stderr.unwrap();
             Err(Error::msg(message))
         }
     }

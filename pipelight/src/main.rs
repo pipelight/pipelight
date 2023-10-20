@@ -1,21 +1,31 @@
-#![allow(unused_variables)]
+// Rules
+// #![allow(unused_variables)]
 // #![allow(unused_imports)]
 // #![allow(dead_code)]
-#![allow(unused_must_use)]
+// #![allow(unused_must_use)]
 
-use pipelight_core::cli::Cli;
-
+// Structs
+use switch::Switch;
 // Error Handling
 use log::trace;
 use miette::{MietteHandlerOpts, Result, RgbColors};
 
+/**
+The pipelight binary entrypoint.
+This main function is the first function to be executed when launching pipelight.
+*/
 fn main() -> Result<()> {
     trace!("Launch process.");
     make_handler()?;
-    Cli::launch()?;
+    Switch::case()?;
     trace!("Process clean exit.");
     Ok(())
 }
+
+/**
+The make handler functions is executed right after the main function
+to set up a verbose and colorful error/panic handler.
+*/
 pub fn make_handler() -> Result<()> {
     miette::set_hook(Box::new(|_| {
         Box::new(

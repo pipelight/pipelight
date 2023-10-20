@@ -4,27 +4,16 @@ import {
   parallelPackagingPipeline,
 } from "./cicd/packages.ts";
 import { uploadPipeline } from "./cicd/upload.ts";
+import testConfig from "./test.pipelight.ts";
+
+console.log(testConfig);
 
 const config: Config = {
   pipelines: [
-    parallelPackagingPipeline as Pipeline,
-    ...packagingPipelines,
+    parallelPackagingPipeline,
     uploadPipeline,
-    {
-      name: "test",
-      steps: [
-        {
-          name: "get pwd",
-          commands: ["pwd"],
-        },
-      ],
-      triggers: [
-        {
-          branches: ["dev"],
-          actions: ["pre-push", "manual"],
-        },
-      ],
-    },
+    ...packagingPipelines,
+    ...(testConfig.pipelines as Pipeline[]),
   ],
 };
 export default config;

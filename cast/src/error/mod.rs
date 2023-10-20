@@ -1,3 +1,4 @@
+// Tests
 mod test;
 // Error Handling
 use miette::{Diagnostic, SourceOffset, SourceSpan};
@@ -8,8 +9,17 @@ pub enum CastError {
     #[error(transparent)]
     #[diagnostic(transparent)]
     JsonError(#[from] JsonError),
+    #[error(transparent)]
+    #[diagnostic(transparent)]
+    YamlError(#[from] YamlError),
+    #[error(transparent)]
+    #[diagnostic(transparent)]
+    TomlError(#[from] TomlError),
 }
 
+/**
+A json report type with hint, colors and code span for better pipeline debugging
+*/
 #[derive(Error, Diagnostic, Debug)]
 #[diagnostic(code(cast::json))]
 #[error("Serde: Could not convert Json into Rust types")]
@@ -39,6 +49,9 @@ impl JsonError {
     }
 }
 
+/**
+A yaml report type with hint, colors and code span for better pipeline debugging
+*/
 #[derive(Error, Diagnostic, Debug)]
 #[diagnostic(code(cast::yaml))]
 #[error("Serde: Could not convert Yaml into Rust types")]
@@ -75,8 +88,12 @@ impl YamlError {
         }
     }
 }
+
+/**
+A toml report type with hint, colors and code span for better pipeline debugging
+*/
 #[derive(Error, Diagnostic, Debug)]
-#[diagnostic(code(cast::yaml))]
+#[diagnostic(code(cast::toml))]
 #[error("Serde: Could not convert Toml into Rust types")]
 pub struct TomlError {
     #[source]
