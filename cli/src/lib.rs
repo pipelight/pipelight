@@ -1,8 +1,7 @@
-// #![allow(unused_variables)]
-// #![allow(unused_must_use)]
-// #![allow(unused_imports)]
-// #![allow(dead_code)]
-
+// #[allow(unused_variables)]
+// #[allow(unused_must_use)]
+// #[allow(unused_imports)]
+// #[allow(dead_code)]
 pub mod actions;
 mod builder;
 pub mod globals;

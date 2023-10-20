@@ -92,7 +92,6 @@ pub fn default() -> Result<()> {
         let last_log = Logs::get_by_name(&pipeline.name);
         if let Ok(last_log) = last_log {
             status = String::from(&last_log.status.clone().unwrap());
-
             let event = last_log.event.clone().unwrap();
             match event.trigger.clone() {
                 Trigger::TriggerBranch(trigger_branch) => {

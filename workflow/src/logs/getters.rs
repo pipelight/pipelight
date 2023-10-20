@@ -17,8 +17,7 @@ impl Logs {
     */
     pub fn hydrate(&mut self) -> Result<Self> {
         // Get global
-        let global_logs = LOGS.lock().unwrap().clone();
-        if global_logs.is_none() {
+        if LOGS.lock().unwrap().clone().is_none() {
             // Read log files
             let json_logs: Vec<String> = cast::Logs::read(".pipelight/logs/")?;
             let mut pipelines: Vec<Pipeline> = vec![];
@@ -29,8 +28,8 @@ impl Logs {
             pipelines = Filters::sort_by_date_asc(pipelines)?;
             // Set global
             *LOGS.lock().unwrap() = Some(pipelines);
-            self.pipelines = LOGS.lock().unwrap().clone();
         }
+        self.pipelines = LOGS.lock().unwrap().clone();
         Ok(self.to_owned())
     }
 }
@@ -51,7 +50,7 @@ impl Getters<Pipeline> for Logs {
         let mut pipelines = Logs::get()?;
         pipelines = pipelines
             .iter()
-            .filter(|p| p.name == *name)
+            .filter(|p| p.name == name)
             .cloned()
             .collect::<Vec<Pipeline>>();
         match pipelines.pop() {
