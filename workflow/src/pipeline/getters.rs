@@ -1,7 +1,7 @@
 use crate::error::IsError;
 use crate::traits::Getters;
 use crate::types::{Config, Pipeline};
-
+use exec::Process;
 // Error Handling
 use log::warn;
 use miette::{Error, Result};
@@ -35,5 +35,18 @@ impl Getters<Pipeline> for Pipeline {
                 Err(IsError::new(&message, &hint)?.into())
             }
         }
+    }
+}
+
+impl Pipeline {
+    pub fn get_procs(&self) -> Result<Vec<Process>> {
+        let mut procs: Vec<Process> = vec![];
+        for step in self.steps.clone() {
+            procs.extend(step.get_procs()?);
+        }
+        if let Some(fallback) = self.fallback.clone() {
+            procs.extend(fallback.get_procs()?);
+        }
+        Ok(procs)
     }
 }

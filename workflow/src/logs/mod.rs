@@ -1,6 +1,6 @@
 // Struct
 use crate::pipeline::Filters;
-use crate::types::{Logs, Node, Pipeline};
+use crate::types::{Logs, Node, Parallel, Pipeline, Step, StepOrParallel};
 // Getters
 use crate::Getters;
 mod getters;
@@ -39,6 +39,7 @@ impl Logs {
     pub fn clean() -> Result<()> {
         let pipelines = Logs::get()?;
         for pipeline in pipelines {
+            // Guard
             if pipeline.get_status() != Some(Status::Running) {
                 pipeline.clean()?;
             }

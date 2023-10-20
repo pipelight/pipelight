@@ -29,6 +29,12 @@ impl Pipeline {
                 fs::remove_file(path).into_diagnostic()?;
             }
         }
+        // Subprocess tmp files
+        let processes = self.get_procs()?;
+        for process in processes {
+            process.io.clean();
+        }
+
         Ok(())
     }
     /**
