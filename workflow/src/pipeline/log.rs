@@ -32,7 +32,7 @@ impl Pipeline {
         // Subprocess tmp files
         let processes = self.get_procs()?;
         for process in processes {
-            process.io.clean();
+            process.io.clean()?;
         }
 
         Ok(())

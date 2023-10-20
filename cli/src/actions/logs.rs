@@ -1,10 +1,6 @@
 // Types
-use chrono::{DateTime, Local};
 use exec::{Statuable, Status};
-use workflow::{pipeline::Filters, Config, Getters, Logs, Node, Pipeline};
-//Logger
-use log::{error, info, warn, LevelFilter};
-use utils::globals::LOGGER;
+use workflow::{pipeline::Filters, Getters, Logs, Node, Pipeline};
 // Error Handling
 use miette::{IntoDiagnostic, Result};
 

@@ -1,7 +1,7 @@
 // Relative paths
 use crate::logger::types::{LogFile, LogInfo, Logger};
+use log::debug;
 use log::LevelFilter;
-use log::{debug, info, trace};
 
 // Absolute paths
 // use std::path::Path;

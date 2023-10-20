@@ -7,7 +7,7 @@ use miette::Result;
 // Struct
 use crate::pipeline::Filters;
 use crate::types::Config;
-use utils::git::{Flag, Hook, Special};
+use utils::git::Flag;
 
 impl Config {
     pub fn get() -> Result<Self> {

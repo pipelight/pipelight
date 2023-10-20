@@ -1,9 +1,5 @@
 // Struct
-use crate::services::types::{Action, Service};
-use crate::types::{Cli, Commands, DetachableCommands, PostCommands};
-use crate::types::{Pipeline, Trigger, Watch};
-use exec::Status;
-use utils::git::Flag;
+use crate::services::types::Service;
 // Process manipulation
 use exec::SelfProcess;
 // Error Handling
@@ -40,8 +36,8 @@ impl FgBg for Service {
         Ok(())
     }
     fn should_detach(&mut self) -> Result<()> {
-        if let Some(mut args) = self.args.clone() {
-            match args.attach.clone() {
+        if let Some(args) = self.args.clone() {
+            match args.attach {
                 true => {
                     trace!("pipelight process is attached");
                     self.attach()?;
@@ -49,7 +45,9 @@ impl FgBg for Service {
                 false => {
                     trace!("detach pipelight process");
                     // Exit the detach loop
-                    self.args.as_mut().map(|e| e.attach = true);
+                    if let Some(e) = self.args.as_mut() {
+                        e.attach = true;
+                    }
                     self.detach()?;
                 }
             };

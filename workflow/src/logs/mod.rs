@@ -1,6 +1,5 @@
 // Struct
-use crate::pipeline::Filters;
-use crate::types::{Logs, Node, Parallel, Pipeline, Step, StepOrParallel};
+use crate::types::Logs;
 // Getters
 use crate::Getters;
 mod getters;

@@ -57,12 +57,12 @@ mod is;
 
 impl Trigger {
     pub fn get() -> Result<Trigger> {
-        let mut env: Trigger = TRIGGER_ENV.lock().unwrap().clone();
+        let env: Trigger = TRIGGER_ENV.lock().unwrap().clone();
         Ok(env)
     }
     pub fn set(flag: Option<Flag>) -> Result<Trigger> {
         // Get the global
-        let mut env: Trigger = TRIGGER_ENV.lock().unwrap().clone();
+        let env: Trigger;
 
         let mut branch = None;
         let mut tag = None;

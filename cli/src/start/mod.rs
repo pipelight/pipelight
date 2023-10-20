@@ -3,9 +3,8 @@ use crate::actions::{logs, pipeline, prompt, run, stop, trigger, watch};
 use crate::services::types::{Action, Service};
 use crate::types::Cli;
 use crate::types::{ColoredOutput, LogsCommands};
-use crate::types::{Commands, DetachableCommands, Pipeline, PostCommands, PreCommands};
+use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
 use utils::git::Hook;
-use workflow::Config;
 // Clap
 use clap::ValueEnum;
 use clap_complete::shells::Shell;
@@ -13,10 +12,8 @@ use clap_complete::shells::Shell;
 use templates::Template;
 // Colors
 use colored::control::set_override;
-use colored::{ColoredString, Colorize};
 // Traits
 use crate::services::traits::FgBg;
-use workflow::Getters;
 // Error Handling
 use miette::{Error, Result};
 // Globals

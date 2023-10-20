@@ -1,13 +1,9 @@
 // Struct
 use crate::services::types::{Action, Service};
-use crate::types::{Cli, Commands, DetachableCommands, PostCommands};
-use crate::types::{Pipeline, Trigger, Watch};
-use exec::Status;
+use crate::types::{Commands, DetachableCommands, PostCommands};
+use crate::types::{Pipeline, Trigger};
 use utils::git::Flag;
-// Process manipulation
-use exec::SelfProcess;
 // Error Handling
-use log::trace;
 use miette::Result;
 
 pub trait Parser {
@@ -28,23 +24,19 @@ impl Parser for Service {
 
         // Retrieve reusable arguments and mutate the defaults
         if let Some(args) = self.args.clone() {
-            match args.commands {
-                Commands::PostCommands(post_commands) => match post_commands {
-                    PostCommands::DetachableCommands(detachable_commands) => {
-                        match detachable_commands {
-                            DetachableCommands::Trigger(trigger) => {
-                                flag = trigger.flag;
-                            }
-                            DetachableCommands::Run(pipeline) => {
-                                flag = pipeline.trigger.flag;
-                                name = pipeline.name;
-                            }
-                            _ => {}
-                        }
+            if let Commands::PostCommands(PostCommands::DetachableCommands(detachable_commands)) =
+                args.commands
+            {
+                match detachable_commands {
+                    DetachableCommands::Trigger(trigger) => {
+                        flag = trigger.flag;
+                    }
+                    DetachableCommands::Run(pipeline) => {
+                        flag = pipeline.trigger.flag;
+                        name = pipeline.name;
                     }
                     _ => {}
-                },
-                _ => {}
+                }
             };
         }
 

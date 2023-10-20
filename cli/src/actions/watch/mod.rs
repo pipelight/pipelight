@@ -1,13 +1,5 @@
 // Test
 mod test;
-// Detach
-// Watchexec
-use watchexec::{
-    action::{Outcome},
-    config::{InitConfig, RuntimeConfig},
-    handler::{Handler as _, PrintDebug},
-    Watchexec,
-};
 // Error handling
 use miette::{IntoDiagnostic, Result};
 
@@ -18,11 +10,7 @@ pub use build::*;
 mod is;
 
 #[derive(Debug)]
-pub struct Watcher {
-    watchexec: Option<Watchexec>,
-    runtime: Option<RuntimeConfig>,
-    builded: bool,
-}
+pub struct Watcher;
 
 impl Watcher {
   pub fn kill() -> Result<()> {

@@ -366,7 +366,6 @@ name = "cli"
 version = "0.4.0"
 dependencies = [
  "assert_cmd",
- "async-priority-channel",
  "cast",
  "chrono",
  "clap",
@@ -378,23 +377,17 @@ dependencies = [
  "exec",
  "glob",
  "ignore-files",
- "iso8601-duration",
  "log",
  "miette",
  "once_cell",
  "rayon",
- "regex",
- "rustix 0.37.25",
  "serde",
  "serde_json",
  "serde_plain",
- "strum",
- "sysinfo 0.28.4",
  "templates",
  "thiserror",
  "tokio",
  "utils",
- "uuid",
  "watchexec",
  "watchexec-events",
  "watchexec-filterer-ignore",
@@ -670,7 +663,7 @@ dependencies = [
  "rustix 0.37.25",
  "serde",
  "subprocess",
- "sysinfo 0.29.10",
+ "sysinfo",
  "thiserror",
  "utils",
  "uuid",
@@ -2379,31 +2372,14 @@ version = "0.4.2"
 dependencies = [
  "assert_cmd",
  "cast",
- "chrono",
  "clap",
- "clap_complete",
  "cli",
- "colored",
- "convert_case",
- "dialoguer",
  "exec",
- "glob",
- "iso8601-duration",
  "log",
  "miette",
  "once_cell",
- "rayon",
- "regex",
- "rustix 0.37.25",
- "serde",
- "serde_json",
- "serde_plain",
- "strum",
- "sysinfo 0.28.4",
  "templates",
- "thiserror",
  "utils",
- "uuid",
  "workflow",
 ]
 
@@ -2427,21 +2403,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
-]
-
-[[package]]
-name = "sysinfo"
-version = "0.28.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4c2f3ca6693feb29a89724516f016488e9aafc7f37264f898593ee4b942f31b"
-dependencies = [
- "cfg-if",
- "core-foundation-sys",
- "libc",
- "ntapi",
- "once_cell",
- "rayon",
- "winapi",
 ]
 
 [[package]]
@@ -2835,9 +2796,7 @@ dependencies = [
  "chrono",
  "console",
  "convert_case",
- "futures",
  "git2",
- "ignore",
  "ignore-files",
  "iso8601-duration",
  "log",
@@ -2847,16 +2806,10 @@ dependencies = [
  "project-origins",
  "rev_buf_reader",
  "serde",
- "serde_json",
  "serde_plain",
  "signal-hook",
  "strum",
- "thiserror",
- "tokio",
  "uuid",
- "watchexec",
- "watchexec-events",
- "watchexec-signals",
 ]
 
 [[package]]
@@ -3241,14 +3194,10 @@ dependencies = [
 name = "workflow"
 version = "0.4.1"
 dependencies = [
- "assert_cmd",
  "cast",
  "chrono",
- "clap",
- "clap_complete",
  "colored",
  "convert_case",
- "dialoguer",
  "exec",
  "glob",
  "log",
@@ -3259,9 +3208,7 @@ dependencies = [
  "rustix 0.37.25",
  "serde",
  "serde_json",
- "serde_plain",
  "strum",
- "sysinfo 0.28.4",
  "templates",
  "thiserror",
  "utils",

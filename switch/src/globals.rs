@@ -4,13 +4,10 @@ use utils::git::Flag;
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
 // Teleport
-use utils::{logger::Logger, teleport::Portal};
+use utils::teleport::Portal;
 // Logs
 use workflow::{Config, Trigger};
 // Cli
-use clap::FromArgMatches;
-use cli::services::FgBg;
-use cli::services::{Action, Service};
 use cli::types::Cli;
 use cli::types::{Commands, DetachableCommands, PostCommands};
 // Error Handling
@@ -26,8 +23,7 @@ pub static PORTAL: Lazy<Arc<Mutex<Portal>>> = Lazy::new(|| Arc::new(Mutex::new(P
 
 // Hydrate logs
 pub fn early_hydrate_logger() -> Result<()> {
-    let args;
-    args = CLI.lock().unwrap().clone();
+    let args = CLI.lock().unwrap().clone();
     // Set internal verbosity level
     let verbosity = args.verbose.log_level_filter();
     LOGGER.lock().unwrap().set_level(&verbosity)?;
@@ -44,23 +40,20 @@ pub fn full_hydrate_logger() -> Result<()> {
 
 // Hydrate trigger
 pub fn hydrate_trigger() -> Result<()> {
-    let args;
-    args = CLI.lock().unwrap().clone();
+    let args = CLI.lock().unwrap().clone();
     let mut flag = None;
-    match args.commands {
-        Commands::PostCommands(post_commands) => match post_commands {
-            PostCommands::DetachableCommands(detachable_commands) => match detachable_commands {
-                DetachableCommands::Trigger(trigger) => {
-                    flag = trigger.flag;
-                }
-                DetachableCommands::Run(pipeline) => {
-                    flag = pipeline.trigger.flag;
-                }
-                _ => {}
-            },
+    if let Commands::PostCommands(PostCommands::DetachableCommands(detachable_commands)) =
+        args.commands
+    {
+        match detachable_commands {
+            DetachableCommands::Trigger(trigger) => {
+                flag = trigger.flag;
+            }
+            DetachableCommands::Run(pipeline) => {
+                flag = pipeline.trigger.flag;
+            }
             _ => {}
-        },
-        _ => {}
+        }
     }
     if let Some(flag) = flag {
         Trigger::set(Some(Flag::from(&flag)))?;
@@ -73,8 +66,7 @@ pub fn hydrate_trigger() -> Result<()> {
 // Hydrate portal
 pub fn hydrate_portal() -> Result<()> {
     trace!("hydrate portal");
-    let args;
-    args = CLI.lock().unwrap().clone();
+    let args = CLI.lock().unwrap().clone();
 
     let seed = if args.config.is_some() {
         args.config.unwrap()
@@ -93,10 +85,8 @@ pub fn hydrate_portal() -> Result<()> {
 // Hydrate config
 pub fn hydrate_config() -> Result<()> {
     trace!("hydrate config");
-    let portal;
-    let args;
-    args = CLI.lock().unwrap().clone();
-    portal = PORTAL.lock().unwrap().clone();
+    let portal = PORTAL.lock().unwrap().clone();
+    let args = CLI.lock().unwrap().clone();
 
     let casted_config = cast::Config::load(&portal.target.file_path.unwrap(), args.raw.clone())?;
     let config = Config::from(&casted_config);

@@ -5,7 +5,7 @@ use crate::types::{Trigger, TriggerBranch, TriggerTag};
 // Globbing
 use glob::Pattern;
 // Error Handling
-use miette::{Error, IntoDiagnostic, Result};
+use miette::{IntoDiagnostic, Result};
 
 impl Trigger {
     pub fn has_match(&self, list: Vec<Self>) -> Result<bool> {
