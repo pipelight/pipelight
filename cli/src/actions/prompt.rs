@@ -1,6 +1,6 @@
 // Struct
 use exec::Status;
-use workflow::{pipeline::Filters, Getters, Pipeline};
+use workflow::{pipeline::Filters, Getters, Logs, Pipeline};
 // Prompt
 use dialoguer::{console::Term, Select};
 // Error Handling
@@ -38,9 +38,13 @@ Displays a selet prompt and add the selected pipeline name to the global CLI.
 */
 pub fn running_pipeline() -> Result<String> {
     // Get pipelines names
-    let pipelines = Filters::filter_by_status(Pipeline::get()?, Some(Status::Running))?;
+    let pipelines = Filters::filter_by_status(Logs::get()?, Some(Status::Running))?;
     let items = pipelines.iter().map(|e| &e.name).collect::<Vec<&String>>();
-
+    // Guard
+    if items.is_empty() {
+        let message = "No running pipelines";
+        return Err(Error::msg(message));
+    }
     // Displays a select prompt with pipeline names.
     let selection = Select::new()
         .items(&items)
