@@ -1,10 +1,9 @@
 # Cargo build dir 
-/target/
-.cargo/
+target/
+packages/
 
-.pipelight/
+# Git dir
 .git/
-# Test files dir
 public/
 
 # Cicd files
