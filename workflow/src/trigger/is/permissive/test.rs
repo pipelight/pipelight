@@ -8,10 +8,12 @@ mod trigger_match_no_git {
         let env = Trigger::TriggerBranch(TriggerBranch {
             branch: None,
             action: Some(Flag::Special(Special::Manual)),
+            ..TriggerBranch::default()
         });
         let triggers = vec![Trigger::TriggerBranch(TriggerBranch {
             branch: None,
             action: Some(Flag::Special(Special::Manual)),
+            ..TriggerBranch::default()
         })];
         assert_eq!(env.has_match(triggers).unwrap(), true);
     }
@@ -27,10 +29,12 @@ mod trigger_match_git {
         let env = Trigger::TriggerBranch(TriggerBranch {
             branch: Some("master".to_owned()),
             action: Some(Flag::Hook(Hook::PrePush)),
+            ..TriggerBranch::default()
         });
         let triggers = vec![Trigger::TriggerBranch(TriggerBranch {
             branch: Some("master".to_owned()),
             action: None,
+            ..TriggerBranch::default()
         })];
         assert_eq!(env.has_match(triggers).unwrap(), true);
     }
@@ -40,10 +44,12 @@ mod trigger_match_git {
         let env = Trigger::TriggerBranch(TriggerBranch {
             branch: Some("master".to_owned()),
             action: Some(Flag::Hook(Hook::PrePush)),
+            ..TriggerBranch::default()
         });
         let triggers = vec![Trigger::TriggerBranch(TriggerBranch {
             branch: Some("dev".to_owned()),
             action: None,
+            ..TriggerBranch::default()
         })];
         assert_eq!(env.has_match(triggers).unwrap(), false);
     }
@@ -53,10 +59,12 @@ mod trigger_match_git {
         let env = Trigger::TriggerBranch(TriggerBranch {
             branch: Some("master".to_owned()),
             action: Some(Flag::Hook(Hook::PrePush)),
+            ..TriggerBranch::default()
         });
         let triggers = vec![Trigger::TriggerBranch(TriggerBranch {
             branch: None,
             action: Some(Flag::Hook(Hook::PrePush)),
+            ..TriggerBranch::default()
         })];
         assert_eq!(env.has_match(triggers).unwrap(), true);
     }
@@ -66,10 +74,12 @@ mod trigger_match_git {
         let env = Trigger::TriggerBranch(TriggerBranch {
             branch: Some("master".to_owned()),
             action: Some(Flag::Special(Special::Watch)),
+            ..TriggerBranch::default()
         });
         let triggers = vec![Trigger::TriggerBranch(TriggerBranch {
             branch: None,
             action: Some(Flag::Hook(Hook::PrePush)),
+            ..TriggerBranch::default()
         })];
         assert_eq!(env.has_match(triggers).unwrap(), false);
     }
@@ -79,10 +89,12 @@ mod trigger_match_git {
         let env = Trigger::TriggerTag(TriggerTag {
             tag: Some("v0.4".to_owned()),
             action: Some(Flag::Hook(Hook::PrePush)),
+            ..TriggerTag::default()
         });
         let triggers = vec![Trigger::TriggerTag(TriggerTag {
             tag: Some("v0.4".to_owned()),
             action: None,
+            ..TriggerTag::default()
         })];
         assert_eq!(env.has_match(triggers).unwrap(), true);
     }
@@ -92,10 +104,12 @@ mod trigger_match_git {
         let env = Trigger::TriggerTag(TriggerTag {
             tag: Some("v0.5".to_owned()),
             action: Some(Flag::Hook(Hook::PrePush)),
+            ..TriggerTag::default()
         });
         let triggers = vec![Trigger::TriggerTag(TriggerTag {
             tag: Some("v0.4".to_owned()),
             action: None,
+            ..TriggerTag::default()
         })];
         assert_eq!(env.has_match(triggers).unwrap(), false);
     }
@@ -104,10 +118,12 @@ mod trigger_match_git {
         let env = Trigger::TriggerTag(TriggerTag {
             tag: Some("v0.5".to_owned()),
             action: Some(Flag::Hook(Hook::PrePush)),
+            ..TriggerTag::default()
         });
         let triggers = vec![Trigger::TriggerTag(TriggerTag {
             tag: None,
             action: None,
+            ..TriggerTag::default()
         })];
         assert_eq!(env.has_match(triggers).unwrap(), true);
     }
@@ -116,10 +132,12 @@ mod trigger_match_git {
         let env = Trigger::TriggerTag(TriggerTag {
             tag: Some("v0.5".to_owned()),
             action: Some(Flag::Hook(Hook::PrePush)),
+            ..TriggerTag::default()
         });
         let triggers = vec![Trigger::TriggerTag(TriggerTag {
             tag: None,
             action: Some(Flag::Hook(Hook::PrePush)),
+            ..TriggerTag::default()
         })];
         assert_eq!(env.has_match(triggers).unwrap(), true);
     }
@@ -128,10 +146,12 @@ mod trigger_match_git {
         let env = Trigger::TriggerTag(TriggerTag {
             tag: Some("v0.5".to_owned()),
             action: Some(Flag::Hook(Hook::PrePush)),
+            ..TriggerTag::default()
         });
         let triggers = vec![Trigger::TriggerTag(TriggerTag {
             tag: None,
             action: Some(Flag::Hook(Hook::PreCommit)),
+            ..TriggerTag::default()
         })];
         assert_eq!(env.has_match(triggers).unwrap(), false);
     }

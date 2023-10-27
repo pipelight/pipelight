@@ -8,6 +8,7 @@ mod serialize {
         let env = Trigger::TriggerBranch(TriggerBranch {
             action: Some(Flag::Hook(Hook::PrePush)),
             branch: Some("master".to_owned()),
+            ..TriggerBranch::default()
         });
         let res = serde_json::to_string::<Trigger>(&env).unwrap();
 
@@ -26,6 +27,7 @@ mod serialize {
         let env = Trigger::TriggerBranch(TriggerBranch {
             action: Some(Flag::Special(Special::Manual)),
             branch: Some("master".to_owned()),
+            ..TriggerBranch::default()
         });
         let res = serde_json::to_string::<Trigger>(&env).unwrap();
 
@@ -44,6 +46,7 @@ mod serialize {
         let env = Trigger::TriggerBranch(TriggerBranch {
             action: Some(Flag::Hook(Hook::PrePush)),
             branch: Some("master".to_owned()),
+            ..TriggerBranch::default()
         });
         let json = r#"
         {

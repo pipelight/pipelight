@@ -214,6 +214,7 @@ impl Trigger {
                         tuplelist.push(Trigger::TriggerBranch(TriggerBranch {
                             action: Some(Flag::from(&action)),
                             branch: None,
+                            ..TriggerBranch::default()
                         }))
                     }
                 }
@@ -222,6 +223,7 @@ impl Trigger {
                         tuplelist.push(Trigger::TriggerBranch(TriggerBranch {
                             action: None,
                             branch: Some(branch.to_owned()),
+                            ..TriggerBranch::default()
                         }))
                     }
                 }
@@ -231,6 +233,7 @@ impl Trigger {
                             tuplelist.push(Trigger::TriggerBranch(TriggerBranch {
                                 action: Some(Flag::from(&action)),
                                 branch: Some(branch.to_owned()),
+                                ..TriggerBranch::default()
                             }))
                         }
                     }
@@ -242,6 +245,7 @@ impl Trigger {
                         tuplelist.push(Trigger::TriggerTag(TriggerTag {
                             action: Some(Flag::from(&action)),
                             tag: None,
+                            ..TriggerTag::default()
                         }))
                     }
                 }
@@ -250,6 +254,7 @@ impl Trigger {
                         tuplelist.push(Trigger::TriggerTag(TriggerTag {
                             action: None,
                             tag: Some(tag.to_owned()),
+                            ..TriggerTag::default()
                         }))
                     }
                 }
@@ -259,6 +264,7 @@ impl Trigger {
                             tuplelist.push(Trigger::TriggerTag(TriggerTag {
                                 action: Some(Flag::from(&action)),
                                 tag: Some(tag.to_owned()),
+                                ..TriggerTag::default()
                             }))
                         }
                     }

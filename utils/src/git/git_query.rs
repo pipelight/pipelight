@@ -7,7 +7,7 @@ impl Git {
     /**
     Returns a boolean, whether a repository exists or not.
     */
-    pub fn exists(&mut self) -> bool {
+    pub fn exists(self) -> bool {
         self.repo.is_some()
     }
     /**

@@ -22,17 +22,10 @@ impl From<&Event> for String {
         date = format!("{}\n", date);
         string.push_str(&date);
 
-        // Set the commit id
-        let commit = e.commit.clone();
-        if let Some(commit) = commit {
-            let header = "commit: ";
-            let commit = format!("{}{}\n", header.white(), &commit.white());
-            string.push_str(&commit);
-        }
-
         let mut tag: Option<String> = None;
         let mut branch: Option<String> = None;
         let action: Option<Flag> = e.trigger.get_action().unwrap();
+        let commit: Option<String> = e.trigger.get_commit().unwrap();
         match e.trigger.clone() {
             Trigger::TriggerTag(trigger_tag) => {
                 tag = trigger_tag.tag;
@@ -40,6 +33,13 @@ impl From<&Event> for String {
             Trigger::TriggerBranch(trigger_branch) => {
                 branch = trigger_branch.branch;
             }
+        }
+
+        // Set the commit id
+        if let Some(commit) = commit {
+            let header = "commit: ";
+            let commit = format!("{}{}\n", header.white(), &commit.white());
+            string.push_str(&commit);
         }
 
         // Set the tag name

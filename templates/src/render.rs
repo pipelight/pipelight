@@ -8,7 +8,7 @@ use std::fs;
 use std::io::Write;
 use std::path::Path;
 
-use crate::types::{Style, Template};
+use crate::types::{Assets, Style, Template};
 use utils::files::{is_filename, FileType};
 
 impl Template {
@@ -86,12 +86,12 @@ impl Template {
         let style = &String::from(&self.style);
         let extension = &String::from(&FileType::from(&self.style));
         let mut handlebars = Handlebars::new();
-        let path = format!("templates_static/{}.{}", style, extension);
+        let path = format!("{}.{}", style, extension);
         handlebars
-            .register_template_file(style, path)
+            .register_embed_templates::<Assets>()
             .into_diagnostic()?;
         let rendered_string = handlebars
-            .render_with_context(style, &Context::null())
+            .render_with_context(&path, &Context::null())
             .into_diagnostic()?;
         Ok(rendered_string)
     }

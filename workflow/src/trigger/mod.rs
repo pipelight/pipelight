@@ -67,11 +67,14 @@ impl Trigger {
         let mut branch = None;
         let mut tag = None;
         let mut action = None;
+        // Storage value
+        let mut commit = None;
 
         // Get git info
         if Git::new().exists() {
             branch = Git::new().get_branch().ok();
             tag = Git::new().get_tag().ok();
+            commit = Git::new().get_commit().ok();
         }
         // Set env action to flag
         if flag.is_some() {
@@ -84,10 +87,18 @@ impl Trigger {
 
         // Set the global trigger
         if tag.is_some() {
-            env = Trigger::TriggerTag(TriggerTag { tag, action });
+            env = Trigger::TriggerTag(TriggerTag {
+                tag,
+                action,
+                ..TriggerTag::default()
+            });
             *TRIGGER_ENV.lock().unwrap() = env.clone();
         } else {
-            env = Trigger::TriggerBranch(TriggerBranch { branch, action });
+            env = Trigger::TriggerBranch(TriggerBranch {
+                branch,
+                action,
+                ..TriggerBranch::default()
+            });
             *TRIGGER_ENV.lock().unwrap() = env.clone();
         }
 

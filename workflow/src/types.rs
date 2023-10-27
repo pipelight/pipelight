@@ -99,11 +99,19 @@ pub enum Trigger {
 pub struct TriggerBranch {
     pub action: Option<Flag>,
     pub branch: Option<String>,
+    // Storage value. Not used in any computation
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
+    pub commit: Option<String>,
 }
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
 pub struct TriggerTag {
     pub action: Option<Flag>,
     pub tag: Option<String>,
+    // Storage value. Not used in any computation
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default)]
+    pub commit: Option<String>,
 }
 /**
 The event/environment that triggered the piepline execution.
@@ -112,8 +120,6 @@ The event/environment that triggered the piepline execution.
 pub struct Event {
     pub trigger: Trigger,
     pub date: String,
-    // The commit id
-    pub commit: Option<String>,
     // Unix process info
     pub pid: Option<u32>,
     pub pgid: Option<u32>,
