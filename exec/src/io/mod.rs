@@ -6,6 +6,7 @@ use crate::globals::OUTDIR;
 use std::fs::{remove_file, File};
 use std::io::BufReader;
 use std::io::Read;
+use std::path::Path;
 
 // Error Handling
 use log::info;
@@ -19,8 +20,16 @@ impl Io {
         // path definition
         let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
         let stderr_path = format!("{}/{}_stderr", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
-        remove_file(stdout_path).into_diagnostic()?;
-        remove_file(stderr_path).into_diagnostic()?;
+        // Guard
+        let stdout = Path::new(&stdout_path);
+        if stdout.exists() && stdout.is_file() {
+            remove_file(stdout).into_diagnostic()?;
+        }
+        // Guard
+        let stderr = Path::new(&stderr_path);
+        if stderr.exists() && stderr.is_file() {
+            remove_file(stderr).into_diagnostic()?;
+        }
         Ok(())
     }
     /**
