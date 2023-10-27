@@ -45,21 +45,11 @@ impl PreCommands {
                 }
             }
             PreCommands::Init(e) => {
-                // create file
-                Template::new(e.template.clone(), e.file.clone())?.create()?;
-                // Set watcher
-                // let args = CLI.lock().unwrap().clone();
-                // if Config::get()?.has_watchable()? {
-                // Service::new(Action::Watch, Some(args))?.should_detach()?;
-                // } else {
-                // watch::Watcher::kill()?;
-                // }
-                // Set git hooks
-                // if Config::get()?.has_git_flag()? {
-                // Hook::enable()?;
-                // } else {
-                // Hook::disable()?;
-                // }
+                // create template pipeline file
+                let template = Template::new(e.template.clone(), e.file.clone())?;
+                template.create()?;
+                // Create gitignore file
+                template.create_ignore()?;
             }
             PreCommands::Hooks(toggle) => {
                 if toggle.enable {

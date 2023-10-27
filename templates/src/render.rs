@@ -72,6 +72,11 @@ impl Template {
         self.write_config_file(&rendered)?;
         Ok(())
     }
+    pub fn create_ignore(&self) -> Result<()> {
+        let rendered = self.create_ignore_template()?;
+        self.write_ignore_file(&rendered)?;
+        Ok(())
+    }
     pub fn try_delete(&self) -> Result<()> {
         let path = Path::new(&self.file_path)
             .canonicalize()
@@ -85,8 +90,8 @@ impl Template {
     pub fn create_config_template(&self) -> Result<String> {
         let style = &String::from(&self.style);
         let extension = &String::from(&FileType::from(&self.style));
-        let mut handlebars = Handlebars::new();
         let path = format!("{}.{}", style, extension);
+        let mut handlebars = Handlebars::new();
         handlebars
             .register_embed_templates::<Assets>()
             .into_diagnostic()?;
@@ -100,6 +105,37 @@ impl Template {
     */
     fn write_config_file(&self, code: &String) -> Result<()> {
         let path = Path::new(&self.file_path);
+        // Guard: don't overwrite existing file
+        if !path.exists() {
+            let owned_str = code.to_owned();
+            let bytes = owned_str.as_bytes();
+            let mut file = fs::File::create(path).into_diagnostic()?;
+            file.write_all(bytes).into_diagnostic()?;
+        }
+        Ok(())
+    }
+    /**
+    Generate in memory the config file template.
+    */
+    pub fn create_ignore_template(&self) -> Result<String> {
+        let mut handlebars = Handlebars::new();
+        handlebars
+            .register_embed_templates::<Assets>()
+            .into_diagnostic()?;
+        let rendered_string = handlebars
+            .render_with_context("gitignore", &Context::null())
+            .into_diagnostic()?;
+        Ok(rendered_string)
+    }
+    /**
+    Write the config file template to filesystem.
+    */
+    fn write_ignore_file(&self, code: &String) -> Result<()> {
+        let ignore_path = format!(
+            "{}/.gitignore",
+            env::current_dir().unwrap().to_str().unwrap(),
+        );
+        let path = Path::new(&ignore_path);
         // Guard: don't overwrite existing file
         if !path.exists() {
             let owned_str = code.to_owned();
