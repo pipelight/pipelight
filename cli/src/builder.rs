@@ -41,6 +41,17 @@ impl Cli {
                         PossibleValue::new("elvish"),
                     ])
                 })
+            })
+            .mut_subcommand("init", |a| {
+                a.mut_arg("template", |e| {
+                    e.value_parser([
+                        PossibleValue::new("objects"),
+                        PossibleValue::new("helpers"),
+                        PossibleValue::new("javascript"),
+                        PossibleValue::new("toml"),
+                        PossibleValue::new("yaml"),
+                    ])
+                })
             });
         Ok(cli)
     }

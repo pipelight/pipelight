@@ -64,11 +64,12 @@ impl Portal {
         if !self.has_reached_root()? && self.current.directory_path.is_some() {
             let current = self.current.directory_path.clone().unwrap();
             let parent = Path::new(&current).parent();
-            self.current.directory_path = Some(parent.unwrap().display().to_string());
-            return Ok(self.to_owned());
-        } else {
-            Err(Error::msg("File has no parent"))
+            if parent.is_some() {
+                self.current.directory_path = Some(parent.unwrap().display().to_string());
+                return Ok(self.to_owned());
+            }
         }
+        Err(Error::msg("File has no parent"))
     }
     fn has_reached_root(&mut self) -> Result<bool> {
         // If teleport (search method) has reached git repo root
@@ -88,7 +89,6 @@ impl Portal {
         }
         // Else if teleport (search method) has reached filesystem root
         else {
-            println!("{:#?}", self.current.directory_path);
             Ok(self.current.directory_path == Some("/".to_owned()))
         }
     }

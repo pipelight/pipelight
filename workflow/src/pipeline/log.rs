@@ -34,7 +34,6 @@ impl Pipeline {
         for process in processes {
             process.io.clean()?;
         }
-
         Ok(())
     }
     /**
