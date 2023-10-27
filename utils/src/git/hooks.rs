@@ -34,7 +34,9 @@ impl Hook {
     pub fn disable() -> Result<()> {
         info!("disabling git hooks.");
         let dir = Path::new(".git/hooks/");
-        fs::remove_dir_all(dir).into_diagnostic()?;
+        if dir.exists() {
+            fs::remove_dir_all(dir).into_diagnostic()?;
+        }
         Ok(())
     }
 

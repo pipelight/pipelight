@@ -1,6 +1,8 @@
 // File systeme crates
 use serde::{Deserialize, Serialize};
 use std::env;
+// Embed files
+use rust_embed::RustEmbed;
 
 #[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
 #[serde(rename_all = "kebab-case")]
@@ -30,3 +32,7 @@ impl Default for Template {
         }
     }
 }
+
+#[derive(RustEmbed)]
+#[folder = "static"]
+pub struct Assets;

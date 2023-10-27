@@ -1,6 +1,6 @@
 [package]
 name = "templates"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
 
 [dependencies]
@@ -12,7 +12,8 @@ thiserror = "1.0.38"
 serde_yaml = "0.9.19"
 log = "0.4.17"
 toml = { version = "0.7.3", features = ["parse"] }
-handlebars = "4.4.0"
+handlebars = { version = "4.4.0", features = ["rust-embed"] }
 serde_plain = "1.0.2"
 convert_case = "0.6.0"
+rust-embed = "8.0.0"
 
