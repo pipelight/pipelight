@@ -5,10 +5,11 @@
 // #![allow(unused_must_use)]
 
 // Structs
+use owo_colors::Style;
 use switch::Switch;
 // Error Handling
 use log::trace;
-use miette::{MietteHandlerOpts, Result, RgbColors};
+use miette::{GraphicalTheme, MietteHandlerOpts, Result, RgbColors, ThemeStyles};
 
 /**
 The pipelight binary entrypoint.
@@ -28,9 +29,22 @@ to set up a verbose and colorful error/panic handler.
 */
 pub fn make_handler() -> Result<()> {
     miette::set_hook(Box::new(|_| {
+        let styles = ThemeStyles {
+            error: Style::new().red(),
+            warning: Style::new().yellow(),
+            advice: Style::new().white(),
+            help: Style::new().white(),
+            link: Style::new().blue(),
+            linum: Style::new().white(),
+            highlights: vec![Style::new().white()],
+        };
         Box::new(
             MietteHandlerOpts::new()
                 .rgb_colors(RgbColors::Never)
+                // .graphical_theme(GraphicalTheme {
+                // styles,
+                // ..GraphicalTheme::default()
+                // })
                 .color(true)
                 .unicode(true)
                 .terminal_links(true)
