@@ -90,14 +90,14 @@ impl Trigger {
             env = Trigger::TriggerTag(TriggerTag {
                 tag,
                 action,
-                ..TriggerTag::default()
+                commit,
             });
             *TRIGGER_ENV.lock().unwrap() = env.clone();
         } else {
             env = Trigger::TriggerBranch(TriggerBranch {
                 branch,
                 action,
-                ..TriggerBranch::default()
+                commit,
             });
             *TRIGGER_ENV.lock().unwrap() = env.clone();
         }

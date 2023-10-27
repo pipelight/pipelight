@@ -35,13 +35,6 @@ impl From<&Event> for String {
             }
         }
 
-        // Set the commit id
-        if let Some(commit) = commit {
-            let header = "commit: ";
-            let commit = format!("{}{}\n", header.white(), &commit.white());
-            string.push_str(&commit);
-        }
-
         // Set the tag name
         if let Some(tag) = tag {
             let header = "tag: ";
@@ -54,6 +47,13 @@ impl From<&Event> for String {
             let header = "branch: ";
             let branch = format!("{}{}\n", header.white(), String::from(&branch).white());
             string.push_str(&branch);
+        }
+
+        // Set the commit id
+        if let Some(commit) = commit {
+            let header = "commit: ";
+            let commit = format!("{}{}\n", header.white(), &commit.white());
+            string.push_str(&commit);
         }
 
         // Set the action
