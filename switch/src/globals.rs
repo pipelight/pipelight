@@ -1,4 +1,5 @@
 // Struct
+use utils::error::LibError;
 use utils::git::Flag;
 // Global vars
 use once_cell::sync::Lazy;
@@ -12,7 +13,7 @@ use cli::types::Cli;
 use cli::types::{Commands, DetachableCommands, PostCommands};
 // Error Handling
 use log::{info, trace};
-use miette::Result;
+use miette::{Result, WrapErr};
 
 // Global vars
 use cli::globals::CLI;
@@ -73,13 +74,25 @@ pub fn hydrate_portal() -> Result<()> {
     } else {
         "pipelight".to_owned()
     };
-    let portal = Portal::new()?.seed(&seed).search()?;
-    info!(
-        "Found config file at: {}",
-        portal.target.file_path.clone().unwrap()
-    );
-    *PORTAL.lock().unwrap() = portal;
-    Ok(())
+    let mut portal = Portal::new()?;
+    portal.seed(&seed);
+
+    let res = portal.search();
+    match res {
+        Ok(portal) => {
+            info!(
+                "Found config file at: {}",
+                portal.target.file_path.clone().unwrap()
+            );
+            *PORTAL.lock().unwrap() = portal;
+            return Ok(());
+        }
+        Err(e) => {
+            let message = "Could not find a configuration file";
+            let help = "Create a default configuration file: \"git init --help\"";
+            return Err(LibError::new(message, help, e).into());
+        }
+    };
 }
 
 // Hydrate config

@@ -5,6 +5,7 @@
 pub mod globals;
 // Internal Imports
 pub mod dates;
+pub mod error;
 pub mod files;
 pub mod git;
 pub mod logger;

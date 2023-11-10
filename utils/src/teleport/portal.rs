@@ -19,13 +19,13 @@ impl Portal {
     pub fn teleport(&mut self) -> Result<Self> {
         let target = self.target.directory_path.clone().unwrap();
         env::set_current_dir(target.clone()).into_diagnostic()?;
-        info!("working directory changed to -> {}", &target);
+        info!("working directory changed to -> {:#?}", &target);
         Ok(self.to_owned())
     }
     pub fn origin(&mut self) -> Result<Self> {
         let target = self.origin.directory_path.clone().unwrap();
         env::set_current_dir(target.clone()).into_diagnostic()?;
-        info!("working directory changed to -> {}", &target);
+        info!("working directory changed to -> {:#?}", &target);
         Ok(self.to_owned())
     }
     // Set seed string, file name, relative path, absolute path
@@ -53,7 +53,7 @@ impl Portal {
                 return Ok(self.to_owned());
             } else {
                 return Err(Error::msg(format!(
-                    "Couldn't find a file with the provided seed: {}",
+                    "Couldn't find a file with the provided seed: {:#?}",
                     seed
                 )));
             }
@@ -64,13 +64,12 @@ impl Portal {
         if !self.has_reached_root()? && self.current.directory_path.is_some() {
             let current = self.current.directory_path.clone().unwrap();
             let parent = Path::new(&current).parent();
-            if let Some(parent) = parent {
-                self.current.directory_path = Some(parent.display().to_string());
-            } else {
-                return Err(Error::msg("File has no parent"));
+            if parent.is_some() {
+                self.current.directory_path = Some(parent.unwrap().display().to_string());
+                return Ok(self.to_owned());
             }
         }
-        Ok(self.to_owned())
+        Err(Error::msg("File has no parent"))
     }
     fn has_reached_root(&mut self) -> Result<bool> {
         // If teleport (search method) has reached git repo root
@@ -104,7 +103,6 @@ impl Portal {
             if path.extension().is_none() {
                 return Err(Error::msg("Couldn't find file"));
             }
-
             if path.exists() {
                 self.target.file(path.display().to_string())?;
             } else if self.parent().is_ok() {
@@ -133,7 +131,7 @@ impl Portal {
                 Ok(())
             } else {
                 Err(Error::msg(format!(
-                    "Couldn't find file at path {}",
+                    "Couldn't find file at path {:#?}",
                     path_str
                 )))
             }
@@ -167,7 +165,7 @@ impl Portal {
             if self.parent().is_ok() {
                 self.search_prefix()?;
             } else {
-                return Err(Error::msg("Couldn't find file"));
+                return Err(Error::msg("Couldn't find file "));
             }
         }
         Ok(())

@@ -22,18 +22,18 @@ impl Switch {
                     pre_commands.start()?;
                     set_globals()?;
                     // Set watcher
-                    let args = CLI.lock().unwrap().clone();
-                    if Config::get()?.has_watchable()? {
-                        Service::new(Action::Watch, Some(args))?.should_detach()?;
-                    } else {
-                        watch::Watcher::kill()?;
-                    }
+                    // let args = CLI.lock().unwrap().clone();
+                    // if Config::get()?.has_watchable()? {
+                    // Service::new(Action::Watch, Some(args))?.should_detach()?;
+                    // } else {
+                    // watch::Watcher::kill()?;
+                    // }
                     // Set git hooks
-                    if Config::get()?.has_git_flag()? {
-                        Hook::enable()?;
-                    } else {
-                        Hook::disable()?;
-                    }
+                    // if Config::get()?.has_git_flag()? {
+                    // Hook::enable()?;
+                    // } else {
+                    // Hook::disable()?;
+                    // }
                 }
                 _ => pre_commands.start()?,
             },

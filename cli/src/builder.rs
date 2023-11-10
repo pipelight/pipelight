@@ -1,5 +1,5 @@
 // Struct
-use crate::types::Cli;
+use crate::types::{Cli, Commands};
 // Clap - command line lib
 use clap::FromArgMatches;
 use clap::{builder::PossibleValue, Args, Command, ValueHint};
@@ -41,6 +41,17 @@ impl Cli {
                         PossibleValue::new("elvish"),
                     ])
                 })
+            })
+            .mut_subcommand("init", |a| {
+                a.mut_arg("template", |e| {
+                    e.value_parser([
+                        PossibleValue::new("objects"),
+                        PossibleValue::new("helpers"),
+                        PossibleValue::new("javascript"),
+                        PossibleValue::new("toml"),
+                        PossibleValue::new("yaml"),
+                    ])
+                })
             });
         Ok(cli)
     }
@@ -56,6 +67,17 @@ impl Cli {
         generate(shell, &mut cmd, name, &mut io::stdout());
 
         Ok(())
+    }
+
+    pub fn string_to_command(e: &str) -> Result<Commands> {
+        let os_str: Vec<&str> = e.split(' ').collect();
+        let cli = Cli::build()?;
+        let matches = cli.get_matches_from(os_str);
+        let args = Cli::from_arg_matches(&matches)
+            .map_err(|err| err.exit())
+            .unwrap();
+        let command: Commands = args.commands;
+        Ok(command)
     }
 
     pub fn hydrate() -> Result<()> {
