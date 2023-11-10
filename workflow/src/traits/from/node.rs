@@ -15,6 +15,9 @@ use colored::Colorize;
 // Duration
 use chrono::{DateTime, Local};
 
+/**
+Print event info by order of pertinence branch, action, commit.
+*/
 impl From<&Event> for String {
     fn from(e: &Event) -> String {
         let mut string = "".to_owned();
@@ -49,6 +52,13 @@ impl From<&Event> for String {
             string.push_str(&branch);
         }
 
+        // Set the action
+        if let Some(action) = action {
+            let header = "action: ";
+            let action = format!("{}{}\n", header.white(), String::from(&action).white());
+            string.push_str(&action);
+        }
+
         // Set the commit id
         if let Some(commit) = commit {
             let header = "commit: ";
@@ -56,12 +66,6 @@ impl From<&Event> for String {
             string.push_str(&commit);
         }
 
-        // Set the action
-        if let Some(action) = action {
-            let header = "action: ";
-            let action = format!("{}{}\n", header.white(), String::from(&action).white());
-            string.push_str(&action);
-        }
         string
     }
 }

@@ -2,7 +2,7 @@
 use crate::actions::{logs, pipeline, prompt, run, stop, trigger, watch};
 use crate::services::types::{Action, Service};
 use crate::types::Cli;
-use crate::types::{ColoredOutput, LogsCommands};
+use crate::types::{ColoredOutput, LogsCommands, ToggleCommands};
 use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
 use utils::git::Hook;
 // Clap
@@ -51,12 +51,23 @@ impl PreCommands {
                 // Create gitignore file
                 template.create_ignore()?;
             }
-            PreCommands::Hooks(toggle) => {
-                if toggle.enable {
-                    Hook::enable()?;
+            PreCommands::Enable(e) => {
+                if let Some(commands) = e.commands.clone() {
+                    match commands {
+                        ToggleCommands::GitHooks => Hook::enable()?,
+                        ToggleCommands::Watcher => {
+                            let service = Service::new(Action::Watch, None)?;
+                            service.detach()?;
+                        }
+                    }
                 }
-                if toggle.disable {
-                    Hook::disable()?;
+            }
+            PreCommands::Disable(e) => {
+                if let Some(commands) = e.commands.clone() {
+                    match commands {
+                        ToggleCommands::GitHooks => Hook::disable()?,
+                        ToggleCommands::Watcher => watch::Watcher::kill()?,
+                    }
                 }
             }
         }

@@ -6,6 +6,9 @@ use colored::Colorize;
 // Traits
 use std::fmt;
 
+/**
+Bulk display pipeline flatten triggers.
+*/
 impl fmt::Display for Trigger {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         // set_override(true);
