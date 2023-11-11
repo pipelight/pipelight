@@ -1,0 +1,59 @@
+# projects.toml file describing inputs for dream2nix
+#
+# To re-generate this file, run:
+#   nix run .#detect-projects $source
+# ... where `$source` points to the source of your project.
+#
+# If the local flake is unavailable, alternatively execute the app from the
+# upstream dream2nix flake:
+#   nix run github:nix-community/dream2nix#detect-projects $source
+
+[app]
+name = "app"
+relPath = ""
+subsystem = "rust"
+translator = "cargo-lock"
+translators = ["cargo-lock", "cargo-toml"]
+
+["".subsystemInfo]
+workspaceMembers = ["utils", "exec", "cast", "templates", "workflow", "cli", "switch", "pipelight"]
+
+[["".subsystemInfo.crates]]
+name = "cast"
+relPath = "cast"
+version = "0.5.8"
+
+[["".subsystemInfo.crates]]
+name = "cli"
+relPath = "cli"
+version = "0.4.0"
+
+[["".subsystemInfo.crates]]
+name = "exec"
+relPath = "exec"
+version = "0.2.0"
+
+[["".subsystemInfo.crates]]
+name = "pipelight"
+relPath = "pipelight"
+version = "0.6.19"
+
+[["".subsystemInfo.crates]]
+name = "switch"
+relPath = "switch"
+version = "0.4.2"
+
+[["".subsystemInfo.crates]]
+name = "templates"
+relPath = "templates"
+version = "0.0.2"
+
+[["".subsystemInfo.crates]]
+name = "utils"
+relPath = "utils"
+version = "0.2.0"
+
+[["".subsystemInfo.crates]]
+name = "workflow"
+relPath = "workflow"
+version = "0.4.1"
