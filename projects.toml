@@ -10,7 +10,7 @@
 
 [app]
 name = "app"
-relPath = ""
+relPath = "./"
 subsystem = "rust"
 translator = "cargo-lock"
 translators = ["cargo-lock", "cargo-toml"]
