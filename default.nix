@@ -1,8 +1,20 @@
 {pkgs, ...}: let
   packages = let
-    rust_crates = ["utils" "cast" "pipelight"];
+    rust_crates = [
+  ## Dependencies small utilities crates
+  "utils"
+  "exec"
+  "cast"
+  "templates"
+  ## Core crates with interdependencies
+  "workflow"
+  "cli"
+  "switch"
+  ## Bin package
+  "pipelight"
+    ];
     # Return package definition
-    make_packages = name:
+    make_package = name:
       pkgs.rustPlatform.buildRustPackage {
         pname = name;
         version = "0.7.8";
@@ -18,13 +30,12 @@
   in
     builtins.listToAttrs (
       builtins.map (
-        u:
-          {
-            name = u;
-            value = make_packages u;
-          }
-          rust_crates
+        u: {
+          name = u;
+          value = make_package u;
+        }
       )
+      rust_crates
     );
 in {
   pipelight = packages.pipelight;
