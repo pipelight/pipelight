@@ -1,0 +1,52 @@
+{
+  description = "My flake with dream2nix packages";
+
+  imports = [
+  ];
+
+  inputs = {
+    dream2nix.url = "github:nix-community/dream2nix?ref=legacy";
+    # nixpkgs.follows = "dream2nix/nixpkgs";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-23.05";
+  };
+
+  outputs = {
+    self,
+    dream2nix,
+    nixpkgs,
+  }: let
+    system = "x86_64-linux";
+    pkgs = nixpkgs.legacyPackages.${system};
+  in 
+     dream2nix.lib.makeFlakeOutputs {
+        systems = [ system ];
+        config.projectRoot = ./.;
+        source = ./.;
+        projects = ./projects.toml;
+        # autoProjects = true;
+        packageOverrides = {
+          # Add build dependencies
+          # dream2nix uses crane and generate 2 derivations novops and novops-deps
+          # Each needs additional build inputs
+          # See https://nix-community.github.io/dream2nix/subsystems/rust.html#override-gotchas
+          utils-deps = {
+            add-deps = {
+               nativeBuildInputs = old: old ++ [
+                pkgs.pkg-config
+                pkgs.openssl.dev
+                pkgs.openssl
+              ];
+            };
+          };
+          utils = {
+            add-deps = {
+               buildInputs = [
+                pkgs.pkg-config
+                pkgs.openssl.dev
+                pkgs.openssl
+              ];
+            };
+          };
+        };
+    };
+}

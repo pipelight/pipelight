@@ -10,50 +10,50 @@
 
 [app]
 name = "app"
-relPath = "./"
+relPath = ""
 subsystem = "rust"
 translator = "cargo-lock"
 translators = ["cargo-lock", "cargo-toml"]
 
-["".subsystemInfo]
+[app.subsystemInfo]
 workspaceMembers = ["utils", "exec", "cast", "templates", "workflow", "cli", "switch", "pipelight"]
 
-[["".subsystemInfo.crates]]
+[[app.subsystemInfo.crates]]
 name = "cast"
 relPath = "cast"
 version = "0.5.8"
 
-[["".subsystemInfo.crates]]
+[[app.subsystemInfo.crates]]
 name = "cli"
 relPath = "cli"
 version = "0.4.0"
 
-[["".subsystemInfo.crates]]
+[[app.subsystemInfo.crates]]
 name = "exec"
 relPath = "exec"
 version = "0.2.0"
 
-[["".subsystemInfo.crates]]
+[[app.subsystemInfo.crates]]
 name = "pipelight"
 relPath = "pipelight"
 version = "0.6.19"
 
-[["".subsystemInfo.crates]]
+[[app.subsystemInfo.crates]]
 name = "switch"
 relPath = "switch"
 version = "0.4.2"
 
-[["".subsystemInfo.crates]]
+[[app.subsystemInfo.crates]]
 name = "templates"
 relPath = "templates"
 version = "0.0.2"
 
-[["".subsystemInfo.crates]]
+[[app.subsystemInfo.crates]]
 name = "utils"
 relPath = "utils"
 version = "0.2.0"
 
-[["".subsystemInfo.crates]]
+[[app.subsystemInfo.crates]]
 name = "workflow"
 relPath = "workflow"
 version = "0.4.1"

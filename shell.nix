@@ -2,22 +2,25 @@
   pkgs.mkShell rec {
     buildInputs = with pkgs; [
       # Local dependencies
-      # pkg-config
-      # openssl
-      # openssl.dev
+      pkg-config
+      openssl
+      openssl.dev
 
       clang
       # Replace llvmPackages with llvmPackages_X, where X is the latest LLVM version (at the time of writing, 16)
       llvmPackages.bintools
       rustup
     ];
+    buildPhase = ''
+      ${pkgs.cargo}/bin/cargo build --release
+    '';
 
     # Local dependencies
     # Certain Rust tools won't work without this
     # This can also be fixed by using oxalica/rust-overlay and specifying the rust-src extension
     # See https://discourse.nixos.org/t/rust-src-not-found-and-other-misadventures-of-developing-rust-on-nixos/11570/3?u=samuela. 
     # For more details.
-    # RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
+    RUST_SRC_PATH = "${pkgs.rust.packages.stable.rustPlatform.rustLibSrc}";
 
     RUSTC_VERSION = pkgs.lib.readFile ./rust-toolchain.toml;
     # https://github.com/rust-lang/rust-bindgen#environment-variables
