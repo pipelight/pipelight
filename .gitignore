@@ -9,3 +9,6 @@ test/*pipelight*
 /target
 # Nixos
 /result
+
+## Nixos direnv cache
+.direnv
