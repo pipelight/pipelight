@@ -4,6 +4,8 @@
 # Test artifacts
 test/*pipelight*
 
-# Build directories
+## Build directories
 /packages
 /target
+# Nixos
+/result

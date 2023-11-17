@@ -12,13 +12,38 @@
       flake-utils.lib.eachDefaultSystem (
         system: let
           pkgs = nixpkgs.legacyPackages.${system};
-          code = pkgs.callPackage ./. {inherit nixpkgs system rust-overlay;};
         in rec {
-          packages = {
-            pipelight = code.pipelight;
-            # utils = code.utils;
-            default = packages.pipelight;
-          };
+          packages.default = let
+            name = "pipelight";
+            package = pkgs.rustPlatform.buildRustPackage {
+              pname = name;
+              version = "0.7.8";
+              src = ./.;
+
+              cargoLock = {
+                lockFile = ./Cargo.lock;
+              };
+              cargoBuildHook = ''
+                cargo build --release
+              '';
+              # disable tests
+              checkType = "debug";
+              doCheck = false;
+
+              nativeBuildInputs = with pkgs; [
+                pkg-config
+                rustc
+                cargo
+                rustfmt
+                rust-analyzer
+                clippy
+              ];
+
+              PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
+            };
+          in
+            package;
+          default = packages.pipelight;
         }
       );
 }
