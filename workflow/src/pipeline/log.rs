@@ -25,7 +25,7 @@ impl Pipeline {
         if let Some(file) = file {
             let path = format!("{}/{}.json", file.directory, file.name);
             let path = Path::new(&path);
-            if path.is_file() {
+            if path.exists() && path.is_file() {
                 fs::remove_file(path).into_diagnostic()?;
             }
         }
@@ -34,7 +34,6 @@ impl Pipeline {
         for process in processes {
             process.io.clean()?;
         }
-
         Ok(())
     }
     /**

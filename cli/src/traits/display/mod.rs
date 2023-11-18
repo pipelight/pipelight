@@ -2,7 +2,8 @@
 mod test;
 // Structs
 use crate::types::{
-    Cli, DisplayCommands, Init, Logs, LogsCommands, Pipeline, Shell, Toggle, Trigger,
+    Cli, DisplayCommands, Init, Logs, LogsCommands, Pipeline, Shell, Toggle, ToggleCommands,
+    Trigger,
 };
 use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
 use crate::types::{InternalVerbosity, Verbosity};
@@ -29,6 +30,31 @@ impl fmt::Display for Cli {
             string += " ";
             string += "--attach";
         }
+        write!(f, "{}", string)
+    }
+}
+
+impl fmt::Display for Commands {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let string = match self {
+            Commands::PreCommands(pre_commands) => match pre_commands {
+                PreCommands::Init(_) => "init".to_owned(),
+                PreCommands::Completion(shell) => format!("completion{}", shell),
+                PreCommands::Enable(toggle) => format!("enable{}", toggle),
+                PreCommands::Disable(toggle) => format!("disable{}", toggle),
+            },
+            Commands::PostCommands(post_commands) => match post_commands {
+                PostCommands::DetachableCommands(detachable_command) => match detachable_command {
+                    DetachableCommands::Run(pipeline) => format!("run{}", pipeline),
+                    DetachableCommands::Trigger(trigger) => format!("trigger{}", trigger),
+                    DetachableCommands::Watch => "watch".to_owned(),
+                },
+                PostCommands::Stop(pipeline) => format!("stop{}", pipeline),
+                PostCommands::Logs(logs) => format!("logs{}", logs),
+                PostCommands::Inspect(pipeline) => format!("inspect{}", pipeline),
+                PostCommands::Ls(list) => format!("ls{}", list),
+            },
+        };
         write!(f, "{}", string)
     }
 }
@@ -97,13 +123,17 @@ impl fmt::Display for Logs {
 impl fmt::Display for Toggle {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut string = "".to_owned();
-        if self.enable {
-            string += " ";
-            string += "enable";
-        }
-        if self.disable {
-            string += " ";
-            string += "disable";
+        if let Some(commands) = self.commands.clone() {
+            match commands {
+                ToggleCommands::GitHooks => {
+                    string += " ";
+                    string += "git-hooks";
+                }
+                ToggleCommands::Watcher => {
+                    string += " ";
+                    string += "watcher";
+                }
+            }
         }
         write!(f, "{}", string)
     }
@@ -145,28 +175,4 @@ fn from_verbosity_to_string(e: Verbosity) -> String {
         string += &"v".repeat(n - 1);
     }
     string
-}
-
-impl fmt::Display for Commands {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let string = match self {
-            Commands::PreCommands(pre_commands) => match pre_commands {
-                PreCommands::Init(_) => "init".to_owned(),
-                PreCommands::Hooks(toggle) => format!("hooks{}", toggle),
-                PreCommands::Completion(shell) => format!("completion{}", shell),
-            },
-            Commands::PostCommands(post_commands) => match post_commands {
-                PostCommands::DetachableCommands(detachable_command) => match detachable_command {
-                    DetachableCommands::Run(pipeline) => format!("run{}", pipeline),
-                    DetachableCommands::Trigger(trigger) => format!("trigger{}", trigger),
-                    DetachableCommands::Watch => "watch".to_owned(),
-                },
-                PostCommands::Stop(pipeline) => format!("stop{}", pipeline),
-                PostCommands::Logs(logs) => format!("logs{}", logs),
-                PostCommands::Inspect(pipeline) => format!("inspect{}", pipeline),
-                PostCommands::Ls(list) => format!("ls{}", list),
-            },
-        };
-        write!(f, "{}", string)
-    }
 }

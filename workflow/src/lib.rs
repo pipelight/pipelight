@@ -16,6 +16,7 @@ pub mod traits;
 pub mod types;
 
 // Re-export
+pub use error::*;
 pub use exec::Statuable;
 pub use traits::Getters;
 pub use types::*;

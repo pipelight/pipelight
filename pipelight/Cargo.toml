@@ -12,5 +12,6 @@ license="GPL2"
 [dependencies]
 switch = {path = "../switch" }
 log = "0.4.17"
-miette = { version = "5.5.0", features = ["fancy"] }
+miette = { version = "5.5.0", features = ["fancy", "backtrace"] }
+owo-colors = "3.5.0"
 

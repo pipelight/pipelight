@@ -18,7 +18,7 @@ const config: Config = {
         "cargo run --bin pipelight run test_rw --config test.pipelight.ts --attach",
       ]),
     ]),
-    // Triggers
+    // Test watcher with a long running pipeline
     pipeline("test_watch", () => [
       step(`run harmless commands`, () => ["pwd", "sleep 30", "ls"]),
     ]).add_trigger({

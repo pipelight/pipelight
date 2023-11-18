@@ -52,22 +52,27 @@ impl Hook {
     */
     fn create_subscripts_caller(hook: &Hook) -> Result<()> {
         let git = Git::new();
-        let action = String::from(hook);
-        let root = git.repo.unwrap().path().display().to_string();
 
-        let path = &format!(".git/hooks/{}", String::from(hook));
-        let path = Path::new(path);
+        let hook = String::from(hook);
+
+        // Set the file path depending on the git repo type
+        let hook_rel_dir;
+        if git.repo.unwrap().is_bare() {
+            hook_rel_dir = format!("./hooks/{}", &hook);
+        } else {
+            hook_rel_dir = format!(".git/hooks/{}", &hook);
+        }
+        let path = Path::new(&hook_rel_dir);
 
         let mut file = fs::File::create(path).into_diagnostic()?;
         let s = format!(
             "#!/bin/sh \n\
-            dir=\"{root}hooks/{action}.d\" \n\
+            echo $pwd \n\
+            dir=\"{root}.d\" \n\
             for file in \"$dir/*\"; do \n\
-              cd $dir
-              $file \n\
+              ./$file \n\
             done",
-            root = root,
-            action = action
+            root = hook_rel_dir,
         );
         let b = s.as_bytes();
         file.write_all(b).into_diagnostic()?;
@@ -92,6 +97,8 @@ impl Hook {
       └── _pipelight
     */
     fn create_script(hook: &Hook) -> Result<()> {
+        let git = Git::new();
+
         let hook = String::from(hook);
         #[cfg(debug_assertions)]
         let script = format!(
@@ -108,14 +115,19 @@ impl Hook {
             &hook
         );
 
-        let dir_path = format!(".git/hooks/{}.d", &hook);
-        let dir_path = Path::new(&dir_path);
-
+        // Set the file path depending on the git repo type
+        let hook_rel_dir;
+        if git.repo.unwrap().is_bare() {
+            hook_rel_dir = format!("./hooks/{}.d", &hook);
+        } else {
+            hook_rel_dir = format!(".git/hooks/{}.d", &hook);
+        }
+        let dir_path = Path::new(&hook_rel_dir);
         fs::create_dir_all(dir_path).into_diagnostic()?;
 
-        let file_path = format!(".git/hooks/{}.d/_pipelight", &hook);
-        let file_path = Path::new(&file_path);
-        let mut file = fs::File::create(file_path).into_diagnostic()?;
+        let file_path = format!("{}/_pipelight", &hook_rel_dir);
+        // let file_path = Path::new(&file_path);
+        let mut file = fs::File::create(file_path.clone()).into_diagnostic()?;
 
         let bytes = script.as_bytes();
         file.write_all(bytes).into_diagnostic()?;
