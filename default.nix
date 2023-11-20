@@ -1,13 +1,14 @@
 {pkgs ? import <nixpkgs> {}}:
 pkgs.rustPlatform.buildRustPackage rec {
   pname = "pipelight";
-  version = "0.7.9";
+  version = "0.7.10";
   src = ./.;
 
   cargoLock = {
     lockFile = ./Cargo.lock;
   };
   cargoBuildHook = ''
+    git checkout v0.7.10
     cargo build --release
   '';
   # disable tests
