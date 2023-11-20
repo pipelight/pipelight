@@ -1,9 +1,11 @@
-{ pkgs ? import <nixpkgs> { } }:
+{pkgs ? import <nixpkgs> {}}:
 pkgs.mkShell {
-  # Get dependencies from the main package
-  inputsFrom = [(pkgs.callPackage ./default.nix {})];
   # Additional tooling
-  buildInputs = with pkgs; [
+  nativeBuildInputs = with pkgs; [
+    openssl.dev
+    pkg-config
+    rustc
+    cargo
     rust-analyzer # LSP Server
     rustfmt # Formatter
     clippy # Linter

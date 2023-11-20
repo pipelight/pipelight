@@ -7,19 +7,23 @@ pkgs.rustPlatform.buildRustPackage rec {
   cargoLock = {
     lockFile = ./Cargo.lock;
   };
-  cargoBuildHook = ''
-    git checkout v0.7.10
-    cargo build --release
-  '';
+  # cargoBuildHook = ''
+  # buildPhase = ''
+  #   cargo build --release
+  # '';
+  # installPhase = ''
+  #   mkdir -p $out/bin
+  #   install -t target/release/${pname} $out/bin
+  # '';
   # disable tests
   checkType = "debug";
   doCheck = false;
 
   nativeBuildInputs = with pkgs; [
+    openssl.dev
     pkg-config
     rustc
     cargo
   ];
-
   PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
 }
