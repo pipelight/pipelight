@@ -121,8 +121,7 @@ impl Finder {
     pub fn kill(&self) -> Result<()> {
         if let Some(matches) = self.matches.clone() {
             for pid in matches {
-                let rustix_pid;
-                unsafe { rustix_pid = rustix::process::Pid::from_raw(pid) };
+                let rustix_pid = rustix::process::Pid::from_raw(pid.try_into().into_diagnostic()?);
 
                 let pgid = getpgid(rustix_pid).into_diagnostic()?;
                 if test_kill_process_group(pgid).is_ok() {

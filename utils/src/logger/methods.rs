@@ -26,13 +26,13 @@ impl Logger {
     error!(target: "pipelines_to_file","{}", json);
 
     */
-    pub fn set_file(&mut self, uuid: &Uuid) -> Self {
+    pub fn set_file(&mut self, uuid: &Uuid) -> Result<Self> {
         self.pipelines.file_info = Some(LogFile {
             name: uuid.to_string(),
             ..self.pipelines.file_info.clone().unwrap()
         });
-        self.update().unwrap();
-        self.to_owned()
+        self.update()?;
+        Ok(self.to_owned())
     }
     /**
     Delete logs directories

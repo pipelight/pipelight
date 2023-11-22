@@ -74,8 +74,7 @@ impl Hook {
             done",
             root = hook_rel_dir,
         );
-        let b = s.as_bytes();
-        file.write_all(b).into_diagnostic()?;
+        file.write_all(s.as_bytes()).into_diagnostic()?;
 
         // Set permissions
         let metadata = file.metadata().into_diagnostic()?;

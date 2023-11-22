@@ -121,9 +121,9 @@ pub struct Event {
     pub trigger: Trigger,
     pub date: String,
     // Unix process info
-    pub pid: Option<u32>,
-    pub pgid: Option<u32>,
-    pub sid: Option<u32>,
+    pub pid: Option<i32>,
+    pub pgid: Option<i32>,
+    pub sid: Option<i32>,
 }
 
 /**

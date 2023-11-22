@@ -3,33 +3,40 @@ use crate::types::{Pipeline, StepOrParallel};
 // Traits
 use exec::{Statuable, Status};
 // Globals
+use once_cell::sync::Lazy;
+use std::io::Write;
+use std::sync::{Arc, Mutex};
 use utils::globals::LOGGER;
 // Fylesystem manipulation
 use std::fs;
+use std::fs::{create_dir_all, File};
 use std::path::Path;
 // Error Handling
 use log::error;
 use miette::{IntoDiagnostic, Result};
+
+/**
+Lazy global that contains the default output directory to be used.
+*/
+pub static OUTDIR: Lazy<Arc<Mutex<String>>> =
+    Lazy::new(|| Arc::new(Mutex::new(".pipelight/logs".to_owned())));
 
 impl Pipeline {
     /**
     Delete the pipeline log file.
     */
     pub fn clean(&self) -> Result<()> {
-        LOGGER.lock().unwrap().to_file();
-        LOGGER.lock().unwrap().set_file(&self.uuid);
-        let logger = LOGGER.lock().unwrap().clone();
+        //Ensure dir
+        let dir = OUTDIR.lock().unwrap();
+        fs::create_dir_all(dir.clone()).into_diagnostic()?;
 
-        // Pipeline main file
-        let file = logger.pipelines.file_info;
-        if let Some(file) = file {
-            let path = format!("{}/{}.json", file.directory, file.name);
-            let path = Path::new(&path);
-            if path.exists() && path.is_file() {
-                fs::remove_file(path).into_diagnostic()?;
-            }
+        let stdout_path = format!("{}/{}.json", dir.clone(), self.uuid);
+
+        let path = Path::new(&stdout_path);
+        if path.exists() && path.is_file() {
+            fs::remove_file(path).into_diagnostic()?;
         }
-        // Subprocess tmp files
+        // // Subprocess tmp files
         let processes = self.get_procs()?;
         for process in processes {
             process.io.clean()?;
@@ -39,11 +46,22 @@ impl Pipeline {
     /**
     Print the pipeline status as JSON inside a log file.
     */
-    pub fn log(&self) {
-        LOGGER.lock().unwrap().to_file();
-        LOGGER.lock().unwrap().set_file(&self.uuid);
-        let json = serde_json::to_string(&self).unwrap();
-        error!(target: "pipelines_to_file","{}", json);
+    pub fn log(&self) -> Result<()> {
+        //Ensure dir
+        let dir = OUTDIR.lock().unwrap();
+        fs::create_dir_all(dir.clone()).into_diagnostic()?;
+
+        let json = serde_json::to_string(&self).unwrap() + "\n";
+
+        let stdout_path = format!("{}/{}.json", dir.clone(), self.uuid);
+        let mut f = File::options()
+            .append(true)
+            .write(true)
+            .create(true)
+            .open(stdout_path)
+            .into_diagnostic()?;
+        f.write_all(json.as_bytes()).into_diagnostic()?;
+        Ok(())
     }
     /**
     On demand,

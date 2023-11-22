@@ -59,10 +59,8 @@ impl Pipeline {
     */
     pub fn is_running(&self) -> Result<bool> {
         if let Some(event) = self.event.clone() {
-            unsafe {
                 let pid = rustix::process::Pid::from_raw(event.pid.unwrap());
                 Ok(test_kill_process(pid.unwrap()).is_ok())
-            }
         } else {
             Ok(false)
         }

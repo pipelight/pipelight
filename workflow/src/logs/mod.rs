@@ -24,7 +24,7 @@ impl Logs {
                 if pipeline.get_status() == Some(Status::Running) && !pipeline.is_running().unwrap()
                 {
                     pipeline.set_status(Some(Status::Aborted));
-                    pipeline.log();
+                    pipeline.log().unwrap();
                 }
             });
             *LOGS.lock().unwrap() = Some(pipelines);

@@ -20,7 +20,7 @@ impl Switch {
             Commands::PreCommands(pre_commands) => match pre_commands {
                 PreCommands::Init(_) => {
                     pre_commands.start()?;
-                    set_globals()?;
+                    // set_globals()?;
                     // Set watcher
                     // let args = CLI.lock().unwrap().clone();
                     // if Config::get()?.has_watchable()? {

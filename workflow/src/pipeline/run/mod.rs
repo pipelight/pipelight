@@ -46,12 +46,12 @@ impl Pipeline {
         unsafe {
             (*ptr).event = Some(event);
             (*ptr).set_status(Some(Status::Started));
-            (*ptr).log();
+            (*ptr).log()?;
         }
 
         unsafe {
             (*ptr).set_status(Some(Status::Running));
-            (*ptr).log();
+            (*ptr).log()?;
 
             for step in &mut (*ptr).steps {
                 step.run(ptr)?;
@@ -85,7 +85,7 @@ impl Pipeline {
             } else {
                 (*ptr).set_status(Some(Status::Failed))
             }
-            (*ptr).log();
+            (*ptr).log()?;
         }
 
         // Execute fallbacks
@@ -113,7 +113,7 @@ impl Pipeline {
                 // Duration
                 d.stop()?;
                 (*ptr).duration = Some(d);
-                (*ptr).log();
+                (*ptr).log()?;
             }
         }
         unsafe {
@@ -168,7 +168,7 @@ impl Parallel {
         self.duration = Some(d);
 
         unsafe {
-            (*ptr).log();
+            (*ptr).log()?;
         }
         Ok(())
     }
@@ -215,7 +215,7 @@ impl Step {
         self.duration = Some(d);
 
         unsafe {
-            (*ptr).log();
+            (*ptr).log()?;
         }
         // Execute post-run steps
         if self.fallback.is_some() {
@@ -236,7 +236,7 @@ impl Step {
                 }
             }
             unsafe {
-                (*ptr).log();
+                (*ptr).log()?;
             }
         }
         Ok(())
@@ -252,7 +252,7 @@ impl Command {
 
         self.set_status(Some(Status::Running));
         unsafe {
-            (*ptr).log();
+            (*ptr).log()?;
         }
 
         // Run process
@@ -270,7 +270,7 @@ impl Command {
         self.duration = Some(d);
 
         unsafe {
-            (*ptr).log();
+            (*ptr).log()?;
         }
         Ok(())
     }

@@ -27,7 +27,7 @@ Simplified process struct.
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Process {
     pub uuid: Option<Uuid>,
-    pub pid: Option<u32>,
+    pub pid: Option<i32>,
     pub state: State,
     pub io: Io,
     // pub cwd: Option<String>,

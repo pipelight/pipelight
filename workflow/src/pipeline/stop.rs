@@ -19,7 +19,7 @@ impl Pipeline {
                 kill_process_group(pgid, Signal::Term).into_diagnostic()?
             }
             self.status = Some(Status::Aborted);
-            self.log();
+            self.log()?;
         }
         Ok(())
     }

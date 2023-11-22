@@ -47,7 +47,7 @@ const config: Config = {
     pipeline("test_deno_additional_arguments", () => [
       step(`host -> ${flags.host}`, () => ["cargo test --package pipeline"]),
     ]),
-    pipeline("crago_tests", () => [step("test", () => ["cargo test"])]),
+    pipeline("cargo_tests", () => [step("test", () => ["cargo test"])]),
     pipeline("test_parallel_modes", () => [
       parallel(() => [
         step("test", () => ["llls"]).set_mode("continue"),

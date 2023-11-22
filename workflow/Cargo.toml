@@ -22,5 +22,5 @@ thiserror = "1.0.38"
 regex = "1.7.1"
 strum = { version = "0.24.1", features = ["derive"] }
 glob = "0.3.1"
-rustix = { version = "0.37.20", features = ["process"] }
+rustix = { version = "0.38.25", features = ["process"] }
 
