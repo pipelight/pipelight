@@ -5,15 +5,15 @@
 </h1>
 </span>
 
-You should checkout the [Documentation](https://pipelight.dev) for a much friendly approach and a deeper understanding.
+You should checkout the [Documentation](https://pipelight.dev) for a much
+friendly approach and a deeper understanding.
 
 ## Get help (fast)!
 
-Pipelight is a young software and has become stable pretty recently.
-If you encouter a bug or whatever difficulty, please open an issue or send a message
-on [discord](https://discord.gg/swNRD3Xysz)
-or on telegram at [@Areskul](https://t.me/areskul)
-or send a mail at areskul@areskul.com.
+Pipelight is a young software and has become stable pretty recently. If you
+encouter a bug or whatever difficulty, please open an issue or send a message on
+[discord](https://discord.gg/swNRD3Xysz) or on telegram at
+[@Areskul](https://t.me/areskul) or send a mail at areskul@areskul.com.
 
 ## A lightweight software
 
@@ -21,13 +21,13 @@ Pipelight is a 6Mb binary, to be used in the terminal.
 
 It aims to automate boring and repetitive tasks.
 
-You fold your bash commands into a `Pipeline{ Step{ Command }}` written in **Typescript** (Yaml or Toml),
-and it executes the pipeline on some events.
+You fold your bash commands into a `Pipeline{ Step{ Command }}` written in
+**Typescript** (Yaml or Toml), and it executes the pipeline on some events.
 
 ## Define pipelines with a programming language
 
-Create a `pipelight.ts` file on your project root directory.
-Then use and combine your favorite syntax flavors.
+Create a `pipelight.ts` file on your project root directory. Then use and
+combine your favorite syntax flavors.
 
 Use a verbose and declarative syntax. (Objects API)
 
@@ -62,13 +62,13 @@ const my_pipeline = pipeline("build website", () => [
 
 ## Automatic triggers
 
-Add automatic triggers to your pipeline.
-Run tests on file change.
-Push to production on new tag...
+Add automatic triggers to your pipeline. Run tests on file change. Push to
+production on new tag...
 
 ```sh
-# enable watcher and git hooks (now opt-in!)
-pipelight init
+# enable watcher and git hooks.
+pipelight enable git-hooks
+pipelight enable watcher
 ```
 
 ```ts
@@ -141,5 +141,4 @@ Explore logs
 pipelight logs -vvvv
 ```
 
-Licensed under GNU GPLv2
-Copyright (C) 2023 Areskul
+Licensed under GNU GPLv2 Copyright (C) 2023 Areskul
