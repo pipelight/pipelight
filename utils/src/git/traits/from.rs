@@ -49,6 +49,7 @@ impl From<&String> for Flag {
         match cased {
             "manual" => Flag::Special(Special::Manual),
             "watch" => Flag::Special(Special::Watch),
+            "blank" => Flag::Special(Special::Blank),
             _ => Flag::Hook(Hook::from(action)),
         }
     }
