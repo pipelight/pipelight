@@ -67,7 +67,6 @@ impl Hook {
         let mut file = fs::File::create(path).into_diagnostic()?;
         let s = format!(
             "#!/bin/sh \n\
-            echo $pwd \n\
             dir=\"{root}.d\" \n\
             for file in \"$dir/*\"; do \n\
               ./$file \n\
