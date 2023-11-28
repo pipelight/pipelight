@@ -89,7 +89,7 @@ pub fn hydrate_portal() -> Result<()> {
         }
         Err(e) => {
             let message = "Could not find a configuration file";
-            let help = "Create a default configuration file: \"git init --help\"";
+            let help = "Create a default configuration file: \"pipelight init --help\"";
             return Err(LibError::new(message, help, e).into());
         }
     };
