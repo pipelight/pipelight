@@ -37,6 +37,7 @@ impl Default for Pipeline {
             status: None,
             duration: None,
             triggers: None,
+            options: None,
             steps,
             fallback: None,
         }

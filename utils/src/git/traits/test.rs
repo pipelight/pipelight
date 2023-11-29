@@ -26,6 +26,6 @@ mod from_trait {
     #[should_panic]
     fn bag_string_to_flag() {
         let string = "unknown-flag".to_owned();
-        let res = Flag::from(&string);
+        let _res = Flag::from(&string);
     }
 }

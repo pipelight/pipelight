@@ -5,6 +5,23 @@
 use serde::{Deserialize, Serialize};
 
 /**
+Options to tweak pipelines behavior
+*/
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct PipelineOpts {
+    // Wheteher the pipeline should be attached or detached from the standard I/O
+    // when triggered by a git hook.
+    pub attach: Option<bool>,
+    pub log_level: Option<String>,
+}
+
+pub struct StepOpts {
+    // The step's command execution behavior
+    pub mode: Option<String>,
+}
+
+/**
 A pipeline and a step can have fallbacks.
 They are steps to be triggered on specific events.
 For example if a pipeline fails and if its on_failure fallback is defined
@@ -34,6 +51,9 @@ It is as is to let room for top level configuration that will come after **v1.0.
 #[serde(deny_unknown_fields)]
 pub struct Config {
     pub pipelines: Option<Vec<Pipeline>>,
+    // Wheteher every pipeline should be attached or detached from the standard I/O
+    // when triggered by a git hook.
+    pub attach: Option<bool>,
 }
 
 /**
@@ -47,6 +67,7 @@ pub struct Pipeline {
     pub steps: Vec<StepOrParallel>,
     #[serde(flatten)]
     pub fallback: Option<Fallback>,
+    pub options: Option<PipelineOpts>,
 }
 /**
 Steps are a named list of Commands.
@@ -68,6 +89,7 @@ Parallel are unnamed list of steps.
 #[serde(deny_unknown_fields)]
 pub struct Parallel {
     pub parallel: Vec<Step>,
+    // pub options: Option<StepOpts>,
     pub mode: Option<String>,
     #[serde(flatten)]
     pub fallback: Option<Fallback>,

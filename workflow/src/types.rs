@@ -12,7 +12,23 @@ use utils::git::Flag;
 // Traits - Enum workaround
 use strum::EnumIter;
 
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+/**
+Options to tweak pipelines behavior
+*/
+#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+pub struct PipelineOpts {
+    // Wheteher the pipeline should be attached or detached from the standard I/O
+    // when triggered by a git hook.
+    pub attach: Option<bool>,
+    pub log_level: Option<LevelFilter>,
+}
+
+pub struct StepOpts {
+    // The step's command execution behavior
+    pub mode: Option<String>,
+}
+
+#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Fallback {
     pub on_started: Option<Vec<StepOrParallel>>,
     pub on_failure: Option<Vec<StepOrParallel>>,
@@ -43,6 +59,7 @@ pub struct Pipeline {
     pub triggers: Option<Vec<Trigger>>,
     pub fallback: Option<Fallback>,
     pub steps: Vec<StepOrParallel>,
+    pub options: Option<PipelineOpts>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]

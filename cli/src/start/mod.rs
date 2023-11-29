@@ -95,10 +95,7 @@ impl DetachableCommands {
                 false => Service::new(Action::Watch, Some(args))?.should_detach()?,
                 true => watch::Watcher::start()?,
             },
-            DetachableCommands::Trigger(trigger) => match args.attach {
-                false => Service::new(Action::Trigger, Some(args))?.should_detach()?,
-                true => trigger::launch(trigger)?,
-            },
+            DetachableCommands::Trigger(trigger) => trigger::launch(trigger)?,
         }
         Ok(())
     }

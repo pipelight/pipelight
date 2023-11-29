@@ -59,8 +59,8 @@ impl Pipeline {
     */
     pub fn is_running(&self) -> Result<bool> {
         if let Some(event) = self.event.clone() {
-                let pid = rustix::process::Pid::from_raw(event.pid.unwrap());
-                Ok(test_kill_process(pid.unwrap()).is_ok())
+            let pid = rustix::process::Pid::from_raw(event.pid.unwrap());
+            Ok(test_kill_process(pid.unwrap()).is_ok())
         } else {
             Ok(false)
         }
@@ -114,16 +114,44 @@ impl Pipeline {
                 return true;
             }
             if self.status == Some(Status::Running) {
-                unsafe {
                     let pid =
                         rustix::process::Pid::from_raw(self.event.clone().unwrap().pid.unwrap());
                     test_kill_process(pid.unwrap()).is_err()
-                }
             } else {
                 false
             }
         } else {
             false
+        }
+    }
+    /**
+     Report if pipeline has options
+    */
+    pub fn has_options(&self) -> Result<bool> {
+        Ok(self.options.is_some())
+    }
+    /**
+     Report if pipeline has options
+    */
+    pub fn has_attach_flag(&self) -> Result<bool> {
+        if let Some(options) = &self.options {
+            Ok(options.attach.is_some())
+        } else {
+            Ok(false)
+        }
+    }
+    /**
+     Report if pipeline has options
+    */
+    pub fn should_detach(&self) -> Result<bool> {
+        if let Some(options) = &self.options {
+            if let Some(attach) = options.attach {
+                Ok(!attach)
+            } else {
+                Ok(true)
+            }
+        } else {
+            Ok(true)
         }
     }
 }

@@ -1,7 +1,10 @@
 use crate::pipeline::Filters;
-use crate::types::{Command, Config, Fallback, Mode, Parallel, Pipeline, Step, StepOrParallel};
+use crate::types::{
+    Command, Config, Fallback, Mode, Parallel, Pipeline, PipelineOpts, Step, StepOrParallel,
+};
 use crate::types::{Trigger, TriggerBranch, TriggerTag};
 use exec::Process;
+use log::LevelFilter;
 
 use convert_case::{Case, Casing};
 
@@ -32,8 +35,26 @@ impl From<&cast::Config> for Config {
     }
 }
 
+impl From<&cast::PipelineOpts> for PipelineOpts {
+    fn from(e: &cast::PipelineOpts) -> Self {
+        let mut options = PipelineOpts::default();
+        if let Some(log_level) = &e.log_level {
+            let level = serde_plain::from_str::<LevelFilter>(log_level).unwrap();
+            options.log_level = Some(level);
+        }
+        if let Some(attach) = e.attach {
+            options.attach = Some(attach);
+        }
+        options
+    }
+}
+
 impl From<&cast::Pipeline> for Pipeline {
     fn from(e: &cast::Pipeline) -> Self {
+        let mut options = None;
+        if let Some(cast_options) = &e.options {
+            options = Some(PipelineOpts::from(cast_options));
+        }
         // Convert steps
         let steps = &e
             .steps
@@ -71,6 +92,7 @@ impl From<&cast::Pipeline> for Pipeline {
             triggers,
             steps: steps.to_owned(),
             fallback,
+            options,
         }
     }
 }

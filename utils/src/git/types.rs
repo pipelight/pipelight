@@ -28,7 +28,7 @@ pub enum Flag {
 An enumaration over the different types of git-hooks(sub-flags)
 that can trigger a pipeline run.
 */
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, EnumIter, Eq, Ord)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord, EnumIter)]
 #[serde(rename_all = "kebab-case")]
 pub enum Hook {
     // mail hooks
@@ -71,7 +71,7 @@ An enumaration over the different types of special flags(sub-flags)
 that are external to git and involves other triggering methods
 and that can trigger a pipeline run.
 */
-#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord, EnumIter)]
 #[serde(rename_all = "kebab-case")]
 pub enum Special {
     #[default]

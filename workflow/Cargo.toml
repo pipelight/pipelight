@@ -23,4 +23,5 @@ regex = "1.7.1"
 strum = { version = "0.24.1", features = ["derive"] }
 glob = "0.3.1"
 rustix = { version = "0.38.25", features = ["process"] }
+serde_plain = "1.0.2"
 

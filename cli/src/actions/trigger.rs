@@ -18,6 +18,10 @@ pub fn launch(trigger: &Trigger) -> Result<()> {
         // Guard
         if pipeline.is_triggerable_strict().unwrap() {
             let mut args = CLI.lock().unwrap().clone();
+
+            if pipeline.has_attach_flag().unwrap() {
+                args.attach = pipeline.should_detach().unwrap();
+            }
             args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
                 DetachableCommands::Run(Pipeline {
                     trigger: trigger.to_owned(),

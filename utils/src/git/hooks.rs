@@ -1,6 +1,6 @@
 // Struct
 use crate::git::{Git, Hook};
-// Tarit - Enum iteration workaround
+// Trait - Enum iteration workaround
 use strum::IntoEnumIterator;
 // Filesystem manipulation
 use std::fs;
@@ -93,6 +93,10 @@ impl Hook {
     ├── pre-push
     └── pre-psuh.d
       └── _pipelight
+
+    Note that pipeline will be attached to the standard output
+    You can change this behavior globally are on a per pipeline basis.
+
     */
     fn create_script(hook: &Hook) -> Result<()> {
         let git = Git::new();
@@ -101,14 +105,19 @@ impl Hook {
         #[cfg(debug_assertions)]
         let script = format!(
             "#!/bin/sh \n\
-            cargo run --bin pipelight trigger --flag {}\
+            cargo run --bin \
+            pipelight trigger \
+                --flag {} \
+                --attachj\
             ",
             &hook,
         );
         #[cfg(not(debug_assertions))]
         let script = format!(
             "#!/bin/sh \n\
-            pipelight trigger --flag {}\
+            pipelight trigger \
+                --flag {} \
+                --attachj\
             ",
             &hook
         );
