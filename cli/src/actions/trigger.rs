@@ -28,6 +28,7 @@ pub fn launch(trigger: &Trigger) -> Result<()> {
                     name: Some(pipeline.name.clone()),
                 }),
             ));
+            // println!("here");
             Service::new(Action::Run, Some(args))
                 .unwrap()
                 .should_detach()

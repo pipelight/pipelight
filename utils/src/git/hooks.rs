@@ -108,7 +108,7 @@ impl Hook {
             cargo run --bin \
             pipelight trigger \
                 --flag {} \
-                --attachj\
+                --attach\
             ",
             &hook,
         );

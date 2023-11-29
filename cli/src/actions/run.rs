@@ -13,6 +13,7 @@ pub fn launch(name: &str) -> Result<()> {
         pipeline.run()?;
         // Return pipeline log
         println!("{}", Node::from(&pipeline));
+
         match pipeline.status {
             Some(Status::Succeeded) => Ok(()),
             Some(Status::Failed) => {

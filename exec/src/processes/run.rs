@@ -14,6 +14,39 @@ use miette::{IntoDiagnostic, Result};
 
 impl Process {
     /**
+    Execute/Await a subprocess and inherit the parent process output outputs(stdout/stderr)
+    to the parent process.
+    */
+    pub fn run_inherit(&mut self) -> Result<()> {
+        info!("Run subprocess piped to parent");
+        get_shell()?;
+        let mut duration = Duration::default();
+        let child = Command::new(&(*SHELL.lock().unwrap()))
+            .arg("-c")
+            .arg(self.io.stdin.as_ref().unwrap())
+            .stdin(Stdio::null())
+            .stdout(Stdio::inherit())
+            .stderr(Stdio::inherit())
+            .spawn()
+            .expect("Couldn't spawn a detached subprocess");
+
+        // Hydrate struct
+        duration.start();
+        let output = child.wait_with_output().into_diagnostic()?;
+        duration.stop();
+        self.io = Io {
+            uuid: self.io.uuid,
+            stdin: self.io.stdin.to_owned(),
+            ..Io::from(&output)
+        };
+        self.state = State {
+            duration: Some(duration),
+            status: Some(Status::from(&output)),
+        };
+        Ok(())
+    }
+
+    /**
     Execute/Await a subprocess and pipe the outputs(stdout/stderr)
     to the parent process.
     */

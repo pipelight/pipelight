@@ -41,7 +41,7 @@ impl SelfProcess {
         let command = format!("{} {}", &bin, &cmd_args);
 
         // Run a detached subprocess
-        Process::new(&command).run_piped()?;
+        Process::new(&command).run_inherit()?;
         Ok(())
     }
 }

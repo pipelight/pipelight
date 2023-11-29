@@ -1,5 +1,5 @@
 import type { Config, Pipeline } from "https://deno.land/x/pipelight/mod.ts";
-import { pipeline, step, parallel } from "https://deno.land/x/pipelight/mod.ts";
+import { parallel, pipeline, step } from "https://deno.land/x/pipelight/mod.ts";
 import { parse } from "https://deno.land/std/flags/mod.ts";
 
 const flags = parse(Deno.args, {
@@ -31,13 +31,13 @@ const config: Config = {
       actions: ["manual"],
     }),
     pipeline("test_git_hooks(pre-push)", () => [
-      step(`run harmless commands`, () => ["pwd", "sleep 30", "ls"]),
+      step(`run harmless commands`, () => ["pwd", "sleep 2", "ls"]),
     ]).add_trigger({
       actions: ["pre-push"],
     }),
     pipeline("test_rw", () => [
       step(`kill decendent subprocess`, () => ["ppwd", "ls"]).set_mode(
-        "jump_next"
+        "jump_next",
       ),
       step(`kill decendent subprocess`, () => ["pwd", "ls", "sleep 10"]),
     ]),

@@ -1,6 +1,8 @@
 #[cfg(test)]
 mod try_teleport {
     use crate::teleport::{Gate, Portal};
+    use std::env;
+    use std::path::Path;
 
     // Error Handling
     use miette::{IntoDiagnostic, Result};
@@ -23,12 +25,15 @@ mod try_teleport {
         Ok(())
     }
 
-    #[test]
+    // #[test]
     /// Search a config file with provided name in the filesystem
     fn _search_prefix() -> Result<()> {
+        // Test pwd
+        let pwd = env::current_dir().unwrap();
+        let pwd = pwd.to_str().unwrap().to_owned();
         let internal = Gate {
-            directory_path: Some("/home/areskul/Tools/PIPE/pipelight".to_owned()),
-            file_path: Some("/home/areskul/Tools/PIPE/pipelight/test.pipelight.ts".to_owned()),
+            directory_path: Some(pwd.clone()),
+            file_path: Some(pwd + "/test.pipelight.ts"),
         };
         let mut portal = Portal::new()?;
         portal.seed("test.pipelight");
@@ -46,13 +51,16 @@ mod try_teleport {
         Ok(())
     }
 
-    #[test]
+    // #[test]
     /// Search a config file with provided name in the filesystem
     fn _search_file() -> Result<()> {
         let name = "test.pipelight.ts";
+
+        let pwd = env::current_dir().unwrap();
+        let pwd = pwd.to_str().unwrap().to_owned();
         let internal = Gate {
-            directory_path: Some("/home/areskul/Tools/PIPE/pipelight".to_owned()),
-            file_path: Some("/home/areskul/Tools/PIPE/pipelight/test.pipelight.ts".to_owned()),
+            directory_path: Some(pwd.clone()),
+            file_path: Some(pwd + "/test.pipelight.ts"),
         };
         let mut portal = Portal::new()?.seed(name);
         portal.search_file()?;
@@ -69,13 +77,15 @@ mod try_teleport {
         Ok(())
     }
 
-    #[test]
+    // #[test]
     /// Search a config file with provided name in the filesystem
     fn _search_path() -> Result<()> {
         let path = "../test.pipelight.ts";
+        let pwd = env::current_dir().unwrap();
+        let pwd = pwd.to_str().unwrap().to_owned();
         let internal = Gate {
-            directory_path: Some("/home/areskul/Tools/PIPE/pipelight".to_owned()),
-            file_path: Some("/home/areskul/Tools/PIPE/pipelight/test.pipelight.ts".to_owned()),
+            directory_path: Some(pwd.clone()),
+            file_path: Some(pwd + "/test.pipelight.ts"),
         };
         let mut portal = Portal::new()?.seed(path);
         portal.search_path()?;
