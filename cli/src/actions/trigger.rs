@@ -1,6 +1,9 @@
 // Struct
 use crate::services::types::{Action, Service};
 use crate::types::{Commands, DetachableCommands, Pipeline, PostCommands, Trigger};
+use crate::verbosity::external::level_value;
+use crate::verbosity::external::Verbosity;
+
 use workflow;
 // Traits
 use crate::services::traits::FgBg;
@@ -19,8 +22,16 @@ pub fn launch(trigger: &Trigger) -> Result<()> {
         if pipeline.is_triggerable_strict().unwrap() {
             let mut args = CLI.lock().unwrap().clone();
 
-            if pipeline.has_attach_flag().unwrap() {
+            if pipeline.has_attach_option().unwrap() {
                 args.attach = pipeline.should_detach().unwrap();
+            }
+            if pipeline.has_loglevel_option().unwrap() {
+                let mut level = None;
+                if let Some(level_filter) = pipeline.get_default_loglevel().ok() {
+                    level = level_filter.to_level()
+                }
+                args.verbose = Verbosity::new(level_value(level).try_into().unwrap(), 0);
+                // LOGGER.lock().unwrap().set_level(&args.verbose)?;
             }
             args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
                 DetachableCommands::Run(Pipeline {
@@ -28,7 +39,6 @@ pub fn launch(trigger: &Trigger) -> Result<()> {
                     name: Some(pipeline.name.clone()),
                 }),
             ));
-            // println!("here");
             Service::new(Action::Run, Some(args))
                 .unwrap()
                 .should_detach()

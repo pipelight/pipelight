@@ -67,7 +67,7 @@ impl<L: LogLevel> Verbosity<L> {
     }
 }
 
-fn level_value(level: Option<log::Level>) -> i8 {
+pub fn level_value(level: Option<log::Level>) -> i8 {
     match level {
         None => -1,
         Some(log::Level::Error) => 0,

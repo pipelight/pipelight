@@ -2,6 +2,8 @@ use crate::error::IsError;
 use crate::traits::Getters;
 use crate::types::{Config, Pipeline};
 use exec::Process;
+use log::LevelFilter;
+
 // Error Handling
 use miette::{Error, Result};
 
@@ -47,5 +49,16 @@ impl Pipeline {
             procs.extend(fallback.get_procs()?);
         }
         Ok(procs)
+    }
+    pub fn get_default_loglevel(&self) -> Result<LevelFilter> {
+        if let Some(options) = &self.options {
+            if let Some(log_level) = options.log_level {
+                Ok(log_level)
+            } else {
+                Ok(LevelFilter::Error)
+            }
+        } else {
+                Ok(LevelFilter::Error)
+        }
     }
 }

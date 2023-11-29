@@ -54,6 +54,18 @@ const config: Config = {
       ]).set_mode("continue"),
       parallel(() => [step("test", () => ["ls"]).set_mode("continue")]),
     ]),
+    {
+      name: "test_options",
+      steps: [
+        step(`run harmless commands`, () => ["pwd", "sleep 2", "ls"]),
+      ],
+      triggers: [{
+        actions: ["pre-push"],
+      }],
+      options: {
+        log_level: "info",
+      },
+    },
   ],
 };
 

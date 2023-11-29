@@ -114,9 +114,8 @@ impl Pipeline {
                 return true;
             }
             if self.status == Some(Status::Running) {
-                    let pid =
-                        rustix::process::Pid::from_raw(self.event.clone().unwrap().pid.unwrap());
-                    test_kill_process(pid.unwrap()).is_err()
+                let pid = rustix::process::Pid::from_raw(self.event.clone().unwrap().pid.unwrap());
+                test_kill_process(pid.unwrap()).is_err()
             } else {
                 false
             }
@@ -133,13 +132,24 @@ impl Pipeline {
     /**
      Report if pipeline has options
     */
-    pub fn has_attach_flag(&self) -> Result<bool> {
+    pub fn has_attach_option(&self) -> Result<bool> {
         if let Some(options) = &self.options {
             Ok(options.attach.is_some())
         } else {
             Ok(false)
         }
     }
+    /**
+     Report if pipeline has options
+    */
+    pub fn has_loglevel_option(&self) -> Result<bool> {
+        if let Some(options) = &self.options {
+            Ok(options.log_level.is_some())
+        } else {
+            Ok(false)
+        }
+    }
+     
     /**
      Report if pipeline has options
     */
