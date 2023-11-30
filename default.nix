@@ -1,7 +1,7 @@
 {pkgs ? import <nixpkgs> {}}:
 pkgs.rustPlatform.buildRustPackage rec {
   pname = "pipelight";
-  version = "0.7.12";
+  version = "0.7.13";
   src = ./.;
 
   cargoLock = {
