@@ -67,7 +67,6 @@ impl Default for Parallel {
             status: None,
             duration: None,
             steps: vec![Step::default()],
-            mode: Some(Mode::StopOnFailure),
             fallback: None,
         }
     }
@@ -115,7 +114,7 @@ impl Default for Step {
             status: None,
             duration: None,
             commands,
-            mode: Some(Mode::StopOnFailure),
+            options: None,
             fallback: None,
         }
     }

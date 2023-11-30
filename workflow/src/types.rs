@@ -13,28 +13,16 @@ use utils::git::Flag;
 use strum::EnumIter;
 
 /**
-Options to tweak pipelines behavior
+Options to tweak global pipelines behavior
 */
 #[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
-pub struct PipelineOpts {
+pub struct ConfigOpts {
     // Wheteher the pipeline should be attached or detached from the standard I/O
     // when triggered by a git hook.
     pub attach: Option<bool>,
     pub log_level: Option<LevelFilter>,
 }
 
-pub struct StepOpts {
-    // The step's command execution behavior
-    pub mode: Option<String>,
-}
-
-#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
-pub struct Fallback {
-    pub on_started: Option<Vec<StepOrParallel>>,
-    pub on_failure: Option<Vec<StepOrParallel>>,
-    pub on_success: Option<Vec<StepOrParallel>>,
-    pub on_abortion: Option<Vec<StepOrParallel>>,
-}
 #[derive(Default, Debug, Clone, Eq, PartialEq)]
 pub struct Config {
     pub pipelines: Option<Vec<Pipeline>>,
@@ -47,6 +35,17 @@ pub struct Node {
     pub status: Option<Status>,
     pub children: Option<Vec<Node>>,
     pub level: LevelFilter,
+}
+
+/**
+Options to tweak pipelines behavior
+*/
+#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+pub struct PipelineOpts {
+    // Wheteher the pipeline should be attached or detached from the standard I/O
+    // when triggered by a git hook.
+    pub attach: Option<bool>,
+    pub log_level: Option<LevelFilter>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
@@ -62,6 +61,13 @@ pub struct Pipeline {
     pub options: Option<PipelineOpts>,
 }
 
+#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+pub struct StepOpts {
+    // The step's command execution behavior
+    // Failure Handling mode
+    pub mode: Option<Mode>,
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 #[serde(untagged)]
 pub enum StepOrParallel {
@@ -73,8 +79,6 @@ pub struct Parallel {
     pub status: Option<Status>,
     pub duration: Option<Duration>,
     pub steps: Vec<Step>,
-    // Failure Handling mode
-    pub mode: Option<Mode>,
     // Fallback Hooks
     pub fallback: Option<Fallback>,
 }
@@ -86,10 +90,18 @@ pub struct Step {
     pub duration: Option<Duration>,
     pub commands: Vec<Command>,
     // Failure Handling mode
-    pub mode: Option<Mode>,
+    pub options: Option<StepOpts>,
     // Fallback Hooks
     pub fallback: Option<Fallback>,
 }
+#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+pub struct Fallback {
+    pub on_started: Option<Vec<StepOrParallel>>,
+    pub on_failure: Option<Vec<StepOrParallel>>,
+    pub on_success: Option<Vec<StepOrParallel>>,
+    pub on_abortion: Option<Vec<StepOrParallel>>,
+}
+
 #[derive(Debug, EnumIter, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord)]
 #[serde(untagged)]
 pub enum Mode {

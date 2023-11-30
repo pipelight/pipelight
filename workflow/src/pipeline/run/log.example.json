@@ -47,7 +47,9 @@
         }
       }
     }],
-    "mode": null,
+    "options": {
+     "mode": null
+    },
     "fallback": null
   }]
 }

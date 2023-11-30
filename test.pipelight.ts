@@ -10,6 +10,9 @@ const flags = parse(Deno.args, {
 });
 
 const config: Config = {
+  options: {
+    attach: false,
+  },
   pipelines: [
     pipeline("test", () => [step(`test`, () => ["pwd"])]),
     pipeline("test_empty", () => [step(`launch a pipeline`, () => ["pwd"])]),
@@ -51,7 +54,7 @@ const config: Config = {
     pipeline("test_parallel_modes", () => [
       parallel(() => [
         step("test", () => ["llls"]).set_mode("continue"),
-      ]).set_mode("continue"),
+      ]),
       parallel(() => [step("test", () => ["ls"]).set_mode("continue")]),
     ]),
     {

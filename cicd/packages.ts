@@ -1,8 +1,8 @@
 import type {
   Config,
+  Parallel,
   Pipeline,
   Step,
-  Parallel,
 } from "https://deno.land/x/pipelight/mod.ts";
 
 import $ from "https://deno.land/x/dax/mod.ts";
@@ -36,7 +36,10 @@ const makePipeline = ({ name, prefix, format }: any): Pipeline => {
       {
         name: `remove old ${name} container`,
         commands: [`docker container rm ${name}.latest `],
+        options:{
+
         mode: "jump_next",
+        }
       },
       {
         name: `build ${name} container`,

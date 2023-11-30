@@ -41,10 +41,11 @@ const config = {
             {
               name: "test",
               commands: ["llls"],
-              mode: "continue",
+              options: {
+                mode: "continue",
+              },
             },
           ],
-          mode: "continue",
         },
         {
           parallel: [

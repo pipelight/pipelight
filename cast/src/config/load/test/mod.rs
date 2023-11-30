@@ -17,11 +17,13 @@ mod cast {
     #[test]
     fn javascript() {
         let res = Config::load("./public/pipelight.js", None);
+        println!("{:?}",res);
         assert!(res.is_ok());
     }
     #[test]
     fn typescript() {
         let res = Config::load("./public/pipelight.ts", None);
+        println!("{:?}",res);
         assert!(res.is_ok());
     }
     #[test]

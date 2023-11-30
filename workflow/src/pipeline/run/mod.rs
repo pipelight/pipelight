@@ -56,7 +56,7 @@ impl Pipeline {
             for step in &mut (*ptr).steps {
                 step.run(ptr)?;
                 if (step.get_status() != Some(Status::Succeeded))
-                    && (step.mode().is_none() || step.mode() == Some(Mode::StopOnFailure))
+                    && (step.get_mode().is_none() || step.get_mode() == Some(Mode::StopOnFailure))
                 {
                     break;
                 }
@@ -73,7 +73,7 @@ impl Pipeline {
         unsafe {
             let last_step = (*ptr).steps.last().unwrap();
             if last_step.get_status().is_some() {
-                if last_step.mode() == Some(Mode::JumpNextOnFailure) {
+                if last_step.get_mode() == Some(Mode::JumpNextOnFailure) {
                     if last_step.get_status() == Some(Status::Failed) {
                         (*ptr).set_status(Some(Status::Succeeded))
                     } else {
@@ -184,6 +184,8 @@ impl Step {
         self.run(ptr)
     }
     fn run(&mut self, ptr: *mut Pipeline) -> Result<()> {
+        // Options
+        let mode = self.get_mode();
         // Duration
         let mut d = Duration::default();
         d.start()?;
@@ -196,7 +198,7 @@ impl Step {
             command.run(ptr)?;
 
             if (command.get_status().is_none() || command.get_status() != Some(Status::Succeeded))
-                && (self.mode.is_none() || self.mode != Some(Mode::ContinueOnFailure))
+                && (mode.is_none() || mode != Some(Mode::ContinueOnFailure))
             {
                 break;
             }

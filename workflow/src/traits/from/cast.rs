@@ -1,6 +1,7 @@
 use crate::pipeline::Filters;
 use crate::types::{
-    Command, Config, Fallback, Mode, Parallel, Pipeline, PipelineOpts, Step, StepOrParallel,
+    Command, Config, ConfigOpts, Fallback, Mode, Parallel, Pipeline, PipelineOpts, Step, StepOpts,
+    StepOrParallel,
 };
 use crate::types::{Trigger, TriggerBranch, TriggerTag};
 use exec::Process;
@@ -16,6 +17,19 @@ use uuid::Uuid;
 // Logger
 use log::error;
 
+impl From<&cast::ConfigOpts> for ConfigOpts {
+    fn from(e: &cast::ConfigOpts) -> Self {
+        let mut options = ConfigOpts::default();
+        if let Some(log_level) = &e.log_level {
+            let level = serde_plain::from_str::<LevelFilter>(log_level).unwrap();
+            options.log_level = Some(level);
+        }
+        if let Some(attach) = e.attach {
+            options.attach = Some(attach);
+        }
+        options
+    }
+}
 impl From<&cast::Config> for Config {
     fn from(e: &cast::Config) -> Self {
         let mut config = Config::default();
@@ -106,6 +120,16 @@ impl From<&cast::StepOrParallel> for StepOrParallel {
     }
 }
 
+impl From<&cast::StepOpts> for StepOpts {
+    fn from(e: &cast::StepOpts) -> Self {
+        let mut options = StepOpts::default();
+        if let Some(mode) = &e.mode {
+            options.mode = Some(Mode::from(mode));
+        }
+        options
+    }
+}
+
 impl From<&cast::Step> for Step {
     fn from(e: &cast::Step) -> Self {
         let commands = e
@@ -120,17 +144,18 @@ impl From<&cast::Step> for Step {
             fallback = Some(Fallback::from(e.fallback.as_ref().unwrap()));
         }
 
-        // Convert mode
-        let mut mode = None;
-        if e.mode.is_some() {
-            mode = Some(Mode::from(e.mode.as_ref().unwrap()));
+        // Convert options
+        let mut options = None;
+        if e.options.is_some() {
+            options = Some(StepOpts::from(e.options.as_ref().unwrap()));
         }
+
         Step {
             name: e.clone().name,
-            mode,
             commands,
             status: None,
             fallback,
+            options,
             ..Step::default()
         }
     }
@@ -142,20 +167,11 @@ impl From<&cast::Parallel> for Parallel {
         if e.fallback.is_some() {
             fallback = Some(Fallback::from(e.fallback.as_ref().unwrap()));
         }
-
-        // Convert mode
-        let mut mode = None;
-        if e.mode.is_some() {
-            mode = Some(Mode::from(e.mode.as_ref().unwrap()));
-        }
-
         let mut res = Parallel {
-            mode,
             fallback,
             steps: vec![],
             ..Parallel::new()
         };
-
         for step in &e.parallel {
             res.steps.push(Step::from(step));
         }

@@ -5,35 +5,15 @@
 use serde::{Deserialize, Serialize};
 
 /**
-Options to tweak pipelines behavior
+Options to tweak global pipelines behavior
 */
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
-pub struct PipelineOpts {
-    // Wheteher the pipeline should be attached or detached from the standard I/O
+pub struct ConfigOpts {
+    // Wheteher every pipelines should be attached or detached from the standard I/O
     // when triggered by a git hook.
     pub attach: Option<bool>,
     pub log_level: Option<String>,
-}
-
-pub struct StepOpts {
-    // The step's command execution behavior
-    pub mode: Option<String>,
-}
-
-/**
-A pipeline and a step can have fallbacks.
-They are steps to be triggered on specific events.
-For example if a pipeline fails and if its on_failure fallback is defined
-the on_failure fallback is triggered.
-*/
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
-#[serde(deny_unknown_fields)]
-pub struct Fallback {
-    pub on_started: Option<Vec<StepOrParallel>>,
-    pub on_failure: Option<Vec<StepOrParallel>>,
-    pub on_success: Option<Vec<StepOrParallel>>,
-    pub on_abortion: Option<Vec<StepOrParallel>>,
 }
 
 /**
@@ -51,9 +31,19 @@ It is as is to let room for top level configuration that will come after **v1.0.
 #[serde(deny_unknown_fields)]
 pub struct Config {
     pub pipelines: Option<Vec<Pipeline>>,
-    // Wheteher every pipeline should be attached or detached from the standard I/O
+    pub options: Option<ConfigOpts>,
+}
+
+/**
+Options to tweak pipelines behavior
+*/
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct PipelineOpts {
+    // Wheteher the pipeline should be attached or detached from the standard I/O
     // when triggered by a git hook.
     pub attach: Option<bool>,
+    pub log_level: Option<String>,
 }
 
 /**
@@ -69,6 +59,16 @@ pub struct Pipeline {
     pub fallback: Option<Fallback>,
     pub options: Option<PipelineOpts>,
 }
+
+/**
+Options to tweak step behavior and command execution
+*/
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+pub struct StepOpts {
+    // The step's command execution behavior
+    pub mode: Option<String>,
+}
+
 /**
 Steps are a named list of Commands.
 */
@@ -77,7 +77,7 @@ Steps are a named list of Commands.
 pub struct Step {
     pub name: String,
     pub commands: Vec<String>,
-    pub mode: Option<String>,
+    pub options: Option<StepOpts>,
     #[serde(flatten)]
     pub fallback: Option<Fallback>,
 }
@@ -108,6 +108,21 @@ a usable **Union** (Step must be This type OR This type).
 pub enum StepOrParallel {
     Step(Step),
     Parallel(Parallel),
+}
+
+/**
+A pipeline and a step can have fallbacks.
+They are steps to be triggered on specific events.
+For example if a pipeline fails and if its on_failure fallback is defined
+the on_failure fallback is triggered.
+*/
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct Fallback {
+    pub on_started: Option<Vec<StepOrParallel>>,
+    pub on_failure: Option<Vec<StepOrParallel>>,
+    pub on_success: Option<Vec<StepOrParallel>>,
+    pub on_abortion: Option<Vec<StepOrParallel>>,
 }
 
 /**
