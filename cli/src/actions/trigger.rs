@@ -26,7 +26,7 @@ pub fn launch(trigger: &Trigger) -> Result<()> {
 
             // Retrieve global options
             if config.has_attach_option().unwrap() {
-                args.attach = config.should_detach().unwrap();
+                args.attach = !config.should_detach().unwrap();
             }
             if config.has_loglevel_option().unwrap() {
                 let mut level = None;
@@ -39,7 +39,7 @@ pub fn launch(trigger: &Trigger) -> Result<()> {
 
             // Retrieve per-pipeline options
             if pipeline.has_attach_option().unwrap() {
-                args.attach = pipeline.should_detach().unwrap();
+                args.attach = !pipeline.should_detach().unwrap();
             }
             if pipeline.has_loglevel_option().unwrap() {
                 let mut level = None;

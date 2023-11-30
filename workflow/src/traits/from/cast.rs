@@ -32,20 +32,27 @@ impl From<&cast::ConfigOpts> for ConfigOpts {
 }
 impl From<&cast::Config> for Config {
     fn from(e: &cast::Config) -> Self {
-        let mut config = Config::default();
+        let mut options = None;
+        if let Some(cast_options) = &e.options {
+            options = Some(ConfigOpts::from(cast_options));
+        }
+        let mut pipelines = None;
         if e.pipelines.is_some() {
-            let mut pipelines = e
+            let mut binding_pipelines = e
                 .clone()
                 .pipelines
                 .unwrap()
                 .iter()
                 .map(Pipeline::from)
                 .collect();
-            pipelines = Filters::dedup(pipelines).unwrap();
-            config.pipelines = Some(pipelines);
-            // Remove duplicates
+            binding_pipelines = Filters::dedup(binding_pipelines).unwrap();
+            pipelines = Some(binding_pipelines);
         }
-        config
+        Config {
+            pipelines,
+            options,
+            ..Config::default()
+        }
     }
 }
 
@@ -65,10 +72,6 @@ impl From<&cast::PipelineOpts> for PipelineOpts {
 
 impl From<&cast::Pipeline> for Pipeline {
     fn from(e: &cast::Pipeline) -> Self {
-        let mut options = None;
-        if let Some(cast_options) = &e.options {
-            options = Some(PipelineOpts::from(cast_options));
-        }
         // Convert steps
         let steps = &e
             .steps
@@ -80,6 +83,11 @@ impl From<&cast::Pipeline> for Pipeline {
         let mut fallback = None;
         if e.fallback.is_some() {
             fallback = Some(Fallback::from(e.fallback.as_ref().unwrap()));
+        }
+        // Options
+        let mut options = None;
+        if let Some(cast_options) = &e.options {
+            options = Some(PipelineOpts::from(cast_options));
         }
         // Flatten triggers
         let triggers: Option<Vec<Trigger>> = if e.triggers.is_none() {
@@ -100,13 +108,11 @@ impl From<&cast::Pipeline> for Pipeline {
         Pipeline {
             uuid: Uuid::new_v4(),
             name: e.name.to_owned(),
-            duration: None,
-            event: None,
-            status: None,
-            triggers,
             steps: steps.to_owned(),
+            triggers,
             fallback,
             options,
+            ..Pipeline::default()
         }
     }
 }
@@ -153,7 +159,6 @@ impl From<&cast::Step> for Step {
         Step {
             name: e.clone().name,
             commands,
-            status: None,
             fallback,
             options,
             ..Step::default()

@@ -16,6 +16,7 @@ mod config {
                 })]),
                 ..Pipeline::default()
             }]),
+            ..Config::default()
         };
         let boolean = config.has_watchable().unwrap();
         assert!(boolean);
@@ -31,6 +32,7 @@ mod config {
                 })]),
                 ..Pipeline::default()
             }]),
+            ..Config::default()
         };
         let boolean = config.has_watchable().unwrap();
         assert!(!boolean);
