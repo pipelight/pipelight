@@ -9,6 +9,9 @@ import testConfig from "./test.pipelight.ts";
 console.log(testConfig);
 
 const config: Config = {
+  options: {
+    attach: false,
+  },
   pipelines: [
     parallelPackagingPipeline,
     uploadPipeline,

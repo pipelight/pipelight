@@ -17,7 +17,7 @@ encouter a bug or whatever difficulty, please open an issue or send a message on
 
 ## A lightweight software
 
-Pipelight is a 6Mb binary, to be used in the terminal.
+Pipelight is a 13Mb binary, to be used in the terminal.
 
 It aims to automate boring and repetitive tasks.
 

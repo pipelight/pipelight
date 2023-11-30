@@ -26,6 +26,7 @@ pub struct ConfigOpts {
 #[derive(Default, Debug, Clone, Eq, PartialEq)]
 pub struct Config {
     pub pipelines: Option<Vec<Pipeline>>,
+    pub options: Option<ConfigOpts>,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq)]

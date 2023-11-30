@@ -51,4 +51,39 @@ impl Config {
         }
         Ok(false)
     }
+    /**
+     Report if config has a global options.attach property
+    */
+    pub fn has_attach_option(&self) -> Result<bool> {
+        if let Some(options) = &self.options {
+            Ok(options.attach.is_some())
+        } else {
+            Ok(false)
+        }
+    }
+    /**
+     Report if pipeline has options
+    */
+    pub fn should_detach(&self) -> Result<bool> {
+        if let Some(options) = &self.options {
+            if let Some(attach) = options.attach {
+                Ok(!attach)
+            } else {
+                Ok(true)
+            }
+        } else {
+            Ok(true)
+        }
+    }
+    /**
+     Report if pipeline has options
+    */
+    pub fn has_loglevel_option(&self) -> Result<bool> {
+        if let Some(options) = &self.options {
+            Ok(options.log_level.is_some())
+        } else {
+            Ok(false)
+        }
+    }
+     
 }

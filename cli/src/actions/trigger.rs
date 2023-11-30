@@ -17,11 +17,27 @@ use miette::Result;
 
 pub fn launch(trigger: &Trigger) -> Result<()> {
     let mut pipelines = workflow::Pipeline::get()?;
+    let config = workflow::Config::get()?;
+
     pipelines.par_iter_mut().for_each(|pipeline| {
         // Guard
         if pipeline.is_triggerable_strict().unwrap() {
             let mut args = CLI.lock().unwrap().clone();
 
+            // Retrieve global options
+            if config.has_attach_option().unwrap() {
+                args.attach = config.should_detach().unwrap();
+            }
+            if config.has_loglevel_option().unwrap() {
+                let mut level = None;
+                if let Some(level_filter) = pipeline.get_default_loglevel().ok() {
+                    level = level_filter.to_level()
+                }
+                args.verbose = Verbosity::new(level_value(level).try_into().unwrap(), 0);
+                // LOGGER.lock().unwrap().set_level(&args.verbose)?;
+            }
+
+            // Retrieve per-pipeline options
             if pipeline.has_attach_option().unwrap() {
                 args.attach = pipeline.should_detach().unwrap();
             }
