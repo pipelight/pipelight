@@ -37,7 +37,8 @@ const config: Config = {
       step(`run harmless commands`, () => ["pwd", "sleep 2", "ls"]),
     ]).add_trigger({
       actions: ["pre-push"],
-    }),
+    })
+    .attach(),
     pipeline("test_rw", () => [
       step(`kill decendent subprocess`, () => ["ppwd", "ls"]).set_mode(
         "jump_next",

@@ -8,6 +8,7 @@ use miette::Result;
 use crate::pipeline::Filters;
 use crate::types::Config;
 use utils::git::Flag;
+use log::LevelFilter;
 
 impl Config {
     pub fn get() -> Result<Self> {
@@ -83,6 +84,17 @@ impl Config {
             Ok(options.log_level.is_some())
         } else {
             Ok(false)
+        }
+    }
+    pub fn get_default_loglevel(&self) -> Result<LevelFilter> {
+        if let Some(options) = &self.options {
+            if let Some(log_level) = options.log_level {
+                Ok(log_level)
+            } else {
+                Ok(LevelFilter::Error)
+            }
+        } else {
+            Ok(LevelFilter::Error)
         }
     }
 }

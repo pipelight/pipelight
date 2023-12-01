@@ -30,7 +30,7 @@ pub fn launch(trigger: &Trigger) -> Result<()> {
             }
             if config.has_loglevel_option().unwrap() {
                 let mut level = None;
-                if let Some(level_filter) = pipeline.get_default_loglevel().ok() {
+                if let Some(level_filter) = config.get_default_loglevel().ok() {
                     level = level_filter.to_level()
                 }
                 args.verbose = Verbosity::new(level_value(level).try_into().unwrap(), 0);
