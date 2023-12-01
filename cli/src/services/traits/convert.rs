@@ -42,7 +42,17 @@ impl Parser for Service {
 
         // Rewrite the arg according to action
         match self.cmd {
-            Action::Run => {
+            Action::RunStrict => {
+                if let Some(ref mut args) = self.args {
+                    args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
+                        DetachableCommands::Run(Pipeline {
+                            trigger: Trigger { flag },
+                            name,
+                        }),
+                    ));
+                }
+            }
+            Action::RunLoose => {
                 if let Some(ref mut args) = self.args {
                     args.commands = Commands::PostCommands(PostCommands::DetachableCommands(
                         DetachableCommands::Run(Pipeline {

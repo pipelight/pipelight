@@ -6,7 +6,8 @@ use miette::Result;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub enum Action {
-    Run,
+    RunStrict,
+    RunLoose,
     Trigger,
     Watch,
 }

@@ -87,7 +87,7 @@ impl DetachableCommands {
                     ))
                 }
                 if let Some(name) = &e.name {
-                    run::launch(name)?;
+                    run::strict::launch(name)?;
                 }
                 // match args.attach {
                 //     None => Service::new(Action::Run, Some(args))?.should_detach()?,

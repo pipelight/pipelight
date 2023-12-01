@@ -19,44 +19,13 @@ pub fn launch(name: &str) -> Result<()> {
     if pipeline.is_triggerable()? {
         let mut args = CLI.lock().unwrap().clone();
 
-        if args.verbose.is_none() {
-            if config.has_loglevel_option().unwrap() {
-                let mut level = None;
-                if let Some(level_filter) = config.get_default_loglevel().ok() {
-                    level = level_filter.to_level()
-                }
-                args.verbose = Some(Verbosity::new(level_value(level).try_into().unwrap(), 0));
-                // LOGGER.lock().unwrap().set_level(&args.verbose)?;
-            }
-            if pipeline.has_loglevel_option().unwrap() {
-                let mut level = None;
-                if let Some(level_filter) = pipeline.get_default_loglevel().ok() {
-                    level = level_filter.to_level()
-                }
-                args.verbose = Some(Verbosity::new(level_value(level).try_into().unwrap(), 0));
-                // LOGGER.lock().unwrap().set_level(&args.verbose)?;
-            }
-        }
-
-        if args.attach.is_none() {
-            // Retrieve global options
-            if config.has_attach_option().unwrap() {
-                args.attach = Some(!config.should_detach()?);
-            }
-
-            // Retrieve per-pipeline options
-            if pipeline.has_attach_option().unwrap() {
-                args.attach = Some(!pipeline.should_detach()?);
-            }
-        }
-
         match args.attach {
             None => {
-                Service::new(Action::Run, Some(args))?.should_detach()?;
+                Service::new(Action::RunLoose, Some(args))?.should_detach()?;
                 Ok(())
             }
             Some(false) => {
-                Service::new(Action::Run, Some(args))?.should_detach()?;
+                Service::new(Action::RunLoose, Some(args))?.should_detach()?;
                 Ok(())
             }
             Some(true) => {

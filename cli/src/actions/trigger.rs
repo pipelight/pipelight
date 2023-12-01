@@ -54,7 +54,7 @@ pub fn launch(trigger: &Trigger) -> Result<()> {
                     name: Some(pipeline.name.clone()),
                 }),
             ));
-            Service::new(Action::Run, Some(args))
+            Service::new(Action::RunLoose, Some(args))
                 .unwrap()
                 .should_detach()
                 .unwrap();
