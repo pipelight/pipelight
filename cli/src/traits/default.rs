@@ -29,9 +29,10 @@ impl Default for Cli {
             })),
             raw: None,
             config: None,
-            verbose: Verbosity::new(0, 0),
+            verbose: None,
+            // verbose: Some(Verbosity::new(0, 0)),
             internal_verbose: InternalVerbosity::new(0, 0),
-            attach: true,
+            attach: Some(true),
         }
     }
 }

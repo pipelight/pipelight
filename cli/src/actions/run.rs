@@ -1,26 +1,79 @@
 // Struct
+use crate::services::types::{Action, Service};
 use exec::Status;
 use workflow::{Getters, Node, Pipeline};
+// Globals
+use crate::globals::CLI;
+use crate::verbosity::external::{level_value, Verbosity};
+// Traits
+use crate::services::traits::FgBg;
 // Error Handling
 use miette::{Error, Result};
 use workflow::error::IsError;
 
 pub fn launch(name: &str) -> Result<()> {
-    // Guard
     let mut pipeline = Pipeline::get_by_name(name)?;
-    if pipeline.is_triggerable()? {
-        // Action
-        pipeline.run()?;
-        // Return pipeline log
-        println!("{}", Node::from(&pipeline));
+    let config = workflow::Config::get()?;
 
-        match pipeline.status {
-            Some(Status::Succeeded) => Ok(()),
-            Some(Status::Failed) => {
-                let message = "Pipeline status: Failed";
-                Err(Error::msg(message))
+    // Guard
+    if pipeline.is_triggerable()? {
+        let mut args = CLI.lock().unwrap().clone();
+
+        if args.verbose.is_none() {
+            if config.has_loglevel_option().unwrap() {
+                let mut level = None;
+                if let Some(level_filter) = config.get_default_loglevel().ok() {
+                    level = level_filter.to_level()
+                }
+                args.verbose = Some(Verbosity::new(level_value(level).try_into().unwrap(), 0));
+                // LOGGER.lock().unwrap().set_level(&args.verbose)?;
             }
-            _ => Ok(()),
+            if pipeline.has_loglevel_option().unwrap() {
+                let mut level = None;
+                if let Some(level_filter) = pipeline.get_default_loglevel().ok() {
+                    level = level_filter.to_level()
+                }
+                args.verbose = Some(Verbosity::new(level_value(level).try_into().unwrap(), 0));
+                // LOGGER.lock().unwrap().set_level(&args.verbose)?;
+            }
+        }
+
+        if args.attach.is_none() {
+            // Retrieve global options
+            if config.has_attach_option().unwrap() {
+                args.attach = Some(!config.should_detach()?);
+            }
+
+            // Retrieve per-pipeline options
+            if pipeline.has_attach_option().unwrap() {
+                args.attach = Some(!pipeline.should_detach()?);
+            }
+        }
+
+        match args.attach {
+            None => {
+                Service::new(Action::Run, Some(args))?.should_detach()?;
+                Ok(())
+            }
+            Some(false) => {
+                Service::new(Action::Run, Some(args))?.should_detach()?;
+                Ok(())
+            }
+            Some(true) => {
+                // Action
+                pipeline.run()?;
+                // Return pipeline log
+                println!("{}", Node::from(&pipeline));
+
+                match pipeline.status {
+                    Some(Status::Succeeded) => Ok(()),
+                    Some(Status::Failed) => {
+                        let message = "Pipeline status: Failed";
+                        Err(Error::msg(message))
+                    }
+                    _ => Ok(()),
+                }
+            }
         }
     } else {
         let mut string = "".to_owned();

@@ -34,13 +34,13 @@ pub struct Cli {
     pub config: Option<String>,
 
     /// Attach command to standard I/O
-    #[arg(global = true, long)]
-    pub attach: bool,
+    #[arg(global = true, long, required = false)]
+    pub attach: Option<bool>,
 
     /// Set verbosity level
     #[clap(flatten)]
     // #[serde(flatten)]
-    pub verbose: Verbosity,
+    pub verbose: Option<Verbosity>,
 
     #[clap(flatten)]
     // #[serde(flatten)]

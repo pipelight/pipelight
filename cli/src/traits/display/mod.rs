@@ -23,12 +23,16 @@ impl fmt::Display for Cli {
             string += " ";
             string += &format!("-- {}", self.raw.clone().unwrap().join(" "));
         }
-        string += &from_verbosity_to_string(self.verbose.clone());
+        if let Some(verbose) = &self.verbose {
+            string += &from_verbosity_to_string(verbose.clone());
+        }
         string += &from_internal_verbosity_to_string(self.internal_verbose.clone());
 
-        if self.attach {
-            string += " ";
-            string += "--attach";
+        if let Some(attach) = self.attach {
+            if attach {
+                string += " ";
+                string += "--attach";
+            }
         }
         write!(f, "{}", string)
     }

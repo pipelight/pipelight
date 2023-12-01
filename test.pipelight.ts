@@ -14,7 +14,7 @@ const config: Config = {
     attach: false,
   },
   pipelines: [
-    pipeline("test", () => [step(`test`, () => ["pwd"])]),
+    pipeline("test", () => [step(`test`, () => ["pwd"])]).attach(),
     pipeline("test_empty", () => [step(`launch a pipeline`, () => ["pwd"])]),
     pipeline("test_attached_pipelines", () => [
       step(`launch a pipeline`, () => [
@@ -38,7 +38,7 @@ const config: Config = {
     ]).add_trigger({
       actions: ["pre-push"],
     })
-    .attach(),
+      .attach(),
     pipeline("test_rw", () => [
       step(`kill decendent subprocess`, () => ["ppwd", "ls"]).set_mode(
         "jump_next",
@@ -67,7 +67,7 @@ const config: Config = {
         actions: ["pre-push"],
       }],
       options: {
-        log_level: "info",
+        log_level: "trace",
       },
     },
   ],

@@ -9,10 +9,10 @@ use utils::teleport::Portal;
 // Logs
 use workflow::{Config, Trigger};
 // Cli
-use cli::types::Cli;
+use cli::types::{Cli, Verbosity};
 use cli::types::{Commands, DetachableCommands, PostCommands};
 // Error Handling
-use log::{info, trace};
+use log::{info, trace, LevelFilter};
 use miette::{Result, WrapErr};
 
 // Global vars
@@ -26,7 +26,10 @@ pub static PORTAL: Lazy<Arc<Mutex<Portal>>> = Lazy::new(|| Arc::new(Mutex::new(P
 pub fn early_hydrate_logger() -> Result<()> {
     let args = CLI.lock().unwrap().clone();
     // Set internal verbosity level
-    let verbosity = args.verbose.log_level_filter();
+    let mut verbosity = LevelFilter::Error;
+    if let Some(verbose) = args.verbose {
+        verbosity = verbose.log_level_filter();
+    }
     LOGGER.lock().unwrap().set_level(&verbosity)?;
     // Set verbosity level
     let verbosity = args.internal_verbose.log_level_filter();

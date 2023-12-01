@@ -32,6 +32,11 @@ impl Cli {
                 })
             })
             .mut_arg("config", |e| e.value_hint(ValueHint::FilePath))
+            .mut_arg("attach", |e| {
+                e.num_args(0..=1)
+                    .require_equals(true)
+                    .default_missing_value("true")
+            })
             .mut_subcommand("completion", |a| {
                 a.mut_arg("name", |e| {
                     e.value_parser([

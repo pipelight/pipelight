@@ -38,15 +38,23 @@ impl FgBg for Service {
     fn should_detach(&mut self) -> Result<()> {
         if let Some(args) = self.args.clone() {
             match args.attach {
-                true => {
+                Some(true) => {
                     trace!("pipelight process is attached");
                     self.attach()?;
                 }
-                false => {
+                Some(false) => {
                     trace!("detach pipelight process");
                     // Exit the detach loop
                     if let Some(e) = self.args.as_mut() {
-                        e.attach = true;
+                        e.attach = Some(true);
+                    }
+                    self.detach()?;
+                }
+                None => {
+                    trace!("detach pipelight process");
+                    // Exit the detach loop
+                    if let Some(e) = self.args.as_mut() {
+                        e.attach = Some(true);
                     }
                     self.detach()?;
                 }

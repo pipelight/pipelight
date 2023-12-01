@@ -86,14 +86,19 @@ impl DetachableCommands {
                         DetachableCommands::Run(e.to_owned()),
                     ))
                 }
-                match args.attach {
-                    false => Service::new(Action::Run, Some(args))?.should_detach()?,
-                    true => run::launch(&e.name.clone().unwrap())?,
+                if let Some(name) = &e.name {
+                    run::launch(name)?;
                 }
+                // match args.attach {
+                //     None => Service::new(Action::Run, Some(args))?.should_detach()?,
+                //     Some(false) => Service::new(Action::Run, Some(args))?.should_detach()?,
+                //     Some(true) => run::launch(&e.name.clone().unwrap())?,
+                // }
             }
             DetachableCommands::Watch => match args.attach {
-                false => Service::new(Action::Watch, Some(args))?.should_detach()?,
-                true => watch::Watcher::start()?,
+                None => Service::new(Action::Watch, Some(args))?.should_detach()?,
+                Some(false) => Service::new(Action::Watch, Some(args))?.should_detach()?,
+                Some(true) => watch::Watcher::start()?,
             },
             DetachableCommands::Trigger(trigger) => trigger::launch(trigger)?,
         }
