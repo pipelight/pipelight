@@ -20,7 +20,7 @@ mod display {
                     },
                 }),
             )),
-            attach: false,
+            attach: Some(false),
             raw: None,
             config: None,
             // Set verbosity to default level (Error)
@@ -43,7 +43,7 @@ mod display {
                     color: None,
                 },
             })),
-            attach: false,
+            attach: Some(false),
             raw: None,
             config: None,
             internal_verbose: InternalVerbosity::new(0, 0),
@@ -62,7 +62,7 @@ mod display {
                 name: None,
                 color: None,
             })),
-            attach: false,
+            attach: Some(false),
             raw: None,
             config: None,
             // fn new(verbose: u8, quiet: u8) -> Self
@@ -82,7 +82,7 @@ mod display {
                 name: None,
                 color: None,
             })),
-            attach: false,
+            attach: Some(false),
             raw: None,
             config: None,
             // fn new(verbose: u8, quiet: u8) -> Self
@@ -102,7 +102,7 @@ mod display {
                 name: None,
                 color: None,
             })),
-            attach: false,
+            attach: Some(false),
             raw: None,
             config: Some("test.pipelight.ts".to_owned()),
             // fn new(verbose: u8, quiet: u8) -> Self
@@ -122,7 +122,7 @@ mod display {
                 name: None,
                 color: None,
             })),
-            attach: false,
+            attach: Some(false),
             raw: Some(vec!["--host".to_owned(), "linode".to_owned()]),
             config: None,
             // fn new(verbose: u8, quiet: u8) -> Self

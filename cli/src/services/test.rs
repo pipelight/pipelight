@@ -25,9 +25,9 @@ mod service {
         });
         // println!("{:#?}", args);
         if let Some(ref mut args) = args {
-            args.attach = true;
+            args.attach = Some(true);
         }
-        let service = Service::new(Action::Run, args)?;
+        let service = Service::new(Action::RunStrict, args)?;
         println!("{:#?}", service);
         Ok(())
     }
@@ -44,9 +44,9 @@ mod service {
         });
         // println!("{:#?}", args);
         if let Some(ref mut args) = args {
-            args.attach = true;
+            args.attach = Some(true);
         }
-        let service = Service::new(Action::Run, args)?;
+        let service = Service::new(Action::RunStrict, args)?;
         service.detach()?;
         Ok(())
     }
@@ -61,7 +61,7 @@ mod service {
         });
         // println!("{:#?}", args);
         if let Some(ref mut args) = args {
-            args.attach = true;
+            args.attach = Some(true);
         }
         let service = Service::new(Action::Watch, args)?;
         service.detach()?;
