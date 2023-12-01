@@ -23,8 +23,8 @@ impl fmt::Display for Cli {
             string += " ";
             string += &format!("-- {}", self.raw.clone().unwrap().join(" "));
         }
-        if let Some(verbose) = &self.verbose {
-            string += &from_verbosity_to_string(verbose.clone());
+        if self.verbose.verbose.is_some() {
+            string += &from_verbosity_to_string(self.verbose.clone());
         }
         string += &from_internal_verbosity_to_string(self.internal_verbose.clone());
 

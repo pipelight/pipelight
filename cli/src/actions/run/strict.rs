@@ -19,13 +19,13 @@ pub fn launch(name: &str) -> Result<()> {
     if pipeline.is_triggerable()? {
         let mut args = CLI.lock().unwrap().clone();
 
-        if args.verbose.is_none() {
+        if args.verbose.verbose.is_some() {
             if config.has_loglevel_option().unwrap() {
                 let mut level = None;
                 if let Some(level_filter) = config.get_default_loglevel().ok() {
                     level = level_filter.to_level()
                 }
-                args.verbose = Some(Verbosity::new(level_value(level).try_into().unwrap(), 0));
+                args.verbose = Verbosity::new(level_value(level).try_into().unwrap(), 0);
                 // LOGGER.lock().unwrap().set_level(&args.verbose)?;
             }
             if pipeline.has_loglevel_option().unwrap() {
@@ -33,7 +33,7 @@ pub fn launch(name: &str) -> Result<()> {
                 if let Some(level_filter) = pipeline.get_default_loglevel().ok() {
                     level = level_filter.to_level()
                 }
-                args.verbose = Some(Verbosity::new(level_value(level).try_into().unwrap(), 0));
+                args.verbose = Verbosity::new(level_value(level).try_into().unwrap(), 0);
                 // LOGGER.lock().unwrap().set_level(&args.verbose)?;
             }
         }

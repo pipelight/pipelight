@@ -27,8 +27,8 @@ pub fn early_hydrate_logger() -> Result<()> {
     let args = CLI.lock().unwrap().clone();
     // Set internal verbosity level
     let mut verbosity = LevelFilter::Error;
-    if let Some(verbose) = args.verbose {
-        verbosity = verbose.log_level_filter();
+    if args.verbose.verbose.is_some() {
+        verbosity = args.verbose.log_level_filter();
     }
     LOGGER.lock().unwrap().set_level(&verbosity)?;
     // Set verbosity level

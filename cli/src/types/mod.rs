@@ -40,7 +40,7 @@ pub struct Cli {
     /// Set verbosity level
     #[clap(flatten)]
     // #[serde(flatten)]
-    pub verbose: Option<Verbosity>,
+    pub verbose: Verbosity,
 
     #[clap(flatten)]
     // #[serde(flatten)]
