@@ -117,7 +117,7 @@ impl Hook {
             "#!/bin/sh \n\
             pipelight trigger \
                 --flag {} \
-                --attachj\
+                --attach\
             ",
             &hook
         );
