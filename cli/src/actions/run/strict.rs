@@ -17,8 +17,6 @@ pub fn launch(name: &str) -> Result<()> {
     let mut pipeline = Pipeline::get_by_name(name)?;
     let config = workflow::Config::get()?;
 
-    println!("{:#?}", LOGGER.lock().unwrap().pipelines);
-
     // Guard
     if pipeline.is_triggerable()? {
         let mut args = CLI.lock().unwrap().clone();

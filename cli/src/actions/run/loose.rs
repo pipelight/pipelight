@@ -4,7 +4,6 @@ use exec::Status;
 use workflow::{Getters, Node, Pipeline};
 // Globals
 use crate::globals::CLI;
-use crate::verbosity::external::{level_value, Verbosity};
 // Traits
 use crate::services::traits::FgBg;
 // Error Handling
@@ -13,11 +12,10 @@ use workflow::error::IsError;
 
 pub fn launch(name: &str) -> Result<()> {
     let mut pipeline = Pipeline::get_by_name(name)?;
-    let config = workflow::Config::get()?;
 
     // Guard
     if pipeline.is_triggerable()? {
-        let mut args = CLI.lock().unwrap().clone();
+        let args = CLI.lock().unwrap().clone();
 
         match args.attach {
             None => {
