@@ -2,16 +2,10 @@ use crate::types::ColoredOutput;
 use convert_case::{Case, Casing};
 // Structs
 use crate::types::{
-    Cli, DisplayCommands, Init, Logs, LogsCommands, Pipeline, Shell, Toggle, Trigger,
+    Cli, DisplayCommands, Init, Logs, Pipeline, Shell, Toggle, Trigger,
 };
-use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
-use crate::types::{InternalVerbosity, Verbosity};
-// Traits
-use clap::FromArgMatches;
+use crate::types::{Commands};
 
-// Error Handling
-use log::LevelFilter;
-use miette::Result;
 
 impl From<&String> for ColoredOutput {
     fn from(option: &String) -> ColoredOutput {

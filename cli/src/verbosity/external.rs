@@ -16,7 +16,7 @@ pub struct Verbosity<L: LogLevel = ErrorLevel> {
         help = L::verbose_help(),
         long_help = L::verbose_long_help(),
     )]
-    pub verbose: Option<u8>,
+    pub verbose: u8,
 
     #[arg(
         long,
@@ -37,7 +37,7 @@ impl<L: LogLevel> Verbosity<L> {
     /// Create a new verbosity instance by explicitly setting the values
     pub fn new(verbose: u8, quiet: u8) -> Self {
         Verbosity {
-            verbose: Some(verbose),
+            verbose,
             quiet,
             phantom: std::marker::PhantomData,
         }
@@ -63,7 +63,7 @@ impl<L: LogLevel> Verbosity<L> {
     }
 
     fn verbosity(&self) -> i8 {
-        level_value(L::default()) - (self.quiet as i8) + (self.verbose.unwrap() as i8)
+        level_value(L::default()) - (self.quiet as i8) + (self.verbose as i8)
     }
 }
 

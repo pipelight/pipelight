@@ -1,9 +1,5 @@
 // Structs
-use cli::actions::watch;
-use cli::services::{Action, FgBg, Service};
 use cli::types::{Commands, PreCommands};
-use utils::git::Hook;
-use workflow::Config;
 // Error Handling
 use miette::Result;
 // Global vars

@@ -5,6 +5,8 @@ use workflow::{Getters, Node, Pipeline};
 // Globals
 use crate::globals::CLI;
 use crate::verbosity::external::{level_value, Verbosity};
+use log::LevelFilter;
+use utils::globals::LOGGER;
 // Traits
 use crate::services::traits::FgBg;
 // Error Handling
@@ -15,26 +17,26 @@ pub fn launch(name: &str) -> Result<()> {
     let mut pipeline = Pipeline::get_by_name(name)?;
     let config = workflow::Config::get()?;
 
+    println!("{:#?}", LOGGER.lock().unwrap().pipelines);
+
     // Guard
     if pipeline.is_triggerable()? {
         let mut args = CLI.lock().unwrap().clone();
 
-        if args.verbose.verbose.is_some() {
+        if args.verbose.log_level_filter() == LevelFilter::Error {
             if config.has_loglevel_option().unwrap() {
-                let mut level = None;
                 if let Some(level_filter) = config.get_default_loglevel().ok() {
-                    level = level_filter.to_level()
+                    let level = level_filter.to_level();
+                    args.verbose = Verbosity::new(level_value(level).try_into().unwrap(), 0);
+                    LOGGER.lock().unwrap().set_level(&level_filter)?;
                 }
-                args.verbose = Verbosity::new(level_value(level).try_into().unwrap(), 0);
-                // LOGGER.lock().unwrap().set_level(&args.verbose)?;
             }
             if pipeline.has_loglevel_option().unwrap() {
-                let mut level = None;
                 if let Some(level_filter) = pipeline.get_default_loglevel().ok() {
-                    level = level_filter.to_level()
+                    let level = level_filter.to_level();
+                    args.verbose = Verbosity::new(level_value(level).try_into().unwrap(), 0);
+                    LOGGER.lock().unwrap().set_level(&level_filter)?;
                 }
-                args.verbose = Verbosity::new(level_value(level).try_into().unwrap(), 0);
-                // LOGGER.lock().unwrap().set_level(&args.verbose)?;
             }
         }
 

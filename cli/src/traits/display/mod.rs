@@ -23,7 +23,7 @@ impl fmt::Display for Cli {
             string += " ";
             string += &format!("-- {}", self.raw.clone().unwrap().join(" "));
         }
-        if self.verbose.verbose.is_some() {
+        if self.verbose.log_level_filter() != LevelFilter::Error {
             string += &from_verbosity_to_string(self.verbose.clone());
         }
         string += &from_internal_verbosity_to_string(self.internal_verbose.clone());

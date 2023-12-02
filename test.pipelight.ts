@@ -12,6 +12,7 @@ const flags = parse(Deno.args, {
 const config: Config = {
   options: {
     attach: false,
+    log_level: "info",
   },
   pipelines: [
     pipeline("test", () => [step(`test`, () => ["pwd"])]).attach(),

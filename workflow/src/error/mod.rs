@@ -1,6 +1,5 @@
 // Error Handling
-use miette::{Diagnostic, ErrReport, MietteDiagnostic, MietteError, Report, Result};
-use thiserror::Error;
+use miette::{MietteDiagnostic,  Result};
 
 /**
 A json report type with hint, colors and code span for better pipeline debugging
