@@ -125,7 +125,7 @@ And explore logs:
 pipelight logs -vvvv
 ```
 
-## 💑 Community
+## Community
 
 Reach the community whenever you need support or software improvements. On
 [discord](https://discord.gg/swNRD3Xysz) or on telegram at
