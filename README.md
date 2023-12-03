@@ -18,7 +18,7 @@ be used from inside a terminal.
 Checkout the [Documentation](https://pipelight.dev) for a much friendly approach
 and a deeper understanding.
 
-## ☺️  Define pipelines with a programming language
+## Define pipelines with a programming language
 
 Fold your bash commands into an object `Pipeline{ Step{ Command }}` written in
 **Typescript**, and it executes the pipeline on some events.
