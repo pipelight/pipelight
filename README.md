@@ -5,31 +5,27 @@
 </h1>
 </span>
 
-You should checkout the [Documentation](https://pipelight.dev) for a much
-friendly approach and a deeper understanding.
+Automate your most boring and repetitive tasks.
 
-## Get help (fast)!
+- Define pipelines using **typescript, toml and yaml**.
+- Pipelines get triggered on specific events (git hooks, file changes).
 
-Pipelight is a young software and has become stable pretty recently. If you
-encouter a bug or whatever difficulty, please open an issue or send a message on
-[discord](https://discord.gg/swNRD3Xysz) or on telegram at
-[@Areskul](https://t.me/areskul) or send a mail at areskul@areskul.com.
+## A lightweight tool for CICD
 
-## A lightweight software
+Pipelight is a [Rust](https://www.rust-lang.org/) based small(13Mb) cli tool to
+be used from inside a terminal.
 
-Pipelight is a 13Mb binary, to be used in the terminal.
-
-It aims to automate boring and repetitive tasks.
-
-You fold your bash commands into a `Pipeline{ Step{ Command }}` written in
-**Typescript** (Yaml or Toml), and it executes the pipeline on some events.
+Checkout the [Documentation](https://pipelight.dev) for a much friendly approach
+and a deeper understanding.
 
 ## Define pipelines with a programming language
 
-Create a `pipelight.ts` file on your project root directory. Then use and
-combine your favorite syntax flavors.
+Fold your bash commands into a `Pipeline{ Step{ Command }}` written in
+**Typescript**, and it executes the pipeline on some events.
 
-Use a verbose and declarative syntax. (Objects API)
+As long as you know javascript, you are ready to go
+
+Use a verbose and declarative syntax (Objects API).
 
 ```ts
 const my_pipeline = {
@@ -47,7 +43,7 @@ const my_pipeline = {
 };
 ```
 
-Use the provided sweet shorthands, or make your owns. (Helpers API)
+Use the provided sweet shorthands (Helpers API).
 
 ```ts
 const my_pipeline = pipeline("build website", () => [
@@ -62,8 +58,10 @@ const my_pipeline = pipeline("build website", () => [
 
 ## Automatic triggers
 
-Add automatic triggers to your pipeline. Run tests on file change. Push to
-production on new tag...
+Add automatic triggers to your pipeline.
+
+- Run tests on file change,
+- Deploy to production on push to master,...
 
 ```sh
 # enable watcher and git hooks.
@@ -73,12 +71,12 @@ pipelight enable watcher
 
 ```ts
 pipeline.add_trigger({
-  tags: ["v*"],
-  actions: ["pre-commit", "pre-push"],
+  branch: ["master"],
+  actions: ["pre-push"],
 });
 ```
 
-## Pretty and Verbose logs
+## Pretty and verbose logs
 
 ```sh
 pipelight logs
@@ -92,53 +90,37 @@ pipelight logs -vvvv
 
 <img width="500px" alt="pretty logs" src="https://pipelight.dev/images/log_level_trace.png"/>
 
-## Try it quick (ArchLinux)
+## Install (Linux)
 
-Install
+Checkout the
+[instruction guide](https://pipelight.dev/introduction/install.html) for your
+favorite package manager.
 
-```sh
-paru -S pipelight-git
-```
+## Get started!
 
-Ensure the default configuration file.
+Create a default configuration file `pipelight.ts` in your project root
+directory with:
 
 ```sh
 pipelight init
 ```
 
-Will generate this default typescript configuration file.
-
-```ts
-// pipelight.ts
-import type { Pipeline } from "https://deno.land/x/pipelight/mod.ts";
-const my_pipeline: Pipeline = {
-  name: "example",
-  steps: [
-    {
-      name: "list directory",
-      commands: ["ls"],
-    },
-    {
-      name: "get present working directory",
-      commands: ["pwd"],
-    },
-  ],
-};
-export default {
-  pipelines: [my_pipeline],
-};
-```
-
-Try the harmless default pipeline
+Try the harmless default pipeline:
 
 ```sh
 pipelight run
 ```
 
-Explore logs
+And explore logs:
 
 ```sh
 pipelight logs -vvvv
 ```
+
+## Community
+
+Reach the community whenever you need support or software improvements. On
+[discord](https://discord.gg/swNRD3Xysz) or on telegram at
+[@Areskul](https://t.me/areskul) or send a mail at areskul@areskul.com.
 
 Licensed under GNU GPLv2 Copyright (C) 2023 Areskul
