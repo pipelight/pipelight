@@ -10,7 +10,7 @@ Automate your most boring and repetitive tasks.
 - Define pipelines using **typescript, toml and yaml**.
 - Pipelines get triggered on specific events (git hooks, file changes).
 
-## A lightweight tool for CICD
+## 📦 A lightweight tool for CICD
 
 Pipelight is a [Rust](https://www.rust-lang.org/) based small(13Mb) cli tool to
 be used from inside a terminal.
@@ -18,7 +18,7 @@ be used from inside a terminal.
 Checkout the [Documentation](https://pipelight.dev) for a much friendly approach
 and a deeper understanding.
 
-## Define pipelines with a programming language
+## ☺️  Define pipelines with a programming language
 
 Fold your bash commands into an object `Pipeline{ Step{ Command }}` written in
 **Typescript**, and it executes the pipeline on some events.
@@ -57,7 +57,7 @@ const my_pipeline = pipeline("build website", () => [
 ]);
 ```
 
-## ⚙️ \ Automatic triggers
+## ⚙️ Automatic triggers
 
 Add automatic triggers to your pipeline.
 
@@ -77,7 +77,7 @@ pipeline.add_trigger({
 });
 ```
 
-## 🫦\ Pretty and verbose logs
+## 🫦 Pretty and verbose logs
 
 Get the pipeline most relevant informations or dive into the steps and commands
 standard outputs.
@@ -98,13 +98,13 @@ pipelight logs -vvvv
 
 <img width="500px" alt="pretty logs" src="https://pipelight.dev/images/log_level_trace.png"/>
 
-## Install (Linux)
+## 🛠️ Install (Linux)
 
 Checkout the
 [instruction guide](https://pipelight.dev/introduction/install.html) for your
 favorite package manager.
 
-## Get started!
+## 🚀 Get started!
 
 Create a default configuration file `pipelight.ts` in your project root
 directory with:
@@ -125,7 +125,7 @@ And explore logs:
 pipelight logs -vvvv
 ```
 
-## Community
+## 💑 Community
 
 Reach the community whenever you need support or software improvements. On
 [discord](https://discord.gg/swNRD3Xysz) or on telegram at
