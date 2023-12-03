@@ -20,10 +20,11 @@ and a deeper understanding.
 
 ## Define pipelines with a programming language
 
-Fold your bash commands into a `Pipeline{ Step{ Command }}` written in
+Fold your bash commands into an object `Pipeline{ Step{ Command }}` written in
 **Typescript**, and it executes the pipeline on some events.
 
-As long as you know javascript, you are ready to go
+As long as you know javascript, you are ready to go with your favorite syntax
+flavor 🍦.
 
 Use a verbose and declarative syntax (Objects API).
 
@@ -56,7 +57,7 @@ const my_pipeline = pipeline("build website", () => [
 ]);
 ```
 
-## Automatic triggers
+## ⚙️ \ Automatic triggers
 
 Add automatic triggers to your pipeline.
 
@@ -76,13 +77,20 @@ pipeline.add_trigger({
 });
 ```
 
-## Pretty and verbose logs
+## 🫦\ Pretty and verbose logs
+
+Get the pipeline most relevant informations or dive into the steps and commands
+standard outputs.
+
+Get the pipeline status, event, execution time... and more.
 
 ```sh
 pipelight logs
 ```
 
 <img width="500px" alt="pretty logs" src="https://pipelight.dev/images/log_level_error.png"/>
+
+Get a tranparent outputs of every subprocesses.
 
 ```sh
 pipelight logs -vvvv
