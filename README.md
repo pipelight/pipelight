@@ -10,13 +10,13 @@ Automate your most boring and repetitive tasks.
 - Define pipelines using **typescript, toml and yaml**.
 - Pipelines get triggered on specific events (git hooks, file changes).
 
+Checkout the [Documentation](https://pipelight.dev) for a much friendly approach
+and a deeper understanding.
+
 ## 📦 A lightweight tool for CICD
 
 Pipelight is a [Rust](https://www.rust-lang.org/) based small(13Mb) cli tool to
 be used from inside a terminal.
-
-Checkout the [Documentation](https://pipelight.dev) for a much friendly approach
-and a deeper understanding.
 
 ## Define pipelines with a programming language
 
