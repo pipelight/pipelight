@@ -1,5 +1,5 @@
 {
-  description = "Pipelight - Automation pipelines";
+  description = "Pipelight - Tiny automation pipelines";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
