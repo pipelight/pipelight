@@ -53,10 +53,11 @@ impl PreCommands {
             }
             PreCommands::Enable(e) => {
                 if let Some(commands) = e.commands.clone() {
+                    let args = CLI.lock().unwrap().clone();
                     match commands {
                         ToggleCommands::GitHooks => Hook::enable()?,
                         ToggleCommands::Watcher => {
-                            let service = Service::new(Action::Watch, None)?;
+                            let service = Service::new(Action::Watch, Some(args))?;
                             service.detach()?;
                         }
                     }
