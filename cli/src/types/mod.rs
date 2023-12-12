@@ -17,7 +17,7 @@ It casts arguments into the appropriate struct.
 let args = Cli::from_arg_matches(&matches)
 
 */
-#[derive(Debug, Clone, Parser)]
+#[derive(Debug, Clone, Parser, PartialEq)]
 pub struct Cli {
     /**
     The set of subcommands.
