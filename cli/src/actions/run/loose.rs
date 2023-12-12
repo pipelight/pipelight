@@ -16,7 +16,6 @@ pub fn launch(name: &str) -> Result<()> {
     // Guard
     if pipeline.is_triggerable()? {
         let args = CLI.lock().unwrap().clone();
-
         match args.attach {
             None => {
                 Service::new(Action::RunLoose, Some(args))?.should_detach()?;

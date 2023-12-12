@@ -38,18 +38,6 @@ pub fn launch(name: &str) -> Result<()> {
             }
         }
 
-        if args.attach.is_none() {
-            // Retrieve global options
-            if config.has_attach_option().unwrap() {
-                args.attach = Some(!config.should_detach()?);
-            }
-
-            // Retrieve per-pipeline options
-            if pipeline.has_attach_option().unwrap() {
-                args.attach = Some(!pipeline.should_detach()?);
-            }
-        }
-
         match args.attach {
             None => {
                 Service::new(Action::RunStrict, Some(args))?.should_detach()?;
