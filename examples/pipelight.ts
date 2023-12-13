@@ -1,4 +1,5 @@
 import type { Config, Pipeline } from "https://deno.land/x/pipelight/mod.ts";
+import {pipeline, step } from "https://deno.land/x/pipelight/mod.ts";
 import { parse } from "https://deno.land/std/flags/mod.ts";
 
 const flags = parse(Deno.args, {
@@ -10,6 +11,7 @@ const flags = parse(Deno.args, {
 
 const config: Config = {
   pipelines: [
+    pipeline("test", () => [step(`test`, () => ["pwd"])]).attach(),
     {
       name: "test_kill",
       steps: [
@@ -60,10 +62,11 @@ const config: Config = {
             {
               name: "test",
               commands: ["llls"],
-              mode: "continue",
+              options: {
+                mode: "continue",
+              },
             },
           ],
-          mode: "continue",
         },
         {
           parallel: [
