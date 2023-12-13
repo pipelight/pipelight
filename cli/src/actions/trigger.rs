@@ -2,7 +2,6 @@
 use crate::services::types::{Action, Service};
 use crate::types::{Commands, DetachableCommands, Pipeline, PostCommands, Trigger};
 use crate::verbosity::external::{level_value, Verbosity};
-
 use workflow;
 // Traits
 use crate::services::traits::FgBg;
@@ -12,9 +11,24 @@ use rayon::prelude::*;
 // Globals
 use crate::globals::CLI;
 // Error Handling
-use miette::Result;
+use miette::{Error, Result};
 
-pub fn launch(trigger: &Trigger) -> Result<()> {
+pub fn launch() -> Result<()> {
+    let trigger: Trigger;
+    let args = CLI.lock().unwrap().clone();
+    // Retrieve command line args
+    match args.commands {
+        Commands::PostCommands(PostCommands::DetachableCommands(DetachableCommands::Trigger(
+            e,
+        ))) => {
+            trigger = e;
+        }
+        _ => {
+            let message = "Couldn.t retrieve pipeline name";
+            return Err(Error::msg(message));
+        }
+    };
+
     let mut pipelines = workflow::Pipeline::get()?;
     let config = workflow::Config::get()?;
 

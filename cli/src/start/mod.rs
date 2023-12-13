@@ -53,10 +53,11 @@ impl PreCommands {
             }
             PreCommands::Enable(e) => {
                 if let Some(commands) = e.commands.clone() {
+                    let args = CLI.lock().unwrap().clone();
                     match commands {
                         ToggleCommands::GitHooks => Hook::enable()?,
                         ToggleCommands::Watcher => {
-                            let service = Service::new(Action::Watch, None)?;
+                            let service = Service::new(Action::Watch, Some(args))?;
                             service.detach()?;
                         }
                     }
@@ -86,21 +87,16 @@ impl DetachableCommands {
                         DetachableCommands::Run(e.to_owned()),
                     ))
                 }
-                if let Some(name) = &e.name {
-                    run::strict::launch(name)?;
+                if e.name.is_some() {
+                    Service::new(Action::RunLoose, Some(args))?.should_detach()?;
                 }
-                // match args.attach {
-                //     None => Service::new(Action::Run, Some(args))?.should_detach()?,
-                //     Some(false) => Service::new(Action::Run, Some(args))?.should_detach()?,
-                //     Some(true) => run::launch(&e.name.clone().unwrap())?,
-                // }
             }
-            DetachableCommands::Watch => match args.attach {
-                None => Service::new(Action::Watch, Some(args))?.should_detach()?,
-                Some(false) => Service::new(Action::Watch, Some(args))?.should_detach()?,
-                Some(true) => watch::Watcher::start()?,
-            },
-            DetachableCommands::Trigger(trigger) => trigger::launch(trigger)?,
+            DetachableCommands::Watch => {
+                Service::new(Action::Watch, Some(args))?.should_detach()?;
+            }
+            DetachableCommands::Trigger(..) => {
+                Service::new(Action::Trigger, Some(args))?.should_detach()?
+            }
         }
         Ok(())
     }

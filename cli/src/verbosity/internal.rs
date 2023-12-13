@@ -1,7 +1,7 @@
 pub use log::Level;
 pub use log::LevelFilter;
 
-#[derive(clap::Args, Debug, Clone)]
+#[derive(clap::Args, Debug, Clone, PartialEq)]
 pub struct InternalVerbosity<L: LogLevel = ErrorLevel> {
     #[arg(
         long,
@@ -100,7 +100,7 @@ pub trait LogLevel {
     }
 }
 
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq)]
 pub struct ErrorLevel;
 
 impl LogLevel for ErrorLevel {
@@ -109,7 +109,7 @@ impl LogLevel for ErrorLevel {
     }
 }
 
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq)]
 pub struct WarnLevel;
 
 impl LogLevel for WarnLevel {
@@ -118,7 +118,7 @@ impl LogLevel for WarnLevel {
     }
 }
 
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default, PartialEq)]
 pub struct InfoLevel;
 
 impl LogLevel for InfoLevel {

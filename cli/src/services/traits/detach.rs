@@ -2,9 +2,13 @@
 use crate::services::types::Service;
 // Process manipulation
 use exec::SelfProcess;
+// Globals
+use crate::globals::CLI;
 // Error Handling
 use log::trace;
 use miette::Result;
+
+use super::Exec;
 
 pub trait FgBg {
     /**
@@ -24,8 +28,15 @@ pub trait FgBg {
 
 impl FgBg for Service {
     fn attach(&self) -> Result<()> {
+    let origin = CLI.lock().unwrap().clone();
         if let Some(args) = self.args.clone() {
+            if args == origin{
+
+        self.exec()?;
+            }else{
+
             SelfProcess::run_fg_with_cmd(&String::from(&args))?;
+            }
         }
         Ok(())
     }
@@ -43,7 +54,7 @@ impl FgBg for Service {
                     self.attach()?;
                 }
                 Some(false) => {
-                    trace!("detach pipelight process");
+                    trace!("pipelight process is detached");
                     // Exit the detach loop
                     if let Some(e) = self.args.as_mut() {
                         e.attach = Some(true);
@@ -51,7 +62,7 @@ impl FgBg for Service {
                     self.detach()?;
                 }
                 None => {
-                    trace!("detach pipelight process");
+                    trace!("pipelight process is detached");
                     // Exit the detach loop
                     if let Some(e) = self.args.as_mut() {
                         e.attach = Some(true);
