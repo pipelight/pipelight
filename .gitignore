@@ -9,6 +9,7 @@ test/*pipelight*
 /target
 # Nixos
 /result
+gifs/
 
 ## Nixos direnv cache
 .direnv
