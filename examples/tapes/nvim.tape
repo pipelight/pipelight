@@ -3,10 +3,16 @@ Set Shell zsh
 Set Padding 24
 Set FontSize 24
 
-Set Height 600
-Set Width 900
-Output gifs/logs.gif
+Set Height 800
+Set Width 800
+Output gifs/nvim.gif
 
+Type "vi pipelight.toml"
+Sleep 500ms
+Enter
+Sleep 3500ms
+Type ":q"
+Enter
 Type "pipelight run"
 Enter
 Sleep 500ms
@@ -16,7 +22,7 @@ Up
 Sleep 500ms
 Enter
 
-Type "pipelight logs"
+Type "pipelight logs -vv"
 Enter
 Sleep 4s
 
