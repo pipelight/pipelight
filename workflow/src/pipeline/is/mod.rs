@@ -8,6 +8,7 @@ use utils::git::{Flag, Special};
 // Traits
 use exec::Status;
 // Error Handling
+use crate::error::IsError;
 use miette::{Error, Result};
 
 /**
@@ -68,25 +69,54 @@ impl Pipeline {
     /**
     Check if the pipeline can be triggered in the actual environment
     */
-    pub fn is_triggerable_strict(&self) -> Result<bool> {
+    pub fn is_triggerable_strict(&self) -> Result<()> {
         let env = Trigger::get()?;
         // If pipeline has defined triggers
         if let Some(triggers) = self.triggers.clone() {
-            Ok(env.has_match_strict(triggers)?)
+            if env.has_match_strict(triggers)? {
+                return Ok(());
+            } else {
+                let (message, hint) = self.make_trigger_hint()?;
+                Err(IsError::new(&message, &hint)?.into())
+            }
         } else {
-            Ok(false)
+            let (message, hint) = self.make_trigger_hint()?;
+            Err(IsError::new(&message, &hint)?.into())
         }
     }
+    pub fn make_trigger_hint(&self) -> Result<(String, String)> {
+        let mut string = "".to_owned();
+        if let Some(triggers) = self.triggers.clone() {
+            // let actions = triggers.iter().map(|e| e.get_action());
+            for trigger in triggers {
+                string += &format!("{}\n", trigger);
+            }
+        }
+        let message = "You are not allowed to trigger the pipeline in this environment".to_owned();
+
+        let mut hint = "".to_owned();
+        hint += "Checkout to an authorized git branch or use an authorized action.\n";
+        hint += "Authorized triggers are:\n\n";
+        hint += &string;
+
+        Ok((message, hint))
+    }
+
     /**
     Check if the pipeline can be triggered in the actual environment
     */
-    pub fn is_triggerable(&self) -> Result<bool> {
+    pub fn is_triggerable(&self) -> Result<()> {
         let env = Trigger::get()?;
         // If pipeline has defined triggers
         if let Some(triggers) = self.triggers.clone() {
-            Ok(env.has_match(triggers)?)
+            if env.has_match(triggers)? {
+                return Ok(());
+            } else {
+                let (message, hint) = self.make_trigger_hint()?;
+                Err(IsError::new(&message, &hint)?.into())
+            }
         } else {
-            Ok(true)
+            Ok(())
         }
     }
     /**
@@ -149,7 +179,7 @@ impl Pipeline {
             Ok(false)
         }
     }
-     
+
     /**
      Report if pipeline has options
     */

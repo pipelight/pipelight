@@ -93,7 +93,9 @@ impl DetachableCommands {
                     // Usefull SafeGuard that early returns fancy error
                     // if pipeline name not found
                     // on detach mode
-                    let _ = Pipeline::get_by_name(&name)?;
+                    let pipeline = Pipeline::get_by_name(&name)?;
+                    pipeline.is_triggerable()?;
+
                     Service::new(Action::RunLoose, Some(args))?.should_detach()?;
                 }
             }

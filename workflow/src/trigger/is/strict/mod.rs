@@ -1,4 +1,7 @@
-/// Strict trigger matching algorithm
+/*
+Strict trigger matching algorithm
+*/
+
 // Test
 mod test;
 // Struct

@@ -32,7 +32,7 @@ pub fn launch() -> Result<()> {
     let config = workflow::Config::get()?;
 
     // Guard
-    if pipeline.is_triggerable()? {
+    pipeline.is_triggerable()?;
         if args.verbose.log_level_filter() == LevelFilter::Error {
             if config.has_loglevel_option().unwrap() {
                 if let Some(level_filter) = config.get_default_loglevel().ok() {
@@ -63,19 +63,4 @@ pub fn launch() -> Result<()> {
             }
             _ => Ok(()),
         }
-    } else {
-        let mut string = "".to_owned();
-        if let Some(triggers) = pipeline.triggers {
-            // let actions = triggers.iter().map(|e| e.get_action());
-            for trigger in triggers {
-                string += &format!("{}\n", trigger);
-            }
-        }
-        let mut hint = "".to_owned();
-        hint += "Checkout to an authorize git branch or use an authorize action:\n";
-        hint += &string;
-
-        let message = "Can not trigger the pipeline in this environment";
-        Err(IsError::new(message, &hint)?.into())
-    }
 }

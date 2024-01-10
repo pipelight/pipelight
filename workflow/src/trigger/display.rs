@@ -18,14 +18,14 @@ impl fmt::Display for Trigger {
                 if let Some(tag) = self_trigger_tag.clone().tag {
                     string += "tag: ";
                     string += &tag;
-                    string += " ";
+                    string += ", ";
                 }
             }
             Trigger::TriggerBranch(self_trigger_branch) => {
                 if let Some(branch) = self_trigger_branch.clone().branch {
                     string += "branch: ";
                     string += &branch;
-                    string += " ";
+                    string += ", ";
                 }
             }
         };
