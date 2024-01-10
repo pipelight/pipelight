@@ -27,13 +27,25 @@ impl Getters<Pipeline> for Pipeline {
     */
     fn get_by_name(name: &str) -> Result<Pipeline> {
         let pipelines = Pipeline::get()?;
+
+        // Get pipelines names
+        let items = pipelines.iter().map(|e| &e.name).collect::<Vec<&String>>();
+
         let optional = pipelines.iter().find(|p| p.name == name);
         match optional {
             Some(res) => Ok(res.to_owned()),
             None => {
                 let message = format!("Couldn't find pipeline: {:?}", name);
-                let hint = "You may have made a typo";
-                Err(IsError::new(&message, hint)?.into())
+
+                let mut string = "".to_owned();
+                for name in items {
+                    string += &format!("{}\n", name);
+                }
+
+                let mut hint = "".to_owned();
+                hint += "Available pipelines are:\n\n";
+                hint += &string;
+                Err(IsError::new(&message, &hint)?.into())
             }
         }
     }
@@ -58,7 +70,7 @@ impl Pipeline {
                 Ok(LevelFilter::Error)
             }
         } else {
-                Ok(LevelFilter::Error)
+            Ok(LevelFilter::Error)
         }
     }
 }
