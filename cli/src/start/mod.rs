@@ -4,6 +4,8 @@ use crate::services::types::{Action, Service};
 use crate::types::Cli;
 use crate::types::{ColoredOutput, LogsCommands, ToggleCommands};
 use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
+use workflow::{Getters, Pipeline};
+
 use utils::git::Hook;
 // Clap
 use clap::ValueEnum;
@@ -87,7 +89,11 @@ impl DetachableCommands {
                         DetachableCommands::Run(e.to_owned()),
                     ))
                 }
-                if e.name.is_some() {
+                if let Some(name) = e.name.clone() {
+                    // Usefull SafeGuard that early returns fancy error
+                    // if pipeline name not found
+                    // on detach mode
+                    let _ = Pipeline::get_by_name(&name)?;
                     Service::new(Action::RunLoose, Some(args))?.should_detach()?;
                 }
             }

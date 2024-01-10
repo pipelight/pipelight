@@ -1,5 +1,6 @@
-use miette::{Diagnostic, Report, Result};
+use miette::{Diagnostic, Report};
 use thiserror::Error;
+
 /**
 A config error with help.
 Can be recursively chained.
