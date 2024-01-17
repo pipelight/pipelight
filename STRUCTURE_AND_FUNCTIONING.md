@@ -7,6 +7,8 @@ understanding.
 
 ## pipelight crate
 
+**Entry point**
+
 This crate is the smallest and has only one purpose. It is the entry point for
 building a single binary.
 
@@ -23,6 +25,8 @@ comfortable structures.
 
 ## utils crate
 
+**Trivial convenience tooling**
+
 Contains great utility functions for some trivial things.
 
 - git (fetch somoe info on git repositpories and generate git-hooks)
@@ -32,15 +36,35 @@ Contains great utility functions for some trivial things.
 - files (Query the filesystem)
 - signal (functions to handle SIGTERM, Ctrl-C and others)
 
+## template crate
+
+**Generate config file templates**
+
+Contains the functions to generate templates when using commands like
+`pipelight init --template toml`
+
+## exec crate
+
+**Wrapper around process execution**
+
+Functions to pipe processes output, retrieve pid, cwd and so on.
+
 ## switch crate
 
 **A switch/case over commands line args**
 
 Determines which functions to run based on the command line arguments.
 
-## pipeline crate
+## cli crate
 
-**The pipeline executionl ogique***
+**Command line structure definition**
+
+Define the command line sub-command, options and arguments. Makes extensive use
+of [Clap.rs](https://docs.rs/clap/latest/clap/)
+
+## workflow crate
+
+**The pipeline execution logique***
 
 Read the Pipeline Struct extracted from tthe configuration file and set the
 execution workflow.
