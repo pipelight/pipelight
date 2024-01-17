@@ -1,16 +1,51 @@
 # Contributing
 
-## Guidelines
+## Setup
 
-Concerning the source code and programming methods their is no such limiting things as rules.
-If you feel the need to tweak the code, just do it!
-Everything subsidiary as style and reusability will come later.
+Download the source code.
+
+```sh
+git clone <repo_url>
+```
+
+And build on your machine.
+
+```sh
+cd <repo_name>
+cargo build
+```
+
+Run tests with
+
+```sh
+cd <repo_name>
+cargo tests
+```
+
+Try the built binary.
+
+```sh
+cargo run --bin pipelight
+```
+
+```sh
+cargo run --bin pipelight --help
+```
+
+```sh
+cargo run --bin pipelight ls
+```
 
 ## On Nixos
 
-Deprecated usage of `nix-shell` command with shell.nix file  
-in favor of `nix develop` with flake.nix.
+Deprecated usage of `nix-shell` command with shell.nix file in favor of
+`nix develop` with flake.nix.
 
-## On Arch Linux
+To spawn a developing env with lsp formatter and linter.
 
-Mojo
+```sh
+nix develop
+```
+
+or do it automatically when you `cd` into the directory with
+[nix-direnv](https://github.com/nix-community/nix-direnv)
