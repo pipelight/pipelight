@@ -1,108 +1,55 @@
-# Internal API
+# Internal structure
 
-Here will be a quick overview of the crate, functions and global variables roles and interdependencies explanation.
+The pipelight source code is splitted into 5-6 crates.
 
-## Architectural choices
+You can find READMEs in each modules(crates) for better crate by crate
+understanding.
 
-### Synchronous rust
+## pipelight crate
 
-Rust async is like learning rust another time.
-Althought I love using async,
-I want to keep the code as simple as possibe, and found that async wasn't needed here.
+This crate is the smallest and has only one purpose. It is the entry point for
+building a single binary.
 
-Keeping the code synchronous allow for better error catching
-and fresh contributors understanding.
+## cast crate
 
-## Browsing the source code (must read)
+**File convertion utilities**
 
-You can find READMEs everywhere for better crate by crate exploration.
+Mostly a wrapper around [serde](https://github.com/serde-rs/serde). This crate
+contains the functions to read and parse `pipelight.<toml/yaml/ts>`
+configuration files into Rust simple structs.
 
-# The source code structure
+Beware! Those structs are not to be used as is and or converted to more
+comfortable structures.
 
-The pipelight source code is splitted into 5 crates.
-Every crate serves the one where all the logic happens,
-the **pipeline** crate.
+## utils crate
 
-## Cast crate
+Contains great utility functions for some trivial things.
 
-Mostly a wrapper around serde to get a config file parsed as Rust structs.
-And further check what is inside for type safty.
+- git (fetch somoe info on git repositpories and generate git-hooks)
+- logger (set the logger configuration on the fly)
+- teleport (find a file recursively in the filesystem)
+- dates (Date manipulation and serialization, Time computing)
+- files (Query the filesystem)
+- signal (functions to handle SIGTERM, Ctrl-C and others)
 
-## Utils crate
+## switch crate
 
-Contains utility functions to lessen the pain when doing some trivial
-things across the source code.
+**A switch/case over commands line args**
 
-They are simple to use because they higly abstract the logic beneath.
+Determines which functions to run based on the command line arguments.
 
-Divided in 3 main directories.
+## pipeline crate
 
-- Git
-- Logger
-- Teleport
+**The pipeline executionl ogique***
 
-### Git
+Read the Pipeline Struct extracted from tthe configuration file and set the
+execution workflow.
 
-Contains functions to:
+# Internal functionning
 
-- detect the git directory
-- create and ensure pipelight git hooks
+**When running a pipeline. This is what happens.**
 
-### Logger
+The entry point is `pipelight/src/main.rs`.
 
-Contains functions to:
-
-- create and ensure a logger
-
-### Teleport
-
-Certainly the MVP of the utils crate.
-
-Contains functions to:
-
-- Recursively search a file in through the fs
-- Telepor back and forth to the file
-
-### Dates
-
-Abstraction over date convertion and duration computation.
-
-### Files
-
-Abstraction over file reading, filepath (std::path::Path) usage...
-
-# Functionning
-
-When running a pipeline.
-This happens.
-
-Read config file -> Create a Inner Object (Pipeline struct) -> Run processes in the defined order while logging.
-
-### Configuration file reading
-
-The purpose of the first set of functions called when executing a CLI command,
-is to find, read and parse the pipelight configuration file.
-
-### Find
-
-The Teleport crate is a kind of [cosmiconfig](https://github.com/cosmiconfig/cosmiconfig).
-You call `Teleport::search("filename")` and it recursively seeks a file based on globbing pattern you provided.
-
-The advantages it provide is that it can change the process cwd to where the configuration file lays and change it again to the previous cwd.
-
-This is a back and forth teleportation to the folder that contain our file of interest.
-
-```rs
-let mut portal = Teleport::new().preffix("pipelight");
-portal.search()?;
-
-// Teleport process to file path
-portal.teleport();
-// Teleport process to where it was originaly launched
-portal.origin();
-
-```
-
-**The Teleport crate may be the first internal crate to be publicly released to crate.io.**
-
-### Read and Parse
+Then a switch/case function from `swicth/src/case,rs` to determine wich command
+to execute.

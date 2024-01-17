@@ -1,6 +1,6 @@
 # Contributing
 
-## Setup
+## Build and Run
 
 Download the source code.
 
@@ -36,7 +36,50 @@ cargo run --bin pipelight --help
 cargo run --bin pipelight ls
 ```
 
-## On Nixos
+## Internal documentation
+
+The main documentaion can be found at [pipelight.dev](https://pipelight.dev/).
+It explains the tool usage and functionning, however it doesn't say much on
+internal structure.
+
+1. The `INTERNALS.md` gives a quick overlook of how things works.
+
+2. There is a `README.md` detailling what is inside most of modules(crate).
+
+```sh
+.
+├── cast
+│   ├── public
+│   ├── README.md
+│   └── src
+├── cli
+│   ├── build.rs
+│   └── src
+├── exec
+│   ├── README.md
+│   └── src
+├── pipelight
+│   ├── README.md
+│   └── src
+├── switch
+│   └── src
+├── templates
+│   ├── README.md
+│   ├── src
+│   └── static
+├── utils
+│   ├── public
+│   ├── README.md
+│   └── src
+└── workflow
+    ├── README.md
+    └── src
+```
+
+3. Each internal modules and functions have exhaustive and improving
+   descriptions
+
+## Easy set up on Nixos
 
 Deprecated usage of `nix-shell` command with shell.nix file in favor of
 `nix develop` with flake.nix.
