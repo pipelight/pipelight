@@ -100,6 +100,9 @@ pipelight logs -vvvv
 
 ## 🛠️ Install (Linux)
 
+> [!IMPORTANT]  
+> Pipelight is not (yet) compatible with macOS or Windows.
+
 Checkout the
 [instruction guide](https://pipelight.dev/introduction/install.html) for your
 favorite package manager.
