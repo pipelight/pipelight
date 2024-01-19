@@ -1,8 +1,8 @@
 mod convert;
 mod detach;
-mod exec;
+mod execute;
 
 // Re-export
+pub use execute::Exec;
 pub use convert::Parser;
 pub use detach::FgBg;
-pub use exec::Exec;
