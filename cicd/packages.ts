@@ -29,6 +29,7 @@ const distros = [
   },
 ];
 
+// Create a docker environment to build package
 const makePipeline = ({ name, prefix, format }: any): Pipeline => {
   let pipeline: Pipeline = {
     name: `package:${name}`,

@@ -7,7 +7,12 @@
     flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = inputs:
+  outputs = {
+    nixpkgs,
+    rust-overlay,
+    flake-utils,
+    self,
+  } @ inputs:
     with inputs;
       flake-utils.lib.eachDefaultSystem (
         system: let
