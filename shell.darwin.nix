@@ -1,4 +1,11 @@
-{pkgs ? import <nixpkgs> {}}:
+{
+  pkgs ?
+    import <nixpkgs> {
+      crossSystem = {
+        config = "x86_64-apple-darwin";
+      };
+    },
+}:
 pkgs.mkShell rec {
   buildInputs = with pkgs; [
     clang
@@ -8,12 +15,6 @@ pkgs.mkShell rec {
     llvmPackages.bintools
     zlib
     rustup
-    #
-    # Need to be inmstalled rom inside the shell
-    # rustup component add <clippy,...>
-    # rust-analyzer # LSP Server
-    # rustfmt # Formatter
-    # clippy # Linter
   ];
   RUSTC_VERSION = pkgs.lib.readFile ./rust-toolchain.toml;
   # https://github.com/rust-lang/rust-bindgen#environment-variables

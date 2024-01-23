@@ -6,10 +6,16 @@ use dialoguer::{console::Term, Select};
 // Error Handling
 use miette::{Error, IntoDiagnostic, Result};
 
+// Signal handling
+use utils::signal::restore_term;
+
 /**
-Displays a selet prompt and add the selected pipeline name to the global CLI.
+Displays a selet prompt of available pipelines
+and return the selected string
 */
 pub fn pipeline() -> Result<String> {
+    restore_term()?;
+
     // Get pipelines names
     let pipelines = Pipeline::get()?;
     let items = pipelines.iter().map(|e| &e.name).collect::<Vec<&String>>();
@@ -33,10 +39,14 @@ pub fn pipeline() -> Result<String> {
         }
     }
 }
+
 /**
-Displays a selet prompt and add the selected pipeline name to the global CLI.
+Displays a selet prompt of running pipelines
+and return the selected string
 */
 pub fn running_pipeline() -> Result<String> {
+    restore_term()?;
+
     // Get pipelines names
     let pipelines = Filters::filter_by_status(Logs::get()?, Some(Status::Running))?;
     let items = pipelines.iter().map(|e| &e.name).collect::<Vec<&String>>();
