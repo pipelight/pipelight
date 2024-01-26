@@ -16,6 +16,8 @@ impl Switch {
             Commands::PreCommands(pre_commands) => match pre_commands {
                 PreCommands::Init(_) => {
                     pre_commands.start()?;
+                    // Deprecated config polling
+                    //
                     // set_globals()?;
                     // Set watcher
                     // let args = CLI.lock().unwrap().clone();

@@ -68,7 +68,7 @@ impl Finder {
     }
 
     /**
-    Search process and hydrate struct with matches.
+    Search matching processes and hydrate struct with matches.
     */
     pub fn search(&mut self) -> Result<Self> {
         let mut sys = System::new();
@@ -85,13 +85,15 @@ impl Finder {
         } else {
             for (pid, process) in sys.processes() {
                 // Guard - Ensure processes are running in same directory
-                let mut cond_pwd = true;
-                if let Some(cwd) = self.cwd.clone() {
-                    cond_pwd = cwd == env::current_dir().into_diagnostic()?.to_str().unwrap();
-                }
+                let mut cond_pwd: bool = false;
+                if let Some(process_cwd) = self.cwd.clone() {
+                    let cwd = env::current_dir().into_diagnostic()?;
+                    let cwd = cwd.to_str().unwrap();
 
+                    cond_pwd = process_cwd == cwd;
+                }
                 // Guard - Ensure command contains some seed(string)
-                let mut cond_seed = true;
+                let mut cond_seed = false;
                 if let Some(seeds) = self.seeds.clone() {
                     cond_seed = self.is_match_seeds(process)?;
                 };
@@ -115,8 +117,9 @@ impl Finder {
 
         Ok(self.to_owned())
     }
+
     /**
-    Kill processes if any.
+    Kill processes if founded any.
     */
     pub fn kill(&self) -> Result<()> {
         if let Some(matches) = self.matches.clone() {

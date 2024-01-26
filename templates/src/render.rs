@@ -132,7 +132,7 @@ impl Template {
     */
     fn write_ignore_file(&self, code: &String) -> Result<()> {
         let ignore_path = format!(
-            "{}/.gitignore",
+            "{}/.pipelight_ignore",
             env::current_dir().unwrap().to_str().unwrap(),
         );
         let path = Path::new(&ignore_path);

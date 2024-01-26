@@ -7,6 +7,7 @@ mod cast {
     #[test]
     fn toml() {
         let res = Config::load("./public/pipelight.toml", None);
+        println!("{:#?}", res);
         assert!(res.is_ok());
     }
     #[test]
@@ -17,13 +18,13 @@ mod cast {
     #[test]
     fn javascript() {
         let res = Config::load("./public/pipelight.js", None);
-        println!("{:?}",res);
+        // println!("{:?}", res);
         assert!(res.is_ok());
     }
     #[test]
     fn typescript() {
         let res = Config::load("./public/pipelight.ts", None);
-        println!("{:?}",res);
+        // println!("{:?}", res);
         assert!(res.is_ok());
     }
     #[test]

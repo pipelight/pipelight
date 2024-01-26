@@ -7,11 +7,12 @@ use exec::processes::Finder;
 // Error handling
 use miette::{Error, IntoDiagnostic, Result};
 
+impl Watcher {
+
 /**
 Check if an instance of pipelight watch is already
 watching the current working directory.
 */
-impl Watcher {
     pub fn has_homologous_already_running() -> Result<()> {
         // Search homologous
         let finder = Finder::new()

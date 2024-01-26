@@ -23,5 +23,7 @@ commands = ["ls"]
 name = "get working directory"
 commands = ["pwd"]
 
+[[pipelines.triggers]]
+actions = ["watch"]
 
 
