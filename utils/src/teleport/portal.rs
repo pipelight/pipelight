@@ -33,7 +33,9 @@ impl Portal {
         self.seed = Some(string.to_owned());
         self.to_owned()
     }
-    /// Recursively search a file throught parent
+    /*
+    Recursively search a file throught filesystem
+    */
     pub fn search(&mut self) -> Result<Self> {
         let seed = self.seed.clone();
         if let Some(seed) = seed {

@@ -3,6 +3,7 @@ use crate::services;
 use crate::services::{FgBg, Service};
 use crate::types::{Commands, DetachableCommands, PostCommands, Trigger};
 use utils::git::{Flag, Special};
+use utils::teleport::Portal;
 // use crate::trigger;
 // Globals
 use std::sync::Arc;
@@ -33,6 +34,26 @@ use thiserror::Error;
 struct MietteStub;
 
 /**
+ * Retrieve an ignore file fullpath if any.
+*/
+fn get_ignore_path() -> Result<String> {
+    // Search an ignore file to set a filter
+    let mut portal = Portal::new()?;
+    portal.seed(".pipelight_ignore");
+    match portal.search() {
+        Ok(res) => Ok(res.target.file_path.unwrap()),
+        Err(_) => {
+            let mut portal = Portal::new()?;
+            portal.seed(".gitignore");
+            match portal.search() {
+                Ok(res) => Ok(res.target.file_path.unwrap()),
+                Err(err) => return Err(err),
+            }
+        }
+    }
+}
+
+/**
 Build an appropriate watcher that:
 - self reconfigures on ignore file change
 - ignores pipelight generated tmp files
@@ -42,11 +63,17 @@ pub async fn build() -> Result<(Arc<Watchexec>, RuntimeConfig)> {
     // Default config
     let mut init = InitConfig::default();
     init.on_error(PrintDebug(std::io::stderr()));
-
     let mut runtime = RuntimeConfig::default();
-    let ignore_path = ".pipelight_ignore";
-    let filterer = filter_configuration(ignore_path).await?;
-    runtime.filterer(Arc::new(filterer));
+
+    // Search an ignore file to set a filter
+    match get_ignore_path() {
+        Ok(res) => {
+            let filterer = filter_configuration(&res).await?;
+            runtime.filterer(Arc::new(filterer));
+        }
+        Err(_) => {}
+    }
+
     // Watch cwd only
     runtime.pathset(vec![env::current_dir().unwrap()]);
 
@@ -61,9 +88,7 @@ pub async fn build() -> Result<(Arc<Watchexec>, RuntimeConfig)> {
 
         async move {
             // Self reconfigure on ignore file change
-            reconfigure(&w_clone, &r_clone, &action, ignore_path)
-                .await
-                .unwrap();
+            reconfigure(&w_clone, &r_clone, &action).await.unwrap();
             // Pipeline execution
             watch_trigger().unwrap();
             // Handle Stop signals
@@ -95,16 +120,21 @@ pub async fn reconfigure(
     watchexec: &Arc<Watchexec>,
     runtime: &RuntimeConfig,
     action: &Action,
-    ignorefile: &str,
 ) -> Result<()> {
-    for event in action.events.iter() {
-        if event.paths().any(|(p, _)| p.ends_with(ignorefile)) {
-            // Set Filter
-            let filterer = filter_configuration(ignorefile).await?;
-            let mut r = runtime.clone();
-            r.filterer(Arc::new(filterer));
-            watchexec.reconfigure(r).unwrap();
-            break;
+    if let Some(ignore_path) = get_ignore_path().ok() {
+        for event in action.events.iter() {
+            // if event.paths().any(|(p, _)| p.ends_with(ignorefile)) {
+            if event
+                .paths()
+                .any(|(p, _)| p.to_str().unwrap() == ignore_path)
+            {
+                // Set Filter
+                let filterer = filter_configuration(&ignore_path).await?;
+                let mut r = runtime.clone();
+                r.filterer(Arc::new(filterer));
+                watchexec.reconfigure(r).unwrap();
+                break;
+            }
         }
     }
     Ok(())
@@ -123,7 +153,7 @@ pub async fn filter_configuration(path: &str) -> Result<IgnoreFilterer> {
         applies_in: Some(applies_in.clone()),
         applies_to: None,
     };
-    let globs = [".pipelight/*", ".git", ".cargo"];
+    let globs = [".pipelight/*", ".git", ".cargo", ".node_modules"];
     let mut filter: IgnoreFilter = IgnoreFilter::empty(applies_in.clone());
     filter
         .add_globs(&globs, Some(&applies_in))

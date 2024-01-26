@@ -1,3 +1,5 @@
-# Pipelight internal directory
+# Git dir
+.git/
+# Pipelight dir
 .pipelight/
 
