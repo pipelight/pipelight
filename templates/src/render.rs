@@ -123,7 +123,7 @@ impl Template {
             .register_embed_templates::<Assets>()
             .into_diagnostic()?;
         let rendered_string = handlebars
-            .render_with_context("gitignore", &Context::null())
+            .render_with_context("pipelight_ignore", &Context::null())
             .into_diagnostic()?;
         Ok(rendered_string)
     }
