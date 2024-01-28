@@ -8,8 +8,7 @@ pkgs.mkShell rec {
     llvmPackages.bintools
     zlib
     rustup
-    #
-    # Need to be inmstalled rom inside the shell
+    # Need to be installed from inside the shell
     # rustup component add <clippy,...>
     # rust-analyzer # LSP Server
     # rustfmt # Formatter

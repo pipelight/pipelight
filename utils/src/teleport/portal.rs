@@ -15,7 +15,9 @@ use log::{info, trace};
 use miette::{Error, IntoDiagnostic, Result};
 
 impl Portal {
-    /// Jump between PWD and the directory of the loaded config file.
+    /*
+    Jump between PWD and the directory of the loaded config file.
+    */
     pub fn teleport(&mut self) -> Result<Self> {
         let target = self.target.directory_path.clone().unwrap();
         env::set_current_dir(target.clone()).into_diagnostic()?;
@@ -28,7 +30,9 @@ impl Portal {
         info!("working directory changed to -> {:#?}", &target);
         Ok(self.to_owned())
     }
-    // Set seed string, file name, relative path, absolute path
+    /*
+    Set seed string, file name, relative path, absolute path
+    */
     pub fn seed(&mut self, string: &str) -> Self {
         self.seed = Some(string.to_owned());
         self.to_owned()
@@ -102,15 +106,18 @@ impl Portal {
             let file_str = format!("{}/{}", self.current.directory_path.clone().unwrap(), name);
             let path = Path::new(&file_str);
             // SafeGuard
-            if path.extension().is_none() {
-                return Err(Error::msg("Couldn't find file"));
+            // if path.extension().is_none() {
+            if path.is_dir() {
+                let msg = format!("Couldn't find file {}", name);
+                return Err(Error::msg(msg));
             }
             if path.exists() {
                 self.target.file(path.display().to_string())?;
             } else if self.parent().is_ok() {
                 self.search_file()?;
             } else {
-                return Err(Error::msg("Couldn't find file"));
+                let msg = format!("Couldn't find file {}", name);
+                return Err(Error::msg(msg));
             }
         }
         Ok(())
@@ -126,16 +133,15 @@ impl Portal {
             }
             // SafeGuard
             if path.extension().is_none() {
-                return Err(Error::msg("Couldn't find file"));
+                let msg = format!("Couldn't find file at path {}", path_str);
+                return Err(Error::msg(msg));
             }
             if path.exists() {
                 self.target.file(path.display().to_string())?;
                 Ok(())
             } else {
-                Err(Error::msg(format!(
-                    "Couldn't find file at path {:#?}",
-                    path_str
-                )))
+                let msg = format!("Couldn't find file at path {}", path_str);
+                return Err(Error::msg(msg));
             }
         } else {
             Err(Error::msg("No path was provided"))
@@ -143,6 +149,8 @@ impl Portal {
     }
     pub fn search_prefix(&mut self) -> Result<()> {
         trace!("search prefix");
+        let seed = self.seed.clone();
+
         let mut exists = false;
         // Loop through file types
         for file_type in FileType::iter() {
@@ -167,7 +175,8 @@ impl Portal {
             if self.parent().is_ok() {
                 self.search_prefix()?;
             } else {
-                return Err(Error::msg("Couldn't find file "));
+                let msg = format!("Couldn't find file with seed {}", seed.unwrap());
+                return Err(Error::msg(msg));
             }
         }
         Ok(())

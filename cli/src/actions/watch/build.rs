@@ -36,17 +36,17 @@ struct MietteStub;
 /**
  * Retrieve an ignore file fullpath if any.
 */
-fn get_ignore_path() -> Result<String> {
+pub fn get_ignore_path() -> Result<String> {
     // Search an ignore file to set a filter
     let mut portal = Portal::new()?;
     portal.seed(".pipelight_ignore");
-    match portal.search() {
-        Ok(res) => Ok(res.target.file_path.unwrap()),
+    match portal.search_file() {
+        Ok(_) => Ok(portal.target.file_path.unwrap()),
         Err(_) => {
             let mut portal = Portal::new()?;
             portal.seed(".gitignore");
-            match portal.search() {
-                Ok(res) => Ok(res.target.file_path.unwrap()),
+            match portal.search_file() {
+                Ok(_) => Ok(portal.target.file_path.unwrap()),
                 Err(err) => return Err(err),
             }
         }
@@ -68,16 +68,19 @@ pub async fn build() -> Result<(Arc<Watchexec>, RuntimeConfig)> {
     // Search an ignore file to set a filter
     match get_ignore_path() {
         Ok(res) => {
-            let filterer = filter_configuration(&res).await?;
+            let filterer = make_filter_configuration(&res).await?;
             runtime.filterer(Arc::new(filterer));
         }
-        Err(_) => {}
+        Err(_) => {
+            let filterer = make_default_filter_configuration().await?;
+            runtime.filterer(Arc::new(filterer));
+        }
     }
 
-    // Watch cwd only
+    // Watch only the current directory
     runtime.pathset(vec![env::current_dir().unwrap()]);
 
-    // Create WE instance
+    // Create a Watchexec instance
     let watchexec = Watchexec::new(init, runtime.clone()).unwrap();
     let w_clone = watchexec.clone();
     let r_clone = runtime.clone();
@@ -123,13 +126,12 @@ pub async fn reconfigure(
 ) -> Result<()> {
     if let Some(ignore_path) = get_ignore_path().ok() {
         for event in action.events.iter() {
-            // if event.paths().any(|(p, _)| p.ends_with(ignorefile)) {
             if event
                 .paths()
                 .any(|(p, _)| p.to_str().unwrap() == ignore_path)
             {
                 // Set Filter
-                let filterer = filter_configuration(&ignore_path).await?;
+                let filterer = make_filter_configuration(&ignore_path).await?;
                 let mut r = runtime.clone();
                 r.filterer(Arc::new(filterer));
                 watchexec.reconfigure(r).unwrap();
@@ -141,10 +143,10 @@ pub async fn reconfigure(
 }
 
 /**
-Create action filter
+Create an action filter based on provided ignore file path
 Do not watch some files to avoid recursive watching
  */
-pub async fn filter_configuration(path: &str) -> Result<IgnoreFilterer> {
+pub async fn make_filter_configuration(path: &str) -> Result<IgnoreFilterer> {
     let path = Path::new(path);
     // Set Filter
     let applies_in = env::current_dir().into_diagnostic()?;
@@ -153,12 +155,31 @@ pub async fn filter_configuration(path: &str) -> Result<IgnoreFilterer> {
         applies_in: Some(applies_in.clone()),
         applies_to: None,
     };
-    let globs = [".pipelight/*", ".git", ".cargo", ".node_modules"];
+    let globs = [".pipelight/", ".git/", ".cargo/", "target", ".node_modules"];
     let mut filter: IgnoreFilter = IgnoreFilter::empty(applies_in.clone());
     filter
         .add_globs(&globs, Some(&applies_in))
         .into_diagnostic()?;
     filter.add_file(&file).await.into_diagnostic()?;
+
+    let filterer = IgnoreFilterer(filter);
+    Ok(filterer)
+}
+
+/**
+Create an default action filter
+Do not watch some files to avoid recursive watching
+ */
+pub async fn make_default_filter_configuration() -> Result<IgnoreFilterer> {
+    // Set Filter
+    let applies_in = env::current_dir().into_diagnostic()?;
+
+    let globs = [".pipelight/", ".git/", ".cargo/", ".node_modules/"];
+    let mut filter: IgnoreFilter = IgnoreFilter::empty(applies_in.clone());
+    filter
+        .add_globs(&globs, Some(&applies_in))
+        .into_diagnostic()?;
+
     let filterer = IgnoreFilterer(filter);
     Ok(filterer)
 }

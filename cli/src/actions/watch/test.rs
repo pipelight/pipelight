@@ -1,7 +1,8 @@
 #[cfg(test)]
 mod watcher {
     // Globals
-    use crate::actions::watch::{Watcher,build};
+    use crate::actions::watch::build::get_ignore_path;
+    use crate::actions::watch::{build, Watcher};
     use utils::teleport::Portal;
     // Error handling
     use miette::{Diagnostic, IntoDiagnostic, Result};
@@ -23,6 +24,16 @@ mod watcher {
         // Watcher::start()?;
         let (we, runtime) = build().await?;
         we.main().await.into_diagnostic()?;
+        Ok(())
+    }
+
+    #[test]
+    /**
+    Try to retrieve an ignore file
+    */
+    fn test_utils() -> Result<()> {
+        let res = get_ignore_path()?;
+        println!("{}", res);
         Ok(())
     }
 }

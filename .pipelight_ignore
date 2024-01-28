@@ -1,10 +1,9 @@
 # Cargo build dir 
 target/
 packages/
-
-# Git dir
-.git/
 public/
+# Nix
+result/
 
 # Cicd files
 /cicd/
