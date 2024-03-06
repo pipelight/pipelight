@@ -1,4 +1,3 @@
-// Create a pipeline with ObjectsAPI
 const my_pipe = {
   name: "example",
   steps: [
@@ -13,10 +12,8 @@ const my_pipe = {
   ],
 };
 
-// Create config
 const config = {
   pipelines: [my_pipe],
 };
 
-// Export config object as default
 export default config;

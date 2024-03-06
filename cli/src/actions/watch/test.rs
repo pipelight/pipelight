@@ -92,6 +92,7 @@ mod watcher {
             .seed("pipelight")
             .seed("watch")
             .search()?;
+
         println!("{:?}", finder);
 
         Ok(())
