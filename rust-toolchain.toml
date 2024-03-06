@@ -1,5 +1,5 @@
 [toolchain]
 channel = "stable"
-components = ["rust-src"]
+components = ["rust-src", "rust-analyzer"]
 profile = "default"
 targets = ["x86_64-unknown-linux-gnu", "x86_64-apple-darwin"]

@@ -10,7 +10,7 @@ use itertools::Itertools;
 use std::env;
 
 // Utilities to find a running process easily
-#[derive(Default, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub struct Finder {
     // Search arguments
     pub seeds: Option<Vec<String>>,
@@ -20,6 +20,18 @@ pub struct Finder {
     pub matches: Option<Vec<u32>>,
 }
 
+impl Default for Finder {
+    fn default() -> Self {
+        let path = env::current_dir().unwrap();
+        let path = path.to_str().unwrap();
+        Finder {
+            seeds: None,
+            pid: None,
+            matches: None,
+            cwd: Some(path.to_owned()),
+        }
+    }
+}
 impl Finder {
     pub fn new() -> Self {
         Self::default()
@@ -87,10 +99,7 @@ impl Finder {
                 // Guard - Ensure processes are running in same directory
                 let mut cond_pwd: bool = false;
                 if let Some(process_cwd) = self.cwd.clone() {
-                    let cwd = env::current_dir().into_diagnostic()?;
-                    let cwd = cwd.to_str().unwrap();
-
-                    cond_pwd = process_cwd == cwd;
+                    cond_pwd = process.cwd().to_str().unwrap() == self.cwd.clone().unwrap();
                 }
                 // Guard - Ensure command contains some seed(string)
                 let mut cond_seed = false;
@@ -101,10 +110,6 @@ impl Finder {
                 // Guard - Ensure different process from the one alredy running
                 let cond_other = pid != &get_current_pid().unwrap();
 
-                // Guard: check if pid link to a running programm
-                // test_kill_process(rustix_pid).into_diagnostic()?;
-
-                // println!("{:#?}", process.cmd());
                 // Final resolution
                 if cond_pwd && cond_seed && cond_other {
                     matches.push(pid.as_u32());

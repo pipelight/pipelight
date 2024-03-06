@@ -167,7 +167,7 @@ pub async fn make_filter_configuration(path: &str) -> Result<IgnoreFilterer> {
 }
 
 /**
-Create an default action filter
+Create a default action filter
 Do not watch some files to avoid recursive watching
  */
 pub async fn make_default_filter_configuration() -> Result<IgnoreFilterer> {

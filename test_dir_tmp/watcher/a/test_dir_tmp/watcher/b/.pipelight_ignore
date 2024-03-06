@@ -1,0 +1,5 @@
+# Git dir
+.git/
+# Pipelight dir
+.pipelight/
+

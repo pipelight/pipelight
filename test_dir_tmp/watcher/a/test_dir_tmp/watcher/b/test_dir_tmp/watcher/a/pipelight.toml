@@ -1,0 +1,11 @@
+[[pipelines]]
+name =  "example"
+
+[[pipelines.steps]]
+name = "first"
+commands = ["ls", "pwd"]
+
+[[pipelines.steps]]
+name = "second"
+commands = ["ls","pwd"]
+
