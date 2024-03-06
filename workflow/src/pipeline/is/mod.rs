@@ -66,24 +66,7 @@ impl Pipeline {
             Ok(false)
         }
     }
-    /**
-    Check if the pipeline can be triggered in the actual environment
-    */
-    pub fn is_triggerable_strict(&self) -> Result<()> {
-        let env = Trigger::get()?;
-        // If pipeline has defined triggers
-        if let Some(triggers) = self.triggers.clone() {
-            if env.has_match_strict(triggers)? {
-                return Ok(());
-            } else {
-                let (message, hint) = self.make_trigger_hint()?;
-                Err(IsError::new(&message, &hint)?.into())
-            }
-        } else {
-            let (message, hint) = self.make_trigger_hint()?;
-            Err(IsError::new(&message, &hint)?.into())
-        }
-    }
+
     pub fn make_trigger_hint(&self) -> Result<(String, String)> {
         let mut string = "".to_owned();
         if let Some(triggers) = self.triggers.clone() {
@@ -102,6 +85,25 @@ impl Pipeline {
         Ok((message, hint))
     }
 
+    /**
+    Check if the pipeline can be triggered in the actual environment
+    */
+    pub fn is_triggerable_strict(&self) -> Result<()> {
+        let env = Trigger::get()?;
+        // If pipeline has defined triggers
+        if let Some(triggers) = self.triggers.clone() {
+            if env.has_match_strict(triggers)? {
+                return Ok(());
+            } else {
+                let (message, hint) = self.make_trigger_hint()?;
+                Err(IsError::new(&message, &hint)?.into())
+            }
+        } else {
+            let (message, hint) = self.make_trigger_hint()?;
+            Err(IsError::new(&message, &hint)?.into())
+        }
+    }
+    
     /**
     Check if the pipeline can be triggered in the actual environment
     */
