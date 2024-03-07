@@ -2,8 +2,8 @@
 mod test;
 // Structs
 use crate::types::{
-    Cli, DisplayCommands, Init, Logs, LogsCommands, Pipeline, Shell, Toggle, ToggleCommands,
-    Trigger,
+    Attach, Cli, DisplayCommands, Init, Logs, LogsCommands, Pipeline, Shell, Toggle,
+    ToggleCommands, Trigger,
 };
 use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
 use crate::types::{InternalVerbosity, Verbosity};
@@ -28,11 +28,14 @@ impl fmt::Display for Cli {
         }
         string += &from_internal_verbosity_to_string(self.internal_verbose.clone());
 
-        if let Some(attach) = self.attach {
-            if attach {
-                string += " ";
-                string += "--attach";
-            }
+        if let Some(attach) = self.attach.clone() {
+            match Attach::from(&attach) {
+                Attach::True => {
+                    string += " ";
+                    string += "--attach";
+                }
+                _ => {}
+            };
         }
         write!(f, "{}", string)
     }

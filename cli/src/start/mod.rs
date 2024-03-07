@@ -96,7 +96,7 @@ impl DetachableCommands {
                     let pipeline = Pipeline::get_by_name(&name)?;
                     pipeline.is_triggerable()?;
 
-                    Service::new(Action::RunLoose, Some(args))?.should_detach()?;
+                    Service::new(Action::RunLoose, Some(args))?.attach()?;
                 }
             }
             DetachableCommands::Watch => {

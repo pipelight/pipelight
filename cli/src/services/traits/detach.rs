@@ -1,5 +1,6 @@
 // Struct
 use crate::services::types::Service;
+use crate::types::Attach;
 // Process manipulation
 use exec::SelfProcess;
 // Globals
@@ -28,14 +29,13 @@ pub trait FgBg {
 
 impl FgBg for Service {
     fn attach(&self) -> Result<()> {
-    let origin = CLI.lock().unwrap().clone();
+        let origin = CLI.lock().unwrap().clone();
+        // Guard
         if let Some(args) = self.args.clone() {
-            if args == origin{
-
-        self.exec()?;
-            }else{
-
-            SelfProcess::run_fg_with_cmd(&String::from(&args))?;
+            if args == origin {
+                self.exec()?;
+            } else {
+                SelfProcess::run_fg_with_cmd(&String::from(&args))?;
             }
         }
         Ok(())
@@ -48,28 +48,23 @@ impl FgBg for Service {
     }
     fn should_detach(&mut self) -> Result<()> {
         if let Some(args) = self.args.clone() {
-            match args.attach {
-                Some(true) => {
-                    trace!("pipelight process is attached");
-                    self.attach()?;
-                }
-                Some(false) => {
-                    trace!("pipelight process is detached");
-                    // Exit the detach loop
-                    if let Some(e) = self.args.as_mut() {
-                        e.attach = Some(true);
+            // println!("{:#?}", args.attach);
+            if let Some(attach) = args.attach {
+                match Attach::from(&attach) {
+                    Attach::True => {
+                        trace!("Subprocess is attached");
+                        self.attach()?;
                     }
-                    self.detach()?;
-                }
-                None => {
-                    trace!("pipelight process is detached");
-                    // Exit the detach loop
-                    if let Some(e) = self.args.as_mut() {
-                        e.attach = Some(true);
+                    Attach::False => {
+                        trace!("Subprocess is detached");
+                        // Exit the detach loop
+                        if let Some(e) = self.args.as_mut() {
+                            e.attach = Some(String::from(&Attach::True));
+                        }
+                        self.detach()?;
                     }
-                    self.detach()?;
-                }
-            };
+                };
+            }
         }
         Ok(())
     }

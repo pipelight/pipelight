@@ -1,6 +1,6 @@
+use crate::types::{Attach, Pipeline, Trigger};
 use crate::types::{Cli, Commands, DisplayCommands, PostCommands};
 use crate::types::{InternalVerbosity, Verbosity};
-use crate::types::{Pipeline, Trigger};
 
 impl Cli {
     pub fn new() -> Cli {
@@ -31,7 +31,7 @@ impl Default for Cli {
             config: None,
             verbose: Verbosity::new(0, 0),
             internal_verbose: InternalVerbosity::new(0, 0),
-            attach: Some(true),
+            attach: None,
         }
     }
 }

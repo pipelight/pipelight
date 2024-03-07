@@ -3,7 +3,7 @@ mod service {
     // Struct
     use crate::services::types::{Action, Service};
     use crate::Pipeline;
-    use crate::{Cli, Commands, DetachableCommands, PostCommands};
+    use crate::{Attach, Cli, Commands, DetachableCommands, PostCommands};
     // Traits
     use crate::services::traits::FgBg;
     // Error Handling
@@ -25,7 +25,7 @@ mod service {
         });
         // println!("{:#?}", args);
         if let Some(ref mut args) = args {
-            args.attach = Some(true);
+            args.attach = Some(String::from(&Attach::True));
         }
         let service = Service::new(Action::RunStrict, args)?;
         println!("{:#?}", service);
@@ -44,7 +44,7 @@ mod service {
         });
         // println!("{:#?}", args);
         if let Some(ref mut args) = args {
-            args.attach = Some(true);
+            args.attach = Some(String::from(&Attach::False));
         }
         let service = Service::new(Action::RunStrict, args)?;
         service.detach()?;
@@ -61,7 +61,7 @@ mod service {
         });
         // println!("{:#?}", args);
         if let Some(ref mut args) = args {
-            args.attach = Some(true);
+            args.attach = Some(String::from(&Attach::True));
         }
         let service = Service::new(Action::Watch, args)?;
         service.detach()?;

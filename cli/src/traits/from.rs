@@ -1,4 +1,4 @@
-use crate::types::ColoredOutput;
+use crate::types::{ColoredOutput,Attach};
 use convert_case::{Case, Casing};
 // Structs
 use crate::types::{
@@ -7,6 +7,17 @@ use crate::types::{
 use crate::types::{Commands};
 
 
+impl From<&String> for Attach {
+    fn from(option: &String) -> Attach {
+        let cased: &str = &option.to_case(Case::Kebab);
+        serde_plain::from_str(cased).unwrap()
+    }
+}
+impl From<&Attach> for String {
+    fn from(option: &Attach) -> String {
+        serde_plain::to_string::<Attach>(option).unwrap()
+    }
+}
 impl From<&String> for ColoredOutput {
     fn from(option: &String) -> ColoredOutput {
         let cased: &str = &option.to_case(Case::Kebab);

@@ -1,6 +1,6 @@
 // Struct
 use crate::services::types::{Action, Service};
-use crate::types::{Commands, DetachableCommands, PostCommands};
+use crate::types::{Attach, Commands, DetachableCommands, PostCommands};
 use exec::Status;
 use workflow::{Config, Getters, Node, Pipeline};
 // Globals
@@ -18,7 +18,7 @@ pub fn launch() -> Result<()> {
 
     // Retrieve command line args
     let name: String;
-    match args.commands {
+    match args.commands.clone() {
         Commands::PostCommands(PostCommands::DetachableCommands(DetachableCommands::Run(e))) => {
             name = e.name.unwrap();
         }
@@ -34,7 +34,7 @@ pub fn launch() -> Result<()> {
     // Guard
     pipeline.is_triggerable()?;
     if args.verbose.log_level_filter() == LevelFilter::Error {
-            // Retrieve global options
+        // Retrieve global options
         if config.has_loglevel_option().unwrap() {
             if let Some(level_filter) = config.get_default_loglevel().ok() {
                 let level = level_filter.to_level();
@@ -51,28 +51,43 @@ pub fn launch() -> Result<()> {
             }
         }
     }
+
     if args.attach.is_none() {
         // Retrieve global options
         if config.has_attach_option().unwrap() {
-            args.attach = Some(!config.should_detach().unwrap());
+            args.attach = Some(config.options.unwrap().attach.unwrap().to_string());
+            // args.attach = Some(!config.should_detach().unwrap());
         }
         // Retrieve per-pipeline options
         if pipeline.has_attach_option().unwrap() {
-            args.attach = Some(!pipeline.should_detach().unwrap());
+            args.attach = Some(pipeline.clone().options.unwrap().attach.unwrap().to_string());
         }
     }
 
     // Action
-    pipeline.run()?;
-    // Return pipeline log
-    println!("{}", Node::from(&pipeline));
+    match args.attach.clone() {
+        Some(val) => {
+            if val == String::from(&Attach::True) {
+                pipeline.run()?;
+                // Return pipeline log
+                println!("{}", Node::from(&pipeline));
 
-    match pipeline.status {
-        Some(Status::Succeeded) => Ok(()),
-        Some(Status::Failed) => {
-            let message = "Pipeline status: Failed";
-            Err(Error::msg(message))
+                let _ = match pipeline.status {
+                    Some(Status::Succeeded) => Ok(()),
+                    Some(Status::Failed) => {
+                        let message = "Pipeline status: Failed";
+                        Err(Error::msg(message))
+                    }
+                    _ => Ok(()),
+                };
+            }
+            if val == String::from(&Attach::False) {
+                Service::new(Action::RunLoose, Some(args))?.should_detach()?;
+            }
         }
-        _ => Ok(()),
-    }
+        None => {
+            Service::new(Action::RunLoose, Some(args))?.should_detach()?;
+        }
+    };
+    Ok(())
 }

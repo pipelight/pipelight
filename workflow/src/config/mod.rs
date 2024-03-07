@@ -7,8 +7,8 @@ use miette::Result;
 // Struct
 use crate::pipeline::Filters;
 use crate::types::Config;
-use utils::git::Flag;
 use log::LevelFilter;
+use utils::git::Flag;
 
 impl Config {
     pub fn get() -> Result<Self> {
@@ -65,15 +65,15 @@ impl Config {
     /**
      Report if pipeline has options
     */
-    pub fn should_detach(&self) -> Result<bool> {
+    pub fn should_attach(&self) -> Result<bool> {
         if let Some(options) = &self.options {
             if let Some(attach) = options.attach {
-                Ok(!attach)
+                Ok(attach)
             } else {
-                Ok(true)
+                Ok(false)
             }
         } else {
-            Ok(true)
+            Ok(false)
         }
     }
     /**

@@ -1,6 +1,6 @@
 // Struct
 use crate::services::types::{Action, Service};
-use crate::types::{Commands, DetachableCommands, Pipeline, PostCommands, Trigger};
+use crate::types::{Attach, Commands, DetachableCommands, Pipeline, PostCommands, Trigger};
 use crate::verbosity::external::{level_value, Verbosity};
 use workflow;
 // Traits
@@ -42,8 +42,12 @@ pub fn launch() -> Result<()> {
 
         // Retrieve global options
         if config.has_attach_option().unwrap() {
-            args.attach = Some(!config.should_detach().unwrap());
+            args.attach = match config.should_attach().ok() {
+                Some(false) => Some(String::from(&Attach::False)),
+                Some(true) | None => Some(String::from(&Attach::True)),
+            };
         }
+
         if config.has_loglevel_option().unwrap() {
             let mut level = None;
             if let Some(level_filter) = config.get_default_loglevel().ok() {
@@ -55,7 +59,10 @@ pub fn launch() -> Result<()> {
 
         // Retrieve per-pipeline options
         if pipeline.has_attach_option().unwrap() {
-            args.attach = Some(!pipeline.should_detach().unwrap());
+            args.attach = match pipeline.should_detach().ok() {
+                Some(false) => Some(String::from(&Attach::True).to_owned()),
+                Some(true) | None => Some(String::from(&Attach::False).to_owned()),
+            }
         }
         if pipeline.has_loglevel_option().unwrap() {
             let mut level = None;

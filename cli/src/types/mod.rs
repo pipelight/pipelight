@@ -1,9 +1,10 @@
 // Clap - command line lib
 use clap::{Parser, Subcommand, ValueHint};
-// Struct
+// Verbosity
 pub use crate::verbosity::external::Verbosity;
 pub use crate::verbosity::internal::InternalVerbosity;
-
+// Serde
+use serde::{Deserialize, Serialize};
 // Struct
 mod post;
 mod pre;
@@ -35,7 +36,7 @@ pub struct Cli {
 
     /// Attach command to standard I/O
     #[arg(global = true, long, required = false)]
-    pub attach: Option<bool>,
+    pub attach: Option<String>,
 
     /// Set verbosity level
     #[clap(flatten)]
@@ -49,6 +50,23 @@ pub struct Cli {
     /// Pass those arguments to deno
     #[arg(global = true, last = true, allow_hyphen_values = true)]
     pub raw: Option<Vec<String>>,
+}
+
+/*
+Why this and not a simple boolean?
+Clap interprets Option<bool> as bool.
+This enum is a workaround.
+It can be either None, Some("true") or Some("false")
+
+Then it is possible to know if the flag has been used
+on command line.
+
+*/
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum Attach {
+    True,
+    False,
 }
 
 /*

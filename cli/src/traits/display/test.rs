@@ -2,7 +2,7 @@
 mod display {
     // Structs
     use crate::types::{
-        Cli, DisplayCommands, Init, Logs, LogsCommands, Pipeline, Shell, Toggle, Trigger,
+        Attach, Cli, DisplayCommands, Init, Logs, LogsCommands, Pipeline, Shell, Toggle, Trigger,
     };
     use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
     use crate::types::{InternalVerbosity, Verbosity};
@@ -20,7 +20,7 @@ mod display {
                     },
                 }),
             )),
-            attach: Some(false),
+            attach: Some(String::from(&Attach::False)),
             raw: None,
             config: None,
             // Set verbosity to default level (Error)
@@ -43,7 +43,7 @@ mod display {
                     color: None,
                 },
             })),
-            attach: Some(false),
+            attach: Some(String::from(&Attach::False)),
             raw: None,
             config: None,
             internal_verbose: InternalVerbosity::new(0, 0),
@@ -62,7 +62,7 @@ mod display {
                 name: None,
                 color: None,
             })),
-            attach: Some(false),
+            attach: Some(String::from(&Attach::False)),
             raw: None,
             config: None,
             // fn new(verbose: u8, quiet: u8) -> Self
@@ -82,7 +82,7 @@ mod display {
                 name: None,
                 color: None,
             })),
-            attach: Some(false),
+            attach: Some(String::from(&Attach::False)),
             raw: None,
             config: None,
             // fn new(verbose: u8, quiet: u8) -> Self
@@ -102,7 +102,7 @@ mod display {
                 name: None,
                 color: None,
             })),
-            attach: Some(false),
+            attach: Some(String::from(&Attach::False)),
             raw: None,
             config: Some("test.pipelight.ts".to_owned()),
             // fn new(verbose: u8, quiet: u8) -> Self
@@ -122,7 +122,7 @@ mod display {
                 name: None,
                 color: None,
             })),
-            attach: Some(false),
+            attach: Some(String::from(&Attach::False)),
             raw: Some(vec!["--host".to_owned(), "linode".to_owned()]),
             config: None,
             // fn new(verbose: u8, quiet: u8) -> Self

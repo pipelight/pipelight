@@ -15,7 +15,7 @@ const config: Config = {
     log_level: "info",
   },
   pipelines: [
-    pipeline("test", () => [step(`test`, () => ["pwd"])]).attach(),
+    pipeline("test", () => [step(`test`, () => ["pwd"])]),
     pipeline("test_empty", () => [step(`launch a pipeline`, () => ["pwd"])]),
     pipeline("test_attached_pipelines", () => [
       step(`launch a pipeline`, () => [

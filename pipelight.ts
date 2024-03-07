@@ -10,7 +10,7 @@ console.log(testConfig);
 
 const config: Config = {
   options: {
-    attach: true,
+    attach: false,
     log_level: "info",
   },
   pipelines: [
