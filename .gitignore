@@ -3,6 +3,7 @@
 
 # Test artifacts
 test/*pipelight*
+test_*
 
 ## Build directories
 /packages

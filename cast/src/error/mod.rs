@@ -18,7 +18,8 @@ pub enum CastError {
 }
 
 /**
-A json report type with hint, colors and code span for better pipeline debugging
+A JSON report type with hint, colors and code span.
+For better configuration file debugging
 */
 #[derive(Error, Diagnostic, Debug)]
 #[diagnostic(code(cast::json))]
@@ -50,7 +51,8 @@ impl JsonError {
 }
 
 /**
-A yaml report type with hint, colors and code span for better pipeline debugging
+A YAML report type with hint, colors and code span.
+For better configuration file debugging
 */
 #[derive(Error, Diagnostic, Debug)]
 #[diagnostic(code(cast::yaml))]
@@ -90,7 +92,8 @@ impl YamlError {
 }
 
 /**
-A toml report type with hint, colors and code span for better pipeline debugging
+A TOML report type with hint, colors and code span.
+For better configuration file debugging
 */
 #[derive(Error, Diagnostic, Debug)]
 #[diagnostic(code(cast::toml))]

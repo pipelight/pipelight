@@ -36,24 +36,19 @@ Contains great utility functions for some trivial things.
 - files (Query the filesystem)
 - signal (functions to handle SIGTERM, Ctrl-C and others)
 
-## template crate
-
-**Generate config file templates**
-
-Contains the functions to generate templates when using commands like
-`pipelight init --template toml`
-
 ## exec crate
 
 **Wrapper around process execution**
 
-Functions to pipe processes output, retrieve pid, cwd and so on.
+Functions to pipe processes output, retrieve pids, cwd and so on. Used to keep
+track of pipeline subprocesses.
 
-## switch crate
+## workflow crate
 
-**A switch/case over commands line args**
+**The pipeline execution logic***
 
-Determines which functions to run based on the command line arguments.
+Read the Pipeline Struct extracted from tthe configuration file and set the
+execution workflow.
 
 ## cli crate
 
@@ -62,12 +57,18 @@ Determines which functions to run based on the command line arguments.
 Define the command line sub-command, options and arguments. Makes extensive use
 of [Clap.rs](https://docs.rs/clap/latest/clap/)
 
-## workflow crate
+## switch crate
 
-**The pipeline execution logique***
+**A switch/case over commands line args**
 
-Read the Pipeline Struct extracted from tthe configuration file and set the
-execution workflow.
+Determines which functions to run based on the command line arguments.
+
+## template crate
+
+**Generate config file templates**
+
+Contains the functions to generate templates when using commands like
+`pipelight init --template toml`
 
 # Internal functionning
 
@@ -75,5 +76,14 @@ execution workflow.
 
 The entry point is `pipelight/src/main.rs`.
 
-Then a switch/case function from `swicth/src/case,rs` to determine wich command
+Then a switch/case function from `swicth/src/case.rs` to determine wich command
 to execute.
+
+The command is then detached from the standard I/O and sent to the background.
+
+## Detaching processes (the secret sauce)
+
+Pipelight is a single binary to execute pipelines, whach files, print logs...
+
+
+# P
