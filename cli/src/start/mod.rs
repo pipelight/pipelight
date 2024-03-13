@@ -59,8 +59,8 @@ impl PreCommands {
                     match commands {
                         ToggleCommands::GitHooks => Hook::enable()?,
                         ToggleCommands::Watcher => {
-                            let service = Service::new(Action::Watch, Some(args))?;
-                            service.detach()?;
+                            let mut service = Service::new(Action::Watch, Some(args))?;
+                            service.should_detach()?;
                         }
                     }
                 }

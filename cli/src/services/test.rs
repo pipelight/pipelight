@@ -12,9 +12,11 @@ mod service {
     use assert_cmd::prelude::*; // Add methods on commands
     use std::process::Command; // Run commnds
 
-    #[test]
-    fn create_service() -> Result<()> {
-        let mut args = Some(Cli {
+    /**
+    Arguments to run an empty pipeline
+    */
+    fn make_dummy_args() -> Result<Cli> {
+        let args = Cli {
             commands: Commands::PostCommands(PostCommands::DetachableCommands(
                 DetachableCommands::Run(Pipeline {
                     name: Some("test".to_owned()),
@@ -22,7 +24,14 @@ mod service {
                 }),
             )),
             ..Cli::default()
-        });
+        };
+        Ok(args)
+    }
+
+    /// Create a dummy service
+    #[test]
+    fn create_service() -> Result<()> {
+        let mut args = make_dummy_args().ok();
         // println!("{:#?}", args);
         if let Some(ref mut args) = args {
             args.attach = Some(String::from(&Attach::True));
@@ -33,15 +42,7 @@ mod service {
     }
     #[test]
     fn start_detached_service() -> Result<()> {
-        let mut args = Some(Cli {
-            commands: Commands::PostCommands(PostCommands::DetachableCommands(
-                DetachableCommands::Run(Pipeline {
-                    name: Some("test".to_owned()),
-                    ..Pipeline::default()
-                }),
-            )),
-            ..Cli::default()
-        });
+        let mut args = make_dummy_args().ok();
         // println!("{:#?}", args);
         if let Some(ref mut args) = args {
             args.attach = Some(String::from(&Attach::False));
@@ -50,6 +51,7 @@ mod service {
         service.detach()?;
         Ok(())
     }
+
     /// Run watcher
     #[test]
     fn start_detached_watcher() -> Result<()> {

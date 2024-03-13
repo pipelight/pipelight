@@ -64,6 +64,11 @@ impl FgBg for Service {
                         self.detach()?;
                     }
                 };
+            } else {
+                if let Some(e) = self.args.as_mut() {
+                    e.attach = Some(String::from(&Attach::True));
+                }
+                        self.detach()?;
             }
         }
         Ok(())
