@@ -14,7 +14,7 @@ const flags = parse(Deno.args, {
 
 const config: Config = {
   options: {
-    attach: false,
+    attach: true,
     log_level: "info",
   },
 

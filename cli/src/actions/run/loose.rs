@@ -51,7 +51,6 @@ pub fn launch() -> Result<()> {
             }
         }
     }
-
     if args.attach.is_none() {
         // Retrieve global options
         if config.has_attach_option().unwrap() {
@@ -60,7 +59,15 @@ pub fn launch() -> Result<()> {
         }
         // Retrieve per-pipeline options
         if pipeline.has_attach_option().unwrap() {
-            args.attach = Some(pipeline.clone().options.unwrap().attach.unwrap().to_string());
+            args.attach = Some(
+                pipeline
+                    .clone()
+                    .options
+                    .unwrap()
+                    .attach
+                    .unwrap()
+                    .to_string(),
+            );
         }
     }
 

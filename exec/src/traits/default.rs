@@ -13,6 +13,7 @@ impl Process {
         Process {
             uuid,
             pid: None,
+            cwd: None,
             io: Io {
                 uuid,
                 stdin: Some(stdin.to_owned()),
@@ -31,6 +32,7 @@ impl Default for Process {
         Process {
             uuid,
             pid: None,
+            cwd: None,
             io: Io {
                 uuid,
                 ..Io::default()

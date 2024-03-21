@@ -1,5 +1,5 @@
 // Unix process manipulation
-use rustix::process::{getpgid, kill_process_group, test_kill_process_group, Signal};
+use rustix::process::{getpid, kill_process, test_kill_process, Signal};
 // use std::collections::HashMap;
 use sysinfo::get_current_pid;
 use sysinfo::{PidExt, Process, ProcessExt, System, SystemExt};
@@ -14,21 +14,22 @@ use std::env;
 pub struct Finder {
     // Search arguments
     pub seeds: Option<Vec<String>>,
+    root: Option<String>,
     cwd: Option<String>,
     pid: Option<u32>,
     // Search results
-    pub matches: Option<Vec<u32>>,
+    pub matches: Option<Vec<crate::Process>>,
 }
 
 impl Default for Finder {
     fn default() -> Self {
-        let path = env::current_dir().unwrap();
-        let path = path.to_str().unwrap();
         Finder {
+            // A root directory to search from
+            root: None,
+            cwd: None,
             seeds: None,
             pid: None,
             matches: None,
-            cwd: Some(path.to_owned()),
         }
     }
 }
@@ -48,6 +49,14 @@ impl Finder {
     }
 
     /**
+    Restrict search result by a root directory.
+    */
+    pub fn root(&mut self, root: &str) -> Self {
+        self.root = Some(root.to_owned());
+        self.to_owned()
+    }
+
+    /**
     Restrict search result by seed.
     */
     pub fn seed(&mut self, cmd: &str) -> Self {
@@ -59,6 +68,7 @@ impl Finder {
         }
         self.to_owned()
     }
+
     /**
     Restrict search result by pid.
     */
@@ -86,20 +96,29 @@ impl Finder {
         let mut sys = System::new();
         sys.refresh_processes();
         // Loop through process list
-        let mut matches: Vec<u32> = vec![];
+        let mut matches: Vec<crate::Process> = vec![];
         if let Some(pid) = self.pid {
             let sysinfo_pid = sysinfo::Pid::from_u32(pid);
             if let Some(process) = sys.processes().get(&sysinfo_pid) {
                 if self.is_match_seeds(process)? {
-                    matches.push(pid);
+                    matches.push(crate::Process::from(process));
                 }
             }
         } else {
             for (pid, process) in sys.processes() {
+                // Guard - Ensure processes are running in same subdirectory
+                let mut cond_root: bool = false;
+                if let Some(root) = self.root.clone() {
+                    cond_root = process.cwd().starts_with(self.root.clone().unwrap());
+                } else {
+                    cond_root = true;
+                }
                 // Guard - Ensure processes are running in same directory
                 let mut cond_pwd: bool = false;
                 if let Some(process_cwd) = self.cwd.clone() {
                     cond_pwd = process.cwd().to_str().unwrap() == self.cwd.clone().unwrap();
+                } else {
+                    cond_pwd = true;
                 }
                 // Guard - Ensure command contains some seed(string)
                 let mut cond_seed = false;
@@ -111,8 +130,11 @@ impl Finder {
                 let cond_other = pid != &get_current_pid().unwrap();
 
                 // Final resolution
-                if cond_pwd && cond_seed && cond_other {
-                    matches.push(pid.as_u32());
+                if cond_pwd && cond_seed && cond_other && cond_root {
+                    println!("{:?}", process.cmd());
+                    println!("{:?}", process.cwd());
+                    // matches.push(pid.as_u32());
+                    matches.push(crate::Process::from(process));
                 }
             }
         }
@@ -128,12 +150,10 @@ impl Finder {
     */
     pub fn kill(&self) -> Result<()> {
         if let Some(matches) = self.matches.clone() {
-            for pid in matches {
-                let rustix_pid = rustix::process::Pid::from_raw(pid.try_into().into_diagnostic()?);
-
-                let pgid = getpgid(rustix_pid).into_diagnostic()?;
-                if test_kill_process_group(pgid).is_ok() {
-                    kill_process_group(pgid, Signal::Kill).into_diagnostic()?;
+            for process in matches {
+                let pid = rustix::process::Pid::from_raw(process.pid.unwrap());
+                if test_kill_process(pid.unwrap()).is_ok() {
+                    kill_process(pid.unwrap(), Signal::Kill).into_diagnostic()?;
                 }
             }
         }

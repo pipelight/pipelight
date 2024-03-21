@@ -30,7 +30,7 @@ pub struct Process {
     pub pid: Option<i32>,
     pub state: State,
     pub io: Io,
-    // pub cwd: Option<String>,
+    pub cwd: Option<String>,
 }
 
 /**
