@@ -1,9 +1,9 @@
 // Clap completion script generation
-use clap_complete::{generate_to, shells};
+use clap_complete::{generate_to, Shell};
 use std::env;
 // Filesystem manipulation
-// use std::fs;
-// use std::path::Path;
+use std::fs;
+use std::path::Path;
 // Error Handling
 use miette::{IntoDiagnostic, Result};
 
@@ -14,23 +14,20 @@ pub use crate::types::Cli;
 Build cli and generate autocompletion scripts
 */
 fn main() -> Result<()> {
-    let outdir = match env::var_os("OUT_DIR") {
-        None => return Ok(()),
-        Some(outdir) => outdir,
-    };
+
+    // Standard outdir
+    // let outdir = match env::var_os("OUT_DIR") {
+    //     None => return Ok(()),
+    //     Some(outdir) => outdir,
+    // };
 
     // Practical outdir
-    //let outdir = Path::new("../autocompletion/");
-    //fs::create_dir_all(outdir).into_diagnostic()?;
+    let outdir = Path::new("../autocompletion/");
+    fs::create_dir_all(outdir).into_diagnostic()?;
 
     let mut cmd = Cli::build()?;
     let name = cmd.get_name().to_string();
-    let shells = vec![
-        shells::Shell::Bash,
-        shells::Shell::Zsh,
-        shells::Shell::Fish,
-        shells::Shell::Elvish,
-    ];
+    let shells = vec![Shell::Bash, Shell::Zsh, Shell::Fish, Shell::Elvish];
     for shell in shells {
         let path = generate_to(
             shell,

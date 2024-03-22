@@ -1,7 +1,7 @@
 {pkgs ? import <nixpkgs> {}}:
 pkgs.rustPlatform.buildRustPackage rec {
   pname = "pipelight";
-  version = "0.7.20";
+  version = "0.7.22";
   src = ./.;
 
   cargoLock = {
@@ -20,10 +20,18 @@ pkgs.rustPlatform.buildRustPackage rec {
   doCheck = false;
 
   nativeBuildInputs = with pkgs; [
+    installShellFiles
     openssl.dev
     pkg-config
     rustc
     cargo
   ];
   PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
+
+  postInstall = with lib; ''
+    installShellCompletion --cmd pipelight \
+      --bash autocompletions/pipelight.bash \
+      --fish autocompletions/pipelight.fish \
+      --zsh  autocompletions/_pipelight
+  '';
 }

@@ -1,5 +1,6 @@
 # Cargo build dir 
 target/
+autocompletion/
 packages/
 public/
 # Nix
