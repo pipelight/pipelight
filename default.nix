@@ -1,4 +1,8 @@
-{pkgs ? import <nixpkgs> {}}:
+{
+  pkgs ? import <nixpkgs> {},
+  lib,
+  ...
+}:
 pkgs.rustPlatform.buildRustPackage rec {
   pname = "pipelight";
   version = "0.7.22";
@@ -29,9 +33,9 @@ pkgs.rustPlatform.buildRustPackage rec {
   PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
 
   postInstall = with lib; ''
-    installShellCompletion --cmd pipelight \
-      --bash autocompletions/pipelight.bash \
-      --fish autocompletions/pipelight.fish \
-      --zsh  autocompletions/_pipelight
+    installShellCompletion --cmd ${pname}\
+      --bash ./autocompletion/${pname}.bash \
+      --fish ./autocompletion/${pname}.fish \
+      --zsh  ./autocompletion/_${pname}
   '';
 }
