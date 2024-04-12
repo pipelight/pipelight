@@ -9,7 +9,7 @@ WORKDIR /root
 # Download rust latest
 RUN curl https://sh.rustup.rs | bash -s -- -y
 # Copy sources
-RUN git clone https://gitea.com/pipelight/pipelight.git
+RUN git clone https://github.com/pipelight/pipelight.git
 # Build sources
 WORKDIR /root/pipelight
 
@@ -27,6 +27,7 @@ RUN mkdir pipelight-0.0.1
 RUN mv pipelight/target/release/pipelight pipelight-0.0.1/
 RUN tar -cvf pipelight-0.0.1.tar.gz pipelight-0.0.1
 RUN mv pipelight-0.0.1.tar.gz rpmbuild/SOURCES
+
 COPY ./packages.pipelight/rpm.pipelight/pipelight.spec rpmbuild/SPECS/
 
 # Build package

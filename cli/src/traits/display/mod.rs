@@ -19,10 +19,6 @@ impl fmt::Display for Cli {
             string += " ";
             string += &format!("--config {}", self.config.clone().unwrap());
         }
-        if self.raw.is_some() {
-            string += " ";
-            string += &format!("-- {}", self.raw.clone().unwrap().join(" "));
-        }
         if self.verbose.log_level_filter() != LevelFilter::Error {
             string += &from_verbosity_to_string(self.verbose.clone());
         }
@@ -36,6 +32,11 @@ impl fmt::Display for Cli {
                 }
                 _ => {}
             };
+        }
+        // Keep last arg
+        if self.raw.is_some() {
+            string += " ";
+            string += &format!("-- {}", self.raw.clone().unwrap().join(" "));
         }
         write!(f, "{}", string)
     }

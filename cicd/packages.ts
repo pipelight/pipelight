@@ -37,19 +37,18 @@ const makePipeline = ({ name, prefix, format }: any): Pipeline => {
       {
         name: `remove old ${name} container`,
         commands: [`docker container rm ${name}.latest `],
-        options:{
-
-        mode: "jump_next",
-        }
+        options: {
+          mode: "jump_next",
+        },
       },
       {
         name: `build ${name} container`,
         commands: [
           `sh -c \
-          "cd ../ && docker build \
+          "docker build \
             --pull \
             --no-cache \
-            -f pipelight/.docker/Dockerfile.${prefix} \
+            -f .docker/Dockerfile.${prefix} \
             -t ${name}.latest ."`,
         ],
       },
@@ -57,8 +56,8 @@ const makePipeline = ({ name, prefix, format }: any): Pipeline => {
         name: `run ${name} container`,
         commands: [
           `docker run \
-          --name="${name}.latest" \
-          ${name}.latest
+            --name="${name}.latest" \
+            ${name}.latest
         `,
           `docker cp \
             ${name}.latest:/root/dist/pipelight.${format} \

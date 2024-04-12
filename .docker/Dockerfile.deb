@@ -12,7 +12,7 @@ WORKDIR /root
 RUN curl -fsSL https://deno.land/x/install/install.sh | sh
 RUN curl https://sh.rustup.rs | sh -s -- -y
 # Copy sources
-RUN git clone https://gitea.com/pipelight/pipelight.git
+RUN git clone https://github.com/pipelight/pipelight.git
 # Build sources
 WORKDIR /root/pipelight
 
@@ -24,8 +24,9 @@ RUN ~/.cargo/bin/cargo build --release
 
 # Make package file tree
 WORKDIR /root
-COPY  ./packages.pipelight/deb.pipelight deb.pipelight/
+COPY  .docker/packages/deb.pipelight deb.pipelight/
 RUN cp pipelight/target/release/pipelight deb.pipelight/pipelight/usr/bin/
+
 # Build package
 WORKDIR /root/deb.pipelight
 RUN dpkg --build pipelight 
