@@ -4,12 +4,12 @@ version = "0.2.0"
 edition = "2021"
 
 [dependencies]
-utils = {path = "../utils" }
+utils = { path = "../utils" }
 colored = "2.0.0"
 log = "0.4.17"
 thiserror = "1.0.38"
 miette = { version = "5.5.0", features = ["fancy"] }
-serde = { version = "1.0.152" ,features = ["derive"] }
+serde = { version = "1.0.152", features = ["derive"] }
 convert_case = "0.6.0"
 uuid = { version = "1.3.4", features = ["v4", "serde"] }
 subprocess = "0.2.9"
@@ -17,4 +17,3 @@ rustix = { version = "0.38.25", features = ["process"] }
 sysinfo = "0.29.2"
 once_cell = "1.18.0"
 itertools = "0.11.0"
-

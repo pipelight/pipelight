@@ -8,19 +8,19 @@ use miette::Result;
 use std::env;
 
 /**
-Lazy global that contains the default shell to be used by the invoked processes.
+* A lazy global that contains the default shell to be used by the invoked processes.
 */
 pub static SHELL: Lazy<Arc<Mutex<String>>> = Lazy::new(|| Arc::new(Mutex::new("sh".to_owned())));
 
 /**
-Lazy global that contains the default output directory to be used by the invoked processes
-that pipe their outputs(stdout/stderr) into files.
+* A lazy global that contains the default output directory to be used by the invoked processes
+* that pipe their outputs(stdout/stderr) into files.
 */
 pub static OUTDIR: Lazy<Arc<Mutex<String>>> =
     Lazy::new(|| Arc::new(Mutex::new(".pipelight/_internals/out".to_owned())));
 
 /**
-Returns the  user session shell when found.
+Returns the user session shell or fallback to default "sh".
 */
 pub fn get_shell() -> Result<()> {
     trace!("Get shell");

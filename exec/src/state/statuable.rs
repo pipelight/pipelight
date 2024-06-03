@@ -1,5 +1,5 @@
 // Struct
-use crate::types::{Process, Status};
+use crate::{Process, Status};
 
 /**
 In pipelight, many are the structs and enum substructs that have a status.

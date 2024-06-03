@@ -1,3 +1,20 @@
+//! # pipelight::exec
+//!
+//! A crate for easy process management.
+//!
+//! Features:
+//!
+//! - Spawn and Kill background processes.
+//! - Retrieve standard outputs as the process runs.
+//! - Get execution time and other metrics.
+//!
+//! - Interoperability with the most known rustix and sysinfo crates.
+//!
+//! ## Example
+//!
+//! Spawn a simple process in the background.
+//!
+
 // Rules
 #![allow(unused_variables)]
 // #![allow(unused_imports)]
@@ -6,10 +23,10 @@
 // Internal Imports
 mod globals;
 mod io;
-pub mod processes;
-mod traits;
-mod types;
+mod process;
+mod state;
 
 // Re-export
-pub use traits::Statuable;
-pub use types::*;
+pub use io::*;
+pub use process::*;
+pub use state::*;

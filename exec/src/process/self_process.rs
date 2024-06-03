@@ -1,5 +1,5 @@
 // Struct
-use crate::types::{Process, SelfProcess};
+use crate::{Process, SelfProcess};
 // Error Handling
 use miette::Result;
 

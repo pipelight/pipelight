@@ -1,5 +1,5 @@
 // Structs
-use crate::types::{Io, Process, State, Status};
+use crate::{Io, Process, State, Status};
 use utils::dates::Duration;
 // Unix process manipulation
 use std::process::{Command, Stdio};

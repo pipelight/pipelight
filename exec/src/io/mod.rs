@@ -1,5 +1,5 @@
-// Structs
-use super::types::Io;
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 // Globals
 use crate::globals::OUTDIR;
 // File manipulation
@@ -7,10 +7,22 @@ use std::fs::{remove_file, File};
 use std::io::BufReader;
 use std::io::Read;
 use std::path::Path;
+use std::process::Output;
 
 // Error Handling
 use log::info;
 use miette::{IntoDiagnostic, Result};
+
+/**
+* A struct that stores the procees standards input and outputs into human readable strings.
+*/
+#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+pub struct Io {
+    pub uuid: Option<Uuid>,
+    pub stdin: Option<String>,
+    pub stdout: Option<String>,
+    pub stderr: Option<String>,
+}
 
 impl Io {
     /**
@@ -62,5 +74,34 @@ impl Io {
             ..*self
         };
         Ok(())
+    }
+}
+/**
+* Convert a standart process (std::process) outputs into an Io struct.
+* The output buffers are converted into human readable strings.
+*/
+impl From<&Output> for Io {
+    fn from(output: &Output) -> Io {
+        let stdout_str = String::from_utf8(output.stdout.to_owned()).unwrap();
+        // .strip_suffix("\r\n")
+        // .unwrap()
+        let stderr_str = String::from_utf8(output.stderr.to_owned()).unwrap();
+        // .strip_suffix("\r\n")
+        // .unwrap()
+
+        let mut stdout = None;
+        if !stdout_str.is_empty() {
+            stdout = Some(stdout_str);
+        }
+        let mut stderr = None;
+        if !stderr_str.is_empty() {
+            stderr = Some(stderr_str);
+        }
+        Io {
+            stdin: None,
+            uuid: None,
+            stdout,
+            stderr,
+        }
     }
 }
