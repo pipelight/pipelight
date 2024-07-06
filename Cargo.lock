@@ -1791,6 +1791,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "pipelight_core"
+version = "0.6.19"
+dependencies = [
+ "log",
+ "miette",
+ "owo-colors",
+ "switch",
+ "utils",
+]
+
+[[package]]
 name = "pkg-config"
 version = "0.3.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"

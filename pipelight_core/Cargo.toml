@@ -1,5 +1,5 @@
 [package]
-name = "pipelight"
+name = "pipelight_core"
 version = "0.6.19"
 edition = "2021"
 authors = ["areskul"]
@@ -7,7 +7,8 @@ description = "A Rust/Typescript based absurd automation tool"
 homepage = "pipelight.dev"
 repository = "git@github.com:pipelight/pipelight.git"
 license = "GPL2"
-default-run = "pipelight"
+
+# default-run = "pipelight"
 
 [dependencies]
 utils = { path = "../utils" }
