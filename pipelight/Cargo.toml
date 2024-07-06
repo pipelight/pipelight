@@ -9,6 +9,14 @@ homepage = "pipelight.areskul.com"
 repository = "git@gitea.com:areska/pipelight.git"
 license = "GPL2"
 
+[lib]
+name = "mylib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "mybin"
+path = "src/bin.rs"
+
 [dependencies]
 pipelight_utils = { path = "../utils" }
 switch = { path = "../switch" }
