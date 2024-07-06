@@ -3,7 +3,7 @@ name = "pipelight_core"
 version = "0.6.19"
 edition = "2021"
 authors = ["areskul"]
-description = "A Rust/Typescript based absurd automation tool"
+description = "A Rust based absurd automation tool"
 homepage = "pipelight.dev"
 repository = "git@github.com:pipelight/pipelight.git"
 license = "GPL2"
@@ -14,5 +14,5 @@ license = "GPL2"
 utils = { path = "../utils" }
 switch = { path = "../switch" }
 log = "0.4.17"
-miette = { version = "5.5.0", features = ["fancy", "backtrace"] }
+miette = { version = "5.5.0", features = ["backtrace"] }
 owo-colors = "3.5.0"
