@@ -8,7 +8,7 @@ cli = { path = "../cli" }
 workflow = { path = "../workflow" }
 templates = { path = "../templates" }
 exec = { path = "../exec" }
-pipelight_utils = { path = "../utils" }
+pipelight_utils = { path = "../pipelight_utils" }
 cast = { path = "../cast" }
 clap = "4.3.1"
 log = "0.4.17"

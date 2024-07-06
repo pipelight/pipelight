@@ -4,8 +4,8 @@ version = "0.6.19"
 edition = "2021"
 authors = ["areskul"]
 description = "A Rust/Typescript based absurd automation tool"
-homepage = "pipelight.areskul.com"
-repository = "git@gitea.com:areska/pipelight.git"
+homepage = "pipelight.dev"
+repository = "git@github.com:pipelight/pipelight.git"
 license = "GPL2"
 
 # default-run = "pipelight"
@@ -20,7 +20,7 @@ path = "src/bin.rs"
 doc = false
 
 [dependencies]
-pipelight_utils = { path = "../utils" }
+pipelight_utils = { path = "../pipelight_utils" }
 switch = { path = "../switch" }
 log = "0.4.17"
 miette = { version = "5.5.0", features = ["fancy", "backtrace"] }

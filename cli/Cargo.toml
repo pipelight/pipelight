@@ -8,7 +8,7 @@ build = "build.rs"
 workflow = { path = "../workflow" }
 templates = { path = "../templates" }
 exec = { path = "../exec" }
-pipelight_utils = { path = "../utils" }
+pipelight_utils = { path = "../pipelight_utils" }
 cast = { path = "../cast" }
 chrono = { version = "0.4.23", features = ["serde"] }
 colored = "2.0.0"
@@ -41,7 +41,7 @@ ignore-files = "1.3.1"
 workflow = { path = "../workflow" }
 templates = { path = "../templates" }
 exec = { path = "../exec" }
-pipelight_utils = { path = "../utils" }
+pipelight_utils = { path = "../pipelight_utils" }
 cast = { path = "../cast" }
 chrono = { version = "0.4.23", features = ["serde"] }
 colored = "2.0.0"
