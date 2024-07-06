@@ -3,7 +3,7 @@ use crate::actions::watch::Watcher;
 // Env
 use std::env;
 // Process finder
-use exec::processes::Finder;
+use exec::Finder;
 // Error handling
 use miette::{Error, IntoDiagnostic, Result};
 
@@ -32,7 +32,6 @@ impl Watcher {
             .search()?;
         Ok(finder)
     }
-
 
     /**
     Check if an instance of 'pipelight watch' is already

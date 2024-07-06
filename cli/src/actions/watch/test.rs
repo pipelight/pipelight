@@ -8,7 +8,7 @@ mod watcher {
     use crate::actions::watch::build::get_ignore_path;
     use crate::actions::watch::{build, Watcher};
     use exec::Process;
-    use utils::teleport::Portal;
+    use pipelight_utils::teleport::Portal;
     // Error handling
     use miette::{Diagnostic, IntoDiagnostic, Result};
     use thiserror::Error;
@@ -17,7 +17,7 @@ mod watcher {
     // Fancy color
     use colored::Colorize;
     // Process finder
-    use exec::processes::Finder;
+    use exec::Finder;
 
     fn print_cwd() -> Result<()> {
         let path = env::current_dir().into_diagnostic()?;

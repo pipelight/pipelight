@@ -14,7 +14,6 @@ pub use crate::types::Cli;
 Build cli and generate autocompletion scripts
 */
 fn main() -> Result<()> {
-
     // Standard outdir
     // let outdir = match env::var_os("OUT_DIR") {
     //     None => return Ok(()),
@@ -33,7 +32,7 @@ fn main() -> Result<()> {
             shell,
             &mut cmd, // We need to specify what generator to use
             name.clone(),
-            outdir.clone(), // We need to specify where to write to
+            outdir, // We need to specify where to write to
         )
         .into_diagnostic()?;
         println!("cargo:warning=completion file is generated: {path:?}");

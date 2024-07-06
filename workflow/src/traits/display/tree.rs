@@ -10,9 +10,9 @@ use log::LevelFilter;
 use regex::Regex;
 use std::fmt;
 // Globals
-use utils::globals::LOGGER;
+use pipelight_utils::globals::LOGGER;
 // Date utilities
-use utils::dates::convert::*;
+use pipelight_utils::dates::convert::*;
 
 static INDENT: &str = "  ";
 

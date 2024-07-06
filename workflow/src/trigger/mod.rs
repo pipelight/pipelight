@@ -2,7 +2,7 @@
 mod test;
 // Structs
 use crate::types::{Trigger, TriggerBranch, TriggerTag};
-use utils::git::{Flag, Git};
+use pipelight_utils::git::{Flag, Git};
 // Global var
 use crate::globals::TRIGGER_ENV;
 // Error Handling

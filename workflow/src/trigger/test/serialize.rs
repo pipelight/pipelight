@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod serialize {
     use crate::types::{Trigger, TriggerBranch, TriggerTag};
-    use utils::git::{Flag, Hook, Special};
+    use pipelight_utils::git::{Flag, Hook, Special};
 
     #[test]
     fn try_serialize_trigger_hook() {

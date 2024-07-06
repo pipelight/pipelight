@@ -1,5 +1,5 @@
 [package]
-name = "utils"
+name = "pipelight_utils"
 version = "0.2.0"
 edition = "2021"
 
@@ -7,8 +7,19 @@ edition = "2021"
 git2 = "0.16.1"
 rev_buf_reader = "0.3.0"
 log = "0.4.17"
-log4rs = { version = "1.2.0", features = ["json_encoder","pattern_encoder","size_trigger","console_appender", "file_appender"]}
-uuid = { version = "1.1.2", features = [ "v4","serde","fast-rng","macro-diagnostics"]}
+log4rs = { version = "1.2.0", features = [
+  "json_encoder",
+  "pattern_encoder",
+  "size_trigger",
+  "console_appender",
+  "file_appender",
+] }
+uuid = { version = "1.1.2", features = [
+  "v4",
+  "serde",
+  "fast-rng",
+  "macro-diagnostics",
+] }
 strum = { version = "0.24.1", features = ["derive"] }
 serde = { version = "1.0.152", features = ["derive"] }
 convert_case = "0.6.0"
@@ -19,6 +30,6 @@ iso8601-duration = { version = "0.2.0", features = ["serde", "chrono"] }
 chrono = { version = "0.4.23", features = ["serde"] }
 ignore-files = "1.3.1"
 project-origins = "1.2.0"
-signal-hook = { version = "0.3.17", features = ["extended-siginfo"]}
+signal-hook = { version = "0.3.17", features = ["extended-siginfo"] }
 console = "0.15.7"
 thiserror = "1.0.50"

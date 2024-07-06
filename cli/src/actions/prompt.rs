@@ -7,7 +7,7 @@ use dialoguer::{console::Term, Select};
 use miette::{Error, IntoDiagnostic, Result};
 
 // Signal handling
-use utils::signal::restore_term;
+use pipelight_utils::signal::restore_term;
 
 /**
 Displays a selet prompt of available pipelines

@@ -8,7 +8,7 @@ mod typescript;
 use crate::Config;
 // Filesystem
 use std::path::Path;
-use utils::files::FileType;
+use pipelight_utils::files::FileType;
 // Error Handling
 use miette::Result;
 

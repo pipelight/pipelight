@@ -1,4 +1,4 @@
-mod statuable;
+pub mod statuable;
 
 use serde::{Deserialize, Serialize};
 // Colors and Formatting
@@ -11,7 +11,7 @@ use std::process::Output;
 use convert_case::{Case, Casing};
 // Logger
 use log::warn;
-use utils::dates::Duration;
+use pipelight_utils::dates::Duration;
 
 /**
 * A convenience struct to store the process status and its duration.

@@ -29,4 +29,5 @@ mod state;
 // Re-export
 pub use io::*;
 pub use process::*;
+pub use state::statuable::Statuable;
 pub use state::*;

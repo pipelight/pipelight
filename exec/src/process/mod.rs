@@ -28,11 +28,30 @@ pub struct Process {
     pub io: Io,
     pub cwd: Option<String>,
 }
+impl Default for Process {
+    /**
+     * Create a process struct without an initial command.
+     */
+    fn default() -> Process {
+        let uuid = Some(Uuid::new_v4());
+        Process {
+            uuid,
+            pid: None,
+            cwd: None,
+            io: Io {
+                uuid,
+                stdin: None,
+                ..Io::default()
+            },
+            state: State::default(),
+        }
+    }
+}
 impl Process {
     /**
      * Create a process struct with an initial command.
      */
-    fn new(stdin: &str) -> Process {
+    pub fn new(stdin: &str) -> Process {
         let uuid = Some(Uuid::new_v4());
         Process {
             uuid,

@@ -4,10 +4,6 @@ mod cli {
     use miette::{IntoDiagnostic, Result};
 
     use crate::services::types::{Action, Service};
-    use crate::services::FgBg;
-    use crate::types::Cli;
-    // Clap - command line lib
-    use clap::FromArgMatches;
 
     use assert_cmd::prelude::*; // Add methods on commands
     use std::process::Command; // Run commnds
