@@ -10,14 +10,6 @@ license = "GPL2"
 
 # default-run = "pipelight"
 
-[lib]
-name = "pipelight"
-path = "src/lib.rs"
-
-[[bin]]
-name = "pipelight"
-path = "src/bin.rs"
-
 [dependencies]
 pipelight_utils = { path = "../utils" }
 switch = { path = "../switch" }
