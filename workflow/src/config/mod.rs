@@ -8,7 +8,7 @@ use miette::Result;
 use crate::pipeline::Filters;
 use crate::types::Config;
 use log::LevelFilter;
-use pipelight_utils::git::Flag;
+use utils::git::Flag;
 
 impl Config {
     pub fn get() -> Result<Self> {

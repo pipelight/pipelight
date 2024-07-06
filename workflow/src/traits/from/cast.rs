@@ -11,7 +11,7 @@ use convert_case::{Case, Casing};
 
 use std::convert::From;
 use std::process::exit;
-use pipelight_utils::git::Flag;
+use utils::git::Flag;
 use uuid::Uuid;
 
 // Logger

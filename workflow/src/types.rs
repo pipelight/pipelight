@@ -1,13 +1,13 @@
 // Standard libs
 use log::LevelFilter;
 use serde::{Deserialize, Serialize};
-pub use pipelight_utils::dates::Duration;
+pub use utils::dates::Duration;
 use uuid::Uuid;
 
 // Structs
 use exec::Process;
 pub use exec::Status;
-use pipelight_utils::git::Flag;
+use utils::git::Flag;
 
 // Traits - Enum workaround
 use strum::EnumIter;

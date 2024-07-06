@@ -2,7 +2,7 @@
 mod config {
     use crate::types::{Config, Pipeline};
     use crate::{Trigger, TriggerBranch, TriggerTag};
-    use pipelight_utils::git::{Flag, Special};
+    use utils::git::{Flag, Special};
     // Error Handling
     use miette::Result;
 

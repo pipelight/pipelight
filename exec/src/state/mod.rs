@@ -11,7 +11,7 @@ use std::process::Output;
 use convert_case::{Case, Casing};
 // Logger
 use log::warn;
-use pipelight_utils::dates::Duration;
+use utils::dates::Duration;
 
 /**
 * A convenience struct to store the process status and its duration.

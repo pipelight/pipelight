@@ -1,11 +1,11 @@
 // Struct
-use pipelight_utils::error::LibError;
-use pipelight_utils::git::Flag;
+use utils::error::LibError;
+use utils::git::Flag;
 // Global vars
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
 // Teleport
-use pipelight_utils::teleport::Portal;
+use utils::teleport::Portal;
 // Logs
 use workflow::{Config, Trigger};
 // Cli
@@ -17,7 +17,7 @@ use miette::{Result};
 
 // Global vars
 use cli::globals::CLI;
-use pipelight_utils::globals::LOGGER;
+use utils::globals::LOGGER;
 use workflow::globals::CONFIG;
 
 pub static PORTAL: Lazy<Arc<Mutex<Portal>>> = Lazy::new(|| Arc::new(Mutex::new(Portal::default())));

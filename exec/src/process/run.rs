@@ -1,6 +1,6 @@
 // Structs
 use crate::{Io, Process, State, Status};
-use pipelight_utils::dates::Duration;
+use utils::dates::Duration;
 // Unix process manipulation
 use std::process::{Command, Stdio};
 

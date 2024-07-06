@@ -1,6 +1,6 @@
 // Types
 use crate::types::{Command, Event, Mode, Parallel, Pipeline, Step, StepOrParallel};
-use pipelight_utils::dates::Duration;
+use utils::dates::Duration;
 // Error Handling
 use miette::Result;
 // Traits

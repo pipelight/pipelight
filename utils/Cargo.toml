@@ -1,5 +1,5 @@
 [package]
-name = "pipelight_utils"
+name = "utils"
 version = "0.2.0"
 edition = "2021"
 

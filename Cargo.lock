@@ -244,12 +244,12 @@ dependencies = [
  "exec",
  "log",
  "miette",
- "pipelight_utils",
  "serde",
  "serde_json",
  "serde_yaml",
  "thiserror",
  "toml",
+ "utils",
 ]
 
 [[package]]
@@ -376,7 +376,6 @@ dependencies = [
  "log",
  "miette",
  "once_cell",
- "pipelight_utils",
  "rayon",
  "serde",
  "serde_json",
@@ -384,6 +383,7 @@ dependencies = [
  "templates",
  "thiserror",
  "tokio",
+ "utils",
  "watchexec",
  "watchexec-events",
  "watchexec-filterer-ignore",
@@ -636,12 +636,12 @@ dependencies = [
  "log",
  "miette",
  "once_cell",
- "pipelight_utils",
  "rustix",
  "serde",
  "subprocess",
  "sysinfo",
  "thiserror",
+ "utils",
  "uuid",
 ]
 
@@ -1786,32 +1786,8 @@ dependencies = [
  "log",
  "miette",
  "owo-colors",
- "pipelight_utils",
  "switch",
-]
-
-[[package]]
-name = "pipelight_utils"
-version = "0.2.0"
-dependencies = [
- "chrono",
- "console",
- "convert_case",
- "git2",
- "ignore-files",
- "iso8601-duration",
- "log",
- "log4rs",
- "miette",
- "once_cell",
- "project-origins",
- "rev_buf_reader",
- "serde",
- "serde_plain",
- "signal-hook",
- "strum",
- "thiserror",
- "uuid",
+ "utils",
 ]
 
 [[package]]
@@ -2328,8 +2304,8 @@ dependencies = [
  "log",
  "miette",
  "once_cell",
- "pipelight_utils",
  "templates",
+ "utils",
  "workflow",
 ]
 
@@ -2390,7 +2366,6 @@ dependencies = [
  "handlebars",
  "log",
  "miette",
- "pipelight_utils",
  "rust-embed",
  "serde",
  "serde_json",
@@ -2398,6 +2373,7 @@ dependencies = [
  "serde_yaml",
  "thiserror",
  "toml",
+ "utils",
 ]
 
 [[package]]
@@ -2730,6 +2706,30 @@ name = "utf8parse"
 version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "06abde3611657adf66d383f00b093d7faecc7fa57071cce2578660c9f1010821"
+
+[[package]]
+name = "utils"
+version = "0.2.0"
+dependencies = [
+ "chrono",
+ "console",
+ "convert_case",
+ "git2",
+ "ignore-files",
+ "iso8601-duration",
+ "log",
+ "log4rs",
+ "miette",
+ "once_cell",
+ "project-origins",
+ "rev_buf_reader",
+ "serde",
+ "serde_plain",
+ "signal-hook",
+ "strum",
+ "thiserror",
+ "uuid",
+]
 
 [[package]]
 name = "uuid"
@@ -3186,7 +3186,6 @@ dependencies = [
  "log",
  "miette",
  "once_cell",
- "pipelight_utils",
  "rayon",
  "regex",
  "rustix",
@@ -3196,6 +3195,7 @@ dependencies = [
  "strum",
  "templates",
  "thiserror",
+ "utils",
  "uuid",
 ]
 

@@ -1,6 +1,6 @@
 // Struct
 use crate::types::Trigger;
-use pipelight_utils::git::Flag;
+use utils::git::Flag;
 // Error Handling
 use miette::Result;
 

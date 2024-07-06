@@ -20,7 +20,7 @@ path = "src/bin.rs"
 doc = false
 
 [dependencies]
-pipelight_utils = { path = "../pipelight_utils" }
+utils = { path = "../utils" }
 switch = { path = "../switch" }
 log = "0.4.17"
 miette = { version = "5.5.0", features = ["fancy", "backtrace"] }

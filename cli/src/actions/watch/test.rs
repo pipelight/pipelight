@@ -8,7 +8,7 @@ mod watcher {
     use crate::actions::watch::build::get_ignore_path;
     use crate::actions::watch::{build, Watcher};
     use exec::Process;
-    use pipelight_utils::teleport::Portal;
+    use utils::teleport::Portal;
     // Error handling
     use miette::{Diagnostic, IntoDiagnostic, Result};
     use thiserror::Error;
