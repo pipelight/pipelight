@@ -10,8 +10,6 @@ members = [
   "workflow",
   "cli",
   "switch",
-  ## Lib entry point
-  "pipelight_core",
-  ## Bin package
+  ## Bin package and Lib entrypoint
   "pipelight",
 ]
