@@ -1786,6 +1786,7 @@ dependencies = [
  "log",
  "miette",
  "owo-colors",
+ "pipelight_utils",
  "switch",
 ]
 
