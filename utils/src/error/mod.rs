@@ -8,7 +8,7 @@ pub enum PipelightError {
     IoError(#[from] std::io::Error),
 
     #[error(transparent)]
-    #[diagnostic(code(pipelight::io::error))]
+    #[diagnostic(transparent)]
     LibError(#[from] LibError),
 }
 
@@ -16,7 +16,7 @@ pub enum PipelightError {
 A config error with help.
 Can be recursively chained.
 */
-#[derive(Debug, Error, Diagnostic)]
+#[derive(Error, Diagnostic, Debug)]
 #[error("{}", message)]
 #[diagnostic(code(pipelight::lib::error))]
 pub struct LibError {
