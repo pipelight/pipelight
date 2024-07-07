@@ -47,7 +47,7 @@ pub fn get_ignore_path() -> Result<String> {
             portal.seed(".gitignore");
             match portal.search_file() {
                 Ok(_) => Ok(portal.target.file_path.unwrap()),
-                Err(err) => return Err(err),
+                Err(err) => return Err(err.into()),
             }
         }
     }

@@ -1,5 +1,5 @@
 // Struct
-use utils::error::LibError;
+use utils::error::{LibError, PipelightError, WrapError};
 use utils::git::Flag;
 // Global vars
 use once_cell::sync::Lazy;
@@ -9,11 +9,11 @@ use utils::teleport::Portal;
 // Logs
 use workflow::{Config, Trigger};
 // Cli
-use cli::types::{Cli};
+use cli::types::Cli;
 use cli::types::{Commands, DetachableCommands, PostCommands};
 // Error Handling
 use log::{info, trace};
-use miette::{Result};
+use miette::Result;
 
 // Global vars
 use cli::globals::CLI;
@@ -88,9 +88,14 @@ pub fn hydrate_portal() -> Result<()> {
             return Ok(());
         }
         Err(e) => {
-            let message = "Could not find a configuration file";
-            let help = "Create a default configuration file: \"pipelight init --help\"";
-            return Err(LibError::new(message, help, e).into());
+            let message = "Could not find a configuration file".to_owned();
+            let help = "Create a default configuration file: \"pipelight init --help\"".to_owned();
+            return Err(PipelightError::WrapError(WrapError {
+                message,
+                help,
+                origin: e.into(),
+            })
+            .into());
         }
     };
 }

@@ -9,29 +9,36 @@ pub enum PipelightError {
 
     #[error(transparent)]
     #[diagnostic(transparent)]
+    WrapError(#[from] WrapError),
+
+    #[error(transparent)]
+    #[diagnostic(transparent)]
     LibError(#[from] LibError),
 }
 
 /**
-A config error with help.
+A config error with help higher origin
 Can be recursively chained.
 */
-#[derive(Error, Diagnostic, Debug)]
+#[derive(Debug, Error, Diagnostic)]
 #[error("{}", message)]
-#[diagnostic(code(pipelight::lib::error))]
-pub struct LibError {
+#[diagnostic(code(pipelight::wrap::error))]
+pub struct WrapError {
     pub message: String,
     #[diagnostic_source]
     pub origin: Report,
     #[help]
     pub help: String,
 }
-impl LibError {
-    pub fn new(message: &str, help: &str, e: Report) -> Self {
-        LibError {
-            help: help.to_owned(),
-            message: message.to_owned(),
-            origin: e,
-        }
-    }
+
+/**
+A root cause error with no inner origin
+*/
+#[derive(Debug, Error, Diagnostic)]
+#[error("{}", message)]
+#[diagnostic(code(pipelight::lib::error))]
+pub struct LibError {
+    pub message: String,
+    #[help]
+    pub help: String,
 }

@@ -1,9 +1,7 @@
 // Environment
 use std::env;
 // File
-use crate::files::FileType;
-// Struct
-use crate::teleport::types::Portal;
+use crate::{files::FileType, teleport::types::Portal};
 // Trait
 use strum::IntoEnumIterator;
 // Git
@@ -11,22 +9,23 @@ use crate::git::Git;
 // Filesystem
 use std::path::Path;
 // Error Handling
+use crate::error::{LibError, PipelightError};
 use log::{info, trace};
-use miette::{Error, IntoDiagnostic, Result};
+use miette::{Context, Error, IntoDiagnostic, Result};
 
 impl Portal {
     /*
     Jump between PWD and the directory of the loaded config file.
     */
-    pub fn teleport(&mut self) -> Result<Self> {
+    pub fn teleport(&mut self) -> Result<Self, PipelightError> {
         let target = self.target.directory_path.clone().unwrap();
-        env::set_current_dir(target.clone()).into_diagnostic()?;
+        env::set_current_dir(target.clone())?;
         info!("working directory changed to -> {:#?}", &target);
         Ok(self.to_owned())
     }
-    pub fn origin(&mut self) -> Result<Self> {
+    pub fn origin(&mut self) -> Result<Self, PipelightError> {
         let target = self.origin.directory_path.clone().unwrap();
-        env::set_current_dir(target.clone()).into_diagnostic()?;
+        env::set_current_dir(target.clone())?;
         info!("working directory changed to -> {:#?}", &target);
         Ok(self.to_owned())
     }
@@ -40,7 +39,7 @@ impl Portal {
     /*
     Recursively search a file throught filesystem
     */
-    pub fn search(&mut self) -> Result<Self> {
+    pub fn search(&mut self) -> Result<Self, PipelightError> {
         let seed = self.seed.clone();
         if let Some(seed) = seed {
             // Sub portals
@@ -58,15 +57,15 @@ impl Portal {
                 *self = prefix_portal;
                 return Ok(self.to_owned());
             } else {
-                return Err(Error::msg(format!(
-                    "Couldn't find a file with the provided seed: {:#?}",
-                    seed
-                )));
+                return Err(PipelightError::LibError(LibError {
+                    message: format!("Couldn't find a file with the provided seed: {:#?}", seed),
+                    help: format!("Try creating a file that begins by {:#?}", seed),
+                }));
             }
         }
         Ok(self.to_owned())
     }
-    fn parent(&mut self) -> Result<Self> {
+    fn parent(&mut self) -> Result<Self, PipelightError> {
         if !self.has_reached_root()? && self.current.directory_path.is_some() {
             let current = self.current.directory_path.clone().unwrap();
             let parent = Path::new(&current).parent();
@@ -75,9 +74,12 @@ impl Portal {
                 return Ok(self.to_owned());
             }
         }
-        Err(Error::msg("File has no parent"))
+        Err(PipelightError::LibError(LibError {
+            message: "Couldn't recurse higher in filesystem".to_owned(),
+            help: "Maybe you made a typo in filename".to_owned(),
+        }))
     }
-    fn has_reached_root(&mut self) -> Result<bool> {
+    fn has_reached_root(&mut self) -> Result<bool, PipelightError> {
         // If teleport (search method) has reached git repo root
         if Git::new().exists() {
             let boolean = self.current.directory_path
@@ -98,7 +100,7 @@ impl Portal {
             Ok(self.current.directory_path == Some("/".to_owned()))
         }
     }
-    pub fn search_file(&mut self) -> Result<()> {
+    pub fn search_file(&mut self) -> Result<(), PipelightError> {
         trace!("search file");
         // SafeGuard
         if self.seed.is_some() {
@@ -108,43 +110,54 @@ impl Portal {
             // SafeGuard
             // if path.extension().is_none() {
             if path.is_dir() {
-                let msg = format!("Couldn't find file {}", name);
-                return Err(Error::msg(msg));
+                return Err(PipelightError::LibError(LibError {
+                    message: format!("Couldn't find file {}", name),
+                    help: "Maybe you made a typo in filename".to_owned(),
+                }));
             }
             if path.exists() {
                 self.target.file(path.display().to_string())?;
             } else if self.parent().is_ok() {
                 self.search_file()?;
             } else {
-                let msg = format!("Couldn't find file {}", name);
-                return Err(Error::msg(msg));
+                return Err(PipelightError::LibError(LibError {
+                    message: format!("Couldn't find file {}", name),
+                    help: "Maybe you made a typo in filename".to_owned(),
+                }));
             }
         }
         Ok(())
     }
-    pub fn search_path(&mut self) -> Result<()> {
+    pub fn search_path(&mut self) -> Result<(), PipelightError> {
         trace!("search path");
         let path_str = self.seed.clone();
         if let Some(mut path_str) = path_str {
             let mut path = Path::new(&path_str);
             if path.is_relative() {
-                path_str = path.canonicalize().into_diagnostic()?.display().to_string();
+                path_str = path.canonicalize()?.display().to_string();
                 path = Path::new(&path_str);
             }
             // SafeGuard
             if path.extension().is_none() {
-                let msg = format!("Couldn't find file at path {}", path_str);
-                return Err(Error::msg(msg));
+                return Err(PipelightError::LibError(LibError {
+                    message: format!("Couldn't find file at path {}", path_str),
+                    help: "Maybe you made a typo in filename".to_owned(),
+                }));
             }
             if path.exists() {
                 self.target.file(path.display().to_string())?;
                 Ok(())
             } else {
-                let msg = format!("Couldn't find file at path {}", path_str);
-                return Err(Error::msg(msg));
+                return Err(PipelightError::LibError(LibError {
+                    message: format!("Couldn't find file at path {}", path_str),
+                    help: "Maybe you made a typo in filename".to_owned(),
+                }));
             }
         } else {
-            Err(Error::msg("No path was provided"))
+            return Err(PipelightError::LibError(LibError {
+                message: "No filepath were provided".to_owned(),
+                help: "Try giving a filepath".to_owned(),
+            }));
         }
     }
     pub fn search_prefix(&mut self) -> Result<()> {
