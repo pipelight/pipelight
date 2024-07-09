@@ -135,3 +135,24 @@ Reach the community whenever you need support or software improvements. On
 [@Areskul](https://t.me/areskul) or send a mail at areskul@areskul.com.
 
 Licensed under GNU GPLv2 Copyright (C) 2023 Areskul
+
+## Roadmap
+
+Supported languages:
+
+- [ ] feat: add support for apple pkl
+- [ ] feat: add support for hashicorp hcl
+
+Javascript helpers:
+
+- [ ] feat: add helper for jucenit proxy
+- [ ] refactor: rewrite docker helpers in rust wasm
+
+Cli:
+
+- [ ] feat: add a tui interface
+
+Community:
+
+- [ ] feat: add a news page on Documentation website
+- [ ] refactor: move out of discord
