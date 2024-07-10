@@ -9,7 +9,7 @@ use std::io::Write;
 use std::path::Path;
 
 use crate::types::{Assets, Style, Template};
-use utils::files::{is_filename, FileType};
+use pipelight_utils::files::{is_filename, FileType};
 
 impl Template {
     /**

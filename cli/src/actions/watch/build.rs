@@ -2,8 +2,8 @@
 use crate::services;
 use crate::services::{FgBg, Service};
 use crate::types::{Commands, DetachableCommands, PostCommands, Trigger};
-use utils::git::{Flag, Special};
-use utils::teleport::Portal;
+use pipelight_utils::git::{Flag, Special};
+use pipelight_utils::teleport::Portal;
 // use crate::trigger;
 // Globals
 use std::sync::Arc;

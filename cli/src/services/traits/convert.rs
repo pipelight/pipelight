@@ -2,7 +2,7 @@
 use crate::services::types::{Action, Service};
 use crate::types::{Commands, DetachableCommands, PostCommands};
 use crate::types::{Pipeline, Trigger};
-use utils::git::Flag;
+use pipelight_utils::git::Flag;
 // Error Handling
 use miette::Result;
 

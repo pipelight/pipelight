@@ -6,7 +6,7 @@ use exec::{Statuable, Status};
 use once_cell::sync::Lazy;
 use std::io::Write;
 use std::sync::{Arc, Mutex};
-use utils::globals::LOGGER;
+use pipelight_utils::globals::LOGGER;
 // Fylesystem manipulation
 use std::fs;
 use std::fs::{create_dir_all, File};

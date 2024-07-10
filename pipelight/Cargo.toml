@@ -18,7 +18,7 @@ path = "src/main.rs"
 doc = false
 
 [dependencies]
-utils = { path = "../utils", version = "*" }
+pipelight_utils = { path = "../pipelight_utils" }
 switch = { path = "../switch", version = "*" }
 log = "0.4.17"
 miette = { version = "5.5.0", features = ["fancy", "backtrace"] }

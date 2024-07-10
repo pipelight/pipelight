@@ -1,6 +1,6 @@
 use crate::Style;
 use convert_case::{Case, Casing};
-use utils::files::FileType;
+use pipelight_utils::files::FileType;
 
 impl From<&String> for Style {
     fn from(e: &String) -> Self {

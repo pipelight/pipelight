@@ -4,7 +4,7 @@ use exec::{Statuable, Status};
 use workflow::{pipeline::Filters, Config, Getters, Logs, Node, Pipeline, Trigger};
 //Logger
 use log::{error, info, warn, LevelFilter};
-use utils::globals::LOGGER;
+use pipelight_utils::globals::LOGGER;
 // Error Handling
 use miette::{IntoDiagnostic, Result};
 

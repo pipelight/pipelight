@@ -2,7 +2,7 @@
 resolver = "2"
 members = [
   ## Dependencies small utilities crates
-  "utils",
+  "pipelight_utils",
   "exec",
   "cast",
   "templates",

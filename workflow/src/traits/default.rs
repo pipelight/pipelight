@@ -3,7 +3,7 @@ use crate::types::{Command, Event, Logs, Mode, Node, Parallel, Pipeline, Step, S
 use crate::types::{Trigger, TriggerBranch, TriggerTag};
 use exec::Process;
 use log::LevelFilter;
-use utils::git::{Flag, Special};
+use pipelight_utils::git::{Flag, Special};
 use uuid::Uuid;
 // Date and time
 use chrono::Local;

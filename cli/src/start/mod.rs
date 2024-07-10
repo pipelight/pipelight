@@ -6,7 +6,7 @@ use crate::types::{ColoredOutput, LogsCommands, ToggleCommands};
 use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
 use workflow::{Getters, Pipeline};
 
-use utils::git::Hook;
+use pipelight_utils::git::Hook;
 // Clap
 use clap::ValueEnum;
 use clap_complete::shells::Shell;

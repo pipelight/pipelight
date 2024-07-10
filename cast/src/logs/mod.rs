@@ -1,7 +1,7 @@
 // Filesystem - read files
 use std::fs;
 use std::path::Path;
-use utils::files::read_last_line;
+use pipelight_utils::files::read_last_line;
 // Traits
 use serde::{Deserialize, Serialize};
 // Error Handling

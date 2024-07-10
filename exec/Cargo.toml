@@ -4,7 +4,7 @@ version = "0.2.0"
 edition = "2021"
 
 [dependencies]
-utils = { path = "../utils" }
+pipelight_utils = { path = "../pipelight_utils" }
 colored = "2.0.0"
 log = "0.4.17"
 thiserror = "1.0.38"
