@@ -10,7 +10,7 @@ use miette::{Context, Result};
 
 impl Portal {
     /**
-    Preffered way to instanciate a portal.
+    Prefered way to instanciate a portal.
     Hydrate a default portal with current env.
     */
     pub fn new() -> Result<Self, PipelightError> {

@@ -18,8 +18,8 @@ path = "src/main.rs"
 doc = false
 
 [dependencies]
-utils = { path = "../utils" }
-switch = { path = "../switch" }
+utils = { path = "../utils", version = "*" }
+switch = { path = "../switch", version = "*" }
 log = "0.4.17"
 miette = { version = "5.5.0", features = ["fancy", "backtrace"] }
 owo-colors = "3.5.0"
