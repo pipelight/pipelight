@@ -15,8 +15,7 @@ and a deeper understanding.
 
 ## Usage
 
-<video width="320" src="https://pipelight.dev/videos/showcase.mp4" type="video/mp4">
-</video>
+<img width="480" alt="pipelight_demo" src="https://pipelight.dev/images/showcase.gif"/>
 
 ## 📦 A lightweight tool for CICD
 
