@@ -15,7 +15,9 @@ and a deeper understanding.
 
 ## Usage
 
+<span>
 <img width="480px" alt="pipelight_demo" src="https://pipelight.dev/images/showcase.gif"/>
+</span>
 
 ## 📦 A lightweight tool for CICD
 
