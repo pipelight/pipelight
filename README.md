@@ -5,9 +5,7 @@
 </h1>
 </span>
 
-![pipelight_demo](https://pipelight.dev/images/showcase.gif)
-
-<!-- <img width="480px" height="480px" alt="pipelight_demo" src="https://pipelight.dev/images/showcase.gif"/> -->
+![pipelight_demo](https://github.com/pipelight/doc.pipelight/blob/master/public/images/showcase.gif)
 
 Automate your most boring and repetitive tasks.
 
