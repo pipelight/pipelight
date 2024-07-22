@@ -1,13 +1,23 @@
-# Utils crate
+# Pipelight utils crate
+
+A set of trivial utilities for command line tools.
+
+These are the most cleaned up code modules from
+[pipelight](https://github.com/pipelight/pipelight)
+an automation cli.
 
 ## What is inside ?
 
-Convenience functions
+Modules:
 
-- Teleport
-- Git
-- Logger
-- Date
+- Teleport (find and load file from a path, name or a seed)
+  a lot like [cosmiconfig](https://github.com/cosmiconfig)
+
+- Git (manage git repo and hooks)
+
+- Logger()
+
+- Date (common high level date manipulation functions)
 
 ## Logger
 
@@ -41,7 +51,6 @@ Contains functions to:
 - Recursively search a file through the filesystem
 - Change process cwd back and forth from the **pwd** and the **file parent
   directory**.
-
 
 ```rs
 

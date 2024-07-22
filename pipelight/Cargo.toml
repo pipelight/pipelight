@@ -6,7 +6,7 @@ authors = ["areskul"]
 description = "A Rust/Typescript based absurd automation tool"
 homepage = "pipelight.dev"
 repository = "git@github.com:pipelight/pipelight.git"
-license = "GPL2"
+license = "GPL-2.0-only"
 
 [lib]
 name = "pipelight"

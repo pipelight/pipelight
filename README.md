@@ -13,6 +13,12 @@ Automate your most boring and repetitive tasks.
 Checkout the [Documentation](https://pipelight.dev) for a much friendly approach
 and a deeper understanding.
 
+## Usage
+
+<video width="320" height="240" controls>
+  <source src="https://pipelight.dev/public/showcase.mp4" type="video/mp4">
+</video>
+
 ## 📦 A lightweight tool for CICD
 
 Pipelight is a [Rust](https://www.rust-lang.org/) based small(13Mb) cli tool to
@@ -57,7 +63,7 @@ const my_pipeline = pipeline("build website", () => [
 ]);
 ```
 
-## ⚙️ Automatic triggers
+## Automatic triggers
 
 Add automatic triggers to your pipeline.
 
