@@ -5,6 +5,8 @@
 </h1>
 </span>
 
+<img width="480px" alt="pipelight_demo" src="https://pipelight.dev/images/showcase.gif"/>
+
 Automate your most boring and repetitive tasks.
 
 - Define pipelines using **typescript, toml and yaml**.
@@ -12,10 +14,6 @@ Automate your most boring and repetitive tasks.
 
 Checkout the [Documentation](https://pipelight.dev) for a much friendly approach
 and a deeper understanding.
-
-## Usage
-
-<img width="480px" alt="pipelight_demo" src="https://pipelight.dev/images/showcase.gif"/>
 
 ## 📦 A lightweight tool for CICD
 
