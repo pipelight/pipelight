@@ -16,7 +16,7 @@ and a deeper understanding.
 ## Usage
 
 <video width="320" height="240" controls>
-  <source src="https://pipelight.dev/public/showcase.mp4" type="video/mp4">
+  <source src="https://pipelight.dev/videos/showcase.mp4" type="video/mp4">
 </video>
 
 ## 📦 A lightweight tool for CICD
