@@ -18,7 +18,7 @@ pub struct Finder {
     cwd: Option<String>,
     pid: Option<u32>,
     // Search results
-    pub matches: Option<Vec<crate::Process>>,
+    pub matches: Option<Vec<crate::exec::Process>>,
 }
 
 impl Default for Finder {
@@ -96,12 +96,12 @@ impl Finder {
         let mut sys = System::new();
         sys.refresh_processes();
         // Loop through process list
-        let mut matches: Vec<crate::Process> = vec![];
+        let mut matches: Vec<crate::exec::Process> = vec![];
         if let Some(pid) = self.pid {
             let sysinfo_pid = sysinfo::Pid::from_u32(pid);
             if let Some(process) = sys.processes().get(&sysinfo_pid) {
                 if self.is_match_seeds(process)? {
-                    matches.push(crate::Process::from(process));
+                    matches.push(crate::exec::Process::from(process));
                 }
             }
         } else {
@@ -134,7 +134,7 @@ impl Finder {
                     println!("{:?}", process.cmd());
                     println!("{:?}", process.cwd());
                     // matches.push(pid.as_u32());
-                    matches.push(crate::Process::from(process));
+                    matches.push(crate::exec::Process::from(process));
                 }
             }
         }

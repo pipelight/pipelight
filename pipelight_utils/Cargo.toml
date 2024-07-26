@@ -35,3 +35,8 @@ project-origins = "1.2.0"
 signal-hook = { version = "0.3.17", features = ["extended-siginfo"] }
 console = "0.15.7"
 thiserror = "1.0.50"
+colored = "2.0.0"
+subprocess = "0.2.9"
+rustix = { version = "0.38.25", features = ["process"] }
+sysinfo = "0.29.2"
+itertools = "0.11.0"

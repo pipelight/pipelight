@@ -1,5 +1,5 @@
 use crate::types::{Command, Parallel, Pipeline, Status, Step, StepOrParallel};
-use exec::Statuable;
+use pipelight_utils::exec::Statuable;
 
 impl Statuable for Command {
     fn get_status(&self) -> Option<Status> {

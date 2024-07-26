@@ -1,6 +1,6 @@
 // Types
 use chrono::{DateTime, Local};
-use exec::{Statuable, Status};
+use pipelight_utils::exec::{Statuable, Status};
 use workflow::{pipeline::Filters, Config, Getters, Logs, Node, Pipeline, Trigger};
 //Logger
 use log::{error, info, warn, LevelFilter};

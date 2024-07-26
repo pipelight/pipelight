@@ -3,7 +3,7 @@ use crate::error::JsonError;
 use miette::{Error, Result};
 
 // Exec
-use exec::Process;
+use pipelight_utils::exec::Process;
 
 mod script;
 use script::import_script;

@@ -1,6 +1,6 @@
 // Structs
 use crate::types::{Fallback, Parallel, Step, StepOrParallel};
-use exec::Process;
+use pipelight_utils::exec::Process;
 // Error Handling
 use miette::Result;
 

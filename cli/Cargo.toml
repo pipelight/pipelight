@@ -7,7 +7,6 @@ build = "build.rs"
 [dependencies]
 workflow = { path = "../workflow" }
 templates = { path = "../templates" }
-exec = { path = "../exec" }
 pipelight_utils = { path = "../pipelight_utils" }
 cast = { path = "../cast" }
 chrono = { version = "0.4.23", features = ["serde"] }
@@ -40,7 +39,6 @@ ignore-files = "1.3.1"
 [build-dependencies]
 workflow = { path = "../workflow" }
 templates = { path = "../templates" }
-exec = { path = "../exec" }
 pipelight_utils = { path = "../pipelight_utils" }
 cast = { path = "../cast" }
 chrono = { version = "0.4.23", features = ["serde"] }

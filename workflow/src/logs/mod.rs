@@ -6,7 +6,7 @@ mod getters;
 // Tests
 mod test;
 // Traits
-use exec::{Statuable, Status};
+use pipelight_utils::exec::{Statuable, Status};
 // IterMut
 use rayon::prelude::*;
 // Error Handling

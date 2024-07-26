@@ -1,6 +1,6 @@
 // Struct
 use crate::types::{Commands, DetachableCommands, PostCommands};
-use exec::Status;
+use pipelight_utils::exec::Status;
 use workflow::{Getters, Node, Pipeline};
 // Globals
 use crate::globals::CLI;

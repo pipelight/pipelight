@@ -5,8 +5,8 @@ pub use pipelight_utils::dates::Duration;
 use uuid::Uuid;
 
 // Structs
-use exec::Process;
-pub use exec::Status;
+use pipelight_utils::exec::Process;
+pub use pipelight_utils::exec::Status;
 use pipelight_utils::git::Flag;
 
 // Traits - Enum workaround

@@ -1,5 +1,5 @@
 // Types
-use exec::{Statuable, Status};
+use pipelight_utils::exec::{Statuable, Status};
 use workflow::{pipeline::Filters, Getters, Logs, Node, Pipeline};
 // Error Handling
 use miette::{IntoDiagnostic, Result};

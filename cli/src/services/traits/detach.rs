@@ -2,7 +2,7 @@
 use crate::services::types::Service;
 use crate::types::Attach;
 // Process manipulation
-use exec::SelfProcess;
+use pipelight_utils::exec::SelfProcess;
 // Globals
 use crate::globals::CLI;
 // Error Handling

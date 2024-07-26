@@ -1,7 +1,7 @@
 // Structs
 use crate::types::{Pipeline, StepOrParallel};
 // Traits
-use exec::{Statuable, Status};
+use pipelight_utils::exec::{Statuable, Status};
 // Globals
 use once_cell::sync::Lazy;
 use std::io::Write;

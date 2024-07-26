@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
 use sysinfo::{self, PidExt, ProcessExt};
 use uuid::Uuid;
 // Struct
-use crate::{Io, State};
+use crate::exec::{Io, State};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct SelfProcess;

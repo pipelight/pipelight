@@ -241,7 +241,6 @@ checksum = "514de17de45fdb8dc022b1a7975556c53c86f9f0aa5f534b98977b171857c2c9"
 name = "cast"
 version = "0.5.8"
 dependencies = [
- "exec",
  "log",
  "miette",
  "pipelight_utils",
@@ -370,7 +369,6 @@ dependencies = [
  "colored",
  "convert_case",
  "dialoguer",
- "exec",
  "glob",
  "ignore-files",
  "log",
@@ -625,25 +623,6 @@ name = "event-listener"
 version = "2.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0206175f82b8d6bf6652ff7d71a1e27fd2e4efde587fd368662814d6ec1d9ce0"
-
-[[package]]
-name = "exec"
-version = "0.2.0"
-dependencies = [
- "colored",
- "convert_case",
- "itertools",
- "log",
- "miette",
- "once_cell",
- "pipelight_utils",
- "rustix",
- "serde",
- "subprocess",
- "sysinfo",
- "thiserror",
- "uuid",
-]
 
 [[package]]
 name = "faster-hex"
@@ -1795,21 +1774,26 @@ name = "pipelight_utils"
 version = "0.2.1"
 dependencies = [
  "chrono",
+ "colored",
  "console",
  "convert_case",
  "git2",
  "ignore-files",
  "iso8601-duration",
+ "itertools",
  "log",
  "log4rs",
  "miette",
  "once_cell",
  "project-origins",
  "rev_buf_reader",
+ "rustix",
  "serde",
  "serde_plain",
  "signal-hook",
  "strum",
+ "subprocess",
+ "sysinfo",
  "thiserror",
  "uuid",
 ]
@@ -2324,7 +2308,6 @@ dependencies = [
  "cast",
  "clap",
  "cli",
- "exec",
  "log",
  "miette",
  "once_cell",
@@ -3181,7 +3164,6 @@ dependencies = [
  "chrono",
  "colored",
  "convert_case",
- "exec",
  "glob",
  "log",
  "miette",

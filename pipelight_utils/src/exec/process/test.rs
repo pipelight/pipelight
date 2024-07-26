@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod basic {
-    use crate::globals::OUTDIR;
-    use crate::{Process, Status};
+    use crate::exec::globals::OUTDIR;
+    use crate::exec::{Process, Status};
     use std::fs::remove_dir_all;
     #[test]
     fn run_piped() {

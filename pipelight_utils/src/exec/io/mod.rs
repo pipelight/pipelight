@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 // Globals
-use crate::globals::OUTDIR;
+use crate::exec::globals::OUTDIR;
 // File manipulation
 use std::fs::{remove_file, File};
 use std::io::BufReader;

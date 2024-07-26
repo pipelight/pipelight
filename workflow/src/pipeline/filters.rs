@@ -1,6 +1,6 @@
 // Structs
 use crate::types::Pipeline;
-use exec::Status;
+use pipelight_utils::exec::Status;
 use uuid::Uuid;
 // Date and Time
 use chrono::{DateTime, Local};

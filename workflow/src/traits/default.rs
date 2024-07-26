@@ -1,7 +1,7 @@
 // Structs
 use crate::types::{Command, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel};
 use crate::types::{Trigger, TriggerBranch, TriggerTag};
-use exec::Process;
+use pipelight_utils::exec::Process;
 use log::LevelFilter;
 use pipelight_utils::git::{Flag, Special};
 use uuid::Uuid;

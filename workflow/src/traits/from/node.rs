@@ -5,7 +5,7 @@ the node pretty printable type.
 */
 // Struct
 use crate::types::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger};
-use exec::{Statuable, Status};
+use pipelight_utils::exec::{Statuable, Status};
 use log::LevelFilter;
 use pipelight_utils::git::Flag;
 // Globals
