@@ -12,3 +12,6 @@ thiserror = "1.0.38"
 serde_yaml = "0.9.19"
 log = "0.4.17"
 toml = { version = "0.7.3", features = ["parse"] }
+hcl-rs = "0.18.0"
+rusty-pkl = "0.1.2"
+hcl-edit = "0.8.1"

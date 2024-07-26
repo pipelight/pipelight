@@ -51,47 +51,6 @@ impl JsonError {
 }
 
 /**
-A YAML report type with hint, colors and code span.
-For better configuration file debugging
-*/
-#[derive(Error, Diagnostic, Debug)]
-#[diagnostic(code(cast::yaml))]
-#[error("Serde: Could not convert Yaml into Rust types")]
-pub struct YamlError {
-    #[source]
-    pub origin: serde_yaml::Error,
-    #[label("here")]
-    pub at: SourceSpan,
-    #[source_code]
-    pub src: String,
-}
-impl YamlError {
-    pub fn new(e: serde_yaml::Error, src: &str) -> Self {
-        if let Some(location) = e.location() {
-            let line = location.line();
-            let column = location.column();
-            YamlError {
-                at: SourceSpan::new(
-                    SourceOffset::from_location(
-                        //source
-                        src, line, column,
-                    ),
-                    1.into(),
-                ),
-                src: src.to_owned(),
-                origin: e,
-            }
-        } else {
-            YamlError {
-                at: SourceSpan::new(0.into(), 0.into()),
-                src: src.to_owned(),
-                origin: e,
-            }
-        }
-    }
-}
-
-/**
 A TOML report type with hint, colors and code span.
 For better configuration file debugging
 */
@@ -124,6 +83,89 @@ impl TomlError {
             }
         } else {
             TomlError {
+                at: SourceSpan::new(0.into(), 0.into()),
+                src: src.to_owned(),
+                origin: e,
+            }
+        }
+    }
+}
+
+/**
+A TOML report type with hint, colors and code span.
+For better configuration file debugging
+*/
+#[derive(Error, Diagnostic, Debug)]
+#[diagnostic(code(cast::hcl))]
+#[error("Serde: Could not convert Pkl into Rust types")]
+pub struct HclError {
+    #[source]
+    pub origin: hcl::Error,
+    #[label("here")]
+    pub at: SourceSpan,
+    #[source_code]
+    pub src: String,
+}
+impl HclError {
+    pub fn new(e: hcl::Error, src: &str) -> Self {
+        match e {
+            hcl::Error::Parse(e) => {
+                let line = e.location().line();
+                let column = e.location().column();
+                HclError {
+                    at: SourceSpan::new(
+                        SourceOffset::from_location(
+                            //source
+                            src, line, column,
+                        ),
+                        1.into(),
+                    ),
+                    src: src.to_owned(),
+                    origin: hcl::Error::from(e),
+                }
+            }
+            _ => HclError {
+                at: SourceSpan::new(0.into(), 0.into()),
+                src: src.to_owned(),
+                origin: e,
+            },
+        }
+    }
+}
+
+/**
+A YAML report type with hint, colors and code span.
+For better configuration file debugging
+*/
+#[derive(Error, Diagnostic, Debug)]
+#[diagnostic(code(cast::yaml))]
+#[error("Serde: Could not convert Yaml into Rust types")]
+pub struct YamlError {
+    #[source]
+    pub origin: serde_yaml::Error,
+    #[label("here")]
+    pub at: SourceSpan,
+    #[source_code]
+    pub src: String,
+}
+impl YamlError {
+    pub fn new(e: serde_yaml::Error, src: &str) -> Self {
+        if let Some(location) = e.location() {
+            let line = location.line();
+            let column = location.column();
+            YamlError {
+                at: SourceSpan::new(
+                    SourceOffset::from_location(
+                        //source
+                        src, line, column,
+                    ),
+                    1.into(),
+                ),
+                src: src.to_owned(),
+                origin: e,
+            }
+        } else {
+            YamlError {
                 at: SourceSpan::new(0.into(), 0.into()),
                 src: src.to_owned(),
                 origin: e,
