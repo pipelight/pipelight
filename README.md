@@ -140,10 +140,18 @@ Licensed under GNU GPLv2 Copyright (C) 2023 Areskul
 
 ## Roadmap
 
-Supported languages:
+Support other configuration languages:
+
+Can't tell the difference between them,
+but Rustacean made crates for it.
 
 - [ ] feat: add support for apple pkl
 - [ ] feat: add support for hashicorp hcl
+- [ ] feat: add support for CNCF kcl
+
+Crate:
+
+- [ ] doc: add example for pipelight_utils crate
 
 Javascript helpers:
 
@@ -152,9 +160,10 @@ Javascript helpers:
 
 Cli:
 
-- [ ] feat: add a tui interface
+- [ ] feat: add a tui interface with ratatui
+- [ ] feat: add a live view for processing pipelines
 
 Community:
 
-- [ ] feat: add a news page on Documentation website
+- [x] feat: add a news page on Documentation website
 - [ ] refactor: move out of discord
