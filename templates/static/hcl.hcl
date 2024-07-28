@@ -1,12 +1,11 @@
-# A pipeline
-pipelines {
+pipelines = [{
   name = "simple_example"
-  steps {
-    name     = "first"
-    commands = ["ls", "pwd"]
-  }
-  steps {
-    name     = "second"
-    commands = ["ls", "pwd"]
-  }
-}
+  steps = [{
+      name     = "list directory"
+      commands = ["ls"]
+    },
+    {
+      name     = "get working directory"
+      commands = ["pwd"]
+  }]
+}]
