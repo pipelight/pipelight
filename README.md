@@ -9,7 +9,7 @@
 
 Automate your most boring and repetitive tasks.
 
-- Define pipelines using **typescript, toml and yaml**.
+- Define pipelines using **typescript, toml, hcl and yaml**.
 - Pipelines get triggered on specific events (git hooks, file changes).
 
 Checkout the [Documentation](https://pipelight.dev) for a much friendly approach
@@ -145,8 +145,8 @@ Support other configuration languages:
 Can't tell the difference between them,
 but Rustacean made crates for it.
 
+- [x] feat: add support for hashicorp hcl
 - [ ] feat: add support for apple pkl
-- [ ] feat: add support for hashicorp hcl
 - [ ] feat: add support for CNCF kcl
 
 Crate:

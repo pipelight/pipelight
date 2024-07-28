@@ -11,7 +11,6 @@ pipelines {
   }
 }
 
-
 # Another pipeline
 pipelines {
   name = "simple_example2"
