@@ -61,6 +61,21 @@ impl Config {
         }
     }
     /**
+    Returns a Config struct from a provided hcl file path.
+    */
+    pub fn hcl(file_path: &str) -> Result<Config> {
+        println!("{:#?}", file_path);
+        let string = fs::read_to_string(file_path).into_diagnostic()?;
+        let res = hcl::from_str::<Config>(&string);
+        match res {
+            Ok(res) => Ok(res),
+            Err(e) => {
+                let err = HclError::new(e, &string);
+                Err(err.into())
+            }
+        }
+    }
+    /**
     Returns a Config struct from a provided yaml file path.
     */
     pub fn yml(file_path: &str) -> Result<Config> {
@@ -70,20 +85,6 @@ impl Config {
             Ok(res) => Ok(res),
             Err(e) => {
                 let err = YamlError::new(e, &string);
-                Err(err.into())
-            }
-        }
-    }
-    /**
-    Returns a Config struct from a provided yaml file path.
-    */
-    pub fn hcl(file_path: &str) -> Result<Config> {
-        let string = fs::read_to_string(file_path).into_diagnostic()?;
-        let res = hcl::from_str::<Config>(&string);
-        match res {
-            Ok(res) => Ok(res),
-            Err(e) => {
-                let err = HclError::new(e, &string);
                 Err(err.into())
             }
         }
@@ -108,7 +109,7 @@ mod cast {
     #[test]
     fn toml() {
         let res = Config::load("./public/pipelight.toml", None);
-        println!("{:#?}", res);
+        // println!("{:#?}", res);
         assert!(res.is_ok());
     }
     #[test]

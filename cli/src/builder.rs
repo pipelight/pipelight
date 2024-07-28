@@ -54,6 +54,7 @@ impl Cli {
                         PossibleValue::new("helpers"),
                         PossibleValue::new("javascript"),
                         PossibleValue::new("toml"),
+                        PossibleValue::new("hcl"),
                         PossibleValue::new("yaml"),
                     ])
                 })

@@ -12,6 +12,7 @@ pub enum Style {
     Helpers,
     Javascript,
     Toml,
+    Hcl,
     Yaml,
 }
 
