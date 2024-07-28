@@ -5,7 +5,8 @@
 }:
 pkgs.rustPlatform.buildRustPackage rec {
   pname = "pipelight";
-  version = "0.7.22";
+  version = "0.7.25";
+
   src = ./.;
 
   cargoLock = {
