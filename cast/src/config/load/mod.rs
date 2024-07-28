@@ -3,8 +3,8 @@ use crate::Config;
 // Filesystem - read file
 use std::fs;
 // Error Handling
-use crate::error::{TomlError, YamlError};
 use miette::{IntoDiagnostic, Result};
+use pipelight_utils::files::{HclError, TomlError, YamlError};
 
 // Filesystem
 use pipelight_utils::files::FileType;
@@ -42,7 +42,7 @@ impl Config {
             FileType::Toml | FileType::Tml => Config::tml(file_path)?,
             FileType::Yaml | FileType::Yml => Config::yml(file_path)?,
             FileType::Hcl => Config::hcl(file_path)?,
-            FileType::Pkl => Config::pkl(file_path)?,
+            // FileType::Pkl => Config::pkl(file_path)?,
         };
         config.strict_check()
     }
@@ -88,20 +88,6 @@ impl Config {
             }
         }
     }
-    /**
-    Returns a Config struct from a provided yaml file path.
-    */
-    pub fn pkl(file_path: &str) -> Result<Config> {
-        let string = fs::read_to_string(file_path).into_diagnostic()?;
-        let res = serde_yaml::from_str::<Config>(&string);
-        match res {
-            Ok(res) => Ok(res),
-            Err(e) => {
-                let err = PklError::new(e, &string);
-                Err(err.into())
-            }
-        }
-    }
 }
 
 #[cfg(test)]
@@ -131,12 +117,12 @@ mod cast {
         println!("{:#?}", res);
         assert!(res.is_ok());
     }
-    #[test]
-    fn pkl() {
-        let res = Config::load("./public/pipelight.pkl", None);
-        println!("{:#?}", res);
-        assert!(res.is_ok());
-    }
+    // #[test]
+    // fn pkl() {
+    //     let res = Config::load("./public/pipelight.pkl", None);
+    //     println!("{:#?}", res);
+    //     assert!(res.is_ok());
+    // }
     #[test]
     fn yaml() {
         let res = Config::load("./public/pipelight.yaml", None);

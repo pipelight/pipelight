@@ -17,7 +17,8 @@ pub enum FileType {
 
     // New gen proprietary file formats
     // Apple configuration as code
-    Pkl,
+    // Pkl,
+
     // Hashicorp configuration language
     Hcl,
 

@@ -1,6 +1,6 @@
 // Error Handling
-use crate::error::JsonError;
 use miette::{Error, Result};
+use pipelight_utils::files::JsonError;
 
 // Exec
 use pipelight_utils::exec::Process;

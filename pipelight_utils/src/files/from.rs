@@ -14,8 +14,7 @@ impl From<&String> for FileType {
             "tml" => FileType::Tml,
 
             "hcl" => FileType::Hcl,
-            "pkl" => FileType::Pkl,
-
+            // "pkl" => FileType::Pkl,
             "yaml" => FileType::Yaml,
             "yml" => FileType::Yml,
             _ => {
@@ -39,8 +38,7 @@ impl From<&FileType> for String {
             FileType::Tml => "tml".to_owned(),
 
             FileType::Hcl => "hcl".to_owned(),
-            FileType::Pkl => "pkl".to_owned(),
-
+            // FileType::Pkl => "pkl".to_owned(),
             FileType::Yaml => "yaml".to_owned(),
             FileType::Yml => "yml".to_owned(),
         }

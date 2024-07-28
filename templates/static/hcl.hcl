@@ -1,4 +1,5 @@
 
+
 # A pipeline
 pipelines {
   name =  "simple_example"
@@ -30,6 +31,3 @@ commands = ["pwd"]
 }
 
 }
-
-
-

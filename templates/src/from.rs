@@ -40,6 +40,7 @@ impl From<&FileType> for Style {
             FileType::Tml => Style::Toml,
             FileType::Yaml => Style::Yaml,
             FileType::Yml => Style::Yaml,
+            _ => Style::Toml,
         }
     }
 }
