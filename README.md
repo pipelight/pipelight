@@ -5,28 +5,28 @@
 </h1>
 </span>
 
-![pipelight_demo](https://github.com/pipelight/doc.pipelight/blob/master/public/images/showcase.gif)
-
 Automate your most boring and repetitive tasks.
-
-- Define pipelines using **typescript, toml, hcl and yaml**.
-- Pipelines get triggered on specific events (git hooks, file changes).
-
-Checkout the [Documentation](https://pipelight.dev) for a much friendly approach
-and a deeper understanding.
 
 ## 📦 A lightweight tool for CICD
 
 Pipelight is a [Rust](https://www.rust-lang.org/) based small(13Mb) cli tool to
 be used from inside a terminal.
 
-## Define pipelines with a programming language
+- Define pipelines using **typescript, toml, hcl and yaml**.
+- Trigger on events: git hooks, file changes...
+
+Checkout the [Documentation](https://pipelight.dev) for a much friendly approach
+and a deeper understanding.
+
+![pipelight_demo](https://github.com/pipelight/doc.pipelight/blob/master/public/images/showcase.gif)
+
+## Define pipelines with a programming language.
 
 Fold your bash commands into an object `Pipeline{ Step{ Command }}` written in
-**Typescript**, and it executes the pipeline on some events.
+**Typescript**.
 
-As long as you know javascript, you are ready to go with your favorite syntax
-flavor 🍦.
+As long as you know javascript,
+you are ready to go with your favorite syntax flavor.
 
 Use a verbose and declarative syntax (Objects API).
 
@@ -59,12 +59,66 @@ const my_pipeline = pipeline("build website", () => [
 ]);
 ```
 
+## Define pipelines with a configuration language
+
+For your most simple pipelines.
+
+Toml
+
+```toml
+[[pipelines]]
+name = "test"
+
+[[pipelines.steps]]
+name = "build"
+commands = ["pnpm install", "pnpm build"]
+
+[[pipelines.triggers]]
+branches = ["master","dev"]
+actions= ["pre-push", "pre-commit"]
+```
+
+Hcl
+
+```hcl
+# A pipeline
+pipelines = [{
+  name = "test"
+  steps = [{
+    name     = "build"
+    commands = ["pnpm install", "pnpm build"]
+  }]
+  triggers = [{
+    branches = ["master","dev"]
+    actions  = ["pre-push", "pre-commit"]
+  }]
+}]
+```
+
+Yaml
+
+```yml
+pipelines:
+  - name: test
+    steps:
+      - name: build
+        commands:
+          - pnpm install
+          - pnpm build
+  - triggers:
+      - branches:
+          - master
+          - dev
+        actions:
+          - pre-push
+          - pre-commit
+```
+
 ## Automatic triggers
 
 Add automatic triggers to your pipeline.
 
-- Run tests on file change,
-- Deploy to production on push to master,...
+_If you want to run tests on file change or deploy to production on push to master._
 
 ```sh
 # enable watcher and git hooks.
