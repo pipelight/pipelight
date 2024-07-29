@@ -190,8 +190,6 @@ Reach the community whenever you need support or software improvements. On
 [discord](https://discord.gg/swNRD3Xysz) or on telegram at
 [@Areskul](https://t.me/areskul) or send a mail at areskul@areskul.com.
 
-Licensed under GNU GPLv2 Copyright (C) 2023 Areskul
-
 ## Roadmap
 
 Support other configuration languages:
@@ -221,3 +219,5 @@ Community:
 
 - [x] feat: add a news page on Documentation website
 - [ ] refactor: move out of discord
+
+Licensed under GNU GPLv2 Copyright (C) 2023 Areskul
