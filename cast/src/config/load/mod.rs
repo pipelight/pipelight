@@ -64,7 +64,6 @@ impl Config {
     Returns a Config struct from a provided hcl file path.
     */
     pub fn hcl(file_path: &str) -> Result<Config> {
-        println!("{:#?}", file_path);
         let string = fs::read_to_string(file_path).into_diagnostic()?;
         let res = hcl::from_str::<Config>(&string);
         match res {
