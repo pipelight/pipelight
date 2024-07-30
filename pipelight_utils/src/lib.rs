@@ -2,9 +2,10 @@
 // #![allow(unused_variables)]
 // #![allow(unused_must_use)]
 
-//! ## About
+//! !! API not stabilized and lacking documentation !!
+//! !! Download at your own risks !!
 //!
-//! Alpha release! Subject to changes!
+//! ## About
 //!
 //! Pipelight_utils is a crate that gather a set of trivial utilities for command line tools.
 //!
@@ -93,7 +94,6 @@
 //! let tag = repo.get_tag()?;
 //! let commit = repo.get_commit()?;
 //! ```
-//!
 
 pub mod globals;
 // Internal Imports

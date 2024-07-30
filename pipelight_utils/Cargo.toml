@@ -1,6 +1,6 @@
 [package]
 name = "pipelight_utils"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 license = "GPL-2.0-only"
 description = "A set of trivial utilities for command line tools"
