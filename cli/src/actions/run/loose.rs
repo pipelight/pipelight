@@ -11,7 +11,9 @@ use pipelight_utils::globals::LOGGER;
 // Traits
 use crate::services::traits::FgBg;
 // Error Handling
+use super::EXIT_CODE;
 use miette::{Error, Result};
+use std::process::{ExitCode, Termination};
 
 pub fn launch() -> Result<()> {
     let mut args = CLI.lock().unwrap().clone();
@@ -80,9 +82,18 @@ pub fn launch() -> Result<()> {
                 println!("{}", Node::from(&pipeline));
 
                 let _ = match pipeline.status {
-                    Some(Status::Succeeded) => Ok(()),
+                    Some(Status::Succeeded) => {
+                        *EXIT_CODE.lock().unwrap() = ExitCode::SUCCESS;
+                        Ok(())
+                    }
                     Some(Status::Failed) => {
+                        *EXIT_CODE.lock().unwrap() = ExitCode::FAILURE;
                         let message = "Pipeline status: Failed";
+                        Err(Error::msg(message))
+                    }
+                    Some(Status::Aborted) => {
+                        *EXIT_CODE.lock().unwrap() = ExitCode::FAILURE;
+                        let message = "Pipeline status: Aborted";
                         Err(Error::msg(message))
                     }
                     _ => Ok(()),

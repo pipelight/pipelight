@@ -4,7 +4,10 @@
 // #![allow(dead_code)]
 // #![allow(unused_must_use)]
 
+use std::{process::ExitCode, u8};
+
 // Structs
+use cli::EXIT_CODE;
 use owo_colors::Style;
 use switch::Switch;
 // Error Handling
@@ -15,12 +18,12 @@ use miette::{GraphicalTheme, MietteHandlerOpts, Result, RgbColors, ThemeStyles};
 The pipelight binary entrypoint.
 This main function is the first function to be executed when launching pipelight.
 */
-fn main() -> Result<()> {
+fn main() -> Result<ExitCode> {
     trace!("Launch process.");
     make_handler()?;
     Switch::case()?;
     trace!("Process clean exit.");
-    Ok(())
+    Ok(*EXIT_CODE.lock().unwrap())
 }
 
 /**

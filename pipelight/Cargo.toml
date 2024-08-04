@@ -20,6 +20,7 @@ doc = false
 [dependencies]
 pipelight_utils = { path = "../pipelight_utils" }
 switch = { path = "../switch", version = "*" }
+cli = { path = "../cli", version = "*" }
 log = "0.4.17"
 miette = { version = "5.5.0", features = ["fancy", "backtrace"] }
 owo-colors = "3.5.0"

@@ -15,5 +15,6 @@ pub mod traits;
 mod test;
 
 // Re-export
+pub use actions::run::EXIT_CODE;
 pub use types::*;
 pub use verbosity::*;
