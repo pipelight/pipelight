@@ -18,12 +18,6 @@
     flake-parts.lib.mkFlake {
       inherit inputs;
     } {
-      flake = {
-        nixosModules = {
-          jucenit = ./module.nix;
-        };
-      };
-
       systems =
         flake-utils.lib.allSystems;
       perSystem = {
