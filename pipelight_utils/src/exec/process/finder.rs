@@ -4,7 +4,8 @@ use rustix::process::{getpid, kill_process, test_kill_process, Signal};
 use sysinfo::get_current_pid;
 use sysinfo::{PidExt, Process, ProcessExt, System, SystemExt};
 // Error handling
-use miette::{IntoDiagnostic, Result};
+use crate::error::{LibError, PipelightError};
+use miette::{Context, IntoDiagnostic, Result};
 // Env
 use itertools::Itertools;
 use std::env;
@@ -148,12 +149,21 @@ impl Finder {
     /**
     Kill processes if founded any.
     */
-    pub fn kill(&self) -> Result<()> {
+    pub fn kill(&self) -> Result<(), PipelightError> {
         if let Some(matches) = self.matches.clone() {
             for process in matches {
                 let pid = rustix::process::Pid::from_raw(process.pid.unwrap());
                 if test_kill_process(pid.unwrap()).is_ok() {
-                    kill_process(pid.unwrap(), Signal::Kill).into_diagnostic()?;
+                    match kill_process(pid.unwrap(), Signal::Kill) {
+                        Ok(_) => return Ok(()),
+                        Err(e) => {
+                            return Err(LibError {
+                                message: "Couldn't kill process".to_owned(),
+                                help: "".to_owned(),
+                            }
+                            .into());
+                        }
+                    };
                 }
             }
         }

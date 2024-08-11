@@ -1,5 +1,8 @@
 // Struct
-use crate::exec::{Process, SelfProcess};
+use crate::{
+    error::PipelightError,
+    exec::{Process, SelfProcess},
+};
 // Error Handling
 use miette::Result;
 
@@ -10,7 +13,7 @@ impl SelfProcess {
     The instance spawned by the command line can exit whithout killing it's child.
     Thus the clone can run and persist in the background even on tty close.
     */
-    pub fn run_bg_with_cmd(cmd_args: &str) -> Result<()> {
+    pub fn run_bg_with_cmd(cmd_args: &str) -> Result<(), PipelightError> {
         // global vars
         let bin = "pipelight";
 
@@ -30,7 +33,7 @@ impl SelfProcess {
     The instance spawned by the command line can exit whithout killing it's child.
     Thus the clone can run and persist in the background even on tty close.
     */
-    pub fn run_fg_with_cmd(cmd_args: &str) -> Result<()> {
+    pub fn run_fg_with_cmd(cmd_args: &str) -> Result<(), PipelightError> {
         // global vars
         let bin = "pipelight";
 
