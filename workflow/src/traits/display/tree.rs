@@ -5,7 +5,7 @@ pub use colored::control::set_override;
 use colored::{ColoredString, Colorize};
 // Structs
 use crate::types::Node;
-use pipelight_utils::exec::Status;
+use pipelight_exec::Status;
 use log::LevelFilter;
 use regex::Regex;
 use std::fmt;

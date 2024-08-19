@@ -3,7 +3,7 @@ use miette::{Error, Result};
 use pipelight_utils::files::JsonError;
 
 // Exec
-use pipelight_utils::exec::Process;
+use pipelight_exec::Process;
 
 mod script;
 use script::import_script;

@@ -10,8 +10,8 @@ use std::process::Output;
 // Casing
 use convert_case::{Case, Casing};
 // Logger
-use crate::dates::Duration;
 use log::warn;
+use pipelight_utils::dates::Duration;
 
 /**
 * A convenience struct to store the process status and its duration.

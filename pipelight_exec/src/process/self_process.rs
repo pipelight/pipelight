@@ -1,8 +1,6 @@
 // Struct
-use crate::{
-    error::PipelightError,
-    exec::{Process, SelfProcess},
-};
+use crate::{Process, SelfProcess};
+use pipelight_utils::error::PipelightError;
 // Error Handling
 use miette::Result;
 

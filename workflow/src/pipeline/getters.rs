@@ -1,7 +1,7 @@
 use crate::error::IsError;
 use crate::traits::Getters;
 use crate::types::{Config, Pipeline};
-use pipelight_utils::exec::Process;
+use pipelight_exec::Process;
 use log::LevelFilter;
 
 // Error Handling

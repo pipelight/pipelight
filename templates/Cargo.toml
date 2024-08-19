@@ -5,14 +5,14 @@ edition = "2021"
 
 [dependencies]
 pipelight_utils = { path = "../pipelight_utils" }
-serde = { version = "1.0.152", features = ["derive"] }
-serde_json = "1.0.93"
-miette = { version = "5.5.0" }
-thiserror = "1.0.38"
-serde_yaml = "0.9.19"
-log = "0.4.17"
-toml = { version = "0.7.3", features = ["parse"] }
-handlebars = { version = "4.4.0", features = ["rust-embed"] }
+serde = { version = "1.0.207", features = ["derive"] }
+serde_json = "1.0.124"
+miette = { version = "7.2.0" }
+thiserror = "1.0.63"
+serde_yaml = "0.9.34"
+log = "0.4.22"
+toml = { version = "0.8.19", features = ["parse"] }
+handlebars = { version = "6.0.0", features = ["rust-embed"] }
 serde_plain = "1.0.2"
 convert_case = "0.6.0"
-rust-embed = "8.0.0"
+rust-embed = "8.5.0"

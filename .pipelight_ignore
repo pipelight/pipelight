@@ -3,10 +3,13 @@ target/
 autocompletion/
 packages/
 public/
-# Nix
+
+# NixOs
 result/
+.direnv
 
 # Cicd files
+.pipelight/
 /cicd/
 pipelight.ts
 test.pipelight.ts

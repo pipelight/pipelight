@@ -1,11 +1,12 @@
 [package]
-name = "pipelight_utils"
+name = "pipelight_exec"
 version = "0.2.4"
 edition = "2021"
 license = "GPL-2.0-only"
-description = "A set of trivial utilities for command line tools"
+description = "Easy process management"
 
 [dependencies]
+pipelight_utils = { path = "../pipelight_utils" }
 git2 = "0.19.0"
 rev_buf_reader = "0.3.0"
 log = "0.4.22"

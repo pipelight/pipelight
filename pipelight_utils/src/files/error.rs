@@ -40,7 +40,7 @@ impl JsonError {
                     e.line(),
                     e.column(),
                 ),
-                1.into(),
+                1,
             ),
             src: src.to_owned(),
             origin: e,
@@ -74,14 +74,14 @@ impl TomlError {
                         //source
                         src, line, column,
                     ),
-                    1.into(),
+                    1,
                 ),
                 src: src.to_owned(),
                 origin: e,
             }
         } else {
             TomlError {
-                at: SourceSpan::new(0.into(), 0.into()),
+                at: SourceSpan::new(0.into(), 0),
                 src: src.to_owned(),
                 origin: e,
             }
@@ -116,14 +116,14 @@ impl HclError {
                             //source
                             src, line, column,
                         ),
-                        1.into(),
+                        1,
                     ),
                     src: src.to_owned(),
                     origin: hcl::Error::from(e),
                 }
             }
             _ => HclError {
-                at: SourceSpan::new(0.into(), 0.into()),
+                at: SourceSpan::new(0.into(), 0),
                 src: src.to_owned(),
                 origin: e,
             },
@@ -157,14 +157,14 @@ impl YamlError {
                         //source
                         src, line, column,
                     ),
-                    1.into(),
+                    1,
                 ),
                 src: src.to_owned(),
                 origin: e,
             }
         } else {
             YamlError {
-                at: SourceSpan::new(0.into(), 0.into()),
+                at: SourceSpan::new(0.into(), 0),
                 src: src.to_owned(),
                 origin: e,
             }

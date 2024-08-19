@@ -2,9 +2,9 @@
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
 // Error Handling
-use crate::error::PipelightError;
 use log::trace;
 use miette::Result;
+use pipelight_utils::error::PipelightError;
 
 use std::env;
 

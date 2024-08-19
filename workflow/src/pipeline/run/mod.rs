@@ -4,7 +4,7 @@ use pipelight_utils::dates::Duration;
 // Error Handling
 use miette::Result;
 // Traits
-use pipelight_utils::exec::{Statuable, Status};
+use pipelight_exec::{Statuable, Status};
 // Global var
 use once_cell::sync::Lazy;
 // Parallelism

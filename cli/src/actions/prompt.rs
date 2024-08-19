@@ -1,5 +1,5 @@
 // Struct
-use pipelight_utils::exec::Status;
+use pipelight_exec::Status;
 use workflow::{pipeline::Filters, Getters, Logs, Pipeline};
 // Prompt
 use dialoguer::{console::Term, Select};

@@ -1,8 +1,8 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 // Globals
-use crate::error::PipelightError;
-use crate::exec::globals::OUTDIR;
+use crate::globals::OUTDIR;
+use pipelight_utils::error::PipelightError;
 // File manipulation
 use std::fs::{remove_file, File};
 use std::io::BufReader;

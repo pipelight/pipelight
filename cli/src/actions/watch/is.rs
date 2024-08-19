@@ -3,7 +3,7 @@ use crate::actions::watch::Watcher;
 // Env
 use std::env;
 // Process finder
-use pipelight_utils::exec::Finder;
+use pipelight_exec::Finder;
 // Error handling
 use miette::{Error, IntoDiagnostic, Result};
 

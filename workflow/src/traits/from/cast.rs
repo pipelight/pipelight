@@ -4,7 +4,7 @@ use crate::types::{
     StepOrParallel,
 };
 use crate::types::{Trigger, TriggerBranch, TriggerTag};
-use pipelight_utils::exec::Process;
+use pipelight_exec::Process;
 use log::LevelFilter;
 
 use convert_case::{Case, Casing};

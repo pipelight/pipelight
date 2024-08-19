@@ -17,6 +17,6 @@ pub mod types;
 
 // Re-export
 pub use error::*;
-pub use pipelight_utils::exec::Statuable;
+pub use pipelight_exec::Statuable;
 pub use traits::Getters;
 pub use types::*;

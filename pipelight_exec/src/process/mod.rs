@@ -9,10 +9,9 @@ mod self_process;
 pub use finder::Finder;
 
 use serde::{Deserialize, Serialize};
-use sysinfo::{self, PidExt, ProcessExt};
 use uuid::Uuid;
 // Struct
-use crate::exec::{Io, State};
+use crate::{Io, State};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct SelfProcess;
@@ -73,9 +72,16 @@ impl Process {
 impl From<&sysinfo::Process> for Process {
     fn from(proc: &sysinfo::Process) -> Process {
         Process {
-            cwd: Some(proc.cwd().to_str().unwrap().to_owned()),
+            cwd: Some(proc.cwd().unwrap().to_str().unwrap().to_owned()),
             pid: Some(proc.pid().as_u32() as i32),
-            ..Process::new(&proc.cmd().join(" "))
+            ..Process::new(
+                &proc
+                    .cmd()
+                    .iter()
+                    .map(|e| e.to_str().unwrap().to_owned())
+                    .collect::<Vec<String>>()
+                    .join(" "),
+            )
         }
     }
 }

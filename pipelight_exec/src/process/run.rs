@@ -1,14 +1,14 @@
 // Structs
-use crate::dates::Duration;
-use crate::error::PipelightError;
-use crate::exec::{Io, Process, State, Status};
+use crate::{Io, Process, State, Status};
+use pipelight_utils::dates::Duration;
+use pipelight_utils::error::PipelightError;
 // Unix process manipulation
 use std::process::{Command, Stdio};
 
 // File manipulation
 use std::fs::{create_dir_all, File};
 // Globals
-use crate::exec::globals::{get_shell, OUTDIR, SHELL};
+use crate::globals::{get_shell, OUTDIR, SHELL};
 // Error Handling
 use log::info;
 use miette::{IntoDiagnostic, Result};

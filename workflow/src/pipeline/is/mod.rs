@@ -6,7 +6,7 @@ use rustix::process::test_kill_process;
 use crate::types::{Logs, Pipeline, Trigger};
 use pipelight_utils::git::{Flag, Special};
 // Traits
-use pipelight_utils::exec::Status;
+use pipelight_exec::Status;
 // Error Handling
 use crate::error::IsError;
 use miette::{Error, Result};

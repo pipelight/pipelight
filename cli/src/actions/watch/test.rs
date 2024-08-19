@@ -7,17 +7,16 @@ mod watcher {
     // Globals
     use crate::actions::watch::build::get_ignore_path;
     use crate::actions::watch::{build, Watcher};
-    use pipelight_utils::exec::Process;
+    use pipelight_exec::Process;
     use pipelight_utils::teleport::Portal;
     // Error handling
     use miette::{Diagnostic, IntoDiagnostic, Result};
-    use thiserror::Error;
     // Logger
     use log::warn;
     // Fancy color
     use colored::Colorize;
     // Process finder
-    use pipelight_utils::exec::Finder;
+    use pipelight_exec::Finder;
 
     fn print_cwd() -> Result<()> {
         let path = env::current_dir().into_diagnostic()?;
@@ -40,8 +39,8 @@ mod watcher {
         // Teleport
         Portal::new()?.seed("test.pipelight").search()?.teleport()?;
         // Watcher::start()?;
-        let (we, runtime) = build().await?;
-        we.main().await.into_diagnostic()?;
+        let watchexec = build().await?;
+        watchexec.main().await.into_diagnostic()?;
         Ok(())
     }
 
@@ -56,7 +55,7 @@ mod watcher {
     }
 
     fn run_watcher(dir: &str) -> Result<()> {
-        fs::create_dir_all(dir.clone()).into_diagnostic()?;
+        fs::create_dir_all(dir).into_diagnostic()?;
         print_cwd()?;
 
         env::set_current_dir(dir).into_diagnostic()?;

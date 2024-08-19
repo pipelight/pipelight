@@ -1,7 +1,7 @@
 // Struct
 use crate::services::types::{Action, Service};
 use crate::types::{Attach, Commands, DetachableCommands, PostCommands};
-use pipelight_utils::exec::Status;
+use pipelight_exec::Status;
 use workflow::{Config, Getters, Node, Pipeline};
 // Globals
 use crate::globals::CLI;
