@@ -5,7 +5,7 @@
 }:
 pkgs.rustPlatform.buildRustPackage rec {
   pname = "pipelight";
-  version = "0.7.25";
+  version = "0.8.0";
 
   src = ./.;
 
