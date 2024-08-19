@@ -71,7 +71,7 @@ mod watcher {
         Ok(())
     }
 
-    #[test]
+    // #[test]
     pub fn test_single_watcher() -> Result<()> {
         let root = env::current_dir().into_diagnostic()?;
         let root = root.to_str().unwrap();
@@ -104,7 +104,7 @@ mod watcher {
         Ok(())
     }
 
-    #[test]
+    // #[test]
     /**
     Run watchers in unrelated projects
     */

@@ -232,7 +232,7 @@ dependencies = [
  "log",
  "miette",
  "pipelight_exec",
- "pipelight_utils 0.2.4",
+ "pipelight_utils 0.2.5",
  "serde",
  "serde_json",
  "serde_yaml",
@@ -357,7 +357,7 @@ dependencies = [
  "miette",
  "once_cell",
  "pipelight_exec",
- "pipelight_utils 0.2.4",
+ "pipelight_utils 0.2.5",
  "rayon",
  "serde",
  "serde_json",
@@ -1728,13 +1728,13 @@ dependencies = [
  "log",
  "miette",
  "owo-colors",
- "pipelight_utils 0.2.4",
+ "pipelight_utils 0.2.5",
  "switch",
 ]
 
 [[package]]
 name = "pipelight_exec"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "chrono",
  "colored",
@@ -1749,40 +1749,7 @@ dependencies = [
  "log4rs",
  "miette",
  "once_cell",
- "pipelight_utils 0.2.4 (registry+https://github.com/rust-lang/crates.io-index)",
- "project-origins",
- "rev_buf_reader",
- "rustix",
- "serde",
- "serde_json",
- "serde_plain",
- "serde_yaml",
- "signal-hook",
- "strum",
- "subprocess",
- "sysinfo",
- "thiserror",
- "toml",
- "uuid",
-]
-
-[[package]]
-name = "pipelight_utils"
-version = "0.2.4"
-dependencies = [
- "chrono",
- "colored",
- "console",
- "convert_case",
- "git2",
- "hcl-rs",
- "ignore-files",
- "iso8601-duration",
- "itertools",
- "log",
- "log4rs",
- "miette",
- "once_cell",
+ "pipelight_utils 0.2.4",
  "project-origins",
  "rev_buf_reader",
  "rustix",
@@ -1804,6 +1771,39 @@ name = "pipelight_utils"
 version = "0.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "be1b863b4b9a62e4d7cc1a94edbde37b85726fefbbd491e748d3c24d6328fb06"
+dependencies = [
+ "chrono",
+ "colored",
+ "console",
+ "convert_case",
+ "git2",
+ "hcl-rs",
+ "ignore-files",
+ "iso8601-duration",
+ "itertools",
+ "log",
+ "log4rs",
+ "miette",
+ "once_cell",
+ "project-origins",
+ "rev_buf_reader",
+ "rustix",
+ "serde",
+ "serde_json",
+ "serde_plain",
+ "serde_yaml",
+ "signal-hook",
+ "strum",
+ "subprocess",
+ "sysinfo",
+ "thiserror",
+ "toml",
+ "uuid",
+]
+
+[[package]]
+name = "pipelight_utils"
+version = "0.2.5"
 dependencies = [
  "chrono",
  "colored",
@@ -2344,7 +2344,7 @@ dependencies = [
  "log",
  "miette",
  "once_cell",
- "pipelight_utils 0.2.4",
+ "pipelight_utils 0.2.5",
  "templates",
  "workflow",
 ]
@@ -2406,7 +2406,7 @@ dependencies = [
  "handlebars",
  "log",
  "miette",
- "pipelight_utils 0.2.4",
+ "pipelight_utils 0.2.5",
  "rust-embed",
  "serde",
  "serde_json",
@@ -3233,7 +3233,7 @@ dependencies = [
  "miette",
  "once_cell",
  "pipelight_exec",
- "pipelight_utils 0.2.4",
+ "pipelight_utils 0.2.5",
  "rayon",
  "regex",
  "rustix",

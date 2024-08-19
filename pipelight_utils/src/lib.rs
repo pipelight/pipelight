@@ -1,9 +1,4 @@
-// Rules
-// #![allow(unused_variables)]
-// #![allow(unused_must_use)]
-
-//! !! API not stabilized and lacking documentation !!
-//! !! Download at your own risks !!
+//! !! API not stabilized - lacking documentation - do not use !!
 //!
 //! ## About
 //!
@@ -61,30 +56,6 @@
 //! ```
 //!
 //! <img src="" alt="pretty parsing error report">
-//!
-//! ## Exec - easy process manipulation.
-//!
-//! Execute a process and detach it.
-//! It keeps running after parent process exit and terminal exit.
-//!
-//! ```
-//! let mut process = Process::new("echo test");
-//! process.run_detached()?;
-//! ```
-//!
-//! Pipe the process standards outputs to the parent.
-//!
-//! ```
-//! let mut process = Process::new("echo test");
-//! process.run_detached()?;
-//! ```
-//!
-//! Find a running process, with handy search options.
-//!
-//! ```
-//! let process_finder = Finder::new().seed("my_proc").root("/my/dir").search()?;
-//! let process_finder = Finder::new().pid(1792).search()?;
-//! ```
 //!
 //! ## Git - easy git repo manipulation.
 //!
