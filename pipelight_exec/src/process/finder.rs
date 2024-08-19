@@ -2,7 +2,7 @@
 use rustix::process::{getpid, kill_process, test_kill_process, Signal};
 // use std::collections::HashMap;
 use sysinfo::get_current_pid;
-use sysinfo::{Process, ProcessesToUpdate, System};
+use sysinfo::{Process, ProcessRefreshKind, ProcessesToUpdate, System};
 // Error handling
 use miette::{Context, IntoDiagnostic, Result};
 use pipelight_utils::error::{LibError, PipelightError};
@@ -71,14 +71,16 @@ impl Finder {
     }
 
     /**
-    Restrict search result by pid.
-    */
+     * Restrict search result by pid.
+     */
     pub fn pid(&mut self, pid: &u32) -> Self {
         self.pid = Some(pid.to_owned());
         self.to_owned()
     }
-    pub fn is_match_seeds(&mut self, process: &Process) -> Result<bool> {
-        // Guard - Ensure command contains some seed(string)
+    /**
+     * Guard - Ensure command contains some seed(string)
+     */
+    fn is_match_seeds(&mut self, process: &Process) -> Result<bool> {
         if let Some(seeds) = self.seeds.clone() {
             for seed in seeds {
                 if !process
@@ -95,48 +97,57 @@ impl Finder {
         }
         Ok(true)
     }
+    /**
+     * Guard -Ensure processes are running in same subdirectory
+     */
+    fn is_same_root(&mut self, process: &Process) -> Result<bool> {
+        if process.cwd().is_some() && self.root.is_some() {
+            return Ok(process
+                .cwd()
+                .unwrap()
+                .starts_with(self.root.clone().unwrap()));
+        } else {
+            return Ok(false);
+        }
+    }
+    /**
+     * Guard -Ensure processes are running in same directory
+     */
+    fn is_same_cwd(&mut self, process: &Process) -> Result<bool> {
+        if process.cwd().is_some() && self.root.is_some() {
+            return Ok(process.cwd().unwrap().to_str().unwrap() == self.root.clone().unwrap());
+        } else {
+            return Ok(false);
+        }
+    }
 
     /**
-    Search matching processes and hydrate struct with matches.
-    */
+     * Search matching processes and hydrate struct with matches.
+     */
     pub fn search(&mut self) -> Result<Self> {
-        let mut sys = System::new();
-        sys.refresh_processes(ProcessesToUpdate::All);
+        let mut s = System::new_all();
+        s.refresh_processes_specifics(ProcessesToUpdate::All, ProcessRefreshKind::new());
+
         // Loop through process list
         let mut matches: Vec<crate::Process> = vec![];
         if let Some(pid) = self.pid {
             let sysinfo_pid = sysinfo::Pid::from_u32(pid);
-            if let Some(process) = sys.processes().get(&sysinfo_pid) {
+            if let Some(process) = s.processes().get(&sysinfo_pid) {
                 if self.is_match_seeds(process)? {
                     matches.push(crate::Process::from(process));
                 }
             }
         } else {
-            for (pid, process) in sys.processes() {
+            for (pid, process) in s.processes() {
                 // println!("{:?}", process.cmd());
-                println!("{:?}", process.cwd());
+                // println!("{:?}", process.cwd());
+
                 // Guard - Ensure processes are running in same subdirectory
-                let mut cond_root: bool = false;
-                if process.cwd().is_some() && self.root.is_some() {
-                    if let Some(root) = self.root.clone() {
-                        cond_root = process
-                            .cwd()
-                            .unwrap()
-                            .starts_with(self.root.clone().unwrap());
-                    } else {
-                        cond_root = true;
-                    }
-                }
+                let cond_root: bool = self.is_same_root(process)?;
+
                 // Guard - Ensure processes are running in same directory
-                let mut cond_pwd: bool = false;
-                if process.cwd().is_some() && self.cwd.is_some() {
-                    if let Some(process_cwd) = self.cwd.clone() {
-                        cond_pwd =
-                            process.cwd().unwrap().to_str().unwrap() == self.cwd.clone().unwrap();
-                    } else {
-                        cond_pwd = true;
-                    }
-                }
+                let cond_pwd: bool = self.is_same_cwd(process)?;
+
                 // Guard - Ensure command contains some seed(string)
                 let mut cond_seed = false;
                 if let Some(seeds) = self.seeds.clone() {
@@ -146,6 +157,7 @@ impl Finder {
                 // Guard - Ensure different process from the one alredy running
                 let cond_other = pid != &get_current_pid().unwrap();
 
+                // println!("{:?}", cond_pwd);
                 // Final resolution
                 if cond_pwd && cond_seed && cond_other && cond_root {
                     // println!("{:?}", process.cmd());
@@ -163,8 +175,8 @@ impl Finder {
     }
 
     /**
-    Kill processes if founded any.
-    */
+     * Kill matches if any.
+     */
     pub fn kill(&self) -> Result<(), PipelightError> {
         if let Some(matches) = self.matches.clone() {
             for process in matches {
@@ -186,13 +198,30 @@ impl Finder {
         Ok(())
     }
 }
+
 #[cfg(test)]
 mod test {
+    use crate::{Finder, Process};
+    use std::env;
     // Error handling
-    use miette::{Diagnostic, IntoDiagnostic, Result};
+    use miette::{IntoDiagnostic, Result};
 
     #[test]
+    /**
+     * Run a simple process, detach it and find it back.
+     */
     fn find_and_kill_random_process() -> Result<()> {
+        let mut process = Process::new("sleep 12");
+        process.run_detached()?;
+
+        let finder = Finder::new()
+            .root(env::current_dir().into_diagnostic()?.to_str().unwrap())
+            .seed("sleep")
+            .search()?;
+        finder.kill()?;
+
+        assert_eq!(finder.clone().matches.unwrap().len(), 1);
+
         Ok(())
     }
 }
