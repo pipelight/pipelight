@@ -9,6 +9,7 @@ workflow = { path = "../workflow" }
 templates = { path = "../templates" }
 pipelight_utils = { path = "../pipelight_utils" }
 pipelight_exec = { path = "../pipelight_exec" }
+pipelight_watcher = { path = "../pipelight_watcher" }
 cast = { path = "../cast" }
 chrono = { version = "0.4.38", features = ["serde"] }
 colored = "2.1.0"
@@ -43,6 +44,7 @@ workflow = { path = "../workflow" }
 templates = { path = "../templates" }
 pipelight_utils = { path = "../pipelight_utils" }
 pipelight_exec = { path = "../pipelight_exec" }
+pipelight_watcher = { path = "../pipelight_watcher" }
 cast = { path = "../cast" }
 chrono = { version = "0.4.38", features = ["serde"] }
 colored = "2.1.0"

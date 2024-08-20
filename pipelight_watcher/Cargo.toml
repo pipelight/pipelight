@@ -1,0 +1,35 @@
+[package]
+name = "pipelight_watcher"
+version = "0.1.3"
+edition = "2021"
+
+[dependencies]
+pipelight_utils = { path = "../pipelight_utils" }
+pipelight_exec = { path = "../pipelight_exec" }
+chrono = { version = "0.4.38", features = ["serde"] }
+colored = "2.1.0"
+log = "0.4.22"
+once_cell = "1.19.0"
+convert_case = "0.6.0"
+miette = { version = "7.2.0" }
+thiserror = "1.0.63"
+glob = "0.3.1"
+# clap
+clap = { version = "4.5.15", features = ["derive", "wrap_help", "cargo"] }
+clap_complete = "4.5.16"
+clap_mangen = "0.2.23"
+dialoguer = "0.11.0"
+assert_cmd = "2.0.16"
+# serde
+serde = { version = "1.0.207", features = ["derive"] }
+serde_plain = "1.0.2"
+serde_json = "1.0.124"
+# async
+tokio = "1.39.2"
+rayon = "1.10.0"
+watchexec = "4.1.0"
+watchexec-events = "3.0.0"
+watchexec-signals = "3.0.0"
+watchexec-filterer-ignore = "4.0.1"
+ignore-files = "3.0.1"
+watchexec-supervisor = "2.0.0"

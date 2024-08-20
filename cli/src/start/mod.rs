@@ -4,6 +4,7 @@ use crate::services::types::{Action, Service};
 use crate::types::Cli;
 use crate::types::{ColoredOutput, LogsCommands, ToggleCommands};
 use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
+use pipelight_watcher::Watcher;
 use workflow::{Getters, Pipeline};
 
 use pipelight_utils::git::Hook;
@@ -69,7 +70,7 @@ impl PreCommands {
                 if let Some(commands) = e.commands.clone() {
                     match commands {
                         ToggleCommands::GitHooks => Hook::disable()?,
-                        ToggleCommands::Watcher => watch::Watcher::kill()?,
+                        ToggleCommands::Watcher => Watcher::kill()?,
                     }
                 }
             }

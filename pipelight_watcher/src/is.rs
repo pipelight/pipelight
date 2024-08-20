@@ -1,5 +1,5 @@
 // Struct
-use crate::actions::watch::Watcher;
+use super::Watcher;
 // Env
 use std::env;
 // Process finder

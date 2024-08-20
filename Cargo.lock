@@ -358,6 +358,7 @@ dependencies = [
  "once_cell",
  "pipelight_exec",
  "pipelight_utils 0.2.5",
+ "pipelight_watcher",
  "rayon",
  "serde",
  "serde_json",
@@ -1832,6 +1833,38 @@ dependencies = [
  "thiserror",
  "toml",
  "uuid",
+]
+
+[[package]]
+name = "pipelight_watcher"
+version = "0.1.3"
+dependencies = [
+ "assert_cmd",
+ "chrono",
+ "clap",
+ "clap_complete",
+ "clap_mangen",
+ "colored",
+ "convert_case",
+ "dialoguer",
+ "glob",
+ "ignore-files",
+ "log",
+ "miette",
+ "once_cell",
+ "pipelight_exec",
+ "pipelight_utils 0.2.5",
+ "rayon",
+ "serde",
+ "serde_json",
+ "serde_plain",
+ "thiserror",
+ "tokio",
+ "watchexec",
+ "watchexec-events",
+ "watchexec-filterer-ignore",
+ "watchexec-signals",
+ "watchexec-supervisor",
 ]
 
 [[package]]

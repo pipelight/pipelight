@@ -18,7 +18,7 @@ impl Exec for Service {
             Action::RunStrict => actions::run::strict::launch()?,
             Action::RunLoose => actions::run::loose::launch()?,
             Action::Trigger => actions::trigger::launch()?,
-            Action::Watch => actions::watch::Watcher::start()?,
+            Action::Watch => actions::watch::launch()?,
         };
         Ok(())
     }

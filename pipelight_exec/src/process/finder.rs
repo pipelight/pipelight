@@ -217,6 +217,7 @@ mod test {
         let finder = Finder::new()
             .root(env::current_dir().into_diagnostic()?.to_str().unwrap())
             .seed("sleep")
+            .seed("12")
             .search()?;
         finder.kill()?;
 

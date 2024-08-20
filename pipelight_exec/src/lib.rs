@@ -23,22 +23,39 @@
 //! It keeps running after parent process exit and terminal exit.
 //!
 //! ```
+//! # use pipelight_exec::Process;
+//! # use miette::Report;
+//!
 //! let mut process = Process::new("echo test");
 //! process.run_detached()?;
+//!
+//! # Ok::<(), Report>(())
 //! ```
 //!
 //! Pipe the process standards outputs to the parent.
 //!
 //! ```
+//! # use pipelight_exec::Process;
+//! # use miette::Report;
+//!
 //! let mut process = Process::new("echo test");
 //! process.run_detached()?;
+//!
+//! # Ok::<(), Report>(())
 //! ```
 //!
 //! Find a running process, with handy search options.
 //!
 //! ```
+//! # use pipelight_exec::Finder;
+//! # use miette::Report;
+//!
 //! let process_finder = Finder::new().seed("my_proc").root("/my/dir").search()?;
-//! let process_finder = Finder::new().pid(1792).search()?;
+//!
+//! let pid = 1792;
+//! let process_finder = Finder::new().pid(&pid).search()?;
+//!
+//! # Ok::<(), Report>(())
 //! ```
 //!
 

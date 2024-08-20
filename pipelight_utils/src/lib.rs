@@ -12,6 +12,8 @@
 //! You can browse the filesystem for a configuration file.
 //!
 //! ```
+//! # use miette::Report;
+//!
 //! let mut portal = Portal::new()?;
 //! // Set a pattern to search for.
 //! portal.seed("pipelight").search()?;
@@ -26,6 +28,7 @@
 //! // Go back to the origin directory
 //! portal.origin()?;
 //!
+//! # Ok::<(), Report>(())
 //! ```
 //!
 //! ## File - parse file types with pretty diagnostics.
@@ -36,6 +39,9 @@
 //!
 //! Let say you want to deserialize to a Config struct.
 //! ```
+//! # use miette::Report;
+//! use cast::Config;
+//!
 //! let res = serde_yaml::from_str::<Config>(&string);
 //! match res {
 //!     Ok(res) => Ok(res),
@@ -53,6 +59,8 @@
 //!         Err(err.into())
 //!     }
 //! }
+//!
+//! # Ok::<(), Report>(())
 //! ```
 //!
 //! <img src="" alt="pretty parsing error report">
@@ -60,10 +68,14 @@
 //! ## Git - easy git repo manipulation.
 //!
 //! ```
+//! # use miette::Report;
+//!
 //! let repo = Git::new();
 //! let branch = repo.get_branch()?;
 //! let tag = repo.get_tag()?;
 //! let commit = repo.get_commit()?;
+//!
+//! # Ok::<(), Report>(())
 //! ```
 
 pub mod globals;

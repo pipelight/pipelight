@@ -1,16 +1,25 @@
 [workspace]
 resolver = "2"
 members = [
-  ## Dependencies small utilities crates
+  ### Utils
+  ## Small utils crate and error types
   "pipelight_utils",
   ## Process management
   "pipelight_exec",
+  ## Watchexec sane and reusable configuration.
+  "pipelight_watcher",
+
+  ## Read multiple file formats and casts them to pipelight config
   "cast",
+
+  ## A templating crate for default pipelight configuration generation
   "templates",
+
   ## Core crates with interdependencies
   "workflow",
   "cli",
   "switch",
+
   ## Bin package and Lib entrypoint
   "pipelight",
 ]
