@@ -22,11 +22,12 @@ fn main() -> Result<()> {
 
     // Practical outdir
     let outdir = Path::new("../autocompletion/");
+
     fs::create_dir_all(outdir).into_diagnostic()?;
 
     let mut cmd = Cli::build()?;
     let name = cmd.get_name().to_string();
-    let shells = vec![Shell::Bash, Shell::Zsh, Shell::Fish, Shell::Elvish];
+    let shells = vec![Shell::Bash, Shell::Zsh, Shell::Fish];
     for shell in shells {
         let path = generate_to(
             shell,

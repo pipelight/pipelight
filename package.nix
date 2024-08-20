@@ -1,6 +1,7 @@
 {
   pkgs ? import <nixpkgs> {},
   lib,
+  installShellFiles,
   ...
 }:
 pkgs.rustPlatform.buildRustPackage rec {
@@ -10,14 +11,24 @@ pkgs.rustPlatform.buildRustPackage rec {
   cargoLock = {
     lockFile = ./Cargo.lock;
   };
+
+  # cargoBuildHook = ''
+  # buildPhase = ''
+  #   cargo build --release
+  # '';
+  # installPhase = ''
+  #   mkdir -p $out/bin
+  #   install -t target/release/${pname} $out/bin
+  # '';
+
   # disable tests
   checkType = "debug";
   doCheck = false;
 
   nativeBuildInputs = with pkgs; [
+    pkg-config
     installShellFiles
     openssl.dev
-    pkg-config
     rustc
     cargo
   ];
@@ -26,6 +37,6 @@ pkgs.rustPlatform.buildRustPackage rec {
   postInstall = ''
     installShellCompletion --bash ./autocompletion/${pname}.bash
     installShellCompletion --fish ./autocompletion/${pname}.fish
-    installShellCompletion --zsh  ./autocompletion/_${pname}
+    installShellCompletion --zsh ./autocompletion/_${pname}
   '';
 }
