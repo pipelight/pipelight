@@ -9,7 +9,7 @@ workflow = { path = "../workflow" }
 templates = { path = "../templates" }
 pipelight_utils = { path = "../pipelight_utils" }
 cast = { path = "../cast" }
-clap = "4.5.15"
+clap = "4.5.16"
 log = "0.4.22"
 once_cell = "1.19.0"
 miette = { version = "7.2.0" }

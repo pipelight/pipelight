@@ -303,9 +303,9 @@ dependencies = [
 
 [[package]]
 name = "clap_complete"
-version = "4.5.18"
+version = "4.5.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1ee158892bd7ce77aa15c208abbdb73e155d191c287a659b57abd5adb92feb03"
+checksum = "7eddf1c00919f37952199f7dbc834789cd33356ed10278ee40c8572b8fb88cf2"
 dependencies = [
  "clap",
 ]
@@ -1750,7 +1750,7 @@ dependencies = [
  "log4rs",
  "miette",
  "once_cell",
- "pipelight_utils 0.2.4",
+ "pipelight_utils 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "project-origins",
  "rev_buf_reader",
  "rustix",
@@ -1769,9 +1769,7 @@ dependencies = [
 
 [[package]]
 name = "pipelight_utils"
-version = "0.2.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be1b863b4b9a62e4d7cc1a94edbde37b85726fefbbd491e748d3c24d6328fb06"
+version = "0.2.5"
 dependencies = [
  "chrono",
  "colored",
@@ -1805,6 +1803,8 @@ dependencies = [
 [[package]]
 name = "pipelight_utils"
 version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f62caff581d60daaa414f50f1976f48efe541a533e9d63fe3c2ea6151f0d131a"
 dependencies = [
  "chrono",
  "colored",
