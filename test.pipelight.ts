@@ -44,27 +44,25 @@ const config: Config = {
 
     // Triggers
     // Test pipeline triggering by tags
-    pipeline("test_tags_trigger", () => [
-      step(`test tags`, () => ["ls -l"]),
-    ]).add_trigger({
-      tags: ["*"],
-      actions: ["manual"],
-    })
+    pipeline("test_tags_trigger", () => [step(`test tags`, () => ["ls -l"])])
+      .add_trigger({
+        tags: ["*"],
+        actions: ["manual"],
+      })
       .attach(),
 
     // Test pipeline triggering by git hook
     pipeline("test_git_hook", () => [
       step(`harmless commands`, () => ["pwd", "sleep 2", "ls"]),
-    ]).add_trigger({
-      actions: ["pre-push"],
-    })
+    ])
+      .add_trigger({
+        actions: ["pre-push"],
+      })
       .attach(),
 
     // Test setting modes and expected behaviors
     pipeline("test_rw", () => [
-      step(`harmless commands`, () => ["ppwd", "ls"]).set_mode(
-        "jump_next",
-      ),
+      step(`harmless commands`, () => ["ppwd", "ls"]).set_mode("jump_next"),
       step(`harmless commands`, () => ["pwd", "ls", "sleep 10"]),
     ]),
 
@@ -73,24 +71,20 @@ const config: Config = {
 
     // Parallel
     pipeline("test_parallel_modes", () => [
-      parallel(() => [
-        step("test", () => ["llls"]).set_mode("continue"),
-      ]),
+      parallel(() => [step("test", () => ["llls"]).set_mode("continue")]),
       parallel(() => [step("test", () => ["ls"]).set_mode("continue")]),
     ]),
 
     // Set options
-    pipeline("test_parallel_modes", () => [
-      step("test", () => ["pwd"]),
-    ]),
+    pipeline("test_parallel_modes", () => [step("test", () => ["pwd"])]),
     {
       name: "test_options",
-      steps: [
-        step(`run harmless commands`, () => ["pwd", "sleep 2", "ls"]),
+      steps: [step(`run harmless commands`, () => ["pwd", "sleep 2", "ls"])],
+      triggers: [
+        {
+          actions: ["pre-push"],
+        },
       ],
-      triggers: [{
-        actions: ["pre-push"],
-      }],
       options: {
         log_level: "trace",
       },

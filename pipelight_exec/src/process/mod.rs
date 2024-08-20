@@ -5,6 +5,11 @@ mod finder;
 mod run;
 mod self_process;
 
+// Unix process manipulation
+use rustix::process::{getgid, getpid, kill_process, test_kill_process, Signal};
+use sysinfo::get_current_pid;
+use sysinfo::{ProcessRefreshKind, ProcessesToUpdate, System};
+
 // Re-export
 pub use finder::Finder;
 
@@ -23,6 +28,8 @@ pub struct SelfProcess;
 pub struct Process {
     pub uuid: Option<Uuid>,
     pub pid: Option<i32>,
+    pub gid: Option<i32>,
+    pub sid: Option<i32>,
     pub state: State,
     pub io: Io,
     pub cwd: Option<String>,
@@ -36,6 +43,8 @@ impl Default for Process {
         Process {
             uuid,
             pid: None,
+            gid: None,
+            sid: None,
             cwd: None,
             io: Io {
                 uuid,
@@ -55,6 +64,8 @@ impl Process {
         Process {
             uuid,
             pid: None,
+            gid: None,
+            sid: None,
             cwd: None,
             io: Io {
                 uuid,
@@ -64,16 +75,33 @@ impl Process {
             state: State::default(),
         }
     }
+    /**
+     * Get process from Pid
+     */
+    pub fn get_from_pid(pid: &i32) -> Process {
+        let mut s = System::new_all();
+        s.refresh_processes_specifics(ProcessesToUpdate::All, ProcessRefreshKind::new());
+        let res = s
+            .process(sysinfo::Pid::from_u32(
+                u32::try_from(pid.to_owned()).unwrap(),
+            ))
+            .unwrap()
+            .to_owned();
+
+        res.into()
+    }
 }
 
 /**
-* Convert a sysinfo::Process struct into a pipelight::Process struct
+* Convert a rustix::Process struct into a pipelight::Process struct
 */
 impl From<&sysinfo::Process> for Process {
     fn from(proc: &sysinfo::Process) -> Process {
         Process {
             cwd: Some(proc.cwd().unwrap().to_str().unwrap().to_owned()),
             pid: Some(proc.pid().as_u32() as i32),
+            gid: Some(*proc.group_id().unwrap().to_owned() as i32),
+            sid: Some(proc.session_id().unwrap().as_u32() as i32),
             ..Process::new(
                 &proc
                     .cmd()
