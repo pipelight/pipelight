@@ -28,11 +28,18 @@ pkgs.rustPlatform.buildRustPackage rec {
   nativeBuildInputs = with pkgs; [
     pkg-config
     installShellFiles
-    openssl.dev
-    rustc
-    cargo
   ];
-  PKG_CONFIG_PATH = "${pkgs.openssl.dev}/lib/pkgconfig";
+
+  buildInputs = with pkgs;
+    [
+      openssl
+    ]
+    ++ lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
+      CoreFoundation
+      CoreServices
+      IOKit
+      Security
+    ]);
 
   postInstall = ''
     installShellCompletion --bash ./autocompletion/${pname}.bash

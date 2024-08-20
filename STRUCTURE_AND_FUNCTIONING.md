@@ -45,7 +45,7 @@ track of pipeline subprocesses.
 
 ## workflow crate
 
-**The pipeline execution logic***
+**The pipeline execution logic\***
 
 Read the Pipeline Struct extracted from tthe configuration file and set the
 execution workflow.
@@ -84,6 +84,3 @@ The command is then detached from the standard I/O and sent to the background.
 ## Detaching processes (the secret sauce)
 
 Pipelight is a single binary to execute pipelines, whach files, print logs...
-
-
-# P
