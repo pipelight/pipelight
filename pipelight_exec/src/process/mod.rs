@@ -28,6 +28,8 @@ pub struct SelfProcess;
 pub struct Process {
     pub uuid: Option<Uuid>,
     pub pid: Option<i32>,
+    // process parent id
+    pub ppid: Option<i32>,
     pub gid: Option<i32>,
     pub sid: Option<i32>,
     pub state: State,
@@ -43,6 +45,7 @@ impl Default for Process {
         Process {
             uuid,
             pid: None,
+            ppid: None,
             gid: None,
             sid: None,
             cwd: None,
@@ -64,6 +67,7 @@ impl Process {
         Process {
             uuid,
             pid: None,
+            ppid: None,
             gid: None,
             sid: None,
             cwd: None,
@@ -100,6 +104,7 @@ impl From<&sysinfo::Process> for Process {
         Process {
             cwd: Some(proc.cwd().unwrap().to_str().unwrap().to_owned()),
             pid: Some(proc.pid().as_u32() as i32),
+            ppid: Some(proc.parent().unwrap().as_u32() as i32),
             gid: Some(*proc.group_id().unwrap().to_owned() as i32),
             sid: Some(proc.session_id().unwrap().as_u32() as i32),
             ..Process::new(

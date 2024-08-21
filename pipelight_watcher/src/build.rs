@@ -15,12 +15,6 @@ use std::path::Path;
 
 // Error handling
 use miette::{Diagnostic, IntoDiagnostic, Result};
-use thiserror::Error;
-
-// Watchexec - Bug fix Struct
-#[derive(Debug, Error, Diagnostic)]
-#[error("stub")]
-struct MietteStub;
 
 /**
 * Retrieve an ignore file fullpath if any.

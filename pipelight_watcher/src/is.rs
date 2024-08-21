@@ -1,5 +1,3 @@
-// Struct
-use super::Watcher;
 // Env
 use std::env;
 // Process finder
@@ -7,11 +5,14 @@ use pipelight_exec::Finder;
 // Error handling
 use miette::{Error, IntoDiagnostic, Result};
 
+#[derive(Debug)]
+pub struct Watcher;
+
 impl Watcher {
     /**
-    Return process info of any instance of pipelight watch
-    that is already running on the current working directory.
-    */
+     * Return process info of any instance of pipelight watch
+     * that is already running on the current working directory.
+     */
     pub fn find_any() -> Result<Finder> {
         let finder = Finder::new()
             .cwd(env::current_dir().into_diagnostic()?.to_str().unwrap())
@@ -20,9 +21,9 @@ impl Watcher {
         Ok(finder)
     }
     /**
-    Return process info of any instance of pipelight watch
-    that is already running on the current working directory.
-    */
+     * Return process info of any instance of pipelight watch
+     * that is already running on the current working directory.
+     */
     pub fn find_all() -> Result<Finder> {
         let finder = Finder::new()
             .root(env::current_dir().into_diagnostic()?.to_str().unwrap())
@@ -32,9 +33,9 @@ impl Watcher {
     }
 
     /**
-    Check if an instance of 'pipelight watch' is already
-    watching the current working directory.
-    */
+     * Check if an instance of 'pipelight watch' is already
+     * watching the current working directory.
+     */
     pub fn has_homologous_already_running() -> Result<()> {
         let finder = Watcher::find_any()?;
 
@@ -52,8 +53,13 @@ impl Watcher {
         Finder::new()
             .cwd(env::current_dir().into_diagnostic()?.to_str().unwrap())
             .seed("pipelight watch")
-            .search()?
+            .search_no_parents()?
             .kill()?;
+        Ok(())
+    }
+
+    pub fn kill() -> Result<()> {
+        Self::kill_homologous()?;
         Ok(())
     }
 }

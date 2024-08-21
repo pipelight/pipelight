@@ -128,7 +128,14 @@ impl Finder {
      */
     pub fn search(&mut self) -> Result<Self> {
         let mut s = System::new_all();
-        s.refresh_processes_specifics(ProcessesToUpdate::All, ProcessRefreshKind::new());
+        s.refresh_processes_specifics(
+            ProcessesToUpdate::All,
+            ProcessRefreshKind::new()
+                .without_cpu()
+                .without_memory()
+                .without_disk_usage()
+                .without_environ(),
+        );
 
         // Loop through process list
         let mut matches: Vec<crate::Process> = vec![];
@@ -150,22 +157,8 @@ impl Finder {
                 // Guard - Ensure processes are running in same directory
                 let cond_pwd: bool = self.is_same_cwd(process)?;
 
-                // Guard - Ensure different process from the one alredy running (pid)
+                // Guard - Ensure different process from the one already running (pid)
                 let cond_other_pid = pid != &get_current_pid().unwrap();
-
-                // Guard - Ensure different process from the one alredy running (gid)
-                // let mut cond_other_gid = false;
-                // if process.group_id().is_some() && self_proc.gid.is_some() {
-                //     cond_other_gid = self_proc.gid.unwrap()
-                //         != process.group_id().unwrap().deref().to_owned() as i32;
-                // }
-
-                // Guard - Ensure different process from the one alredy running (sid)
-                // let mut cond_other_sid = false;
-                // if process.session_id().is_some() && self_proc.sid.is_some() {
-                //     cond_other_gid =
-                //         self_proc.sid.unwrap() != process.session_id().unwrap().as_u32() as i32;
-                // }
 
                 // Guard - Ensure command contains some seed(string)
                 let mut cond_seed = false;
@@ -179,7 +172,83 @@ impl Finder {
                 }
             }
         }
-        // println!("{:#?}", matches);
+
+        if !matches.is_empty() {
+            self.matches = Some(matches);
+        }
+
+        Ok(self.to_owned())
+    }
+
+    pub fn search_no_parents(&mut self) -> Result<Self> {
+        let mut s = System::new_all();
+        s.refresh_processes_specifics(
+            ProcessesToUpdate::All,
+            ProcessRefreshKind::new()
+                .without_cpu()
+                .without_memory()
+                .without_disk_usage()
+                .without_environ(),
+        );
+
+        // Loop through process list
+        let mut matches: Vec<crate::Process> = vec![];
+        if let Some(pid) = self.pid {
+            let sysinfo_pid = sysinfo::Pid::from_u32(pid);
+            if let Some(process) = s.processes().get(&sysinfo_pid) {
+                if self.is_match_seeds(process)? {
+                    matches.push(crate::Process::from(process));
+                }
+            }
+        } else {
+            let self_proc =
+                crate::Process::get_from_pid(&(get_current_pid().unwrap().as_u32() as i32));
+
+            // println!("{:#?}", self_proc);
+
+            for (pid, process) in s.processes() {
+                // Guard - Ensure processes are running in same subdirectory
+                let cond_root: bool = self.is_same_root(process)?;
+
+                // Guard - Ensure processes are running in same directory
+                let cond_pwd: bool = self.is_same_cwd(process)?;
+
+                // Guard - Ensure different process from the one already running (pid)
+                let cond_other_pid = pid != &get_current_pid().unwrap();
+
+                // Guard - Ensure is not parent (ppid)
+                let mut cond_other_ppid = false;
+                if process.parent().is_some() && self_proc.pid.is_some() {
+                    cond_other_ppid =
+                        self_proc.pid.unwrap() != process.parent().unwrap().as_u32() as i32;
+                }
+
+                // Guard - Ensure different process from the one already running (gid)
+                // let mut cond_other_gid = false;
+                // if process.group_id().is_some() && self_proc.gid.is_some() {
+                //     cond_other_gid = self_proc.gid.unwrap()
+                //         != process.group_id().unwrap().deref().to_owned() as i32;
+                // }
+
+                // Guard - Ensure different process from the one already running (sid)
+                // let mut cond_other_sid = false;
+                // if process.session_id().is_some() && self_proc.sid.is_some() {
+                //     cond_other_gid =
+                //         self_proc.sid.unwrap() != process.session_id().unwrap().as_u32() as i32;
+                // }
+
+                // Guard - Ensure command contains some seed(string)
+                let mut cond_seed = false;
+                if let Some(seeds) = self.seeds.clone() {
+                    cond_seed = self.is_match_seeds(process)?;
+                };
+
+                // Final resolution
+                if cond_pwd && cond_seed && cond_root && cond_other_pid && cond_other_ppid {
+                    matches.push(crate::Process::from(process));
+                }
+            }
+        }
 
         if !matches.is_empty() {
             self.matches = Some(matches);
@@ -230,8 +299,7 @@ mod test {
 
         let finder = Finder::new()
             .root(env::current_dir().into_diagnostic()?.to_str().unwrap())
-            .seed("sleep")
-            .seed("12")
+            .seed("sleep 12")
             .search()?;
         finder.kill()?;
 
