@@ -167,7 +167,7 @@ impl Finder {
                 };
 
                 // Final resolution
-                if cond_pwd && cond_seed && cond_root && cond_other_pid {
+                if cond_root && cond_pwd && cond_seed && cond_other_pid {
                     matches.push(crate::Process::from(process));
                 }
             }
@@ -180,6 +180,10 @@ impl Finder {
         Ok(self.to_owned())
     }
 
+    /**
+     * Search matching processes and hydrate struct with matches.
+     * Ensure the matching process is not a parent of this one.
+     */
     pub fn search_no_parents(&mut self) -> Result<Self> {
         let mut s = System::new_all();
         s.refresh_processes_specifics(
@@ -216,7 +220,7 @@ impl Finder {
                 // Guard - Ensure different process from the one already running (pid)
                 let cond_other_pid = pid != &get_current_pid().unwrap();
 
-                // Guard - Ensure is not parent (ppid)
+                // Guard - Ensure this process is not the parent (ppid)
                 let mut cond_other_ppid = false;
                 if process.parent().is_some() && self_proc.pid.is_some() {
                     cond_other_ppid =
@@ -244,7 +248,7 @@ impl Finder {
                 };
 
                 // Final resolution
-                if cond_pwd && cond_seed && cond_root && cond_other_pid && cond_other_ppid {
+                if cond_root && cond_pwd && cond_seed && cond_other_pid && cond_other_ppid {
                     matches.push(crate::Process::from(process));
                 }
             }
