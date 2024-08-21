@@ -140,6 +140,9 @@ impl Finder {
                 }
             }
         } else {
+            let self_proc =
+                crate::Process::get_from_pid(&(get_current_pid().unwrap().as_u32() as i32));
+
             for (pid, process) in s.processes() {
                 // Guard - Ensure processes are running in same subdirectory
                 let cond_root: bool = self.is_same_root(process)?;
@@ -147,23 +150,31 @@ impl Finder {
                 // Guard - Ensure processes are running in same directory
                 let cond_pwd: bool = self.is_same_cwd(process)?;
 
+                // Guard - Ensure different process from the one alredy running (pid)
+                let cond_other_pid = pid != &get_current_pid().unwrap();
+
+                // Guard - Ensure different process from the one alredy running (gid)
+                // let mut cond_other_gid = false;
+                // if process.group_id().is_some() && self_proc.gid.is_some() {
+                //     cond_other_gid = self_proc.gid.unwrap()
+                //         != process.group_id().unwrap().deref().to_owned() as i32;
+                // }
+
+                // Guard - Ensure different process from the one alredy running (sid)
+                // let mut cond_other_sid = false;
+                // if process.session_id().is_some() && self_proc.sid.is_some() {
+                //     cond_other_gid =
+                //         self_proc.sid.unwrap() != process.session_id().unwrap().as_u32() as i32;
+                // }
+
                 // Guard - Ensure command contains some seed(string)
                 let mut cond_seed = false;
                 if let Some(seeds) = self.seeds.clone() {
                     cond_seed = self.is_match_seeds(process)?;
                 };
 
-                // Guard - Ensure different process from the one alredy running (pid)
-                // let cond_other_pid = pid != &get_current_pid().unwrap();
-
-                // Guard - Ensure different process from the one alredy running (gid)
-                let self_proc =
-                    crate::Process::get_from_pid(&(get_current_pid().unwrap().as_u32() as i32));
-                let cond_other_gid =
-                    self_proc.gid.unwrap() != process.group_id().unwrap().deref().to_owned() as i32;
-
                 // Final resolution
-                if cond_pwd && cond_seed && cond_root && cond_other_gid {
+                if cond_pwd && cond_seed && cond_root && cond_other_pid {
                     matches.push(crate::Process::from(process));
                 }
             }

@@ -15,8 +15,7 @@ impl Watcher {
     pub fn find_any() -> Result<Finder> {
         let finder = Finder::new()
             .cwd(env::current_dir().into_diagnostic()?.to_str().unwrap())
-            .seed("pipelight")
-            .seed("watch")
+            .seed("pipelight watch")
             .search()?;
         Ok(finder)
     }
@@ -27,8 +26,7 @@ impl Watcher {
     pub fn find_all() -> Result<Finder> {
         let finder = Finder::new()
             .root(env::current_dir().into_diagnostic()?.to_str().unwrap())
-            .seed("pipelight")
-            .seed("watch")
+            .seed("pipelight watch")
             .search()?;
         Ok(finder)
     }
@@ -53,8 +51,7 @@ impl Watcher {
         // Search homologous
         Finder::new()
             .cwd(env::current_dir().into_diagnostic()?.to_str().unwrap())
-            .seed("pipelight")
-            .seed("watch")
+            .seed("pipelight watch")
             .search()?
             .kill()?;
         Ok(())
