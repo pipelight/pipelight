@@ -22,7 +22,7 @@
 //!
 //! It keeps running after parent process exit and terminal exit.
 //!
-//! ```
+//! ```rust
 //! # use pipelight_exec::Process;
 //! # use miette::Report;
 //!
@@ -34,7 +34,7 @@
 //!
 //! Pipe the process standards outputs to the parent.
 //!
-//! ```
+//! ```rust
 //! # use pipelight_exec::Process;
 //! # use miette::Report;
 //!
@@ -46,7 +46,7 @@
 //!
 //! Find a running process, with handy search options.
 //!
-//! ```
+//! ```rust
 //! # use pipelight_exec::Finder;
 //! # use miette::Report;
 //!

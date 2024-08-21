@@ -11,17 +11,18 @@
 //!
 //! You can browse the filesystem for a configuration file.
 //!
-//! ```
+//! ```rust
 //! # use miette::Report;
+//! use pipelight_utils::teleport::Portal;
 //!
 //! let mut portal = Portal::new()?;
 //! // Set a pattern to search for.
 //! portal.seed("pipelight").search()?;
 //!
 //! // Get the file path
-//! portal.target.file_path.unwrap();
+//! let file_path = portal.target.file_path.clone().unwrap();
 //! // Get the directory path
-//! portal.target.directory_path.unwrap();
+//! let directory_path = portal.target.directory_path.clone().unwrap();
 //!
 //! // Go to the target directory
 //! portal.teleport()?;
@@ -38,37 +39,44 @@
 //! [miette](https://docs.rs/miette/latest/miette/index.html) crate.
 //!
 //! Let say you want to deserialize to a Config struct.
-//! ```
-//! # use miette::Report;
-//! use cast::Config;
 //!
-//! let res = serde_yaml::from_str::<Config>(&string);
+//! ```rust
+//! # use miette::Result;
+//! # use serde_json::Value;
+//! # use pipelight_utils::files::{YamlError,TomlError};
+//!
+//! # fn main () -> Result<()> {
+//! # let string = "";
+//!
+//! let res = serde_yaml::from_str::<Value>(&string);
 //! match res {
 //!     Ok(res) => Ok(res),
 //!     Err(e) => {
 //!         let err = YamlError::new(e, &string);
-//!         Err(err.into())
+//!         return Err(err.into());
 //!     }
-//! }
+//! };
 //!
-//! let res = serde_toml::from_str::<Config>(&string);
+//! let res = toml::from_str::<Value>(&string);
 //! match res {
 //!     Ok(res) => Ok(res),
 //!     Err(e) => {
 //!         let err = TomlError::new(e, &string);
-//!         Err(err.into())
+//!         return Err(err.into());
 //!     }
-//! }
+//! };
 //!
-//! # Ok::<(), Report>(())
+//! # Ok(())
+//! # }
 //! ```
 //!
 //! <img src="" alt="pretty parsing error report">
 //!
 //! ## Git - easy git repo manipulation.
 //!
-//! ```
+//! ```rust
 //! # use miette::Report;
+//! use pipelight_utils::git::Git;
 //!
 //! let repo = Git::new();
 //! let branch = repo.get_branch()?;

@@ -154,10 +154,10 @@ pipelight logs -vvvv
 
 <img width="500px" alt="pretty logs" src="https://pipelight.dev/images/log_level_trace.png"/>
 
-## 🛠️ Install (Linux)
+## 🛠️ Install
 
 > [!IMPORTANT]  
-> Pipelight is not (yet) compatible with macOS or Windows.
+> Pipelight can now be installed under MacOs and Windows WSL
 
 Checkout the
 [instruction guide](https://pipelight.dev/introduction/install.html) for your

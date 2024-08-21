@@ -101,8 +101,7 @@ impl Process {
 */
 impl From<&sysinfo::Process> for Process {
     fn from(proc: &sysinfo::Process) -> Process {
-        Process {
-            cwd: Some(proc.cwd().unwrap().to_str().unwrap().to_owned()),
+        let mut p = Process {
             pid: Some(proc.pid().as_u32() as i32),
             ppid: Some(proc.parent().unwrap().as_u32() as i32),
             gid: Some(*proc.group_id().unwrap().to_owned() as i32),
@@ -115,6 +114,10 @@ impl From<&sysinfo::Process> for Process {
                     .collect::<Vec<String>>()
                     .join(" "),
             )
+        };
+        if proc.cwd().is_some() {
+            p.cwd = Some(proc.cwd().unwrap().to_str().unwrap().to_owned());
         }
+        p
     }
 }

@@ -1,7 +1,7 @@
 // Filesystem - read files
+use pipelight_utils::files::read_last_line;
 use std::fs;
 use std::path::Path;
-use pipelight_utils::files::read_last_line;
 // Traits
 use serde::{Deserialize, Serialize};
 // Error Handling
@@ -12,9 +12,9 @@ use miette::{Error, IntoDiagnostic, Result};
 pub struct Logs;
 
 /**
-Provide a directory path of valid JSON5 pipelight logs.
-It returns a list/vec of valid json strings
-further to be converted into Pipeline structs in the core("workflow") crate.
+* Provide a directory path of valid JSON5 pipelight logs.
+* It returns a list/vec of valid json strings
+* further to be converted into Pipeline structs in the core("workflow") crate.
 */
 impl Logs {
     pub fn read(directory_path: &str) -> Result<Vec<String>> {
