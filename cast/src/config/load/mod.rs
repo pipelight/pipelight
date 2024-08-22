@@ -41,7 +41,7 @@ impl Config {
             FileType::TypeScript | FileType::JavaScript => Config::ts(file_path, args)?,
             FileType::Toml | FileType::Tml => Config::tml(file_path)?,
             FileType::Yaml | FileType::Yml => Config::yml(file_path)?,
-            FileType::Kdl => Config::hcl(file_path)?,
+            // FileType::Kdl => Config::hcl(file_path)?,
             FileType::Hcl => Config::hcl(file_path)?,
             // FileType::Pkl => Config::pkl(file_path)?,
         };
