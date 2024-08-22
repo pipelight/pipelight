@@ -15,6 +15,8 @@ pub enum FileType {
     Toml,
     Tml,
 
+    // Kdl,
+
     // New gen proprietary file formats
     // Apple configuration as code
     // Pkl,

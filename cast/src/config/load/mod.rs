@@ -41,6 +41,7 @@ impl Config {
             FileType::TypeScript | FileType::JavaScript => Config::ts(file_path, args)?,
             FileType::Toml | FileType::Tml => Config::tml(file_path)?,
             FileType::Yaml | FileType::Yml => Config::yml(file_path)?,
+            FileType::Kdl => Config::hcl(file_path)?,
             FileType::Hcl => Config::hcl(file_path)?,
             // FileType::Pkl => Config::pkl(file_path)?,
         };
@@ -60,6 +61,18 @@ impl Config {
             }
         }
     }
+    /**
+    Returns a Config struct from a provided toml file path.
+    */
+    // pub fn kdl(file_path: &str) -> Result<Config> {
+    //     let string = fs::read_to_string(file_path).into_diagnostic()?;
+    //     let res: kdl::KdlDocument = string.parse().into_diagnostic()?;
+    //     let nodes = res.nodes();
+    //     let node = nodes[0].clone();
+    //     let res = serde_json::to_value(node);
+    //     println!("{:#?}", nodes);
+    //     Ok(res);
+    // }
     /**
     Returns a Config struct from a provided hcl file path.
     */
@@ -117,6 +130,13 @@ mod cast {
         println!("{:#?}", res);
         assert!(res.is_ok());
     }
+    // #[test]
+    // fn kdl() {
+    //     let res = Config::load("./public/pipelight.kdl", None);
+    //     println!("{:#?}", res);
+    //     assert!(res.is_ok());
+    // }
+
     // #[test]
     // fn pkl() {
     //     let res = Config::load("./public/pipelight.pkl", None);
