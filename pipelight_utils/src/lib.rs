@@ -95,4 +95,5 @@ pub mod files;
 pub mod git;
 pub mod logger;
 pub mod signal;
+#[cfg(feature = "git")]
 pub mod teleport;
