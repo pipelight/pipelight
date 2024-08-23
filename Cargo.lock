@@ -233,7 +233,7 @@ dependencies = [
  "log",
  "miette 7.2.0",
  "pipelight_exec",
- "pipelight_utils 0.2.6",
+ "pipelight_utils 0.2.7",
  "serde",
  "serde_json",
  "serde_kdl",
@@ -359,7 +359,7 @@ dependencies = [
  "miette 7.2.0",
  "once_cell",
  "pipelight_exec",
- "pipelight_utils 0.2.6",
+ "pipelight_utils 0.2.7",
  "pipelight_watcher",
  "rayon",
  "serde",
@@ -1831,7 +1831,7 @@ dependencies = [
  "log",
  "miette 7.2.0",
  "owo-colors",
- "pipelight_utils 0.2.6",
+ "pipelight_utils 0.2.7",
  "switch",
 ]
 
@@ -1906,7 +1906,7 @@ dependencies = [
 
 [[package]]
 name = "pipelight_utils"
-version = "0.2.6"
+version = "0.2.7"
 dependencies = [
  "chrono",
  "colored",
@@ -1955,7 +1955,7 @@ dependencies = [
  "miette 7.2.0",
  "once_cell",
  "pipelight_exec",
- "pipelight_utils 0.2.6",
+ "pipelight_utils 0.2.7",
  "rayon",
  "serde",
  "serde_json",
@@ -2552,7 +2552,7 @@ dependencies = [
  "log",
  "miette 7.2.0",
  "once_cell",
- "pipelight_utils 0.2.6",
+ "pipelight_utils 0.2.7",
  "templates",
  "workflow",
 ]
@@ -2614,7 +2614,7 @@ dependencies = [
  "handlebars",
  "log",
  "miette 7.2.0",
- "pipelight_utils 0.2.6",
+ "pipelight_utils 0.2.7",
  "rust-embed",
  "serde",
  "serde_json",
@@ -3447,7 +3447,7 @@ dependencies = [
  "miette 7.2.0",
  "once_cell",
  "pipelight_exec",
- "pipelight_utils 0.2.6",
+ "pipelight_utils 0.2.7",
  "rayon",
  "regex",
  "rustix",
