@@ -91,6 +91,7 @@ pub mod globals;
 pub mod dates;
 pub mod error;
 pub mod files;
+#[cfg(feature = "git")]
 pub mod git;
 pub mod logger;
 pub mod signal;

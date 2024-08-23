@@ -4,7 +4,7 @@ version = "0.5.8"
 edition = "2021"
 
 [dependencies]
-pipelight_utils = { path = "../pipelight_utils" }
+pipelight_utils = { path = "../pipelight_utils", features = ["git"] }
 pipelight_exec = { path = "../pipelight_exec" }
 serde = { version = "1.0.208", features = ["derive"] }
 miette = { version = "7.2.0" }
