@@ -10,9 +10,9 @@ use crate::git::Git;
 // Filesystem
 use std::path::Path;
 // Error Handling
-use crate::error::{LibError, PipelightError};
 use log::{info, trace};
 use miette::{Context, Error, IntoDiagnostic, Result};
+use pipelight_error::{LibError, PipelightError};
 
 impl Portal {
     /*

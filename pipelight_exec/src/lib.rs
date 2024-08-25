@@ -60,13 +60,9 @@
 //!
 
 // Rules
-#![allow(unused_variables)]
-// #![allow(unused_imports)]
-#![allow(unused_must_use)]
-
-// Internal Imports
-mod error;
-pub use error::ExecError;
+// #![allow(unused_variables)]
+#![allow(unused_imports)]
+// #![allow(unused_must_use)]
 
 pub mod dates;
 mod globals;

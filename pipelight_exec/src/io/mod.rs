@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 // Globals
-use crate::error::ExecError;
 use crate::globals::OUTDIR;
 // File manipulation
 use std::fs::{remove_file, File};
@@ -13,6 +12,7 @@ use std::process::Output;
 // Error Handling
 use log::info;
 use miette::{IntoDiagnostic, Result};
+use pipelight_error::PipelightError;
 
 /**
 * A struct that stores the procees standards input and outputs into human readable strings.
@@ -29,7 +29,7 @@ impl Io {
     /**
     Delete the files associated to the Io struct.
     */
-    pub fn clean(&self) -> Result<(), ExecError> {
+    pub fn clean(&self) -> Result<(), PipelightError> {
         // path definition
         let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
         let stderr_path = format!("{}/{}_stderr", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
@@ -49,7 +49,7 @@ impl Io {
     Read the files associated to the Io struct and hydrate
     the Io stdout and stderr fields.
     */
-    pub fn read(&mut self) -> Result<(), ExecError> {
+    pub fn read(&mut self) -> Result<(), PipelightError> {
         // path definition
         let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
         let stderr_path = format!("{}/{}_stderr", *OUTDIR.lock().unwrap(), self.uuid.unwrap());

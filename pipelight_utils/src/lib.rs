@@ -50,9 +50,6 @@
 
 pub mod globals;
 
-pub mod error;
-pub use error::*;
-
 pub mod git;
 pub mod logger;
 pub mod signal;

@@ -1,5 +1,6 @@
 // Struct
-use crate::{error::PipelightError, teleport::types::Gate};
+use crate::teleport::types::Gate;
+use pipelight_error::PipelightError;
 // Filesystem
 use std::path::Path;
 // Error Handling

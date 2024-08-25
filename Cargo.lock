@@ -232,6 +232,7 @@ dependencies = [
  "kdl 4.6.0",
  "log",
  "miette 7.2.0",
+ "pipelight_error",
  "pipelight_exec",
  "pipelight_files",
  "pipelight_utils",
@@ -1838,6 +1839,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "pipelight_error"
+version = "0.2.8"
+dependencies = [
+ "colored",
+ "hcl-rs",
+ "miette 7.2.0",
+ "serde",
+ "serde_json",
+ "serde_plain",
+ "serde_yaml",
+ "strum",
+ "thiserror",
+ "toml",
+]
+
+[[package]]
 name = "pipelight_exec"
 version = "0.2.5"
 dependencies = [
@@ -1854,6 +1871,7 @@ dependencies = [
  "log4rs",
  "miette 7.2.0",
  "once_cell",
+ "pipelight_error",
  "project-origins",
  "rev_buf_reader",
  "rustix",
@@ -1880,6 +1898,7 @@ dependencies = [
  "ignore-files",
  "log",
  "miette 7.2.0",
+ "pipelight_error",
  "rev_buf_reader",
  "serde",
  "serde_json",
@@ -1908,6 +1927,7 @@ dependencies = [
  "log4rs",
  "miette 7.2.0",
  "once_cell",
+ "pipelight_error",
  "pipelight_exec",
  "pipelight_files",
  "project-origins",
@@ -2541,6 +2561,7 @@ dependencies = [
  "log",
  "miette 7.2.0",
  "once_cell",
+ "pipelight_error",
  "pipelight_utils",
  "templates",
  "workflow",

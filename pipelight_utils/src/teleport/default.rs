@@ -1,8 +1,6 @@
 // Structs
-use crate::{
-    error::PipelightError,
-    teleport::types::{Gate, Portal},
-};
+use crate::teleport::types::{Gate, Portal};
+use pipelight_error::PipelightError;
 // Environment
 use std::env;
 // Error Handling

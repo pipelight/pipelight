@@ -3,8 +3,8 @@ use rustix::process::{getgid, getpid, kill_process, test_kill_process, Signal};
 use sysinfo::get_current_pid;
 use sysinfo::{Process, ProcessRefreshKind, ProcessesToUpdate, System};
 // Error handling
-use crate::error::{ExecError, LibError};
 use miette::{Context, IntoDiagnostic, Result};
+use pipelight_error::{LibError, PipelightError};
 // Env
 use itertools::Itertools;
 use std::ops::Deref;
@@ -264,7 +264,7 @@ impl Finder {
     /**
      * Kill matches if any.
      */
-    pub fn kill(&self) -> Result<(), ExecError> {
+    pub fn kill(&self) -> Result<(), PipelightError> {
         if let Some(matches) = self.matches.clone() {
             for process in matches {
                 let pid = rustix::process::Pid::from_raw(process.pid.unwrap());

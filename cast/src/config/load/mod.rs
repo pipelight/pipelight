@@ -6,9 +6,8 @@ use std::fs;
 use miette::{IntoDiagnostic, Result};
 
 // Filesystem
+use pipelight_error::{CastError, HclError, JsonError, PipelightError, TomlError, YamlError};
 use pipelight_files::FileType;
-use pipelight_files::{CastError, HclError, JsonError, TomlError, YamlError};
-use pipelight_utils::PipelightError;
 use std::path::Path;
 
 // Tests

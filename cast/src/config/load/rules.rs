@@ -3,7 +3,7 @@ use crate::Config;
 // Error Handling
 use log::warn;
 use miette::Result;
-use pipelight_utils::PipelightError;
+use pipelight_error::PipelightError;
 
 impl Config {
     /**

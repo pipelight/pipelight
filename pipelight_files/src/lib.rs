@@ -9,7 +9,7 @@
 //! ```rust
 //! # use miette::Result;
 //! # use serde_json::Value;
-//! # use pipelight_files::{YamlError,TomlError,CastError};
+//! # use pipelight_error::{YamlError,TomlError,CastError};
 //!
 //! # fn main () -> Result<(), CastError> {
 //! # let string = "";
@@ -32,7 +32,7 @@
 //! ```rust
 //! # use miette::Result;
 //! # use serde_json::Value;
-//! # use pipelight_files::{YamlError,TomlError,CastError};
+//! # use pipelight_error::{YamlError,TomlError,CastError};
 //!
 //! # fn main () -> Result<(), CastError> {
 //! # let string = "";
@@ -52,10 +52,6 @@
 //! # }
 //! ```
 mod from;
-
-// Re-export types
-mod error;
-pub use error::*;
 
 mod is;
 pub use is::*;

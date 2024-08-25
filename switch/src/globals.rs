@@ -1,5 +1,5 @@
 // Struct
-use pipelight_utils::error::{LibError, PipelightError, WrapError};
+use pipelight_error::{LibError, PipelightError, WrapError};
 use pipelight_utils::git::Flag;
 // Global vars
 use once_cell::sync::Lazy;

@@ -4,6 +4,7 @@ version = "0.5.8"
 edition = "2021"
 
 [dependencies]
+pipelight_error = { path = "../pipelight_error" }
 pipelight_files = { path = "../pipelight_files" }
 pipelight_utils = { path = "../pipelight_utils" }
 pipelight_exec = { path = "../pipelight_exec" }

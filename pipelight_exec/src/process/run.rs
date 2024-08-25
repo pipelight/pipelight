@@ -2,7 +2,7 @@
 use crate::dates::Duration;
 use crate::{Io, Process, State, Status};
 
-use crate::error::ExecError;
+use pipelight_error::PipelightError;
 // Unix process manipulation
 use std::process::{Command, Stdio};
 
@@ -19,7 +19,7 @@ impl Process {
     Execute/Await a subprocess and inherit the parent process output outputs(stdout/stderr)
     to the parent process.
     */
-    pub fn run_inherit(&mut self) -> Result<(), ExecError> {
+    pub fn run_inherit(&mut self) -> Result<(), PipelightError> {
         info!("Run subprocess piped to parent");
         get_shell()?;
         let mut duration = Duration::default();
@@ -52,7 +52,7 @@ impl Process {
     Execute/Await a subprocess and pipe the outputs(stdout/stderr)
     to the parent process.
     */
-    pub fn run_piped(&mut self) -> Result<(), ExecError> {
+    pub fn run_piped(&mut self) -> Result<(), PipelightError> {
         info!("Run subprocess piped to parent");
         get_shell()?;
         let mut duration = Duration::default();
@@ -87,7 +87,7 @@ impl Process {
     Suits long running processes for early inner inspection of outputs
     whilst it still runs.
     */
-    pub fn run_fs(&mut self) -> Result<(), ExecError> {
+    pub fn run_fs(&mut self) -> Result<(), PipelightError> {
         info!("Run subprocess with output piped to pipelight managed files");
         get_shell()?;
         let mut duration = Duration::default();
@@ -122,7 +122,7 @@ impl Process {
     Execute/NoAwait a subprocess and mute the input(stdin) and  outputs(stdout/stderr).
     NoAwait means it immediatly returns once the subprocess is succesfully spawned and don't wait for output.
     */
-    pub fn run_detached(&mut self) -> Result<(), ExecError> {
+    pub fn run_detached(&mut self) -> Result<(), PipelightError> {
         info!("Run detached subprocess");
         get_shell()?;
         let mut duration = Duration::default();

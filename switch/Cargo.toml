@@ -4,10 +4,11 @@ version = "0.4.2"
 edition = "2021"
 
 [dependencies]
+pipelight_utils = { path = "../pipelight_utils" }
+pipelight_error = { path = "../pipelight_error" }
 cli = { path = "../cli" }
 workflow = { path = "../workflow" }
 templates = { path = "../templates" }
-pipelight_utils = { path = "../pipelight_utils" }
 cast = { path = "../cast" }
 clap = "4.5.16"
 log = "0.4.22"
