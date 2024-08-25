@@ -1,9 +1,10 @@
 // Error Handling
 use miette::{Error, Result};
-use pipelight_utils::files::JsonError;
 
 // Exec
 use pipelight_exec::Process;
+use pipelight_files::{CastError, JsonError};
+use pipelight_utils::{LibError, PipelightError, WrapError};
 
 mod script;
 use script::import_script;
@@ -12,7 +13,7 @@ use crate::Config;
 
 impl Config {
     /// Return a Config struct from a provided typescript file path
-    pub fn ts(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
+    pub fn ts(file_path: &str, args: Option<Vec<String>>) -> Result<Config, PipelightError> {
         // Fail safe guards
         Config::lint(file_path)?;
         Config::check(file_path, args.clone())?;
@@ -26,18 +27,18 @@ impl Config {
         };
         let mut p = Process::new(&command);
         p.run_piped()?;
-        let json = p.io.stdout.unwrap();
-        let res = serde_json::from_str::<Config>(&json);
+        let string = p.io.stdout.unwrap();
+        let res = serde_json::from_str::<Config>(&string);
         match res {
             Ok(res) => Ok(res),
             Err(e) => {
-                let err = JsonError::new(e, &json);
+                let err = CastError::JsonError(JsonError::new(e, &string));
                 Err(err.into())
             }
         }
     }
     /// Check if the deno script contains syntax errors
-    fn lint(file: &str) -> Result<()> {
+    fn lint(file: &str) -> Result<(), PipelightError> {
         // debug!("Linting config file");
         let command = format!(
             "deno lint \
@@ -51,11 +52,12 @@ impl Config {
             Ok(())
         } else {
             let message = p.io.stderr.unwrap();
-            Err(Error::msg(message))
+            let help = "Fix typos in order to run the piplines".to_owned();
+            Err(PipelightError::LibError(LibError { message, help }))
         }
     }
     /// Run the script to detect runtime errors
-    fn check(file: &str, args: Option<Vec<String>>) -> Result<()> {
+    fn check(file: &str, args: Option<Vec<String>>) -> Result<(), PipelightError> {
         // debug!("Linting config file");
         let mut command = format!(
             "deno run \
@@ -79,7 +81,8 @@ impl Config {
             Ok(())
         } else {
             let message = p.io.stderr.unwrap();
-            Err(Error::msg(message))
+            let help = "Fix errors in order to run the piplines".to_owned();
+            Err(PipelightError::LibError(LibError { message, help }))
         }
     }
 }

@@ -1,15 +1,14 @@
 [package]
 name = "pipelight_utils"
-version = "0.2.7"
+version = "0.2.8"
 edition = "2021"
 license = "GPL-2.0-only"
 description = "A set of trivial utilities for command line tools"
 
-[features]
-git = ["dep:git2"]
-
 [dependencies]
-git2 = { version = "0.19.0", optional = true }
+pipelight_files = { path = "../pipelight_files" }
+pipelight_exec = { path = "../pipelight_exec" }
+git2 = { version = "0.19.0" }
 rev_buf_reader = "0.3.0"
 log = "0.4.22"
 log4rs = { version = "1.3.0", features = [

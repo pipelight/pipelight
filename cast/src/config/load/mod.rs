@@ -4,10 +4,11 @@ use crate::Config;
 use std::fs;
 // Error Handling
 use miette::{IntoDiagnostic, Result};
-use pipelight_utils::files::{HclError, TomlError, YamlError};
 
 // Filesystem
-use pipelight_utils::files::FileType;
+use pipelight_files::FileType;
+use pipelight_files::{CastError, HclError, JsonError, TomlError, YamlError};
+use pipelight_utils::PipelightError;
 use std::path::Path;
 
 // Tests
@@ -28,7 +29,7 @@ impl Config {
     Languages coming next after v1.0.0:
       - Rust, Hcl, Kcl, Python...
     */
-    pub fn load(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
+    pub fn load(file_path: &str, args: Option<Vec<String>>) -> Result<Config, PipelightError> {
         let extension = &Path::new(file_path)
             .extension()
             .unwrap()
@@ -39,6 +40,8 @@ impl Config {
         let file_type = FileType::from(extension);
         let mut config = match file_type {
             FileType::TypeScript | FileType::JavaScript => Config::ts(file_path, args)?,
+            FileType::Json => Config::json(file_path)?,
+
             FileType::Toml | FileType::Tml => Config::tml(file_path)?,
             FileType::Yaml | FileType::Yml => Config::yml(file_path)?,
             // FileType::Kdl => Config::hcl(file_path)?,
@@ -48,15 +51,29 @@ impl Config {
         config.strict_check()
     }
     /**
+    Returns a Config struct from a provided json file path.
+    */
+    pub fn json(file_path: &str) -> Result<Config, PipelightError> {
+        let string = fs::read_to_string(file_path)?;
+        let res = serde_json::from_str::<Config>(&string);
+        match res {
+            Ok(res) => Ok(res),
+            Err(e) => {
+                let err = CastError::JsonError(JsonError::new(e, &string));
+                Err(err.into())
+            }
+        }
+    }
+    /**
     Returns a Config struct from a provided toml file path.
     */
-    pub fn tml(file_path: &str) -> Result<Config> {
-        let string = fs::read_to_string(file_path).into_diagnostic()?;
+    pub fn tml(file_path: &str) -> Result<Config, PipelightError> {
+        let string = fs::read_to_string(file_path)?;
         let res = toml::from_str::<Config>(&string);
         match res {
             Ok(res) => Ok(res),
             Err(e) => {
-                let err = TomlError::new(e, &string);
+                let err = CastError::TomlError(TomlError::new(e, &string));
                 Err(err.into())
             }
         }
@@ -76,13 +93,13 @@ impl Config {
     /**
     Returns a Config struct from a provided hcl file path.
     */
-    pub fn hcl(file_path: &str) -> Result<Config> {
-        let string = fs::read_to_string(file_path).into_diagnostic()?;
+    pub fn hcl(file_path: &str) -> Result<Config, PipelightError> {
+        let string = fs::read_to_string(file_path)?;
         let res = hcl::from_str::<Config>(&string);
         match res {
             Ok(res) => Ok(res),
             Err(e) => {
-                let err = HclError::new(e, &string);
+                let err = CastError::HclError(HclError::new(e, &string));
                 Err(err.into())
             }
         }
@@ -90,13 +107,13 @@ impl Config {
     /**
     Returns a Config struct from a provided yaml file path.
     */
-    pub fn yml(file_path: &str) -> Result<Config> {
-        let string = fs::read_to_string(file_path).into_diagnostic()?;
+    pub fn yml(file_path: &str) -> Result<Config, PipelightError> {
+        let string = fs::read_to_string(file_path)?;
         let res = serde_yaml::from_str::<Config>(&string);
         match res {
             Ok(res) => Ok(res),
             Err(e) => {
-                let err = YamlError::new(e, &string);
+                let err = CastError::YamlError(YamlError::new(e, &string));
                 Err(err.into())
             }
         }

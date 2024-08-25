@@ -11,6 +11,7 @@ pub enum FileType {
     TypeScript,
     JavaScript,
 
+    Json,
     // Best file formats
     Toml,
     Tml,

@@ -1,6 +1,6 @@
 mod compute;
 pub mod convert;
-mod types;
 
 // Re-exports
+mod types;
 pub use types::*;

@@ -1,11 +1,15 @@
 [workspace]
 resolver = "2"
 members = [
-  ### Utils
+  ## Read and parse files with fancy error with miette
+  "pipelight_files",
+
   ## Small utils crate and error types
   "pipelight_utils",
+
   ## Process management
   "pipelight_exec",
+
   ## Watchexec sane and reusable configuration.
   "pipelight_watcher",
 

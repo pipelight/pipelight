@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 templates = { path = "../templates" }
-pipelight_utils = { path = "../pipelight_utils", features = ["git"] }
+pipelight_utils = { path = "../pipelight_utils" }
 pipelight_exec = { path = "../pipelight_exec" }
 cast = { path = "../cast" }
 chrono = { version = "0.4.38", features = ["serde"] }

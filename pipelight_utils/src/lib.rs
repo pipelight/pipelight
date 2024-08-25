@@ -32,44 +32,6 @@
 //! # Ok::<(), Report>(())
 //! ```
 //!
-//! ## File - parse file types with pretty diagnostics.
-//!
-//! Well structured parsing error reports with the language specific error types.
-//! thanks to the [thiserror](https://docs.rs/thiserror/latest/thiserror/) and
-//! [miette](https://docs.rs/miette/latest/miette/index.html) crate.
-//!
-//! Let say you want to deserialize to a Config struct.
-//!
-//! ```rust
-//! # use miette::Result;
-//! # use serde_json::Value;
-//! # use pipelight_utils::files::{YamlError,TomlError};
-//!
-//! # fn main () -> Result<()> {
-//! # let string = "";
-//!
-//! let res = serde_yaml::from_str::<Value>(&string);
-//! match res {
-//!     Ok(res) => Ok(res),
-//!     Err(e) => {
-//!         let err = YamlError::new(e, &string);
-//!         return Err(err.into());
-//!     }
-//! };
-//!
-//! let res = toml::from_str::<Value>(&string);
-//! match res {
-//!     Ok(res) => Ok(res),
-//!     Err(e) => {
-//!         let err = TomlError::new(e, &string);
-//!         return Err(err.into());
-//!     }
-//! };
-//!
-//! # Ok(())
-//! # }
-//! ```
-//!
 //! <img src="" alt="pretty parsing error report">
 //!
 //! ## Git - easy git repo manipulation.
@@ -87,13 +49,11 @@
 //! ```
 
 pub mod globals;
-// Internal Imports
-pub mod dates;
+
 pub mod error;
-pub mod files;
-#[cfg(feature = "git")]
+pub use error::*;
+
 pub mod git;
 pub mod logger;
 pub mod signal;
-#[cfg(feature = "git")]
 pub mod teleport;

@@ -1,10 +1,11 @@
 // Global vars
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
+
 // Error Handling
+use crate::error::ExecError;
 use log::trace;
 use miette::Result;
-use pipelight_utils::error::PipelightError;
 
 use std::env;
 
@@ -23,7 +24,7 @@ pub static OUTDIR: Lazy<Arc<Mutex<String>>> =
 /**
 Returns the user session shell or fallback to default "sh".
 */
-pub fn get_shell() -> Result<(), PipelightError> {
+pub fn get_shell() -> Result<(), ExecError> {
     trace!("Get shell");
     let user_shell = env::var("SHELL");
     match user_shell {

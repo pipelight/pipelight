@@ -1,0 +1,19 @@
+{
+  "config": {
+    "pipelines": [
+      {
+        "name": "example",
+        "steps": [
+          {
+            "name": "first",
+            "commands": ["ls", "pwd"]
+          },
+          {
+            "name": "second",
+            "commands": ["ls", "pwd"]
+          }
+        ]
+      }
+    ]
+  }
+}

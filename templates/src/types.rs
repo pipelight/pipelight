@@ -11,6 +11,7 @@ pub enum Style {
     Objects,
     Helpers,
     Javascript,
+    Json,
     Toml,
     Hcl,
     Yaml,

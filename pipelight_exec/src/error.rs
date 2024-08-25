@@ -1,12 +1,10 @@
 use miette::{Diagnostic, Report};
-use pipelight_exec::ExecError;
-use pipelight_files::CastError;
 use thiserror::Error;
 
 #[derive(Debug, Error, Diagnostic)]
-pub enum PipelightError {
+pub enum ExecError {
     #[error(transparent)]
-    #[diagnostic(code(pipelight::io::error))]
+    #[diagnostic(code(pipelight::exec::error))]
     IoError(#[from] std::io::Error),
 
     #[error(transparent)]
@@ -16,14 +14,6 @@ pub enum PipelightError {
     #[error(transparent)]
     #[diagnostic(transparent)]
     LibError(#[from] LibError),
-
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    CastError(#[from] CastError),
-
-    #[error(transparent)]
-    #[diagnostic(transparent)]
-    ExecError(#[from] ExecError),
 }
 
 /**

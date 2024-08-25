@@ -65,6 +65,10 @@
 #![allow(unused_must_use)]
 
 // Internal Imports
+mod error;
+pub use error::ExecError;
+
+pub mod dates;
 mod globals;
 mod io;
 mod process;

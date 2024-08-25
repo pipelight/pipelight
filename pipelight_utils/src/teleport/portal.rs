@@ -1,7 +1,8 @@
 // Environment
 use std::env;
 // File
-use crate::{files::FileType, teleport::types::Portal};
+use super::types::Portal;
+use pipelight_files::FileType;
 // Trait
 use strum::IntoEnumIterator;
 // Git

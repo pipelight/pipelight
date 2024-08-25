@@ -13,6 +13,8 @@ impl From<&String> for FileType {
             "toml" => FileType::Toml,
             "tml" => FileType::Tml,
 
+            "json" => FileType::Json,
+
             // "kdl" => FileType::Kdl,
             "hcl" => FileType::Hcl,
             // "pkl" => FileType::Pkl,
@@ -35,6 +37,9 @@ impl From<&FileType> for String {
         match file_type {
             FileType::TypeScript => "ts".to_owned(),
             FileType::JavaScript => "js".to_owned(),
+
+            FileType::Json => "json".to_owned(),
+
             FileType::Toml => "toml".to_owned(),
             FileType::Tml => "tml".to_owned(),
 

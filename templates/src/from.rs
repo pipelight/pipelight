@@ -1,6 +1,6 @@
 use crate::Style;
 use convert_case::{Case, Casing};
-use pipelight_utils::files::FileType;
+use pipelight_files::FileType;
 
 impl From<&String> for Style {
     fn from(e: &String) -> Self {
@@ -26,6 +26,7 @@ impl From<&Style> for FileType {
             Style::Objects => FileType::TypeScript,
             Style::Helpers => FileType::TypeScript,
             Style::Javascript => FileType::JavaScript,
+            Style::Json => FileType::Json,
             Style::Toml => FileType::Toml,
             Style::Hcl => FileType::Hcl,
             Style::Yaml => FileType::Yaml,
@@ -37,6 +38,7 @@ impl From<&FileType> for Style {
         match *e {
             FileType::TypeScript => Style::Objects,
             FileType::JavaScript => Style::Objects,
+            FileType::Json => Style::Json,
             FileType::Toml => Style::Toml,
             FileType::Tml => Style::Toml,
             FileType::Hcl => Style::Hcl,

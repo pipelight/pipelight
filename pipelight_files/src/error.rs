@@ -7,12 +7,18 @@ pub enum CastError {
     #[error(transparent)]
     #[diagnostic(transparent)]
     JsonError(#[from] JsonError),
+
     #[error(transparent)]
     #[diagnostic(transparent)]
     YamlError(#[from] YamlError),
+
     #[error(transparent)]
     #[diagnostic(transparent)]
     TomlError(#[from] TomlError),
+
+    #[error(transparent)]
+    #[diagnostic(transparent)]
+    HclError(#[from] HclError),
 }
 
 /**

@@ -1,0 +1,28 @@
+[package]
+name = "pipelight_files"
+version = "0.2.7"
+edition = "2021"
+license = "GPL-2.0-only"
+description = "Par"
+
+[dependencies]
+rev_buf_reader = "0.3.0"
+log = "0.4.22"
+uuid = { version = "1.10.0", features = [
+  "v4",
+  "serde",
+  "fast-rng",
+  "macro-diagnostics",
+] }
+strum = { version = "0.26.3", features = ["derive"] }
+serde = { version = "1.0.208", features = ["derive"] }
+convert_case = "0.6.0"
+miette = "7.2.0"
+serde_plain = "1.0.2"
+ignore-files = "3.0.1"
+thiserror = "1.0.63"
+colored = "2.1.0"
+serde_json = "1.0.125"
+toml = { version = "0.8.19", features = ["parse"] }
+hcl-rs = "0.18.0"
+serde_yaml = "0.9.34"

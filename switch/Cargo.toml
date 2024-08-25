@@ -7,7 +7,7 @@ edition = "2021"
 cli = { path = "../cli" }
 workflow = { path = "../workflow" }
 templates = { path = "../templates" }
-pipelight_utils = { path = "../pipelight_utils", features = ["git"] }
+pipelight_utils = { path = "../pipelight_utils" }
 cast = { path = "../cast" }
 clap = "4.5.16"
 log = "0.4.22"

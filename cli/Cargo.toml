@@ -7,7 +7,7 @@ build = "build.rs"
 [dependencies]
 workflow = { path = "../workflow" }
 templates = { path = "../templates" }
-pipelight_utils = { path = "../pipelight_utils", features = ["git"] }
+pipelight_utils = { path = "../pipelight_utils" }
 pipelight_exec = { path = "../pipelight_exec" }
 pipelight_watcher = { path = "../pipelight_watcher" }
 cast = { path = "../cast" }
@@ -42,7 +42,7 @@ watchexec-supervisor = "2.0.0"
 [build-dependencies]
 workflow = { path = "../workflow" }
 templates = { path = "../templates" }
-pipelight_utils = { path = "../pipelight_utils", features = ["git"] }
+pipelight_utils = { path = "../pipelight_utils" }
 pipelight_exec = { path = "../pipelight_exec" }
 pipelight_watcher = { path = "../pipelight_watcher" }
 cast = { path = "../cast" }

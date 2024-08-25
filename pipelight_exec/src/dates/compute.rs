@@ -1,7 +1,5 @@
-// Test
-mod test;
 // Duration
-use super::Duration;
+use crate::dates::Duration;
 use chrono::{DateTime, Local};
 use std::time;
 // Convertion functions
@@ -73,5 +71,17 @@ impl Duration {
             .parse::<DateTime<Local>>()
             .into_diagnostic()?;
         Ok(parsed)
+    }
+}
+#[cfg(test)]
+mod convert {
+    use crate::dates::types::Duration;
+
+    #[test]
+    fn string_to_duration() {
+        let mut d = Duration::default();
+        d.start().unwrap();
+        d.stop().unwrap();
+        assert!(d.computed.is_some());
     }
 }

@@ -1,7 +1,7 @@
 // Standard libs
 use log::LevelFilter;
+pub use pipelight_exec::dates::Duration;
 use serde::{Deserialize, Serialize};
-pub use pipelight_utils::dates::Duration;
 use uuid::Uuid;
 
 // Structs
