@@ -50,6 +50,9 @@
 
 pub mod globals;
 
+pub mod file;
+pub use file::FileType;
+
 pub mod git;
 pub mod logger;
 pub mod signal;

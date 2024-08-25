@@ -82,7 +82,7 @@ impl Finder {
     /**
      * Guard - Ensure command contains some seed(string)
      */
-    fn is_match_seeds(&mut self, process: &Process) -> Result<bool> {
+    fn is_match_seeds(&mut self, process: &Process) -> Result<bool, PipelightError> {
         if let Some(seeds) = self.seeds.clone() {
             for seed in seeds {
                 if !process
@@ -103,7 +103,7 @@ impl Finder {
      * Guard -Ensure processes are running in same subdirectory
      * Permissive: Return true if can not figure out
      */
-    fn is_same_root(&mut self, process: &Process) -> Result<bool> {
+    fn is_same_root(&mut self, process: &Process) -> Result<bool, PipelightError> {
         if process.cwd().is_some() && self.root.is_some() {
             return Ok(process
                 .cwd()
@@ -116,7 +116,7 @@ impl Finder {
      * Guard -Ensure processes are running in same directory
      * Permissive: Return true if can not figure out
      */
-    fn is_same_cwd(&mut self, process: &Process) -> Result<bool> {
+    fn is_same_cwd(&mut self, process: &Process) -> Result<bool, PipelightError> {
         if process.cwd().is_some() && self.cwd.is_some() {
             return Ok(process.cwd().unwrap().to_str().unwrap() == self.cwd.clone().unwrap());
         }
@@ -126,7 +126,7 @@ impl Finder {
     /**
      * Search matching processes and hydrate struct with matches.
      */
-    pub fn search(&mut self) -> Result<Self> {
+    pub fn search(&mut self) -> Result<Self, PipelightError> {
         let mut s = System::new_all();
         s.refresh_processes_specifics(
             ProcessesToUpdate::All,
@@ -292,17 +292,18 @@ mod test {
     use std::env;
     // Error handling
     use miette::{IntoDiagnostic, Result};
+    use pipelight_error::PipelightError;
 
     #[test]
     /**
      * Run a simple process, detach it and find it back.
      */
-    fn find_and_kill_random_process() -> Result<()> {
+    fn find_and_kill_random_process() -> Result<(), PipelightError> {
         let mut process = Process::new("sleep 12");
         process.run_detached()?;
 
         let finder = Finder::new()
-            .root(env::current_dir().into_diagnostic()?.to_str().unwrap())
+            .root(env::current_dir()?.to_str().unwrap())
             .seed("sleep 12")
             .search()?;
         finder.kill()?;

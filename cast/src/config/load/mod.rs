@@ -7,7 +7,7 @@ use miette::{IntoDiagnostic, Result};
 
 // Filesystem
 use pipelight_error::{CastError, HclError, JsonError, PipelightError, TomlError, YamlError};
-use pipelight_files::FileType;
+use pipelight_utils::FileType;
 use std::path::Path;
 
 // Tests
@@ -28,7 +28,7 @@ impl Config {
     Languages coming next after v1.0.0:
       - Rust, Hcl, Kcl, Python...
     */
-    pub fn load(file_path: &str, args: Option<Vec<String>>) -> Result<Config, PipelightError> {
+    pub fn load(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
         let extension = &Path::new(file_path)
             .extension()
             .unwrap()
@@ -52,8 +52,8 @@ impl Config {
     /**
     Returns a Config struct from a provided json file path.
     */
-    pub fn json(file_path: &str) -> Result<Config, PipelightError> {
-        let string = fs::read_to_string(file_path)?;
+    pub fn json(file_path: &str) -> Result<Config> {
+        let string = fs::read_to_string(file_path).into_diagnostic()?;
         let res = serde_json::from_str::<Config>(&string);
         match res {
             Ok(res) => Ok(res),
@@ -66,8 +66,8 @@ impl Config {
     /**
     Returns a Config struct from a provided toml file path.
     */
-    pub fn tml(file_path: &str) -> Result<Config, PipelightError> {
-        let string = fs::read_to_string(file_path)?;
+    pub fn tml(file_path: &str) -> Result<Config> {
+        let string = fs::read_to_string(file_path).into_diagnostic()?;
         let res = toml::from_str::<Config>(&string);
         match res {
             Ok(res) => Ok(res),
@@ -92,8 +92,8 @@ impl Config {
     /**
     Returns a Config struct from a provided hcl file path.
     */
-    pub fn hcl(file_path: &str) -> Result<Config, PipelightError> {
-        let string = fs::read_to_string(file_path)?;
+    pub fn hcl(file_path: &str) -> Result<Config> {
+        let string = fs::read_to_string(file_path).into_diagnostic()?;
         let res = hcl::from_str::<Config>(&string);
         match res {
             Ok(res) => Ok(res),
@@ -106,8 +106,8 @@ impl Config {
     /**
     Returns a Config struct from a provided yaml file path.
     */
-    pub fn yml(file_path: &str) -> Result<Config, PipelightError> {
-        let string = fs::read_to_string(file_path)?;
+    pub fn yml(file_path: &str) -> Result<Config> {
+        let string = fs::read_to_string(file_path).into_diagnostic()?;
         let res = serde_yaml::from_str::<Config>(&string);
         match res {
             Ok(res) => Ok(res),

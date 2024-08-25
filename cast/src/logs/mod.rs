@@ -1,5 +1,5 @@
 // Filesystem - read files
-use pipelight_files::read_last_line;
+use pipelight_utils::file::read_last_line;
 use std::fs;
 use std::path::Path;
 // Traits

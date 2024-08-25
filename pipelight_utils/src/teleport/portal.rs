@@ -2,7 +2,7 @@
 use std::env;
 // File
 use super::types::Portal;
-use pipelight_files::FileType;
+use crate::file::FileType;
 // Trait
 use strum::IntoEnumIterator;
 // Git

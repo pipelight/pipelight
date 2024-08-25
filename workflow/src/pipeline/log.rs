@@ -4,9 +4,9 @@ use crate::types::{Pipeline, StepOrParallel};
 use pipelight_exec::{Statuable, Status};
 // Globals
 use once_cell::sync::Lazy;
+use pipelight_utils::globals::LOGGER;
 use std::io::Write;
 use std::sync::{Arc, Mutex};
-use pipelight_utils::globals::LOGGER;
 // Fylesystem manipulation
 use std::fs;
 use std::fs::{create_dir_all, File};
@@ -39,7 +39,7 @@ impl Pipeline {
         // // Subprocess tmp files
         let processes = self.get_procs()?;
         for process in processes {
-            process.io.clean()?;
+            process.io.clean().into_diagnostic()?;
         }
         Ok(())
     }
@@ -74,7 +74,7 @@ impl Pipeline {
                 StepOrParallel::Step(step) => {
                     for command in &mut step.commands {
                         if command.get_status() == Some(Status::Running) {
-                            command.process.io.read()?;
+                            command.process.io.read().into_diagnostic()?;
                         }
                     }
                 }
@@ -82,7 +82,7 @@ impl Pipeline {
                     for step in &mut parallel.steps {
                         for command in &mut step.commands {
                             if command.get_status() == Some(Status::Running) {
-                                command.process.io.read()?;
+                                command.process.io.read().into_diagnostic()?;
                             }
                         }
                     }

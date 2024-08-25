@@ -5,9 +5,8 @@ edition = "2021"
 
 [dependencies]
 pipelight_error = { path = "../pipelight_error" }
-pipelight_files = { path = "../pipelight_files" }
-pipelight_utils = { path = "../pipelight_utils" }
 pipelight_exec = { path = "../pipelight_exec" }
+pipelight_utils = { path = "../pipelight_utils" }
 serde = { version = "1.0.208", features = ["derive"] }
 miette = { version = "7.2.0" }
 thiserror = "1.0.63"

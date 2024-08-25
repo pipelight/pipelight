@@ -29,7 +29,7 @@ impl Io {
     /**
     Delete the files associated to the Io struct.
     */
-    pub fn clean(&self) -> Result<(), PipelightError> {
+    pub fn clean(&self) -> Result<(), std::io::Error> {
         // path definition
         let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
         let stderr_path = format!("{}/{}_stderr", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
@@ -49,7 +49,7 @@ impl Io {
     Read the files associated to the Io struct and hydrate
     the Io stdout and stderr fields.
     */
-    pub fn read(&mut self) -> Result<(), PipelightError> {
+    pub fn read(&mut self) -> Result<(), std::io::Error> {
         // path definition
         let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
         let stderr_path = format!("{}/{}_stderr", *OUTDIR.lock().unwrap(), self.uuid.unwrap());

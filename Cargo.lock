@@ -232,9 +232,8 @@ dependencies = [
  "kdl 4.6.0",
  "log",
  "miette 7.2.0",
- "pipelight_error",
+ "pipelight_error 0.2.8",
  "pipelight_exec",
- "pipelight_files",
  "pipelight_utils",
  "serde",
  "serde_json",
@@ -1833,7 +1832,6 @@ dependencies = [
  "log",
  "miette 7.2.0",
  "owo-colors",
- "pipelight_files",
  "pipelight_utils",
  "switch",
 ]
@@ -1855,8 +1853,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "pipelight_error"
+version = "0.2.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "799df9028d3a0d4a272f0f2808b338e2ff5f3fae920dd61a4b5181aa4227b4d2"
+dependencies = [
+ "colored",
+ "hcl-rs",
+ "miette 7.2.0",
+ "serde",
+ "serde_json",
+ "serde_plain",
+ "serde_yaml",
+ "strum",
+ "thiserror",
+ "toml",
+]
+
+[[package]]
 name = "pipelight_exec"
-version = "0.2.5"
+version = "0.2.8"
 dependencies = [
  "chrono",
  "colored",
@@ -1871,7 +1887,7 @@ dependencies = [
  "log4rs",
  "miette 7.2.0",
  "once_cell",
- "pipelight_error",
+ "pipelight_error 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "project-origins",
  "rev_buf_reader",
  "rustix",
@@ -1883,28 +1899,6 @@ dependencies = [
  "strum",
  "subprocess",
  "sysinfo",
- "thiserror",
- "toml",
- "uuid",
-]
-
-[[package]]
-name = "pipelight_files"
-version = "0.2.7"
-dependencies = [
- "colored",
- "convert_case",
- "hcl-rs",
- "ignore-files",
- "log",
- "miette 7.2.0",
- "pipelight_error",
- "rev_buf_reader",
- "serde",
- "serde_json",
- "serde_plain",
- "serde_yaml",
- "strum",
  "thiserror",
  "toml",
  "uuid",
@@ -1927,9 +1921,8 @@ dependencies = [
  "log4rs",
  "miette 7.2.0",
  "once_cell",
- "pipelight_error",
+ "pipelight_error 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "pipelight_exec",
- "pipelight_files",
  "project-origins",
  "rev_buf_reader",
  "rustix",
@@ -2561,7 +2554,7 @@ dependencies = [
  "log",
  "miette 7.2.0",
  "once_cell",
- "pipelight_error",
+ "pipelight_error 0.2.8",
  "pipelight_utils",
  "templates",
  "workflow",
@@ -2624,7 +2617,6 @@ dependencies = [
  "handlebars",
  "log",
  "miette 7.2.0",
- "pipelight_files",
  "pipelight_utils",
  "rust-embed",
  "serde",

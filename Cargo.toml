@@ -3,10 +3,6 @@ resolver = "2"
 members = [
   ## Read and parse files with fancy error with miette
   "pipelight_error",
-
-  ## Read and parse files with fancy error with miette
-  "pipelight_files",
-
   ## Small utils crate and error types
   "pipelight_utils",
 

@@ -19,7 +19,6 @@ doc = false
 
 [dependencies]
 pipelight_utils = { path = "../pipelight_utils" }
-pipelight_files = { path = "../pipelight_files" }
 switch = { path = "../switch", version = "*" }
 cli = { path = "../cli", version = "*" }
 log = "0.4.22"

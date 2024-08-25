@@ -12,7 +12,7 @@ use crate::Config;
 
 impl Config {
     /// Return a Config struct from a provided typescript file path
-    pub fn ts(file_path: &str, args: Option<Vec<String>>) -> Result<Config, PipelightError> {
+    pub fn ts(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
         // Fail safe guards
         Config::lint(file_path)?;
         Config::check(file_path, args.clone())?;
@@ -37,7 +37,7 @@ impl Config {
         }
     }
     /// Check if the deno script contains syntax errors
-    fn lint(file: &str) -> Result<(), PipelightError> {
+    fn lint(file: &str) -> Result<()> {
         // debug!("Linting config file");
         let command = format!(
             "deno lint \
@@ -52,11 +52,11 @@ impl Config {
         } else {
             let message = p.io.stderr.unwrap();
             let help = "Fix typos in order to run the piplines".to_owned();
-            Err(PipelightError::LibError(LibError { message, help }))
+            Err(PipelightError::LibError(LibError { message, help }).into())
         }
     }
     /// Run the script to detect runtime errors
-    fn check(file: &str, args: Option<Vec<String>>) -> Result<(), PipelightError> {
+    fn check(file: &str, args: Option<Vec<String>>) -> Result<()> {
         // debug!("Linting config file");
         let mut command = format!(
             "deno run \
@@ -81,7 +81,7 @@ impl Config {
         } else {
             let message = p.io.stderr.unwrap();
             let help = "Fix errors in order to run the piplines".to_owned();
-            Err(PipelightError::LibError(LibError { message, help }))
+            Err(PipelightError::LibError(LibError { message, help }).into())
         }
     }
 }

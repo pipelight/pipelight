@@ -3,7 +3,6 @@
 //! Files are converted into intermediate rust structs by the well-known rust serde crate.
 //!
 mod config;
-mod error;
 mod logs;
 
 // Re-export
