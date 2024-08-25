@@ -52,7 +52,8 @@ impl Config {
         } else {
             let message = p.io.stderr.unwrap();
             let help = "Fix typos in order to run the piplines".to_owned();
-            Err(PipelightError::LibError(LibError { message, help }).into())
+            let err = PipelightError::LibError(LibError { message, help });
+            Err(err.into())
         }
     }
     /// Run the script to detect runtime errors
@@ -81,7 +82,8 @@ impl Config {
         } else {
             let message = p.io.stderr.unwrap();
             let help = "Fix errors in order to run the piplines".to_owned();
-            Err(PipelightError::LibError(LibError { message, help }).into())
+            let err = PipelightError::LibError(LibError { message, help });
+            Err(err.into())
         }
     }
 }
