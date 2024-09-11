@@ -3,7 +3,7 @@ pkgs.mkShell {
   buildInputs = with pkgs.buildPackages; [
     openssl
     pkg-config
-    rust-bin.nightly.latest.default
+    rust-bin.stable.latest.default
     pkgs.rust-analyzer
   ];
 }

@@ -6,8 +6,9 @@
 }:
 pkgs.rustPlatform.buildRustPackage rec {
   pname = "pipelight";
-  version = "0.8.0";
-  src = (builtins.fromTOML (lib.readFile ./pipelight/Cargo.toml)).package.version;
+  version = (builtins.fromTOML (lib.readFile ./pipelight/Cargo.toml)).package.version;
+  src = ./.;
+
   cargoLock = {
     lockFile = ./Cargo.lock;
   };

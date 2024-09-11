@@ -1,5 +1,3 @@
-#![feature(async_closure)]
-
 // Structs
 use crate::services::{self, Action};
 use crate::services::{FgBg, Service};
