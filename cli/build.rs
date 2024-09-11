@@ -1,3 +1,5 @@
+#![feature(async_closure)]
+
 // Clap completion script generation
 use clap_complete::{generate_to, Shell};
 use std::env;

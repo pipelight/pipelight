@@ -5,7 +5,7 @@ use std::sync::Arc;
 // Watchexec
 use ignore_files::{IgnoreFile, IgnoreFilter};
 use std::future::Future;
-use watchexec::{action::ActionHandler, Config, Watchexec};
+use watchexec::{action::ActionHandler, filter::Filterer, Config, Watchexec};
 use watchexec_events::Event;
 use watchexec_filterer_ignore::IgnoreFilterer;
 use watchexec_signals::Signal;
@@ -36,30 +36,17 @@ pub fn get_ignore_path() -> Result<String> {
     }
 }
 
-/**
-* Self reconfigure when the IgnoreFile changes.
-*/
-pub async fn reconfigure(watchexec: &Watchexec, action: &ActionHandler) -> Result<()> {
-    if let Some(ignore_path) = get_ignore_path().ok() {
-        for event in action.events.iter() {
-            if event
-                .paths()
-                .any(|(p, _)| p.to_str().unwrap() == ignore_path)
-            {
-                // Set Filter
-                let filterer = make_filter_configuration(&ignore_path).await?;
-                watchexec.config.filterer(Arc::new(filterer));
-                break;
-            }
-        }
+pub async fn make_filterer() -> Result<IgnoreFilterer> {
+    match get_ignore_path() {
+        Ok(res) => make_filter_configuration(&res).await,
+        Err(_) => make_default_filter_configuration(),
     }
-    Ok(())
 }
 
 /**
-Create an action filter based on provided ignore file path.
-It blacklists some files to avoid recursive file watching.
- */
+* Create an action filter based on provided ignore file path.
+* It blacklists some files to avoid recursive file watching.
+*/
 pub async fn make_filter_configuration(path: &str) -> Result<IgnoreFilterer> {
     let path = Path::new(path);
     // Set Filter
@@ -85,7 +72,7 @@ Create a default action filter.
 To be used when no ignore file is provided.
 It blacklists some files to avoid recursive file watching.
  */
-pub async fn make_default_filter_configuration() -> Result<IgnoreFilterer> {
+pub fn make_default_filter_configuration() -> Result<IgnoreFilterer> {
     // Set Filter
     let applies_in = env::current_dir().into_diagnostic()?;
 

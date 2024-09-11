@@ -3,10 +3,8 @@ use std::env;
 // Process finder
 use pipelight_exec::Finder;
 // Error handling
+use super::Watcher;
 use miette::{Error, IntoDiagnostic, Result};
-
-#[derive(Debug)]
-pub struct Watcher;
 
 impl Watcher {
     /**
@@ -53,6 +51,7 @@ impl Watcher {
         Finder::new()
             .cwd(env::current_dir().into_diagnostic()?.to_str().unwrap())
             .seed("pipelight watch")
+            // .search()?
             .search_no_parents()?
             .kill()?;
         Ok(())

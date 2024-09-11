@@ -5,4 +5,6 @@ mod test;
 
 // Reexport
 pub use build::*;
-pub use is::*;
+
+#[derive(Debug)]
+pub struct Watcher;

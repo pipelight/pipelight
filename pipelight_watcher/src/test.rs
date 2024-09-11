@@ -65,7 +65,7 @@ pub async fn build() -> Result<Watchexec> {
             watchexec.config.filterer(Arc::new(filterer));
         }
         Err(_) => {
-            let filterer = make_default_filter_configuration().await?;
+            let filterer = make_default_filter_configuration()?;
             watchexec.config.filterer(Arc::new(filterer));
         }
     }
