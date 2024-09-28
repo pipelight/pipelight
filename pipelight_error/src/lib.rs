@@ -49,6 +49,7 @@ pub struct LibError {
 
 #[derive(Error, Diagnostic, Debug)]
 pub enum CastError {
+    // Deserialize
     #[error(transparent)]
     #[diagnostic(transparent)]
     JsonError(#[from] JsonError),
@@ -64,6 +65,11 @@ pub enum CastError {
     #[error(transparent)]
     #[diagnostic(transparent)]
     HclError(#[from] HclError),
+
+    // Serialize
+    #[error(transparent)]
+    #[diagnostic(code(serialize::toml))]
+    TomlSerError(#[from] toml::ser::Error),
 }
 
 /**
