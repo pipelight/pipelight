@@ -232,7 +232,7 @@ dependencies = [
  "kdl 4.6.0",
  "log",
  "miette 7.2.0",
- "pipelight_error 0.2.8",
+ "pipelight_error 0.2.9",
  "pipelight_exec",
  "pipelight_utils",
  "serde",
@@ -1839,6 +1839,8 @@ dependencies = [
 [[package]]
 name = "pipelight_error"
 version = "0.2.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "799df9028d3a0d4a272f0f2808b338e2ff5f3fae920dd61a4b5181aa4227b4d2"
 dependencies = [
  "colored",
  "hcl-rs",
@@ -1854,9 +1856,7 @@ dependencies = [
 
 [[package]]
 name = "pipelight_error"
-version = "0.2.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "799df9028d3a0d4a272f0f2808b338e2ff5f3fae920dd61a4b5181aa4227b4d2"
+version = "0.2.9"
 dependencies = [
  "colored",
  "hcl-rs",
@@ -1887,7 +1887,7 @@ dependencies = [
  "log4rs",
  "miette 7.2.0",
  "once_cell",
- "pipelight_error 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pipelight_error 0.2.8",
  "project-origins",
  "rev_buf_reader",
  "rustix",
@@ -1921,7 +1921,7 @@ dependencies = [
  "log4rs",
  "miette 7.2.0",
  "once_cell",
- "pipelight_error 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pipelight_error 0.2.8",
  "pipelight_exec",
  "project-origins",
  "rev_buf_reader",
@@ -2554,7 +2554,7 @@ dependencies = [
  "log",
  "miette 7.2.0",
  "once_cell",
- "pipelight_error 0.2.8",
+ "pipelight_error 0.2.9",
  "pipelight_utils",
  "templates",
  "workflow",
