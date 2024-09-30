@@ -1875,35 +1875,24 @@ dependencies = [
 
 [[package]]
 name = "pipelight_exec"
-version = "0.2.8"
+version = "0.2.9"
 dependencies = [
  "chrono",
  "colored",
- "console",
  "convert_case",
- "git2",
- "hcl-rs",
- "ignore-files",
  "iso8601-duration",
  "itertools",
  "log",
- "log4rs",
  "miette 7.2.0",
  "once_cell",
  "pipelight_error 0.2.9 (registry+https://github.com/rust-lang/crates.io-index)",
- "project-origins",
- "rev_buf_reader",
  "rustix",
  "serde",
- "serde_json",
  "serde_plain",
- "serde_yaml",
  "signal-hook",
- "strum",
  "subprocess",
  "sysinfo",
  "thiserror",
- "toml",
  "uuid",
 ]
 

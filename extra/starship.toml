@@ -1,0 +1,15 @@
+# Append this to the end of your starship configuration
+
+# Adds a symbol in prompt when pipelight configuration file is detected
+[custom.pipelight]
+description = "pipelight cicd"
+format = '[$symbol ]($style)'
+symbol = "󰬗"
+detect_files = [
+  "pipelight.ts",
+  "pipelight.js",
+  "pipelight.toml",
+  "pipelight.yaml",
+  "pipelight.hcl",
+]
+style = "fg:green"
