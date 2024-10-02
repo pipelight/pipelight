@@ -89,7 +89,6 @@ impl fmt::Display for Status {
             Status::Failed => write!(f, "{} {}", icon.red(), "Failed".normal().bold()),
             Status::Running => write!(f, "{} {}", icon.green(), "Running".bold()),
             Status::Aborted => write!(f, "{} {}", icon.yellow(), "Aborted".bold()),
-        };
-        Ok(())
+        }
     }
 }
