@@ -1,12 +1,12 @@
 [package]
 name = "pipelight_exec"
-version = "0.2.9"
+version = "0.2.10"
 edition = "2021"
 license = "GPL-2.0-only"
 description = "Easy process management"
 
 [dependencies]
-pipelight_error = "0.2.8"
+pipelight_error = "0.2.10"
 log = "0.4.22"
 uuid = { version = "1.10.0", features = [
   "v4",

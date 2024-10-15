@@ -184,7 +184,7 @@ impl Finder {
      * Search matching processes and hydrate struct with matches.
      * Ensure the matching process is not a parent of this one.
      */
-    pub fn search_no_parents(&mut self) -> Result<Self> {
+    pub fn search_no_parents(&mut self) -> Result<Self, PipelightError> {
         let mut s = System::new_all();
         s.refresh_processes_specifics(
             ProcessesToUpdate::All,
