@@ -1,4 +1,8 @@
 // Tests
+
+// #[cfg(feature = "procfs")]
+mod default;
+
 mod test;
 
 mod finder;
@@ -6,7 +10,6 @@ mod run;
 mod self_process;
 
 // Unix process manipulation
-use rustix::process::{getgid, getpid, kill_process, test_kill_process, Signal};
 use sysinfo::get_current_pid;
 use sysinfo::{ProcessRefreshKind, ProcessesToUpdate, System};
 
