@@ -1,6 +1,6 @@
 // Tests
 
-// #[cfg(feature = "procfs")]
+#[cfg(feature = "fd")]
 mod default;
 
 mod test;

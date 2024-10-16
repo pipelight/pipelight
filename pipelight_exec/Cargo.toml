@@ -6,7 +6,7 @@ license = "GPL-2.0-only"
 description = "Easy process management"
 
 [features]
-procfs = ["dep:procfs"]
+fd = ["dep:procfs"]
 
 [dependencies]
 pipelight_error = "0.2.10"
