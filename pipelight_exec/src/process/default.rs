@@ -23,7 +23,7 @@ use miette::{IntoDiagnostic, Result};
 
 impl Process {
     /**
-     * Run process
+     * Run a detached process
      */
     pub fn run(&mut self) -> Result<Self, PipelightError> {
         info!("Run detached subprocess");
@@ -46,7 +46,9 @@ impl Process {
         duration.start();
         let child = cmd.spawn()?;
 
+        // Update proc pid
         self.pid = Some(child.id() as i32);
+
         duration.stop();
         self.state = State {
             duration: Some(duration),
@@ -55,6 +57,10 @@ impl Process {
         Ok(self.to_owned())
     }
 
+    /**
+     * Read process I/O file descriptors (stdout/stderr)
+     * and update struct field accordingly.
+     */
     pub fn update(&mut self) -> Result<Self, PipelightError> {
         if let Some(pid) = self.pid {
             let proc = UnixProcess::new(pid).unwrap();
