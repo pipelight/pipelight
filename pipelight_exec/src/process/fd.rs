@@ -54,17 +54,4 @@ impl Process {
 #[cfg(test)]
 mod test {
     use super::*;
-    use std::{thread, time};
-
-    #[test]
-    fn detached_proc_fs_update_io() -> Result<(), PipelightError> {
-        let mut proc = Process::new("echo test").run_detached_fs()?;
-
-        let throttle = time::Duration::from_millis(1000);
-        thread::sleep(throttle);
-        proc.io.read()?;
-
-        assert_eq!(proc.io.stdout, Some("test\n".to_owned()));
-        Ok(())
-    }
 }

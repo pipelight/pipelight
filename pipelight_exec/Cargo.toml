@@ -35,3 +35,4 @@ bon = "2.3.0"
 
 # optional deps
 procfs = { version = "0.17.0", optional = true }
+shell-words = "1.1.0"

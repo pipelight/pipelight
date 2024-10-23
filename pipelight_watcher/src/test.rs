@@ -154,9 +154,9 @@ mod watcher {
 
         // Run watcher
         let mut process = Process::new("cargo run --bin pipelight init --template toml");
-        process.run_piped()?;
+        process.run_piped().into_diagnostic()?;
         let mut process = Process::new("cargo run --bin pipelight watch --attach");
-        process.run_detached()?;
+        process.run_detached().into_diagnostic()?;
         // let res = Watcher::has_homologous_already_running()?;
 
         Ok(())
@@ -178,7 +178,7 @@ mod watcher {
         env::set_current_dir(&test_dir).into_diagnostic()?;
 
         // Wait for propagation
-        Process::new("sleep 1").run_piped()?;
+        Process::new("sleep 1").run_piped().into_diagnostic()?;
 
         let finder = Watcher::find_all()?;
         println!("{:#?}", finder);
@@ -216,7 +216,7 @@ mod watcher {
         env::set_current_dir(&test_dir).into_diagnostic()?;
 
         // Wait for propagation
-        Process::new("sleep 1").run_piped()?;
+        Process::new("sleep 1").run_piped().into_diagnostic()?;
 
         let finder = Watcher::find_all()?;
         println!("{:#?}", finder);

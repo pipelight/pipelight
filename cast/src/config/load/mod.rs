@@ -121,29 +121,49 @@ impl Config {
 
 #[cfg(test)]
 mod cast {
+    use super::*;
+    use std::path::PathBuf;
+
     use crate::{Config, Logs};
+
     #[test]
     fn typescript() {
-        let res = Config::load("./public/pipelight.ts", None);
-        // println!("{:?}", res);
+        // Get file
+        let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        path.push("../examples/pipelight.ts");
+        let path = path.display().to_string();
+
+        let res = Config::load(&path, None);
         assert!(res.is_ok());
     }
     #[test]
     fn javascript() {
-        let res = Config::load("./public/pipelight.js", None);
-        // println!("{:?}", res);
+        // Get file
+        let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        path.push("../examples/pipelight.js");
+        let path = path.display().to_string();
+
+        let res = Config::load(&path, None);
         assert!(res.is_ok());
     }
     #[test]
     fn toml() {
-        let res = Config::load("./public/pipelight.toml", None);
-        // println!("{:#?}", res);
+        // Get file
+        let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        path.push("../examples/pipelight.toml");
+        let path = path.display().to_string();
+
+        let res = Config::load(&path, None);
         assert!(res.is_ok());
     }
     #[test]
     fn hcl() {
-        let res = Config::load("./public/pipelight.hcl", None);
-        println!("{:#?}", res);
+        // Get file
+        let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        path.push("../examples/pipelight.hcl");
+        let path = path.display().to_string();
+
+        let res = Config::load(&path, None);
         assert!(res.is_ok());
     }
     // #[test]
@@ -161,12 +181,22 @@ mod cast {
     // }
     #[test]
     fn yaml() {
-        let res = Config::load("./public/pipelight.yaml", None);
+        // Get file
+        let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        path.push("../examples/pipelight.yaml");
+        let path = path.display().to_string();
+
+        let res = Config::load(&path, None);
         assert!(res.is_ok());
     }
     #[test]
     fn logs() {
-        let res = Logs::read("./public");
+        // Get file
+        let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        path.push("./public");
+        let path = path.display().to_string();
+
+        let res = Logs::read(&path);
         assert!(res.is_ok());
     }
 }

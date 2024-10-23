@@ -24,9 +24,18 @@ impl Config {
         } else {
             format!("{} {}", executable, script)
         };
-        let mut p = Process::new(&command);
-        p.run_piped()?;
-        let string = p.io.stdout.unwrap();
+        let proc = Process::new(&command).run_term()?;
+
+        let mut string = "".to_owned();
+        if let Some(stdout) = proc.io.stdout {
+            string = stdout;
+        } else {
+            let err = LibError {
+                message: proc.io.stderr.unwrap(),
+                help: "".to_owned(),
+            };
+            return Err(err.into());
+        }
         let res = serde_json::from_str::<Config>(&string);
         match res {
             Ok(res) => Ok(res),
