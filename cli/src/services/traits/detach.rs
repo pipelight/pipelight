@@ -2,7 +2,8 @@
 use crate::services::types::Service;
 use crate::types::Attach;
 // Process manipulation
-use pipelight_exec::SelfProcess;
+use pipelight_exec::Process;
+use serde::{Deserialize, Serialize};
 // Globals
 use crate::globals::CLI;
 // Error Handling
@@ -10,6 +11,31 @@ use log::trace;
 use miette::Result;
 
 use super::Exec;
+
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+pub struct PipelightBin;
+
+impl PipelightBin {
+    /**
+    Clone the pipelight instance and detach the clone.
+
+    The instance spawned by the command line can exit whithout killing it's child.
+    Thus the clone can run and persist in the background even on tty close.
+    */
+    pub fn args(cmd_args: &str) -> Process {
+        // global vars
+        let bin = "pipelight";
+
+        // Dev env or production env
+        #[cfg(debug_assertions)]
+        let command = format!("cargo run --bin {} {}", &bin, &cmd_args);
+        #[cfg(not(debug_assertions))]
+        let command = format!("{} {}", &bin, &cmd_args);
+
+        // Run a detached subprocess
+        Process::new(&command)
+    }
+}
 
 pub trait FgBg {
     /**
@@ -35,14 +61,14 @@ impl FgBg for Service {
             if args == origin {
                 self.exec()?;
             } else {
-                SelfProcess::run_fg_with_cmd(&String::from(&args))?;
+                PipelightBin::args(&String::from(&args)).run_piped()?;
             }
         }
         Ok(())
     }
     fn detach(&self) -> Result<()> {
         if let Some(args) = self.args.clone() {
-            SelfProcess::run_bg_with_cmd(&String::from(&args))?;
+            PipelightBin::args(&String::from(&args)).run_detached()?;
         }
         Ok(())
     }
@@ -68,7 +94,7 @@ impl FgBg for Service {
                 if let Some(e) = self.args.as_mut() {
                     e.attach = Some(String::from(&Attach::True));
                 }
-                        self.detach()?;
+                self.detach()?;
             }
         }
         Ok(())
