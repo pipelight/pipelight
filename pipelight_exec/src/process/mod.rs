@@ -1,28 +1,21 @@
 // Tests
 
 #[cfg(feature = "fd")]
-mod default;
-
-mod test;
-
+mod fd;
 mod finder;
 mod run;
-mod self_process;
+
+// Re-export
+pub use finder::Finder;
 
 // Unix process manipulation
 use sysinfo::get_current_pid;
 use sysinfo::{ProcessRefreshKind, ProcessesToUpdate, System};
 
-// Re-export
-pub use finder::Finder;
-
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 // Struct
 use crate::{Io, State};
-
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
-pub struct SelfProcess;
 
 /**
 * A struct that stores the process attributes for further access and manipulation.

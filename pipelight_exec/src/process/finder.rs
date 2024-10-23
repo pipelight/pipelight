@@ -294,10 +294,10 @@ mod test {
     use miette::{IntoDiagnostic, Result};
     use pipelight_error::PipelightError;
 
-    #[test]
     /**
      * Run a simple process, detach it and find it back.
      */
+    #[test]
     fn find_and_kill_random_process() -> Result<(), PipelightError> {
         let mut process = Process::new("sleep 12");
         process.run_detached()?;
@@ -306,6 +306,8 @@ mod test {
             .root(env::current_dir()?.to_str().unwrap())
             .seed("sleep 12")
             .search()?;
+
+        // println!("{:#?}", finder);
         finder.kill()?;
 
         assert_eq!(finder.clone().matches.unwrap().len(), 1);
