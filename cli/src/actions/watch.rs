@@ -41,6 +41,41 @@ pub fn watch_and_trigger() -> Result<()> {
     Ok(())
 }
 
+pub fn action_handler(
+    mut action: ActionHandler,
+) -> Box<dyn Future<Output = ActionHandler> + Send + Sync> {
+    // Pipeline execution
+    watch_and_trigger().unwrap();
+
+    // Handle Stop signals
+    if action
+        .signals()
+        .any(|sig| sig == Signal::Interrupt || sig == Signal::Terminate)
+    {
+        action.quit();
+    }
+
+    // Reconfigure watcher when ignore file has changed
+    if let Some(ignore_file) = Watcher::get_ignore_path().ok() {
+        let mut events: Vec<Tag> = vec![];
+        for event in action.events.iter() {
+            let paths: Vec<String> = event
+                .paths()
+                .map(|e| e.0.to_str().unwrap().to_owned())
+                .collect();
+
+            if paths.contains(&ignore_file) {
+                events.extend(event.tags.clone());
+            }
+        }
+        if events.contains(&Tag::FileEventKind(FileEventKind::Modify(
+            ModifyKind::Data(DataChange::Any),
+        ))) {}
+    }
+    // Actions
+    return Box::new(async { action });
+}
+
 /**
 * Build an appropriate watcher that:
 * - self reconfigures on ignore file changes
@@ -48,58 +83,9 @@ pub fn watch_and_trigger() -> Result<()> {
 * - can trigger pipelines
 */
 pub async fn build() -> Result<Watchexec> {
-    // Create a Watchexec with action handler
-    let watchexec = Watchexec::default();
-    // let watchexec = Watchexec::new_async(default_action_handler)?;
-
-    let config = watchexec.config.clone();
-    watchexec
-        .config
-        .on_action_async(move |mut action: ActionHandler| {
-            // Pipeline execution
-            watch_and_trigger().unwrap();
-
-            // Handle Stop signals
-            if action
-                .signals()
-                .any(|sig| sig == Signal::Interrupt || sig == Signal::Terminate)
-            {
-                action.quit();
-            }
-
-            if let Some(ignore_file) = get_ignore_path().ok() {
-                let mut events: Vec<Tag> = vec![];
-
-                for event in action.events.iter() {
-                    let paths: Vec<String> = event
-                        .paths()
-                        .map(|e| e.0.to_str().unwrap().to_owned())
-                        .collect();
-
-                    // Self reconfigure when the ignore file changes
-                    if paths.contains(&ignore_file) {
-                        events.extend(event.tags.clone());
-                    }
-                }
-
-                if events.contains(&Tag::FileEventKind(FileEventKind::Modify(
-                    ModifyKind::Data(DataChange::Any),
-                ))) {
-                    warn!("Reconfiguring watcher");
-                    // async {
-                    //     config.filterer(make_filterer().await.unwrap());
-                    // }
-                }
-            }
-            // Actions
-            return Box::new(async { action });
-        });
-
-    // Search for an ignore file to set a watch filter
-    watchexec.config.filterer(make_filterer().await.unwrap());
-    // Watch only the current directory
-    watchexec.config.pathset(vec![env::current_dir().unwrap()]);
-
+    let w = Watcher::default();
+    w.set_filters().await?.set_action(action_handler).await?;
+    let watchexec = Watchexec::with_config((*w.config).clone())?;
     Ok(watchexec)
 }
 
