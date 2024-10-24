@@ -47,7 +47,6 @@ impl Process {
      */
     pub fn run_inherit(&mut self) -> Result<Self, PipelightError> {
         info!("Run subprocess piped to parent");
-        get_shell()?;
         let mut duration = Duration::default();
         let mut cmd = self.to_command();
         cmd.stdin(Stdio::null())
@@ -78,7 +77,6 @@ impl Process {
      */
     pub fn run_piped(&mut self) -> Result<Self, PipelightError> {
         info!("Run subprocess piped to parent");
-        get_shell()?;
         let mut cmd = self.to_command();
         cmd.stdin(Stdio::null())
             .stdout(Stdio::piped())
@@ -113,7 +111,6 @@ impl Process {
      */
     pub fn run_fs(&mut self) -> Result<Self, PipelightError> {
         info!("Run subprocess with output piped to pipelight managed files");
-        get_shell()?;
         // path definition
         create_dir_all(&(*OUTDIR.lock().unwrap()))?;
         let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
@@ -176,6 +173,7 @@ impl Process {
     }
 
     pub fn run_term(&mut self) -> Result<Self, PipelightError> {
+        get_shell()?;
         let mut cmd = Command::new(&(*SHELL.lock().unwrap()));
         cmd.arg("-c")
             .arg(self.io.stdin.as_ref().unwrap())
@@ -209,13 +207,39 @@ impl Process {
      */
     pub fn run_detached(&mut self) -> Result<Self, PipelightError> {
         info!("Run detached subprocess");
-        get_shell()?;
 
         let mut cmd = self.to_command();
         cmd.stdin(Stdio::null())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped());
+            .stdin(Stdio::null())
+            .stdout(Stdio::null());
         cmd.process_group(0);
+
+        let mut duration = Duration::default();
+        duration.start();
+        let child = cmd.spawn()?;
+        self.pid = Some(child.id().to_owned() as i32);
+        duration.stop();
+
+        // Hydrate struct
+        self.state = State {
+            duration: Some(duration),
+            status: Some(Status::Succeeded),
+        };
+        Ok(self.to_owned())
+    }
+
+    pub fn run_detached_term(&mut self) -> Result<Self, PipelightError> {
+        get_shell()?;
+        let mut cmd = Command::new(&(*SHELL.lock().unwrap()));
+        cmd.arg("-c")
+            .arg(self.io.stdin.as_ref().unwrap())
+            .stdin(Stdio::null())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null());
+        cmd.process_group(0);
+
+        let child = cmd.spawn()?;
+        self.pid = Some(child.id().to_owned() as i32);
 
         let mut duration = Duration::default();
         duration.start();

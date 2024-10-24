@@ -1,8 +1,8 @@
 use crate::error::IsError;
 use crate::traits::Getters;
 use crate::types::{Config, Pipeline};
-use pipelight_exec::Process;
 use log::LevelFilter;
+use pipelight_exec::Process;
 
 // Error Handling
 use miette::{Error, Result};
@@ -29,13 +29,16 @@ impl Getters<Pipeline> for Pipeline {
         let pipelines = Pipeline::get()?;
 
         // Get pipelines names
-        let items = pipelines.iter().map(|e| &e.name).collect::<Vec<&String>>();
+        let items = pipelines
+            .iter()
+            .map(|e| e.name.clone())
+            .collect::<Vec<String>>();
 
         let optional = pipelines.iter().find(|p| p.name == name);
         match optional {
             Some(res) => Ok(res.to_owned()),
             None => {
-                let message = format!("Couldn't find pipeline: {:?}", name);
+                let message = format!("Couldn't find pipeline: {}", name);
 
                 let mut string = "".to_owned();
                 for name in items {

@@ -68,7 +68,7 @@ impl FgBg for Service {
     }
     fn detach(&self) -> Result<()> {
         if let Some(args) = self.args.clone() {
-            PipelightBin::args(&String::from(&args)).run_detached()?;
+            PipelightBin::args(&String::from(&args)).run_detached_term()?;
         }
         Ok(())
     }
