@@ -8,6 +8,8 @@ mod run;
 // Re-export
 pub use finder::Finder;
 
+use bon::{bon, builder};
+
 // Unix process manipulation
 use sysinfo::get_current_pid;
 use sysinfo::{ProcessRefreshKind, ProcessesToUpdate, System};
@@ -21,7 +23,56 @@ use crate::{Io, State};
 * A struct that stores the process attributes for further access and manipulation.
 */
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+pub struct Runner {
+    term: bool,
+    background: bool,
+    detach: bool,
+    save_outputs: bool,
+}
+impl Runner {
+    fn new() {}
+    /*
+     * Request execution in a terminal.
+     * Should be used if complex set of arguments can't be parsed with the default method.
+     */
+    fn term(&mut self) {
+        self.term = true;
+    }
+    /*
+     * Redirect and save process i/o to readable file.
+     */
+    fn (&mut self) {
+        self.term = true;
+    }
+    /*
+     * Request the process to be executed in the background,
+     * - spawn the process and do not wait for completion.
+     */
+    fn background(&mut self) {
+        self.background = true;
+    }
+}
+/**
+* A struct that stores the process attributes for further access and manipulation.
+* ```rust
+* let proc = Process::new()
+*   .stdin("ls -al")
+*   .term()
+*   .save()
+*   .background()
+*   .detached()
+*   .run()?;
+*
+* let stdout = proc.stdout();
+* let stderr = proc.stderr();
+* ```
+*
+* Process
+*/
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Process {
+    #[serde(skip_serializing)]
+    pub config: Runner,
     pub uuid: Option<Uuid>,
     pub pid: Option<i32>,
     // process parent id
@@ -62,6 +113,7 @@ impl Process {
         let uuid = Some(Uuid::new_v4());
         Process {
             uuid,
+            config: Default::default(),
             pid: None,
             ppid: None,
             gid: None,
@@ -75,6 +127,19 @@ impl Process {
             state: State::default(),
         }
     }
+}
+#[bon]
+impl Process {
+    #[builder]
+    fn run(&mut self, term: bool, background: bool, detached: bool, fs: Option<bool>) {
+        if term && detached {}
+        if let Some(term) = term {
+            self.run_term()
+        }
+    }
+}
+
+impl Process {
     /**
      * Get process from Pid
      */
