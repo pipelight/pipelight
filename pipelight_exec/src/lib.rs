@@ -2,6 +2,9 @@
 //!
 //! The API is not stabilized and much likely to change.
 //!
+//! It is used internaly in a lightweight cicd engine:
+//! https://github.com/pipelight/pipelight
+//!
 //! - v0.4 : Many breaking changes.
 //!
 //! ## About
@@ -22,7 +25,7 @@
 //!   crates.
 //!
 //!
-//! ## Example
+//! ## Spawn a process.
 //!
 //! Spawn a simple process in the background.
 //! or in other words, execute a process and detach it.
@@ -33,23 +36,61 @@
 //! # use pipelight_exec::Process;
 //! # use miette::Report;
 //!
-//! let mut process = Process::new("echo test");
-//! process.run_detached()?;
+//! // Runs a child process and wait until execution is over.
+//! let mut process = Process::new()
+//!     .stdin("echo test")
+//! process.run()?;
 //!
-//! # Ok::<(), Report>(())
 //! ```
 //!
-//! Pipe the process standards outputs to the parent.
+//! Runs child process in the background.
+//! Do not wait until process is over and return as soon as child is spawned.
 //!
 //! ```rust
-//! # use pipelight_exec::Process;
-//! # use miette::Report;
+//! let mut process = Process::new()
+//!     .stdin("echo test")
+//!     .background();
+//! process.run()?;
+//! ```
 //!
-//! let mut process = Process::new("echo test");
-//! process.run_detached()?;
+//! Runs a disowned child process that won't be killed if parent is killed.
+//! Do not wait until process is over and return as soon as child is spawned.
+//! ```rust
+//! let mut process = Process::new()
+//!     .stdin("echo test")
+//!     .detach();
+//! process.run()?;
+//! ```
+//!
+//! Runs a disowned child process that won't be killed if parent is killed.
+//! and stores process outputs in ./.pipelight/proc/<uuid>/
+//! Practical if you want to process child output from another program.
+//!
+//! ```rust
+//! let mut process = Process::new()
+//!     .stdin("echo test")
+//!     .fs()
+//!     .detach();
+//! process.run()?;
 //!
 //! # Ok::<(), Report>(())
 //! ```
+//!
+//! Read a process i/o.
+//!
+//! ```rust
+//! let mut process = Process::new()
+//!     .stdin("echo test")
+//!     .detach();
+//! process.run()?;
+//!
+//! process.stdout()?;
+//!
+//! # Ok::<(), Report>(())
+//! ```
+//!
+//!
+//! ## Find a process.
 //!
 //! Find a running process, with handy search options.
 //!
@@ -78,11 +119,8 @@
 //! Pipelight managed processes are stored in a the .pipelight/proc/ directory.
 //! It has the same structure as your /proc/.
 //!
-//! ###
-//!
-//! To ease ones developer life, standard outputs are poll, read and finally to stored as text files.
+//! However, to ease ones developer life, standard outputs are polled, read and finally stored as text files.
 //! /proc/<pid>/2 (file descriptor / buffer)-> ./pipelight/proc/<uuid>/2(text file)
-//!
 //!
 //! For example,
 //! The following code runs a process whose outputs are redirected
