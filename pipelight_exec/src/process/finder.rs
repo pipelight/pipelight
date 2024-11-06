@@ -300,7 +300,7 @@ mod test {
     #[test]
     fn find_and_kill_random_process() -> Result<(), PipelightError> {
         let mut process = Process::new().stdin("sleep 12");
-        process.run_detached()?;
+        process.detach().run()?;
 
         let finder = Finder::new()
             .root(env::current_dir()?.to_str().unwrap())

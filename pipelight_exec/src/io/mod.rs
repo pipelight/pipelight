@@ -3,7 +3,7 @@ use uuid::Uuid;
 // Globals
 use crate::globals::OUTDIR;
 // File manipulation
-use std::fs::{remove_file, File};
+use std::fs::{remove_dir_all, File};
 use std::io::BufReader;
 use std::io::Read;
 use std::path::Path;
@@ -30,18 +30,11 @@ impl Io {
     Delete the files associated to the Io struct.
     */
     pub fn clean(&self) -> Result<(), std::io::Error> {
-        // path definition
-        let stdout_path = format!("{}/{}/1", *OUTDIR.lock().unwrap(), self.uuid);
-        let stderr_path = format!("{}/{}/2", *OUTDIR.lock().unwrap(), self.uuid);
+        let path = format!("{}/{}", *OUTDIR.lock().unwrap(), self.uuid);
         // Guard
-        let stdout = Path::new(&stdout_path);
-        if stdout.exists() && stdout.is_file() {
-            remove_file(stdout)?;
-        }
-        // Guard
-        let stderr = Path::new(&stderr_path);
-        if stderr.exists() && stderr.is_file() {
-            remove_file(stderr)?;
+        let path = Path::new(&path);
+        if path.exists() && path.is_file() {
+            remove_dir_all(path)?;
         }
         Ok(())
     }
