@@ -24,56 +24,55 @@ use crate::{Io, State};
 */
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Runner {
+    uuid: Uuid,
     term: bool,
     background: bool,
     detach: bool,
-    save_outputs: bool,
+    fs: bool,
 }
+impl Default for Runner {
+    fn default() -> Self {
+        Runner {
+            uuid: Uuid::new_v4(),
+            term: false,
+            background: false,
+            detach: false,
+            fs: false,
+        }
+    }
+}
+
 impl Runner {
-    fn new() {}
-    /*
-     * Request execution in a terminal.
-     * Should be used if complex set of arguments can't be parsed with the default method.
-     */
-    fn term(&mut self) {
-        self.term = true;
-    }
-    /*
-     * Redirect and save process i/o to readable file.
-     */
-    fn (&mut self) {
-        self.term = true;
-    }
-    /*
-     * Request the process to be executed in the background,
-     * - spawn the process and do not wait for completion.
-     */
-    fn background(&mut self) {
-        self.background = true;
+    fn new(uuid: Uuid) -> Self {
+        Runner {
+            uuid,
+            term: false,
+            background: false,
+            detach: false,
+            fs: false,
+        }
     }
 }
 /**
 * A struct that stores the process attributes for further access and manipulation.
+*
+* Example:
+*
 * ```rust
 * let proc = Process::new()
 *   .stdin("ls -al")
-*   .term()
-*   .save()
-*   .background()
-*   .detached()
+*   .fs()
 *   .run()?;
 *
 * let stdout = proc.stdout();
 * let stderr = proc.stderr();
 * ```
-*
-* Process
 */
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Process {
     #[serde(skip_serializing)]
+    pub uuid: Uuid,
     pub config: Runner,
-    pub uuid: Option<Uuid>,
     pub pid: Option<i32>,
     // process parent id
     pub ppid: Option<i32>,
@@ -88,9 +87,10 @@ impl Default for Process {
      * Create a process struct without an initial command.
      */
     fn default() -> Process {
-        let uuid = Some(Uuid::new_v4());
+        let uuid = Uuid::new_v4();
         Process {
             uuid,
+            config: Runner::new(uuid),
             pid: None,
             ppid: None,
             gid: None,
@@ -107,35 +107,30 @@ impl Default for Process {
 }
 impl Process {
     /**
-     * Create a process struct with an initial command.
+     * Create a default process struct.
      */
-    pub fn new(stdin: &str) -> Process {
-        let uuid = Some(Uuid::new_v4());
-        Process {
-            uuid,
-            config: Default::default(),
-            pid: None,
-            ppid: None,
-            gid: None,
-            sid: None,
-            cwd: None,
-            io: Io {
-                uuid,
-                stdin: Some(stdin.to_owned()),
-                ..Io::default()
-            },
-            state: State::default(),
-        }
+    pub fn new() -> Self {
+        Default::default()
     }
-}
-#[bon]
-impl Process {
-    #[builder]
-    fn run(&mut self, term: bool, background: bool, detached: bool, fs: Option<bool>) {
-        if term && detached {}
-        if let Some(term) = term {
-            self.run_term()
-        }
+    pub fn stdin(&mut self, stdin: &str) -> Self {
+        self.io.stdin = Some(stdin.to_owned());
+        self.to_owned()
+    }
+    pub fn term(&mut self) -> Self {
+        self.config.term = true;
+        self.to_owned()
+    }
+    pub fn background(&mut self) -> Self {
+        self.config.background = true;
+        self.to_owned()
+    }
+    pub fn detach(&mut self) -> Self {
+        self.config.detach = true;
+        self.to_owned()
+    }
+    pub fn fs(&mut self) -> Self {
+        self.config.fs = true;
+        self.to_owned()
     }
 }
 
@@ -167,7 +162,7 @@ impl From<&sysinfo::Process> for Process {
             ppid: Some(proc.parent().unwrap().as_u32() as i32),
             gid: Some(*proc.group_id().unwrap().to_owned() as i32),
             sid: Some(proc.session_id().unwrap().as_u32() as i32),
-            ..Process::new(
+            ..Process::new().stdin(
                 &proc
                     .cmd()
                     .iter()

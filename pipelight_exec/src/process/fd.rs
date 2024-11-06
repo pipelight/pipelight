@@ -49,6 +49,18 @@ impl Process {
         }
         Ok(self.to_owned())
     }
+    pub fn stdout(&mut self) -> Result<Self, PipelightError> {
+        match self.config.fs {
+            true => {
+                // Read from managed proc fs
+            }
+            false => {
+                // Read from proc fs
+            }
+        }
+
+        Ok(self.to_owned())
+    }
 }
 
 #[cfg(test)]

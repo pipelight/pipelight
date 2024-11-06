@@ -19,7 +19,7 @@ pub static SHELL: Lazy<Arc<Mutex<String>>> = Lazy::new(|| Arc::new(Mutex::new("s
 * that pipe their outputs(stdout/stderr) into files.
 */
 pub static OUTDIR: Lazy<Arc<Mutex<String>>> =
-    Lazy::new(|| Arc::new(Mutex::new(".pipelight/proc/".to_owned())));
+    Lazy::new(|| Arc::new(Mutex::new(".pipelight/proc".to_owned())));
 
 /**
 Returns the user session shell or fallback to default "sh".

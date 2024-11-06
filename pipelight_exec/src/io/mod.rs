@@ -19,7 +19,7 @@ use pipelight_error::PipelightError;
 */
 #[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Io {
-    pub uuid: Option<Uuid>,
+    pub uuid: Uuid,
     pub stdin: Option<String>,
     pub stdout: Option<String>,
     pub stderr: Option<String>,
@@ -31,8 +31,8 @@ impl Io {
     */
     pub fn clean(&self) -> Result<(), std::io::Error> {
         // path definition
-        let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
-        let stderr_path = format!("{}/{}_stderr", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
+        let stdout_path = format!("{}/{}/1", *OUTDIR.lock().unwrap(), self.uuid);
+        let stderr_path = format!("{}/{}/2", *OUTDIR.lock().unwrap(), self.uuid);
         // Guard
         let stdout = Path::new(&stdout_path);
         if stdout.exists() && stdout.is_file() {
@@ -46,13 +46,26 @@ impl Io {
         Ok(())
     }
     /**
-    Read the files associated to the Io struct and hydrate
-    the Io stdout and stderr fields.
-    */
+     * Read the process stdout and stderr and stores it in the struct field
+     *
+     *
+     * ```rust
+     * # use pipelight_exec::Process;
+     * # use miette::Report;
+     *
+     * let p = Process::new("echo stuff");
+     * println("{}", p.io.stdout); // None
+     * p.io.read()?;
+     * println("{}", p.io.stdout); // Some("stuff\n")
+     *
+     * # Ok::<(), Report>(())
+     * ```
+     *  
+     */
     pub fn read(&mut self) -> Result<(), std::io::Error> {
         // path definition
-        let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
-        let stderr_path = format!("{}/{}_stderr", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
+        let stdout_path = format!("{}/{}/1", *OUTDIR.lock().unwrap(), self.uuid);
+        let stderr_path = format!("{}/{}/2", *OUTDIR.lock().unwrap(), self.uuid);
 
         // stdout
         info!("read subprocess stdout from tmp file at {}", stdout_path);
@@ -100,7 +113,7 @@ impl From<&Output> for Io {
         }
         Io {
             stdin: None,
-            uuid: None,
+            uuid: Uuid::new_v4(),
             stdout,
             stderr,
         }

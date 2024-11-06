@@ -299,7 +299,7 @@ mod test {
      */
     #[test]
     fn find_and_kill_random_process() -> Result<(), PipelightError> {
-        let mut process = Process::new("sleep 12");
+        let mut process = Process::new().stdin("sleep 12");
         process.run_detached()?;
 
         let finder = Finder::new()

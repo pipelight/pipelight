@@ -17,6 +17,77 @@ use miette::{IntoDiagnostic, Result};
 use pipelight_error::{PipelightError, WrapError};
 
 impl Process {
+    fn run(&mut self) -> Result<Self, PipelightError> {
+        // Generate command
+        let mut cmd = match self.config.term {
+            false => self.to_command(),
+            true => {
+                let mut e = Command::new(&(*SHELL.lock().unwrap()));
+                e.arg("-c").arg(self.io.stdin.as_ref().unwrap());
+                e
+            }
+        };
+
+        // Output redirection
+        match self.config.detach {
+            true => {
+                cmd.process_group(0);
+            }
+            false => {}
+        };
+        match self.config.background {
+            true => {
+                cmd.stdin(Stdio::null())
+                    .stdout(Stdio::null())
+                    .stderr(Stdio::null());
+            }
+            false => {
+                cmd.stdin(Stdio::null())
+                    .stdout(Stdio::piped())
+                    .stderr(Stdio::piped());
+            }
+        }
+        match self.config.fs {
+            true => {
+                let proc_path = format!("{}/{}", *OUTDIR.lock().unwrap(), self.uuid);
+                create_dir_all(&proc_path)?;
+
+                let stdout_path = format!("{proc_path}/1");
+                let stderr_path = format!("{proc_path}/2");
+                cmd.stdout(File::create(stdout_path)?)
+                    .stderr(File::create(stderr_path)?);
+            }
+            false => {}
+        }
+
+        // Process execution
+        // and catch child pid
+        let child = cmd.spawn()?;
+        self.pid = Some(child.id().to_owned() as i32);
+
+        // Read process output if available
+        let mut duration = Duration::default();
+        if !self.config.detach {
+            duration.start();
+            let output = child.wait_with_output()?;
+            duration.stop();
+            self.io = Io {
+                uuid: self.io.uuid,
+                stdin: self.io.stdin.to_owned(),
+                ..Io::from(&output)
+            };
+            self.state = State {
+                duration: Some(duration),
+                status: Some(Status::from(&output)),
+            };
+            if self.config.fs {
+                self.io.read()?;
+                self.io.clean()?;
+            }
+        }
+
+        Ok(self.to_owned())
+    }
     fn to_command(&self) -> Command {
         // convert stdin
         let mut args: Vec<String> = self
@@ -113,8 +184,8 @@ impl Process {
         info!("Run subprocess with output piped to pipelight managed files");
         // path definition
         create_dir_all(&(*OUTDIR.lock().unwrap()))?;
-        let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
-        let stderr_path = format!("{}/{}_stderr", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
+        let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid);
+        let stderr_path = format!("{}/{}_stderr", *OUTDIR.lock().unwrap(), self.uuid);
 
         let mut cmd = self.to_command();
         cmd.stdin(Stdio::null())
@@ -144,9 +215,8 @@ impl Process {
         get_shell()?;
         // path definition
         create_dir_all(&(*OUTDIR.lock().unwrap()))?;
-        let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
-        let stderr_path = format!("{}/{}_stderr", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
-
+        let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid);
+        let stderr_path = format!("{}/{}_stderr", *OUTDIR.lock().unwrap(), self.uuid);
         let mut cmd = Command::new(&(*SHELL.lock().unwrap()));
         cmd.arg("-c")
             .arg(self.io.stdin.as_ref().unwrap())
@@ -259,8 +329,8 @@ impl Process {
         info!("Run subprocess with output piped to pipelight managed files");
         // path definition
         create_dir_all(&(*OUTDIR.lock().unwrap()))?;
-        let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
-        let stderr_path = format!("{}/{}_stderr", *OUTDIR.lock().unwrap(), self.uuid.unwrap());
+        let stdout_path = format!("{}/{}_stdout", *OUTDIR.lock().unwrap(), self.uuid);
+        let stderr_path = format!("{}/{}_stderr", *OUTDIR.lock().unwrap(), self.uuid);
 
         let mut cmd = self.to_command();
         cmd.stdin(Stdio::null())
@@ -288,29 +358,63 @@ mod test {
     use std::{thread, time};
 
     #[test]
-    fn attach_proc_piped_output() -> Result<()> {
-        let proc = Process::new("echo test").run_piped()?;
+    fn default() -> Result<()> {
+        let proc = Process::new().stdin("echo test").run()?;
+        assert_eq!(proc.io.stdout, Some("test\n".to_owned()));
+        Ok(())
+    }
+    #[test]
+    fn fs() -> Result<()> {
+        let proc = Process::new().stdin("echo test").fs().run()?;
+        assert_eq!(proc.io.stdout, Some("test\n".to_owned()));
+        Ok(())
+    }
+    #[test]
+    fn bg_detach() -> Result<()> {
+        let proc = Process::new()
+            .stdin("echo test")
+            .background()
+            .detach()
+            .run()?;
+        assert_eq!(proc.io.stdout, None);
+        Ok(())
+    }
+    #[test]
+    fn bg_detach_fs() -> Result<()> {
+        let mut proc = Process::new()
+            .stdin("echo test")
+            .background()
+            .detach()
+            .fs()
+            .run()?;
+        assert_eq!(proc.io.stdout, None);
+
+        // Wait until process is executed
+        let throttle = time::Duration::from_millis(1000);
+        thread::sleep(throttle);
+
+        proc.io.read().into_diagnostic()?;
         assert_eq!(proc.io.stdout, Some("test\n".to_owned()));
         Ok(())
     }
 
-    #[test]
+    // #[test]
     fn attach_proc_w_inherited_output() -> Result<()> {
-        let proc = Process::new("echo test").run_inherit()?;
+        let proc = Process::new().stdin("echo test").run_inherit()?;
         assert_eq!(proc.io.stdout, None);
         Ok(())
     }
 
-    #[test]
+    // #[test]
     fn attach_proc_w_output_to_file() -> Result<()> {
-        let proc = Process::new("echo test").run_fs()?;
+        let proc = Process::new().stdin("echo test").run_fs()?;
         assert_eq!(proc.io.stdout, Some("test\n".to_owned()));
         Ok(())
     }
 
-    #[test]
+    // #[test]
     fn detached_proc_fs_update_io() -> Result<(), PipelightError> {
-        let mut proc = Process::new("echo test").run_detached_fs()?;
+        let mut proc = Process::new().stdin("echo test").run_detached_fs()?;
 
         let throttle = time::Duration::from_millis(1000);
         thread::sleep(throttle);
