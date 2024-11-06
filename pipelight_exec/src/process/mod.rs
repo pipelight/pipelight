@@ -59,13 +59,18 @@ impl Runner {
 * Example:
 *
 * ```rust
+* # use pipelight_exec::Process;
+* # use miette::Report;
+*
 * let proc = Process::new()
 *   .stdin("ls -al")
 *   .fs()
 *   .run()?;
 *
-* let stdout = proc.stdout();
-* let stderr = proc.stderr();
+* let stdout = proc.io.stdout;
+* let stderr = proc.io.stderr;
+*
+* # Ok::<(), Report>(())
 * ```
 */
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]

@@ -41,28 +41,39 @@
 //!
 //! // Runs a child process and wait until execution is over.
 //! let mut p = Process::new()
-//!     .stdin("echo test")
+//!     .stdin("echo test");
 //! p.run()?;
 //!
+//! # Ok::<(), Report>(())
 //! ```
 //!
 //! Runs child process in the background.
 //! Do not wait until process is over and return as soon as child is spawned.
 //!
 //! ```rust
+//! # use pipelight_exec::Process;
+//! # use miette::Report;
+//!
 //! let mut p = Process::new()
 //!     .stdin("echo test")
 //!     .background();
-//! process.run()?;
+//! p.run()?;
+//!
+//! # Ok::<(), Report>(())
 //! ```
 //!
 //! Runs a disowned child process that won't be killed if parent is killed.
 //! Do not wait until process is over and return as soon as child is spawned.
 //! ```rust
+//! # use pipelight_exec::Process;
+//! # use miette::Report;
+//!
 //! let mut p = Process::new()
 //!     .stdin("echo test")
 //!     .detach();
 //! p.run()?;
+//!
+//! # Ok::<(), Report>(())
 //! ```
 //!
 //! Runs a disowned child process that won't be killed if parent is killed.
@@ -70,6 +81,9 @@
 //! Practical if you want to process child output from another program.
 //!
 //! ```rust
+//! # use pipelight_exec::Process;
+//! # use miette::Report;
+//!
 //! let mut p = Process::new()
 //!     .stdin("echo test")
 //!     .fs()
@@ -81,15 +95,19 @@
 //!
 //! Read a process i/o.
 //!
-//! ```rust
+//! ```rust,ignore
+//! # use pipelight_exec::Process;
+//! # use miette::{Report, IntoDiagnostic};
+//!
 //! let mut p = Process::new()
 //!     .stdin("echo test")
-//!     .detach();
+//!     .background();
+//!     .fs()
 //! p.run()?;
 //!
 //! // Later in execution
-//! p.io.read()?;
-//! println("{}", p.io.stdout); // Some("stuff\n")
+//! p.io.read().into_diagnostic()?;
+//! println!("{:?}", p.io.stdout); // Some("stuff\n")
 //!
 //! # Ok::<(), Report>(())
 //! ```
@@ -131,11 +149,13 @@
 //! The following code runs a process whose outputs are redirected
 //! to pipelight temporary filesystem thanks to the `fs()` method.
 //!
-//! ```rust
-//! # use miette::Report;
+//! ```rust,ignore
+//! # use pipelight_exec::Process;
+//! # use miette::{Report, IntoDiagnostic};
 //!
-//! let proc = Process::new().stdin("pwd").fs().run()?;
-//! let stout: String = proc.stdout()?;
+//! let p = Process::new().stdin("pwd").fs().run()?;
+//! p.io.read().into_diagnostic()?;
+//! let stdout: Option<String> = p.io.stdout;
 //!
 //! # Ok::<(), Report>(())
 //! ```

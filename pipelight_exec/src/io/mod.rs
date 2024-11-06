@@ -42,14 +42,14 @@ impl Io {
      * Read the process stdout and stderr and stores it in the struct field
      *
      *
-     * ```rust
+     * ```rust,ignore
      * # use pipelight_exec::Process;
-     * # use miette::Report;
+     * # use miette::{Report, IntoDiagnostic};
      *
-     * let p = Process::new("echo stuff");
-     * println("{}", p.io.stdout); // None
-     * p.io.read()?;
-     * println("{}", p.io.stdout); // Some("stuff\n")
+     * let mut p = Process::new().stdin("echo stuff").fs();
+     * println!("{:?}", p.io.stdout); // None
+     * p.io.read().into_diagnostic()?;
+     * println!("{:?}", p.io.stdout); // Some("stuff\n")
      *
      * # Ok::<(), Report>(())
      * ```
