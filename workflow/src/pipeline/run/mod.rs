@@ -258,7 +258,7 @@ impl Command {
         }
 
         // Run process
-        let res = self.process.run_term_fs();
+        let res = self.process.term().fs().run();
         let _ = match res {
             Ok(_) => Ok(()),
             Err(e) => {

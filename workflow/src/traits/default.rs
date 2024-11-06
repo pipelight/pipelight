@@ -1,8 +1,8 @@
 // Structs
 use crate::types::{Command, Event, Logs, Mode, Node, Parallel, Pipeline, Step, StepOrParallel};
 use crate::types::{Trigger, TriggerBranch, TriggerTag};
-use pipelight_exec::Process;
 use log::LevelFilter;
+use pipelight_exec::Process;
 use pipelight_utils::git::{Flag, Special};
 use uuid::Uuid;
 // Date and time
@@ -128,7 +128,7 @@ impl Step {
 impl Command {
     pub fn new(stdin: &str) -> Command {
         Command {
-            process: Process::new(stdin),
+            process: Process::new().stdin(stdin),
             ..Command::default()
         }
     }

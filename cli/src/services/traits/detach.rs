@@ -33,7 +33,7 @@ impl PipelightBin {
         let command = format!("{} {}", &bin, &cmd_args);
 
         // Run a detached subprocess
-        Process::new(&command)
+        Process::new().stdin(&command)
     }
 }
 
@@ -61,14 +61,18 @@ impl FgBg for Service {
             if args == origin {
                 self.exec()?;
             } else {
-                PipelightBin::args(&String::from(&args)).run_piped()?;
+                PipelightBin::args(&String::from(&args)).run()?;
             }
         }
         Ok(())
     }
     fn detach(&self) -> Result<()> {
         if let Some(args) = self.args.clone() {
-            PipelightBin::args(&String::from(&args)).run_detached_term()?;
+            PipelightBin::args(&String::from(&args))
+                .term()
+                .background()
+                .detach()
+                .run()?;
         }
         Ok(())
     }

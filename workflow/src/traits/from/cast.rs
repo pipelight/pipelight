@@ -4,14 +4,14 @@ use crate::types::{
     StepOrParallel,
 };
 use crate::types::{Trigger, TriggerBranch, TriggerTag};
-use pipelight_exec::Process;
 use log::LevelFilter;
+use pipelight_exec::Process;
 
 use convert_case::{Case, Casing};
 
+use pipelight_utils::git::Flag;
 use std::convert::From;
 use std::process::exit;
-use pipelight_utils::git::Flag;
 use uuid::Uuid;
 
 // Logger
@@ -187,7 +187,7 @@ impl From<&cast::Parallel> for Parallel {
 impl From<&String> for Command {
     fn from(s: &String) -> Self {
         Command {
-            process: Process::new(s),
+            process: Process::new().stdin(s),
             ..Command::default()
         }
     }

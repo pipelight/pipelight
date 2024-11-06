@@ -24,14 +24,14 @@ impl Config {
         } else {
             format!("{} {}", executable, script)
         };
-        let proc = Process::new(&command).run_term()?;
+        let p = Process::new().stdin(&command).term().run()?;
 
         let mut string = "".to_owned();
-        if let Some(stdout) = proc.io.stdout {
+        if let Some(stdout) = p.io.stdout {
             string = stdout;
         } else {
             let err = LibError {
-                message: proc.io.stderr.unwrap(),
+                message: p.io.stderr.unwrap(),
                 help: "".to_owned(),
             };
             return Err(err.into());
@@ -54,8 +54,8 @@ impl Config {
             --quiet {}",
             file
         );
-        let mut p = Process::new(&command);
-        p.run_piped()?;
+        let mut p = Process::new().stdin(&command).term();
+        p.run()?;
         if p.io.stderr.is_none() {
             Ok(())
         } else {
@@ -83,8 +83,8 @@ impl Config {
             command = format!("{} {}", command, args.unwrap().join(" "));
         }
 
-        let mut p = Process::new(&command);
-        p.run_piped()?;
+        let mut p = Process::new().stdin(&command).term();
+        p.run()?;
 
         if p.io.stderr.is_none() {
             Ok(())
