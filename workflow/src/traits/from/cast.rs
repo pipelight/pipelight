@@ -187,7 +187,7 @@ impl From<&cast::Parallel> for Parallel {
 impl From<&String> for Command {
     fn from(s: &String) -> Self {
         Command {
-            process: Process::new().stdin(s),
+            process: Process::new().stdin(s).to_owned(),
             ..Command::default()
         }
     }

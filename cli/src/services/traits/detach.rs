@@ -33,7 +33,7 @@ impl PipelightBin {
         let command = format!("{} {}", &bin, &cmd_args);
 
         // Run a detached subprocess
-        Process::new().stdin(&command)
+        Process::new().stdin(&command).to_owned()
     }
 }
 

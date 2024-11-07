@@ -117,25 +117,25 @@ impl Process {
     pub fn new() -> Self {
         Default::default()
     }
-    pub fn stdin(&mut self, stdin: &str) -> Self {
+    pub fn stdin(&mut self, stdin: &str) -> &mut Self {
         self.io.stdin = Some(stdin.to_owned());
-        self.to_owned()
+        self
     }
-    pub fn term(&mut self) -> Self {
+    pub fn term(&mut self) -> &mut Self {
         self.config.term = true;
-        self.to_owned()
+        self
     }
-    pub fn background(&mut self) -> Self {
+    pub fn background(&mut self) -> &mut Self {
         self.config.background = true;
-        self.to_owned()
+        self
     }
-    pub fn detach(&mut self) -> Self {
+    pub fn detach(&mut self) -> &mut Self {
         self.config.detach = true;
-        self.to_owned()
+        self
     }
-    pub fn fs(&mut self) -> Self {
+    pub fn fs(&mut self) -> &mut Self {
         self.config.fs = true;
-        self.to_owned()
+        self
     }
 }
 
@@ -167,14 +167,16 @@ impl From<&sysinfo::Process> for Process {
             ppid: Some(proc.parent().unwrap().as_u32() as i32),
             gid: Some(*proc.group_id().unwrap().to_owned() as i32),
             sid: Some(proc.session_id().unwrap().as_u32() as i32),
-            ..Process::new().stdin(
-                &proc
-                    .cmd()
-                    .iter()
-                    .map(|e| e.to_str().unwrap().to_owned())
-                    .collect::<Vec<String>>()
-                    .join(" "),
-            )
+            ..Process::new()
+                .stdin(
+                    &proc
+                        .cmd()
+                        .iter()
+                        .map(|e| e.to_str().unwrap().to_owned())
+                        .collect::<Vec<String>>()
+                        .join(" "),
+                )
+                .to_owned()
         };
         if proc.cwd().is_some() {
             p.cwd = Some(proc.cwd().unwrap().to_str().unwrap().to_owned());

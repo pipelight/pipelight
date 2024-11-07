@@ -54,7 +54,7 @@ impl Config {
             --quiet {}",
             file
         );
-        let mut p = Process::new().stdin(&command).term();
+        let mut p = Process::new().stdin(&command).term().to_owned();
         p.run()?;
         if p.io.stderr.is_none() {
             Ok(())
@@ -83,7 +83,7 @@ impl Config {
             command = format!("{} {}", command, args.unwrap().join(" "));
         }
 
-        let mut p = Process::new().stdin(&command).term();
+        let mut p = Process::new().stdin(&command).term().to_owned();
         p.run()?;
 
         if p.io.stderr.is_none() {

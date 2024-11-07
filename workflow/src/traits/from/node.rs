@@ -267,8 +267,14 @@ impl From<&Command> for Node {
         };
         // Convert command output as child node
         if e.process.io.stdout.is_some() | e.process.io.stderr.is_some() {
-            let stdout = format!("stdout: {}", e.process.io.stdout.clone().unwrap());
-            let stderr = format!("stderr: {}", e.process.io.stderr.clone().unwrap());
+            let stdout = format!(
+                "stdout: {}",
+                e.process.io.stdout.clone().unwrap_or("".to_owned())
+            );
+            let stderr = format!(
+                "stderr: {}",
+                e.process.io.stderr.clone().unwrap_or("".to_owned())
+            );
 
             let out = match e.get_status() {
                 Some(Status::Succeeded) => e.process.io.stdout.clone(),

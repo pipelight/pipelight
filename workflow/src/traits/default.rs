@@ -128,7 +128,7 @@ impl Step {
 impl Command {
     pub fn new(stdin: &str) -> Command {
         Command {
-            process: Process::new().stdin(stdin),
+            process: Process::new().stdin(stdin).to_owned(),
             ..Command::default()
         }
     }

@@ -60,7 +60,7 @@ impl Pipeline {
 
         // Duration
         d.stop()?;
-        self.duration = Some(d.clone());
+        ptr.duration = Some(d.clone());
 
         // Set pipeline status to last Step status
         let last_step = ptr.steps.last().unwrap();
@@ -77,24 +77,24 @@ impl Pipeline {
         } else {
             ptr.set_status(Some(Status::Failed))
         }
-        self.log()?;
+        ptr.log()?;
 
         // Execute fallbacks
-        if self.fallback.is_some() {
+        if ptr.fallback.is_some() {
             let fallback = &mut self.fallback.clone().unwrap();
-            if self.status == Some(Status::Failed) && fallback.on_failure.is_some() {
+            if ptr.status == Some(Status::Failed) && fallback.on_failure.is_some() {
                 // let steps = (*ptr).on_failure.as_mut().unwrap();
                 for step in fallback.on_failure.as_mut().unwrap() {
                     step.run(p.clone())?;
                 }
             }
-            if self.status == Some(Status::Succeeded) && fallback.on_failure.is_some() {
+            if ptr.status == Some(Status::Succeeded) && fallback.on_failure.is_some() {
                 // let steps = (*ptr).on_failure.as_mut().unwrap();
                 for step in fallback.on_success.as_mut().unwrap() {
                     step.run(p.clone())?;
                 }
             }
-            if self.status == Some(Status::Aborted) && fallback.on_success.is_some() {
+            if ptr.status == Some(Status::Aborted) && fallback.on_success.is_some() {
                 // let steps = (*ptr).on_failure.as_mut().unwrap();
                 for step in fallback.on_abortion.as_mut().unwrap() {
                     step.run(p.clone())?;
@@ -102,9 +102,10 @@ impl Pipeline {
             }
             // Duration
             d.stop()?;
-            self.duration = Some(d);
-            self.log()?;
+            ptr.duration = Some(d);
+            ptr.log()?;
         }
+        *self = ptr.clone();
         Ok(())
     }
 }
@@ -129,7 +130,9 @@ impl Parallel {
         self.set_status(Some(Status::Running));
 
         // Pass wrapped pointer to threads
-        self.steps.par_iter_mut().for_each(|e| e.run(p).unwrap());
+        self.steps
+            .par_iter_mut()
+            .for_each(|e| e.run(p.clone()).unwrap());
 
         // Set parallel global status
         let steps_res: Vec<Status> = self
@@ -228,14 +231,15 @@ impl Command {
         ptr.log()?;
 
         // Run process
-        let res = self.process.term().run();
-        let _ = match res {
-            Ok(val) => Ok(val),
-            Err(e) => {
-                self.set_status(Some(Status::Aborted));
-                Err(e)
-            }
-        };
+        self.process.term().run()?;
+        // let res = self.process.term().run();
+        // let _ = match res {
+        //     Ok(val) => Ok(val),
+        //     Err(e) => {
+        //         self.set_status(Some(Status::Aborted));
+        //         Err(e)
+        //     }
+        // };
 
         // Duration
         d.stop()?;
