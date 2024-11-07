@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod test {
-    use crate::types::{Command, Pipeline, Step, StepOrParallel};
+    use crate::types::{Command, Parallel, Pipeline, Step, StepOrParallel};
     use miette::Result;
 
     #[test]
@@ -16,12 +16,37 @@ mod test {
     }
 
     #[test]
-    fn default() -> Result<()> {
+    fn run_default() -> Result<()> {
         let mut p = Pipeline {
             name: "test".to_owned(),
             steps: vec![StepOrParallel::Step(Step {
                 name: "test".to_owned(),
                 commands: vec![Command::new("sleep 5"), Command::new("pwd")],
+                ..Default::default()
+            })],
+            ..Default::default()
+        };
+        p.run()?;
+        println!("{:#?}", p);
+        Ok(())
+    }
+    #[test]
+    fn run_parallel() -> Result<()> {
+        let mut p = Pipeline {
+            name: "test".to_owned(),
+            steps: vec![StepOrParallel::Parallel(Parallel {
+                steps: vec![
+                    Step {
+                        name: "test".to_owned(),
+                        commands: vec![Command::new("sleep 3")],
+                        ..Default::default()
+                    },
+                    Step {
+                        name: "test".to_owned(),
+                        commands: vec![Command::new("sleep 3")],
+                        ..Default::default()
+                    },
+                ],
                 ..Default::default()
             })],
             ..Default::default()
