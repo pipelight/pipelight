@@ -32,12 +32,6 @@ impl Process {
             .stderr(Stdio::piped());
 
         // Output redirection
-        match self.config.detach {
-            true => {
-                cmd.process_group(0);
-            }
-            false => {}
-        };
         match self.config.fs {
             true => {
                 let proc_path = format!("{}/{}", *OUTDIR.lock().unwrap(), self.uuid);
@@ -51,6 +45,17 @@ impl Process {
             false => {}
         }
 
+        match self.config.detach {
+            true => {
+                // Hard detach
+                // cmd.process_group(0);
+
+                // Soft detach
+                cmd.stdout(Stdio::null()).stderr(Stdio::null());
+            }
+            false => {}
+        };
+
         // Process execution
         // and catch child pid
 
@@ -58,7 +63,9 @@ impl Process {
         let mut duration = Duration::default();
 
         if self.config.background {
+            duration.start();
             cmd.spawn()?;
+            duration.stop();
         } else {
             let child = cmd.spawn()?;
             self.pid = Some(child.id().to_owned() as i32);
@@ -77,7 +84,7 @@ impl Process {
             };
             if self.config.fs {
                 self.io.read()?;
-                self.io.clean()?;
+                // self.io.clean()?;
             }
         }
         Ok(self.to_owned())
@@ -108,13 +115,23 @@ mod test {
     #[test]
     fn default() -> Result<()> {
         let proc = Process::new().stdin("echo test").run()?;
+        println!("{:#?}", proc);
         assert_eq!(proc.io.stdout, Some("test\n".to_owned()));
         Ok(())
     }
     #[test]
     fn default_wait_for_output() -> Result<()> {
         let proc = Process::new().stdin("sleep 3").run()?;
+        println!("{:#?}", proc);
         assert_eq!(proc.io.stdout, None);
+        assert_eq!(proc.state.status, Some(Status::Succeeded));
+        Ok(())
+    }
+    #[test]
+    fn term_wait_for_output() -> Result<()> {
+        let proc = Process::new().stdin("sleep 3").run()?;
+        assert_eq!(proc.io.stdout, None);
+        assert_eq!(proc.state.status, Some(Status::Succeeded));
         Ok(())
     }
     #[test]

@@ -1,4 +1,4 @@
-// From the famous rust crate clap_verbosity_flag
+// From the rust crate clap_verbosity_flag
 // Checkout documentation at: https://docs.rs/clap-verbosity-flag/latest/clap_verbosity_flag/
 // Author: https://github.com/killercup
 

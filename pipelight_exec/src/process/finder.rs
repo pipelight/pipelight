@@ -307,7 +307,7 @@ mod test {
             .seed("sleep 12")
             .search()?;
 
-        // println!("{:#?}", finder);
+        println!("{:#?}", finder);
         finder.kill()?;
 
         assert_eq!(finder.clone().matches.unwrap().len(), 1);

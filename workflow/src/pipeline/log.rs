@@ -4,7 +4,6 @@ use crate::types::{Pipeline, StepOrParallel};
 use pipelight_exec::{Statuable, Status};
 // Globals
 use once_cell::sync::Lazy;
-use pipelight_utils::globals::LOGGER;
 use std::io::Write;
 use std::sync::{Arc, Mutex};
 // Fylesystem manipulation

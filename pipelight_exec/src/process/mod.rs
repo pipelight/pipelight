@@ -75,8 +75,8 @@ impl Runner {
 */
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Process {
-    #[serde(skip_serializing)]
     pub uuid: Uuid,
+    #[serde(skip_serializing, skip_deserializing)]
     pub config: Runner,
     pub pid: Option<i32>,
     // process parent id

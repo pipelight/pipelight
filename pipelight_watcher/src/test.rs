@@ -108,6 +108,8 @@ mod watcher {
     use std::env;
     use std::fs;
     use std::fs::remove_dir_all;
+    use std::{thread, time};
+
     // Globals
     use crate::Watcher;
     use pipelight_exec::Process;
@@ -165,10 +167,10 @@ mod watcher {
         print_cwd()?;
 
         // Run watcher
-        let mut process = Process::new("cargo run --bin pipelight init --template toml");
-        process.run_piped().into_diagnostic()?;
-        let mut process = Process::new("cargo run --bin pipelight watch --attach");
-        process.run_detached().into_diagnostic()?;
+        let mut process = Process::new().stdin("cargo run --bin pipelight init --template toml");
+        process.run().into_diagnostic()?;
+        let mut process = Process::new().stdin("cargo run --bin pipelight watch --attach");
+        process.background().detach().run().into_diagnostic()?;
         // let res = Watcher::has_homologous_already_running()?;
 
         Ok(())
@@ -190,7 +192,8 @@ mod watcher {
         env::set_current_dir(&test_dir).into_diagnostic()?;
 
         // Wait for propagation
-        Process::new("sleep 1").run_piped().into_diagnostic()?;
+        let throttle = time::Duration::from_millis(1000);
+        thread::sleep(throttle);
 
         let finder = Watcher::find_all()?;
         println!("{:#?}", finder);
@@ -228,7 +231,8 @@ mod watcher {
         env::set_current_dir(&test_dir).into_diagnostic()?;
 
         // Wait for propagation
-        Process::new("sleep 1").run_piped().into_diagnostic()?;
+        let throttle = time::Duration::from_millis(1000);
+        thread::sleep(throttle);
 
         let finder = Watcher::find_all()?;
         println!("{:#?}", finder);
