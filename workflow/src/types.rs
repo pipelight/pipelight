@@ -13,7 +13,7 @@ use pipelight_utils::git::Flag;
 use strum::EnumIter;
 
 /**
-Options to tweak global pipelines behavior
+* Options to tweak global pipelines behavior
 */
 #[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct ConfigOpts {

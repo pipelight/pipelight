@@ -13,10 +13,6 @@ use rayon::prelude::*;
 // Tests
 mod test;
 
-// Global var
-// Globals
-static mut PIPELINE: Lazy<Pipeline> = Lazy::new(Pipeline::new);
-
 impl Pipeline {
     /**
      * Run the pipeline
