@@ -167,9 +167,13 @@ mod watcher {
         print_cwd()?;
 
         // Run watcher
-        let mut process = Process::new().stdin("cargo run --bin pipelight init --template toml");
+        let mut process = Process::new()
+            .stdin("cargo run --bin pipelight init --template toml")
+            .to_owned();
         process.run().into_diagnostic()?;
-        let mut process = Process::new().stdin("cargo run --bin pipelight watch --attach");
+        let mut process = Process::new()
+            .stdin("cargo run --bin pipelight watch --attach")
+            .to_owned();
         process.background().detach().run().into_diagnostic()?;
         // let res = Watcher::has_homologous_already_running()?;
 
