@@ -41,7 +41,8 @@
 //!
 //! // Runs a child process and wait until execution is over.
 //! let mut p = Process::new()
-//!     .stdin("echo test");
+//!     .stdin("echo test")
+//!     .to_owned();
 //! p.run()?;
 //!
 //! # Ok::<(), Report>(())
@@ -56,7 +57,8 @@
 //!
 //! let mut p = Process::new()
 //!     .stdin("echo test")
-//!     .background();
+//!     .background()
+//!     .to_owned();
 //! p.run()?;
 //!
 //! # Ok::<(), Report>(())
@@ -70,7 +72,8 @@
 //!
 //! let mut p = Process::new()
 //!     .stdin("echo test")
-//!     .detach();
+//!     .detach()
+//!     .to_owned();
 //! p.run()?;
 //!
 //! # Ok::<(), Report>(())
@@ -87,7 +90,8 @@
 //! let mut p = Process::new()
 //!     .stdin("echo test")
 //!     .fs()
-//!     .detach();
+//!     .detach()
+//!     .to_owned();
 //! p.run()?;
 //!
 //! # Ok::<(), Report>(())
@@ -101,8 +105,9 @@
 //!
 //! let mut p = Process::new()
 //!     .stdin("echo test")
-//!     .background();
+//!     .background()
 //!     .fs()
+//!     .to_owned();
 //! p.run()?;
 //!
 //! // Later in execution
