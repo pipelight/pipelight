@@ -133,6 +133,23 @@ impl Process {
         self.config.detach = true;
         self
     }
+    /**
+     * Detach child process from parent but keep in process group.
+     * Killing parent won't kill child but killing parent group will.
+     */
+    pub fn soft_detach(&mut self) -> &mut Self {
+        self.config.detach = true;
+        self
+    }
+    /**
+     * Detach child process from parent and remove from process group
+     *
+     * Neither killing parent or parent group will kill the child.
+     */
+    pub fn hard_detach(&mut self) -> &mut Self {
+        self.config.detach = true;
+        self
+    }
     pub fn fs(&mut self) -> &mut Self {
         self.config.fs = true;
         self
