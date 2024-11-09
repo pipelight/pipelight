@@ -7,7 +7,8 @@ description = "A set of trivial utilities for command line tools"
 
 [dependencies]
 pipelight_error = "0.2.8"
-pipelight_exec = { path = "../pipelight_exec" }
+# pipelight_exec = { path = "../pipelight_exec" }
+pipelight_exec = "0.4.2"
 
 git2 = { version = "0.19.0" }
 rev_buf_reader = "0.3.0"
