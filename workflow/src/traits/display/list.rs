@@ -64,6 +64,10 @@ impl PipelineTable {
 impl PipelineTable {
     pub fn display(items: Vec<Self>, level: &LevelFilter) -> Result<()> {
         match level {
+            LevelFilter::Off => {
+                let res: String = items.iter().map(|e| e.name.clone() + "\n").collect();
+                print!("{}", res);
+            }
             LevelFilter::Error => {
                 let mut res = Table::new(&items);
                 res
@@ -76,7 +80,7 @@ impl PipelineTable {
                     .with(Disable::column(ByColumnName::new("status")));
 
                 res.with(Style::rounded());
-                println!("{}", res);
+                print!("{}", res);
             }
             LevelFilter::Warn => {
                 let mut res = Table::new(&items);
@@ -89,7 +93,7 @@ impl PipelineTable {
                     .with(Disable::column(ByColumnName::new("branch/tag")));
 
                 res.with(Style::rounded());
-                println!("{}", res);
+                print!("{}", res);
             }
             LevelFilter::Info => {
                 let mut res = Table::new(&items);
@@ -100,7 +104,7 @@ impl PipelineTable {
                     .with(Disable::column(ByColumnName::new("date")));
 
                 res.with(Style::rounded());
-                println!("{}", res);
+                print!("{}", res);
             }
             LevelFilter::Debug => {
                 let mut res = Table::new(&items);
@@ -110,15 +114,14 @@ impl PipelineTable {
                     .with(Disable::column(ByColumnName::new("commit")));
 
                 res.with(Style::rounded());
-                println!("{}", res);
+                print!("{}", res);
             }
             LevelFilter::Trace => {
                 let mut res = Table::new(&items);
                 res.with(Style::rounded());
                 res.with(Disable::column(ByColumnName::new("triggers")));
-                println!("{}", res);
+                print!("{}", res);
             }
-            _ => {}
         };
         Ok(())
     }
