@@ -5,6 +5,12 @@ use pipelight_utils::git::Flag;
 use miette::Result;
 
 impl Trigger {
+    pub fn get_ref(&self) -> Result<Option<String>> {
+        match self {
+            Trigger::TriggerBranch(self_trigger_branch) => Ok(self_trigger_branch.branch.clone()),
+            Trigger::TriggerTag(self_trigger_tag) => Ok(self_trigger_tag.tag.clone()),
+        }
+    }
     pub fn get_action(&self) -> Result<Option<Flag>> {
         match self {
             Trigger::TriggerBranch(self_trigger_branch) => Ok(self_trigger_branch.action.clone()),

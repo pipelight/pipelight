@@ -29,3 +29,5 @@ strum = { version = "0.26.3", features = ["derive"] }
 glob = "0.3.1"
 rustix = { version = "0.38.34", features = ["process"] }
 serde_plain = "1.0.2"
+owo-colors = "4.1.0"
+tabled = { version = "0.16.0", features = ["ansi"] }

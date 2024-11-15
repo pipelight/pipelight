@@ -7,9 +7,14 @@ use std::process::exit;
 // Trait - Enum iteration workaround
 use strum::IntoEnumIterator;
 
-impl fmt::Display for Hook {
+impl fmt::Display for Special {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self)
+    }
+}
+impl From<&Special> for String {
+    fn from(action: &Special) -> String {
+        serde_plain::to_string::<Special>(action).unwrap()
     }
 }
 impl From<&String> for Special {
@@ -28,12 +33,12 @@ impl From<&String> for Special {
         }
     }
 }
-impl From<&Special> for String {
-    fn from(action: &Special) -> String {
-        serde_plain::to_string::<Special>(action).unwrap()
+
+impl fmt::Display for Hook {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
     }
 }
-
 impl From<&String> for Hook {
     fn from(action: &String) -> Hook {
         // let cased: &str = &action.to_case(Case::Snake);
@@ -62,6 +67,11 @@ impl From<&String> for Flag {
             error!("{}", message);
             panic!("{}", message);
         }
+    }
+}
+impl fmt::Display for Flag {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
     }
 }
 impl From<&Flag> for String {

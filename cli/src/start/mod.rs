@@ -1,5 +1,5 @@
 // Struct
-use crate::actions::{logs, pipeline, prompt, run, stop, trigger, watch};
+use crate::actions::{logs, prompt, stop};
 use crate::services::types::{Action, Service};
 use crate::types::Cli;
 use crate::types::{ColoredOutput, LogsCommands, ToggleCommands};
@@ -149,21 +149,21 @@ impl PostCommands {
             PostCommands::Ls(e) => {
                 if e.name.is_some() {
                     if e.json {
-                        pipeline::json(e.name.clone())?;
+                        Pipeline::list_json(e.name.clone())?;
                     } else {
-                        pipeline::pretty(e.name.clone())?;
+                        Pipeline::list_pretty(e.name.clone())?;
                     }
                 } else {
-                    pipeline::default()?;
+                    Pipeline::list()?;
                 }
             }
             PostCommands::Inspect(e) => {
                 if let Some(name) = e.name.clone() {
-                    pipeline::inspect(&name, e.json)?;
+                    Pipeline::inspect(&name, e.json)?;
                 } else {
                     // Select prompt
                     let name = prompt::pipeline()?;
-                    pipeline::inspect(&name, e.json)?;
+                    Pipeline::inspect(&name, e.json)?;
                 }
             }
             PostCommands::DetachableCommands(e) => {
