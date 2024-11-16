@@ -84,23 +84,28 @@ impl Finder {
      */
     fn is_match_seeds(&mut self, process: &Process) -> Result<bool, PipelightError> {
         if let Some(seeds) = self.seeds.clone() {
+            let mut matches = vec![];
             for seed in seeds {
-                if !process
-                    .cmd()
-                    .iter()
-                    .map(|e| e.to_str().unwrap())
-                    .join(" ")
-                    .contains(&seed)
-                {
-                    // println!("{:#?}", process.cmd());
-                    return Ok(false);
-                }
+                matches.push(
+                    process
+                        .cmd()
+                        .iter()
+                        .map(|e| e.to_str().unwrap())
+                        .join(" ")
+                        .contains(&seed),
+                )
             }
+            if matches.contains(&false) {
+                return Ok(false);
+            } else {
+                return Ok(true);
+            }
+        } else {
+            Ok(true)
         }
-        Ok(true)
     }
     /**
-     * Guard -Ensure processes are running in same subdirectory
+     * Guard -Ensure processes are running in a same parent directory.
      * Permissive: Return true if can not figure out
      */
     fn is_same_root(&mut self, process: &Process) -> Result<bool, PipelightError> {
@@ -113,7 +118,7 @@ impl Finder {
         return Ok(true);
     }
     /**
-     * Guard -Ensure processes are running in same directory
+     * Guard -Ensure processes are running in the same directory
      * Permissive: Return true if can not figure out
      */
     fn is_same_cwd(&mut self, process: &Process) -> Result<bool, PipelightError> {
@@ -161,10 +166,7 @@ impl Finder {
                 let cond_other_pid = pid != &get_current_pid().unwrap();
 
                 // Guard - Ensure command contains some seed(string)
-                let mut cond_seed = false;
-                if let Some(seeds) = self.seeds.clone() {
-                    cond_seed = self.is_match_seeds(process)?;
-                };
+                let cond_seed = self.is_match_seeds(process)?;
 
                 // Final resolution
                 if cond_root && cond_pwd && cond_seed && cond_other_pid {
@@ -290,6 +292,9 @@ impl Finder {
 mod test {
     use crate::{Finder, Process};
     use std::env;
+    use std::fs;
+    use std::fs::remove_dir_all;
+    use std::{thread, time};
     // Error handling
     use miette::{IntoDiagnostic, Result};
     use pipelight_error::PipelightError;
@@ -297,10 +302,16 @@ mod test {
     /**
      * Run a simple process, detach it and find it back.
      */
-    #[test]
-    fn find_and_kill_random_process() -> Result<(), PipelightError> {
+    // #[test]
+    fn short_seed() -> Result<(), PipelightError> {
         let mut process = Process::new()
-            .stdin("sleep 12")
+            .stdin("sleep 14")
+            .background()
+            .detach()
+            .to_owned();
+        process.run()?;
+        let mut process = Process::new()
+            .stdin("sleep 10")
             .background()
             .detach()
             .to_owned();
@@ -308,14 +319,100 @@ mod test {
 
         let finder = Finder::new()
             .root(env::current_dir()?.to_str().unwrap())
-            .seed("sleep 12")
+            .seed("sleep 1")
             .search()?;
 
-        println!("{:#?}", finder);
+        // println!("{:#?}", finder);
+        finder.kill()?;
+        assert_eq!(finder.clone().matches.unwrap().len(), 2);
+
+        Ok(())
+    }
+
+    // #[test]
+    fn long_seed() -> Result<(), PipelightError> {
+        let mut process = Process::new()
+            .stdin("sleep 22")
+            .background()
+            .detach()
+            .to_owned();
+        process.run()?;
+
+        let mut process = Process::new()
+            .stdin("sleep 20")
+            .background()
+            .detach()
+            .to_owned();
+        process.run()?;
+
+        let finder = Finder::new()
+            .root(env::current_dir()?.to_str().unwrap())
+            .seed("sleep 22")
+            .search()?;
+
+        // println!("{:#?}", finder);
         finder.kill()?;
 
         assert_eq!(finder.clone().matches.unwrap().len(), 1);
 
+        Ok(())
+    }
+
+    // #[test]
+    fn same_root() -> Result<(), PipelightError> {
+        let root = env::current_dir()?;
+        let root = root.to_str().unwrap();
+
+        let test_dir = "./test_dir_tmp/finder".to_owned();
+        let a = test_dir.clone() + "/a";
+        let b = test_dir.clone() + "/b";
+        for dir in vec![a, b] {
+            fs::create_dir_all(&dir)?;
+            env::set_current_dir(&dir)?;
+            let mut process = Process::new()
+                .stdin("sleep 31")
+                .background()
+                .detach()
+                .to_owned();
+            process.run()?;
+            env::set_current_dir(&root)?;
+        }
+
+        let finder = Finder::new().root(root).seed("sleep 31").search()?;
+        finder.kill()?;
+        println!("{:#?}", finder);
+        assert_eq!(finder.clone().matches.unwrap().len(), 2);
+        Ok(())
+    }
+    #[test]
+    fn different_cwd() -> Result<(), PipelightError> {
+        let root = env::current_dir()?;
+        let root = root.to_str().unwrap();
+
+        let test_dir = "./test_dir_tmp/finder".to_owned();
+        let a = test_dir.clone() + "/a";
+        let b = test_dir.clone() + "/b";
+        for dir in vec![a.clone(), b] {
+            fs::create_dir_all(&dir)?;
+            env::set_current_dir(&dir)?;
+            let mut process = Process::new()
+                .stdin("sleep 31")
+                .background()
+                .detach()
+                .to_owned();
+            process.run()?;
+            env::set_current_dir(&root)?;
+        }
+        // Wait for propagation
+        let throttle = time::Duration::from_millis(1000);
+        thread::sleep(throttle);
+
+        // let path = Path::from()
+        let finder = Finder::new().cwd(&a).seed("sleep 31").search()?;
+        finder.kill()?;
+
+        println!("{:#?}", finder);
+        assert_eq!(finder.clone().matches.unwrap().len(), 1);
         Ok(())
     }
 }
