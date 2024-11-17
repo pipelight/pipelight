@@ -25,5 +25,5 @@ members = [
   "switch",
 
   ## Bin package and Lib entrypoint
-  "pipelight",
+  "pipelight", "man",
 ]
