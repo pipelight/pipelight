@@ -266,7 +266,7 @@ impl From<&Command> for Node {
             ..Node::default()
         };
         // Convert command output as child node
-        if e.process.io.stdout.is_some() | e.process.io.stderr.is_some() {
+        if e.process.io.stdout.is_some() || e.process.io.stderr.is_some() {
             let stdout = format!(
                 "stdout: {}",
                 e.process.io.stdout.clone().unwrap_or("".to_owned())

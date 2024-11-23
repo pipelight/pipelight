@@ -29,10 +29,10 @@ impl Filters {
         Ok(pipelines)
     }
     /**
-    Sort pipelines by ascending date.
-    The more recent pipeline is the last.
-    The oldes pipeline is the first.
-    */
+     * Sort pipelines by ascending date.
+     * The more recent pipeline is the last.
+     * The oldes pipeline is the first.
+     */
     pub fn sort_by_date_asc(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>> {
         let mut pipelines = pipelines;
         if !pipelines.is_empty() {
@@ -58,10 +58,10 @@ impl Filters {
         Ok(pipelines)
     }
     /**
-    Sort pipelines by ascending date.
-    The more recent pipeline is the first.
-    The oldes pipeline is the last.
-    */
+     * Sort pipelines by descending date.
+     * The more recent pipeline is the first.
+     * The oldes pipeline is the last.
+     */
     pub fn sort_by_date_desc(pipelines: Vec<Pipeline>) -> Result<Vec<Pipeline>> {
         let mut pipelines = pipelines;
         if !pipelines.is_empty() {

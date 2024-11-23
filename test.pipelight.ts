@@ -25,7 +25,10 @@ const config: Config = {
     // A pipeline that takes time to resolve
     pipeline("test_long_running_pipeline", () => [
       step(`run and sleep`, () => ["pwd", "ls", "sleep 120", "pwd"]),
-    ]),
+    ]).add_trigger({
+      actions: ["manual", "pre-push"],
+      branches: ["dev"],
+    }),
 
     // Run a pipeline that runs an attached pipeline
     pipeline("test_attached_pipelines", () => [
