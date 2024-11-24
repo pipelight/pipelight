@@ -72,7 +72,7 @@ impl fmt::Display for Pipeline {
         if self.name.is_some() {
             #[cfg(not(target_os = "macos"))]
             fn escape(name: &str) -> String {
-                return format!("\"{}\"", name);
+                return format!("{:?}", name);
             }
             #[cfg(target_os = "macos")]
             fn escape(name: &str) -> String {
