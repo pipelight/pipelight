@@ -17,7 +17,7 @@ impl Logs {
         // Get global
         if LOGS.lock().unwrap().clone().is_none() {
             // Read log files
-            let json_logs: Vec<String> = cast::Logs::read(".pipelight/logs/")?;
+            let json_logs: Vec<String> = cast::Logs::read(".pipelight/logs")?;
             let mut pipelines: Vec<Pipeline> = vec![];
             for json in json_logs {
                 let pipeline = serde_json::from_str::<Pipeline>(&json).into_diagnostic()?;

@@ -51,13 +51,17 @@ impl Node {
     /// Display Node and color based on Node.status
     fn display(&self, prefix: String) {
         // Display node value
-        if self.value.is_some() {
+        if self.value.is_none() {
+            println!("");
+        } else {
             let mut value = self.value.clone().unwrap();
-            // Remove extra spaces
+
+            // Remove command output extra spaces and identation
             let big_spaces: Regex = Regex::new(r"\s\s+").unwrap();
             value = big_spaces.replace_all(&value, "\n").to_string();
             value = value.replace('\n', &format!("\n{prefix:}", prefix = prefix.white()));
 
+            // Print command execution time
             if self.duration.is_some()
                 && LOGGER.lock().unwrap().pipelines.level >= LevelFilter::Error
             {

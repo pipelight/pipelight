@@ -90,19 +90,18 @@ impl Io {
 impl From<&Output> for Io {
     fn from(output: &Output) -> Io {
         let stdout_str = String::from_utf8(output.stdout.to_owned()).unwrap();
-        // .strip_suffix("\r\n")
-        // .unwrap()
+        let stdout_str = stdout_str.trim_matches('\n').trim_matches('\r');
+
         let stderr_str = String::from_utf8(output.stderr.to_owned()).unwrap();
-        // .strip_suffix("\r\n")
-        // .unwrap()
+        let stderr_str = stderr_str.trim_matches('\n').trim_matches('\r');
 
         let mut stdout = None;
         if !stdout_str.is_empty() {
-            stdout = Some(stdout_str);
+            stdout = Some(stdout_str.to_owned());
         }
         let mut stderr = None;
         if !stderr_str.is_empty() {
-            stderr = Some(stderr_str);
+            stderr = Some(stderr_str.to_owned());
         }
         Io {
             stdin: None,
