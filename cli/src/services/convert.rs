@@ -1,5 +1,5 @@
 // Struct
-use crate::services::types::{Action, Service};
+use super::{Action, Service};
 use crate::types::{Commands, DetachableCommands, PostCommands};
 use crate::types::{Pipeline, Trigger};
 use pipelight_utils::git::Flag;

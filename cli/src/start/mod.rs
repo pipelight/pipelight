@@ -1,6 +1,6 @@
 // Struct
 use crate::actions::{logs, prompt, stop};
-use crate::services::types::{Action, Service};
+use crate::services::{Action, Service};
 use crate::types::Cli;
 use crate::types::{ColoredOutput, LogsCommands, ToggleCommands};
 use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
@@ -16,7 +16,7 @@ use templates::Template;
 // Colors
 use colored::control::set_override;
 // Traits
-use crate::services::traits::FgBg;
+use crate::services::FgBg;
 // Error Handling
 use miette::{Error, Result};
 // Globals

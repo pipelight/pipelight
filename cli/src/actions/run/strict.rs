@@ -7,11 +7,9 @@ use crate::globals::CLI;
 use crate::verbosity::external::{level_value, Verbosity};
 use log::LevelFilter;
 use pipelight_utils::globals::LOGGER;
-// Traits
-use crate::services::traits::FgBg;
+
 // Error Handling
 use miette::{Error, Result};
-use workflow::error::IsError;
 
 pub fn launch() -> Result<()> {
     let mut args = CLI.lock().unwrap().clone();

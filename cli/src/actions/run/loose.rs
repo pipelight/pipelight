@@ -1,5 +1,5 @@
 // Struct
-use crate::services::types::{Action, Service};
+use crate::services::{Action, FgBg, Service};
 use crate::types::{Attach, Commands, DetachableCommands, PostCommands};
 use pipelight_exec::Status;
 use workflow::{Config, Getters, Node, Pipeline};
@@ -9,7 +9,6 @@ use crate::verbosity::external::{level_value, Verbosity};
 use log::LevelFilter;
 use pipelight_utils::globals::LOGGER;
 // Traits
-use crate::services::traits::FgBg;
 // Error Handling
 use super::EXIT_CODE;
 use miette::{Error, Result};

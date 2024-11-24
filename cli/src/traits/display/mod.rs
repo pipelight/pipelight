@@ -72,8 +72,16 @@ impl fmt::Display for Pipeline {
         let mut string = "".to_owned();
 
         if self.name.is_some() {
+            #[cfg(not(target_os = "macos"))]
+            fn escape(name: &str) -> String {
+                return format!("\"{}\"", name);
+            }
+            #[cfg(target_os = "macos")]
+            fn escape(name: &str) -> String {
+                return format!("{}", name);
+            }
             string += " ";
-            string += &format!("\"{}\"", &self.name.clone().unwrap());
+            string += &escape(&self.name.clone().unwrap());
         }
         if self.trigger.flag.is_some() {
             string += " ";

@@ -1,10 +1,10 @@
 // Struct
-use crate::services::types::{Action, Service};
+use crate::services::{Action, FgBg, Service};
+
 use crate::types::{Attach, Commands, DetachableCommands, Pipeline, PostCommands, Trigger};
 use crate::verbosity::external::{level_value, Verbosity};
 use workflow;
 // Traits
-use crate::services::traits::FgBg;
 use workflow::Getters;
 // IterMut
 use rayon::prelude::*;

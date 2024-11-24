@@ -1,9 +1,9 @@
 // Struct
-use crate::services::types::{Action, Service};
+use super::{Action, Service};
 // Actions
 use crate::actions;
+
 // Error Handling
-use log::trace;
 use miette::Result;
 
 pub trait Exec {

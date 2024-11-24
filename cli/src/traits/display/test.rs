@@ -27,8 +27,8 @@ mod display {
             internal_verbose: InternalVerbosity::new(0, 0),
             verbose: Verbosity::new(0, 0),
         };
-        // print it
         let result = format!("{}", cli);
+        println!("\n{}", result);
         assert_eq!(result, "run \"test\" --flag pre-push");
     }
     #[test]
@@ -49,8 +49,8 @@ mod display {
             internal_verbose: InternalVerbosity::new(0, 0),
             verbose: Verbosity::new(0, 0),
         };
-        // print it
         let result = format!("{}", cli);
+        println!("\n{}", result);
         assert_eq!(result, "logs rm");
     }
     #[test]
@@ -69,8 +69,8 @@ mod display {
             internal_verbose: InternalVerbosity::new(2, 0),
             verbose: Verbosity::new(0, 0),
         };
-        // print it
         let result = format!("{}", cli);
+        println!("\n{}", result);
         assert_eq!(result, "ls -uu");
     }
     #[test]
@@ -89,8 +89,8 @@ mod display {
             internal_verbose: InternalVerbosity::new(0, 0),
             verbose: Verbosity::new(2, 0),
         };
-        // print it
         let result = format!("{}", cli);
+        println!("\n{}", result);
         assert_eq!(result, "ls -vv");
     }
     #[test]
@@ -109,8 +109,8 @@ mod display {
             internal_verbose: InternalVerbosity::new(0, 0),
             verbose: Verbosity::new(0, 0),
         };
-        // print it
         let result = format!("{}", cli);
+        println!("\n{}", result);
         assert_eq!(result, "ls --config test.pipelight.ts");
     }
     #[test]
@@ -129,8 +129,8 @@ mod display {
             internal_verbose: InternalVerbosity::new(0, 0),
             verbose: Verbosity::new(0, 0),
         };
-        // print it
         let result = format!("{}", cli);
+        println!("\n{}", result);
         assert_eq!(result, "ls -- --host linode");
     }
 }

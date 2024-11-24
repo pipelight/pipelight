@@ -1,6 +1,7 @@
 // Struct
-use crate::services::types::Service;
+use super::{Exec, Service};
 use crate::types::Attach;
+
 // Process manipulation
 use pipelight_exec::Process;
 use serde::{Deserialize, Serialize};
@@ -9,8 +10,6 @@ use crate::globals::CLI;
 // Error Handling
 use log::trace;
 use miette::Result;
-
-use super::Exec;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct PipelightBin;
