@@ -52,7 +52,7 @@ impl fmt::Display for Service {
         #[cfg(debug_assertions)]
         let command = format!("cargo run --bin {} {}", &bin, &self.args.clone().unwrap());
         #[cfg(not(debug_assertions))]
-        let command = format!("{} {}", &bin, &cmd_args);
+        let command = format!("{} {}", &bin, &self.args.clone().unwrap());
 
         write!(f, "{}", command)
     }
