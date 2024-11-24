@@ -63,10 +63,10 @@ impl Pipeline {
         Ok(())
     }
     /**
-    On demand,
-    Add the current process stdout/stderr to a runnnig pipeline log.
-    Beware: Concurent std read/write
-    */
+     * On demand,
+     * Add the current process stdout/stderr to a runnnig pipeline log.
+     * Beware: Concurent std read/write
+     */
     pub fn hydrate(&mut self) -> Result<()> {
         for step_or_parallel in &mut self.steps {
             match step_or_parallel {

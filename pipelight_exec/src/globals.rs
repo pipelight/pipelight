@@ -22,7 +22,7 @@ pub static OUTDIR: Lazy<Arc<Mutex<String>>> =
     Lazy::new(|| Arc::new(Mutex::new(".pipelight/proc".to_owned())));
 
 /**
-Returns the user session shell or fallback to default "sh".
+* Returns the user session shell or fallback to default "sh".
 */
 pub fn get_shell() -> Result<(), std::io::Error> {
     trace!("Get shell");
@@ -31,9 +31,7 @@ pub fn get_shell() -> Result<(), std::io::Error> {
         Ok(res) => {
             *SHELL.lock().unwrap() = res.to_owned();
         }
-        Err(_) => {
-            (*SHELL.lock().unwrap()).to_owned();
-        }
+        Err(_) => {}
     }
     Ok(())
 }

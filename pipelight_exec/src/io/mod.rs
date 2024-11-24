@@ -33,7 +33,7 @@ impl Io {
         let path = format!("{}/{}", *OUTDIR.lock().unwrap(), self.uuid);
         // Guard
         let path = Path::new(&path);
-        if path.exists() && path.is_file() {
+        if path.exists() {
             remove_dir_all(path)?;
         }
         Ok(())
