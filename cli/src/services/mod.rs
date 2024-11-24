@@ -61,8 +61,8 @@ impl fmt::Display for Service {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::Pipeline;
-    use crate::{Attach, Cli, Commands, DetachableCommands, PostCommands};
+    use crate::types::Pipeline;
+    use crate::types::{Attach, Cli, Commands, DetachableCommands, PostCommands};
 
     use assert_cmd::prelude::*; // Add methods on commands
     use std::process::Command; // Run commnds
