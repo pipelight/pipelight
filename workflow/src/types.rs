@@ -7,7 +7,11 @@ use uuid::Uuid;
 // Structs
 use pipelight_exec::Process;
 pub use pipelight_exec::Status;
-use pipelight_utils::git::Flag;
+use pipelight_utils::git::{Flag, Special};
+
+// Event - Process
+use chrono::Local;
+use rustix::process::{getpgid, getpid, getsid, Pid};
 
 // Traits - Enum workaround
 use strum::EnumIter;
@@ -37,6 +41,17 @@ pub struct Node {
     pub children: Option<Vec<Node>>,
     pub level: LevelFilter,
 }
+impl Default for Node {
+    fn default() -> Self {
+        Node {
+            value: None,
+            status: None,
+            duration: None,
+            children: None,
+            level: LevelFilter::Error,
+        }
+    }
+}
 
 /**
 Options to tweak pipelines behavior
@@ -61,6 +76,22 @@ pub struct Pipeline {
     pub steps: Vec<StepOrParallel>,
     pub options: Option<PipelineOpts>,
 }
+impl Default for Pipeline {
+    fn default() -> Self {
+        let steps = vec![StepOrParallel::Step(Step::default())];
+        Pipeline {
+            uuid: Uuid::new_v4(),
+            name: "default".to_owned(),
+            event: None,
+            status: None,
+            duration: None,
+            triggers: None,
+            options: None,
+            steps,
+            fallback: None,
+        }
+    }
+}
 
 #[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct StepOpts {
@@ -75,6 +106,13 @@ pub enum StepOrParallel {
     Step(Step),
     Parallel(Parallel),
 }
+impl Default for StepOrParallel {
+    fn default() -> Self {
+        let step = Step::default();
+        StepOrParallel::Step(step)
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Parallel {
     pub status: Option<Status>,
@@ -82,6 +120,16 @@ pub struct Parallel {
     pub steps: Vec<Step>,
     // Fallback Hooks
     pub fallback: Option<Fallback>,
+}
+impl Default for Parallel {
+    fn default() -> Self {
+        Parallel {
+            status: None,
+            duration: None,
+            steps: vec![Step::default()],
+            fallback: None,
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
@@ -95,6 +143,20 @@ pub struct Step {
     // Fallback Hooks
     pub fallback: Option<Fallback>,
 }
+impl Default for Step {
+    fn default() -> Self {
+        let commands = vec![Command::default()];
+        Step {
+            name: "default".to_owned(),
+            status: None,
+            duration: None,
+            commands,
+            options: None,
+            fallback: None,
+        }
+    }
+}
+
 #[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Fallback {
     pub on_started: Option<Vec<StepOrParallel>>,
@@ -118,6 +180,14 @@ pub struct Command {
     // Things relevant to unix process
     pub process: Process,
 }
+impl Command {
+    pub fn new(stdin: &str) -> Command {
+        Command {
+            process: Process::new().stdin(stdin).to_owned(),
+            ..Command::default()
+        }
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
 #[serde(untagged)]
@@ -125,6 +195,12 @@ pub enum Trigger {
     TriggerBranch(TriggerBranch),
     TriggerTag(TriggerTag),
 }
+impl Default for Trigger {
+    fn default() -> Self {
+        Trigger::TriggerBranch(TriggerBranch::default())
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
 pub struct TriggerBranch {
     pub action: Option<Flag>,
@@ -134,6 +210,16 @@ pub struct TriggerBranch {
     #[serde(default)]
     pub commit: Option<String>,
 }
+impl Default for TriggerBranch {
+    fn default() -> Self {
+        TriggerBranch {
+            action: Some(Flag::Special(Special::Manual)),
+            branch: None,
+            commit: None,
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
 pub struct TriggerTag {
     pub action: Option<Flag>,
@@ -143,6 +229,16 @@ pub struct TriggerTag {
     #[serde(default)]
     pub commit: Option<String>,
 }
+impl Default for TriggerTag {
+    fn default() -> Self {
+        TriggerTag {
+            action: Some(Flag::Special(Special::Manual)),
+            tag: None,
+            commit: None,
+        }
+    }
+}
+
 /**
 The event/environment that triggered the piepline execution.
 */
@@ -154,6 +250,24 @@ pub struct Event {
     pub pid: Option<i32>,
     pub pgid: Option<i32>,
     pub sid: Option<i32>,
+}
+impl Default for Event {
+    fn default() -> Self {
+        // Get process info
+        let pid = getpid();
+        let pgid = getpgid(Some(pid)).unwrap();
+        let sid = getsid(Some(pid)).unwrap();
+
+        Event {
+            trigger: Trigger::get().unwrap(),
+            // Local instead of UTC to better stick to
+            // most time lib iso8601
+            date: Local::now().to_string(),
+            pid: Some(Pid::as_raw(Some(pid))),
+            pgid: Some(Pid::as_raw(Some(pgid))),
+            sid: Some(Pid::as_raw(Some(sid))),
+        }
+    }
 }
 
 /**

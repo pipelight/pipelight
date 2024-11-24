@@ -175,7 +175,7 @@ impl From<&cast::Parallel> for Parallel {
         let mut res = Parallel {
             fallback,
             steps: vec![],
-            ..Parallel::new()
+            ..Parallel::default()
         };
         for step in &e.parallel {
             res.steps.push(Step::from(step));

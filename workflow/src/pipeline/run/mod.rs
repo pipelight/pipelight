@@ -13,7 +13,7 @@ use rayon::prelude::*;
 mod test;
 
 // Global var
-static mut PIPELINE: Lazy<Pipeline> = Lazy::new(Pipeline::new);
+static mut PIPELINE: Lazy<Pipeline> = Lazy::new(Pipeline::default);
 
 impl Pipeline {
     /// Execute the pipeline
@@ -40,7 +40,7 @@ impl Pipeline {
         }
 
         // Event
-        let event = Event::new();
+        let event = Event::default();
 
         // Set event = Pid , Status and Duration
         unsafe {
@@ -277,4 +277,3 @@ impl Command {
         Ok(())
     }
 }
-

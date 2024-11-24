@@ -8,5 +8,3 @@ pub mod trigger;
 pub mod watch;
 // Utils
 pub mod prompt;
-
-// Re-export

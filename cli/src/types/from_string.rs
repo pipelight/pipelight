@@ -1,11 +1,8 @@
-use crate::types::{ColoredOutput,Attach};
+use crate::types::{Attach, ColoredOutput};
 use convert_case::{Case, Casing};
 // Structs
-use crate::types::{
-    Cli, DisplayCommands, Init, Logs, Pipeline, Shell, Toggle, Trigger,
-};
-use crate::types::{Commands};
-
+use crate::types::Commands;
+use crate::types::{Cli, DisplayCommands, Init, Logs, Pipeline, Shell, Toggle, Trigger};
 
 impl From<&String> for Attach {
     fn from(option: &String) -> Attach {
