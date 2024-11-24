@@ -1,5 +1,3 @@
-// Tests
-mod test;
 // Structs
 use crate::types::{
     Attach, Cli, DisplayCommands, Init, Logs, LogsCommands, Pipeline, Shell, Toggle,
@@ -74,7 +72,7 @@ impl fmt::Display for Pipeline {
         if self.name.is_some() {
             #[cfg(not(target_os = "macos"))]
             fn escape(name: &str) -> String {
-                return format!("\"{}\"", name);
+                return format!("{:?}", name);
             }
             #[cfg(target_os = "macos")]
             fn escape(name: &str) -> String {
@@ -191,4 +189,141 @@ fn from_verbosity_to_string(e: Verbosity) -> String {
         string += &"v".repeat(n - 1);
     }
     string
+}
+
+#[cfg(test)]
+mod display {
+    // Structs
+    use crate::types::{
+        Attach, Cli, DisplayCommands, Init, Logs, LogsCommands, Pipeline, Shell, Toggle, Trigger,
+    };
+    use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
+    use crate::types::{InternalVerbosity, Verbosity};
+
+    // Test Cli struct to bash string convertion.
+    #[test]
+    fn pipeline_args() {
+        // Define a cli struct
+        let cli = Cli {
+            commands: Commands::PostCommands(PostCommands::DetachableCommands(
+                DetachableCommands::Run(Pipeline {
+                    name: Some("test".to_owned()),
+                    trigger: Trigger {
+                        flag: Some("pre-push".to_owned()),
+                    },
+                }),
+            )),
+            attach: Some(String::from(&Attach::False)),
+            raw: None,
+            config: None,
+            // Set verbosity to default level (Error)
+            internal_verbose: InternalVerbosity::new(0, 0),
+            verbose: Verbosity::new(0, 0),
+        };
+        let result = format!("{}", cli);
+        println!("\n{}", result);
+        assert_eq!(result, "run \"test\" --flag pre-push");
+    }
+    #[test]
+    fn logs_args() {
+        // Define a cli struct
+        let cli = Cli {
+            commands: Commands::PostCommands(PostCommands::Logs(Logs {
+                commands: Some(LogsCommands::Rm),
+                display: DisplayCommands {
+                    json: false,
+                    name: None,
+                    color: None,
+                },
+            })),
+            attach: Some(String::from(&Attach::False)),
+            raw: None,
+            config: None,
+            internal_verbose: InternalVerbosity::new(0, 0),
+            verbose: Verbosity::new(0, 0),
+        };
+        let result = format!("{}", cli);
+        println!("\n{}", result);
+        assert_eq!(result, "logs rm");
+    }
+    #[test]
+    fn internal_verbosity() {
+        // Define a cli struct
+        let cli = Cli {
+            commands: Commands::PostCommands(PostCommands::Ls(DisplayCommands {
+                json: false,
+                name: None,
+                color: None,
+            })),
+            attach: Some(String::from(&Attach::False)),
+            raw: None,
+            config: None,
+            // fn new(verbose: u8, quiet: u8) -> Self
+            internal_verbose: InternalVerbosity::new(2, 0),
+            verbose: Verbosity::new(0, 0),
+        };
+        let result = format!("{}", cli);
+        println!("\n{}", result);
+        assert_eq!(result, "ls -uu");
+    }
+    #[test]
+    fn verbosity() {
+        // Define a cli struct
+        let cli = Cli {
+            commands: Commands::PostCommands(PostCommands::Ls(DisplayCommands {
+                json: false,
+                name: None,
+                color: None,
+            })),
+            attach: Some(String::from(&Attach::False)),
+            raw: None,
+            config: None,
+            // fn new(verbose: u8, quiet: u8) -> Self
+            internal_verbose: InternalVerbosity::new(0, 0),
+            verbose: Verbosity::new(2, 0),
+        };
+        let result = format!("{}", cli);
+        println!("\n{}", result);
+        assert_eq!(result, "ls -vv");
+    }
+    #[test]
+    fn config_file() {
+        // Define a cli struct
+        let cli = Cli {
+            commands: Commands::PostCommands(PostCommands::Ls(DisplayCommands {
+                json: false,
+                name: None,
+                color: None,
+            })),
+            attach: Some(String::from(&Attach::False)),
+            raw: None,
+            config: Some("test.pipelight.ts".to_owned()),
+            // fn new(verbose: u8, quiet: u8) -> Self
+            internal_verbose: InternalVerbosity::new(0, 0),
+            verbose: Verbosity::new(0, 0),
+        };
+        let result = format!("{}", cli);
+        println!("\n{}", result);
+        assert_eq!(result, "ls --config test.pipelight.ts");
+    }
+    #[test]
+    fn deno_args() {
+        // Define a cli struct
+        let cli = Cli {
+            commands: Commands::PostCommands(PostCommands::Ls(DisplayCommands {
+                json: false,
+                name: None,
+                color: None,
+            })),
+            attach: Some(String::from(&Attach::False)),
+            raw: Some(vec!["--host".to_owned(), "linode".to_owned()]),
+            config: None,
+            // fn new(verbose: u8, quiet: u8) -> Self
+            internal_verbose: InternalVerbosity::new(0, 0),
+            verbose: Verbosity::new(0, 0),
+        };
+        let result = format!("{}", cli);
+        println!("\n{}", result);
+        assert_eq!(result, "ls -- --host linode");
+    }
 }

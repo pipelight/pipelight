@@ -1,15 +1,14 @@
+// Traits implementation
+pub mod display;
+pub mod from_string;
+
 // Clap - command line lib
 use clap::{Parser, Subcommand, ValueHint};
 // Verbosity
-pub use crate::verbosity::external::Verbosity;
-pub use crate::verbosity::internal::InternalVerbosity;
+pub mod verbosity;
+pub use verbosity::{InternalVerbosity, Verbosity};
 // Serde
 use serde::{Deserialize, Serialize};
-// Struct
-mod post;
-mod pre;
-pub use post::*;
-pub use pre::*;
 
 /*
 The Cli struct is the entrypoint for command line argument parsing:
@@ -51,6 +50,22 @@ pub struct Cli {
     #[arg(global = true, last = true, allow_hyphen_values = true)]
     pub raw: Option<Vec<String>>,
 }
+impl Default for Cli {
+    fn default() -> Self {
+        Cli {
+            commands: Commands::PostCommands(PostCommands::Ls(DisplayCommands {
+                json: false,
+                name: None,
+                color: None,
+            })),
+            raw: None,
+            config: None,
+            verbose: Verbosity::new(0, 0),
+            internal_verbose: InternalVerbosity::new(0, 0),
+            attach: None,
+        }
+    }
+}
 
 /*
 Why this and not a simple boolean?
@@ -80,4 +95,172 @@ pub enum Commands {
     PreCommands(PreCommands),
     #[clap(flatten)]
     PostCommands(PostCommands),
+}
+
+/*
+Commands that does not need the config to be found and loaded.
+Leads to fastest execution time.
+*/
+#[derive(Debug, Clone, Eq, PartialEq, Subcommand)]
+pub enum PreCommands {
+    /// Generate autocompletion script for most used shells (bash/zsh/fish)
+    #[command(hide = true)]
+    Completion(Shell),
+    /// Create a `pipelight` config template file
+    Init(Init),
+    // Enable pipelight git hooks.
+    #[command(arg_required_else_help = true)]
+    Enable(Toggle),
+
+    #[command(arg_required_else_help = true)]
+    Disable(Toggle),
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+#[command(args_conflicts_with_subcommands = true)]
+pub struct Toggle {
+    #[command(subcommand)]
+    pub commands: Option<ToggleCommands>,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Parser, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ToggleCommands {
+    /// Git hooks toggle
+    GitHooks,
+    /// Watcher toggle
+    Watcher,
+}
+
+/**
+Arguments for initial config file template creation.
+*/
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+pub struct Init {
+    /// The template style
+    #[arg(long)]
+    pub template: Option<String>,
+    /// The output file path
+    #[arg(long)]
+    pub file: Option<String>,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+pub struct Shell {
+    /// The shell name
+    #[arg(long, ignore_case = true)]
+    pub name: String,
+}
+
+/*
+Commands that need the config file to be found and loaded
+Leads to a slowest execution time
+*/
+#[derive(Debug, Clone, Eq, PartialEq, Subcommand)]
+pub enum PostCommands {
+    #[clap(flatten)]
+    DetachableCommands(DetachableCommands),
+    /// Stop the pipeline execution and its every child processes
+    Stop(Pipeline),
+    /// Display pipelines logs
+    Logs(Logs),
+    /// List available pipelines with a few more useful informations
+    Ls(DisplayCommands),
+    /// Displays pipelines with the maximum verbosity level (interactive)
+    Inspect(DisplayCommands),
+}
+
+/*
+Commands that can be run in background
+*/
+#[derive(Debug, Clone, Eq, PartialEq, Subcommand)]
+pub enum DetachableCommands {
+    /// Run a pipeline (interactive)
+    Run(Pipeline),
+    /// Manualy trigger pipelines
+    Trigger(Trigger),
+    /// Launch a watcher on the working directory (debugging)
+    #[command(hide = true)]
+    Watch,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+#[command(args_conflicts_with_subcommands = true)]
+pub struct Watch {
+    // #[command(flatten)]
+    // pub toggle: Option<Toggle>,
+}
+
+/**
+Argument for pipeline execution.
+- name: pipeline name,
+- trigger: multiple triggering environment arguments.
+*/
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+pub struct Pipeline {
+    /// The pipeline name
+    pub name: Option<String>,
+    #[command(flatten)]
+    pub trigger: Trigger,
+}
+impl Default for Pipeline {
+    fn default() -> Self {
+        Pipeline {
+            name: Some("default".to_owned()),
+            trigger: Trigger {
+                flag: Some("blank".to_owned()),
+            },
+        }
+    }
+}
+
+/**
+Arguments to set/modify the triggering environment.
+*/
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+pub struct Trigger {
+    /// Manualy set a flag/action to bypass environment computation.
+    #[arg(long, ignore_case = true)]
+    pub flag: Option<String>,
+}
+/**
+Arguments to query logs.
+*/
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+#[command(args_conflicts_with_subcommands = true)]
+pub struct Logs {
+    #[command(subcommand)]
+    pub commands: Option<LogsCommands>,
+
+    /// Display logs in json format
+    #[command(flatten)]
+    pub display: DisplayCommands,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+pub enum LogsCommands {
+    /// Clear logs
+    Rm,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Parser)]
+pub struct DisplayCommands {
+    /// The pipeline name
+    pub name: Option<String>,
+
+    /// Display logs in json format
+    #[arg(long)]
+    pub json: bool,
+
+    /// Ignore the environment and enforce/disable colored output
+    #[arg(long)]
+    pub color: Option<String>,
+}
+
+#[derive(Debug, Clone, Eq, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "kebab-case")]
+pub enum ColoredOutput {
+    Always,
+    Auto,
+    Never,
 }

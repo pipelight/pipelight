@@ -82,7 +82,6 @@ impl Process {
                 duration: Some(duration),
                 status: Some(Status::from(&output)),
             };
-
             if self.config.fs {
                 self.io.read()?;
                 // self.io.clean()?;

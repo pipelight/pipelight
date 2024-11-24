@@ -5,7 +5,7 @@ use pipelight_exec::Status;
 use workflow::{Config, Getters, Node, Pipeline};
 // Globals
 use crate::globals::CLI;
-use crate::verbosity::external::{level_value, Verbosity};
+use crate::types::verbosity::{level_value, Verbosity};
 use log::LevelFilter;
 use pipelight_utils::globals::LOGGER;
 // Traits

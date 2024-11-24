@@ -12,6 +12,7 @@ use workflow::{Config, Trigger};
 use cli::types::Cli;
 use cli::types::{Commands, DetachableCommands, PostCommands};
 // Error Handling
+use env_logger::Builder;
 use log::{info, trace};
 use miette::Result;
 
@@ -31,6 +32,9 @@ pub fn early_hydrate_logger() -> Result<()> {
     // Set internal verbosity level
     let verbosity = args.internal_verbose.log_level_filter();
     LOGGER.lock().unwrap().set_internal_level(&verbosity)?;
+    std::env::set_var("PIPELIGHT_LOG", verbosity.to_string().to_lowercase());
+    Builder::from_env("PIPELIGHT_LOG").init();
+
     Ok(())
 }
 // Hydrate logs
@@ -66,7 +70,6 @@ pub fn hydrate_trigger() -> Result<()> {
 
 // Hydrate portal
 pub fn hydrate_portal() -> Result<()> {
-    trace!("hydrate portal");
     let args = CLI.lock().unwrap().clone();
 
     let seed = if args.config.is_some() {
@@ -81,7 +84,7 @@ pub fn hydrate_portal() -> Result<()> {
     match res {
         Ok(portal) => {
             info!(
-                "Found config file at: {}",
+                "Load config file -> {}",
                 portal.target.file_path.clone().unwrap()
             );
             *PORTAL.lock().unwrap() = portal;
@@ -102,7 +105,6 @@ pub fn hydrate_portal() -> Result<()> {
 
 // Hydrate config
 pub fn hydrate_config() -> Result<()> {
-    trace!("hydrate config");
     let portal = PORTAL.lock().unwrap().clone();
     let args = CLI.lock().unwrap().clone();
 
@@ -118,7 +120,6 @@ Read the command line and the config file
 then hydrate every globals.
 */
 pub fn set_globals() -> Result<()> {
-    trace!("Set globals [full]");
     let cond = *CONFIG.lock().unwrap() == Config::default()
         && *PORTAL.lock().unwrap() == Portal::default();
     if cond {
@@ -141,7 +142,6 @@ Only read the command line and ignore the config file
 then hydrate globals that can be hydrated.
 */
 pub fn set_early_globals() -> Result<()> {
-    trace!("Set globals [early]");
     let cond = *CONFIG.lock().unwrap() == Config::default()
         && *PORTAL.lock().unwrap() == Portal::default();
     if cond {

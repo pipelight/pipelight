@@ -35,7 +35,7 @@ impl Logs {
 // Basic getters
 impl Getters<Pipeline> for Logs {
     fn get() -> Result<Vec<Pipeline>> {
-        let logs = Logs::new().hydrate()?.sanitize()?;
+        let logs = Logs::default().hydrate()?.sanitize()?;
         match logs.pipelines {
             Some(mut pipelines) => {
                 pipelines = Filters::sort_by_date_asc(pipelines)?;

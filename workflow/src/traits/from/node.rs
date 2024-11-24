@@ -289,21 +289,21 @@ impl From<&Command> for Node {
                 status: e.get_status(),
                 children: None,
                 level: LevelFilter::Debug,
-                ..Node::new()
+                ..Node::default()
             };
             let stdout = Node {
                 value: Some(stdout),
                 status: e.get_status(),
                 children: None,
                 level: LevelFilter::Trace,
-                ..Node::new()
+                ..Node::default()
             };
             let stderr = Node {
                 value: Some(stderr),
                 status: e.get_status(),
                 children: None,
                 level: LevelFilter::Trace,
-                ..Node::new()
+                ..Node::default()
             };
             if LOGGER.lock().unwrap().pipelines.level == LevelFilter::Debug {
                 node.children = Some(vec![out]);

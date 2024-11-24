@@ -10,8 +10,8 @@ use miette::{Error, IntoDiagnostic, Result};
 use pipelight_utils::signal::restore_term;
 
 /**
-Displays a selet prompt of available pipelines
-and return the selected string
+* Displays a select prompt of available pipelines
+* and return the selected string
 */
 pub fn pipeline() -> Result<String> {
     restore_term()?;
@@ -41,8 +41,8 @@ pub fn pipeline() -> Result<String> {
 }
 
 /**
-Displays a selet prompt of running pipelines
-and return the selected string
+* Displays a select prompt of running pipelines
+* and return the selected string
 */
 pub fn running_pipeline() -> Result<String> {
     restore_term()?;

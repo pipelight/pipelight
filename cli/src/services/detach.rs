@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 // Globals
 use crate::globals::CLI;
 // Error Handling
-use log::trace;
+use log::{info, trace};
 use miette::Result;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
@@ -60,14 +60,18 @@ impl FgBg for Service {
             if args == origin {
                 self.exec()?;
             } else {
-                PipelightBin::args(&String::from(&args)).run()?;
+                let cmd = String::from(&args);
+                info!("Running attached subprocess -> pipelight {}", cmd);
+                PipelightBin::args(&cmd).term().run()?;
             }
         }
         Ok(())
     }
     fn detach(&self) -> Result<()> {
         if let Some(args) = self.args.clone() {
-            PipelightBin::args(&String::from(&args))
+            let cmd = String::from(&args);
+            info!("Running detached subprocess -> pipelight {}", cmd);
+            PipelightBin::args(&cmd)
                 .term()
                 .background()
                 .detach()
@@ -81,11 +85,9 @@ impl FgBg for Service {
             if let Some(attach) = args.attach {
                 match Attach::from(&attach) {
                     Attach::True => {
-                        trace!("Subprocess is attached");
                         self.attach()?;
                     }
                     Attach::False => {
-                        trace!("Subprocess is detached");
                         // Exit the detach loop
                         if let Some(e) = self.args.as_mut() {
                             e.attach = Some(String::from(&Attach::True));

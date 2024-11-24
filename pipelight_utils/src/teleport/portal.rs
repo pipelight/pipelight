@@ -21,13 +21,13 @@ impl Portal {
     pub fn teleport(&mut self) -> Result<Self, PipelightError> {
         let target = self.target.directory_path.clone().unwrap();
         env::set_current_dir(target.clone())?;
-        info!("working directory changed to -> {:#?}", &target);
+        info!("Working directory changed to -> {:#?}", &target);
         Ok(self.to_owned())
     }
     pub fn origin(&mut self) -> Result<Self, PipelightError> {
         let target = self.origin.directory_path.clone().unwrap();
         env::set_current_dir(target.clone())?;
-        info!("working directory changed to -> {:#?}", &target);
+        info!("Working directory changed to -> {:#?}", &target);
         Ok(self.to_owned())
     }
     /*
@@ -102,7 +102,6 @@ impl Portal {
         }
     }
     pub fn search_file(&mut self) -> Result<(), PipelightError> {
-        trace!("search file");
         // SafeGuard
         if self.seed.is_some() {
             let name = self.seed.clone().unwrap();
@@ -130,7 +129,6 @@ impl Portal {
         Ok(())
     }
     pub fn search_path(&mut self) -> Result<(), PipelightError> {
-        trace!("search path");
         let path_str = self.seed.clone();
         if let Some(mut path_str) = path_str {
             let mut path = Path::new(&path_str);
@@ -162,7 +160,6 @@ impl Portal {
         }
     }
     pub fn search_prefix(&mut self) -> Result<()> {
-        trace!("search prefix");
         let seed = self.seed.clone();
 
         let mut exists = false;

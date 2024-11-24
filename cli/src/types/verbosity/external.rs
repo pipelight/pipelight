@@ -2,9 +2,8 @@
 // Checkout documentation at: https://docs.rs/clap-verbosity-flag/latest/clap_verbosity_flag/
 // Author: https://github.com/killercup
 
+use super::{level_enum, level_value, ErrorLevel, LogLevel};
 use clap;
-pub use log::Level;
-pub use log::LevelFilter;
 
 #[derive(clap::Args, Debug, Clone, PartialEq)]
 pub struct Verbosity<L: LogLevel = ErrorLevel> {
@@ -67,80 +66,11 @@ impl<L: LogLevel> Verbosity<L> {
     }
 }
 
-pub fn level_value(level: Option<log::Level>) -> i8 {
-    match level {
-        None => -1,
-        Some(log::Level::Error) => 0,
-        Some(log::Level::Warn) => 1,
-        Some(log::Level::Info) => 2,
-        Some(log::Level::Debug) => 3,
-        Some(log::Level::Trace) => 4,
-    }
-}
-
-fn level_enum(verbosity: i8) -> Option<log::Level> {
-    match verbosity {
-        std::i8::MIN..=-1 => None,
-        0 => Some(log::Level::Error),
-        1 => Some(log::Level::Warn),
-        2 => Some(log::Level::Info),
-        3 => Some(log::Level::Debug),
-        4..=std::i8::MAX => Some(log::Level::Trace),
-    }
-}
-
 use std::fmt;
 
 impl<L: LogLevel> fmt::Display for Verbosity<L> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.verbosity())
-    }
-}
-
-pub trait LogLevel {
-    fn default() -> Option<log::Level>;
-
-    fn verbose_help() -> Option<&'static str> {
-        Some("More output per occurrence")
-    }
-
-    fn verbose_long_help() -> Option<&'static str> {
-        None
-    }
-
-    fn quiet_help() -> Option<&'static str> {
-        Some("Less output per occurrence")
-    }
-
-    fn quiet_long_help() -> Option<&'static str> {
-        None
-    }
-}
-
-#[derive(Copy, Clone, Debug, Default, PartialEq)]
-pub struct ErrorLevel;
-
-impl LogLevel for ErrorLevel {
-    fn default() -> Option<log::Level> {
-        Some(log::Level::Error)
-    }
-}
-
-#[derive(Copy, Clone, Debug, Default, PartialEq)]
-pub struct WarnLevel;
-
-impl LogLevel for WarnLevel {
-    fn default() -> Option<log::Level> {
-        Some(log::Level::Warn)
-    }
-}
-
-#[derive(Copy, Clone, Debug, Default, PartialEq)]
-pub struct InfoLevel;
-
-impl LogLevel for InfoLevel {
-    fn default() -> Option<log::Level> {
-        Some(log::Level::Info)
     }
 }
 

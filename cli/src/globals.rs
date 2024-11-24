@@ -4,4 +4,4 @@ use std::sync::{Arc, Mutex};
 // Struct
 use crate::types::Cli;
 
-pub static CLI: Lazy<Arc<Mutex<Cli>>> = Lazy::new(|| Arc::new(Mutex::new(Cli::new())));
+pub static CLI: Lazy<Arc<Mutex<Cli>>> = Lazy::new(|| Arc::new(Mutex::new(Cli::default())));
