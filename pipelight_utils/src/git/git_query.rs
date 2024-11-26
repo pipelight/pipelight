@@ -29,19 +29,30 @@ impl Git {
     Returns the tag if the head is a tag or if the latest commit is a tag
     */
     pub fn get_tag(&self) -> Result<String> {
-        let repo = self.repo.as_ref().unwrap();
-        let mut head = repo.head().into_diagnostic()?;
-        if head
-            .peel_to_object_in_place()
-            .into_diagnostic()?
-            .kind
-            .is_tag()
-        {
-            let tag = head.name().as_bstr().to_string();
-            Ok(tag)
-        } else {
-            Err(Error::msg("The current HEAD is not a tag"))
-        }
+        // let repo = self.repo.as_ref().unwrap();
+        // let head = repo
+        //     .head_ref()
+        //     .into_diagnostic()?
+        //     .unwrap()
+        //     .follow_to_object()
+        //     .into_diagnostic()?
+        //     .object()
+        //     .into_diagnostic()?
+        //     .to_tag_ref()
+        //     .name
+        //     .to_string();
+        // Ok(head)
+        // if let Some(mut head) = head {
+        // match head.to_tag_ref() {
+        //     Ok(x) => return Ok(x.decode().into_diagnostic()?.name.to_string()),
+        //     Err(e) => {
+        //         return Err(Error::msg("The current HEAD is not a tag"));
+        //     }
+        // };
+        // } else {
+        //     Err(Error::msg("Repo is in detached HEAD state"))
+        // }
+        Ok("null".to_string())
     }
     /**
     Returns the latest commit or the checkout commit
