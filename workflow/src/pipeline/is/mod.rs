@@ -103,7 +103,7 @@ impl Pipeline {
             Err(IsError::new(&message, &hint)?.into())
         }
     }
-    
+
     /**
     Check if the pipeline can be triggered in the actual environment
     */

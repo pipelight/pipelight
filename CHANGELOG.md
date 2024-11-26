@@ -1,0 +1,273 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [0.9.10] - 2024-11-26
+
+### 🚜 Refactor
+
+- Move concerns into big crate
+
+## [0.9.8] - 2024-11-24
+
+### 🐛 Bug Fixes
+
+- Logs tree view missing newline when displaying a running command
+
+## [0.9.7] - 2024-11-24
+
+### 🐛 Bug Fixes
+
+- 'logs rm' does not remove content in .pipelight/proc
+
+## [0.9.6] - 2024-11-24
+
+### 🐛 Bug Fixes
+
+- Release build error
+- Cli/src/test/mod.rs test code could not find `types` in `services`
+
+## [0.9.4] - 2024-11-23
+
+### 🐛 Bug Fixes
+
+- Bad logging due to mutex lock. reversed code to unsafe.
+
+## [0.9.1] - 2024-10-23
+
+### 🐛 Bug Fixes
+
+- Cmd line bad parsing
+
+## [0.8.2] - 2024-09-28
+
+### 🐛 Bug Fixes
+
+- *(flake)* Install autocompletion scripts
+- *(nix)* Import missing function
+- *(install)* Nix buildInputs for darwin (by EleHeHijEl)
+- *(kdl)* Silence kdl support
+- *(git)* Hide teleport behind git feature
+- *(deps)* Set static version
+
+### 🚜 Refactor
+
+- *(versioning)* Update version number to minor
+- *(watcher)* Simpler functions. remove self reconfiguration
+- *(proc management)* Filter by gid
+- *(exec)* Simple proc finder
+- *(kdl)* Silence kdl support
+- *(utils)* Hide git behind feature flag
+- *(files)* Move file parsing functions into its own crate
+- *(crate)* Add error specific crate
+- *(utils)* Add back small file manipulation func to utils
+
+### 📚 Documentation
+
+- *(exec)* Ashamed of this tmp fix
+- *(test)* Fix some doc test
+
+### Hotfix
+
+- *(process_kill)* Watcher specific function
+
+## [0.8.0] - 2024-08-19
+
+### 🐛 Bug Fixes
+
+- *(deps)* Pipelight_utils to fix version number
+- *(finder)* Split logic into readable functions
+
+### 🚜 Refactor
+
+- *(lib)* Update exec crate to lib
+
+### 📚 Documentation
+
+- *(crate.io)* Update main page
+
+## [0.7.27] - 2024-08-04
+
+### 🚀 Features
+
+- *(md)* Add config lang examples to readme
+- *(exit_code)* Add exit code on attached pipeline
+
+### 🐛 Bug Fixes
+
+- *(print)* Remove print statement
+
+### 📚 Documentation
+
+- *(main)* Add top level doc
+- *(utils)* Add warnings about API not stable
+
+## [0.7.26] - 2024-07-28
+
+### 🐛 Bug Fixes
+
+- *(template)* Hcl replace block with array
+
+### Remove
+
+- *(nix)* Deprec nix funct
+
+## [0.7.25] - 2024-07-28
+
+### 🚀 Features
+
+- *(lib)* Add general error enum
+- *(error)* Add lib specific err enum
+- *(roadmap)* Add a roadmap to the README
+- *(parser)* Add hcl error wrapper
+- *(hcl)* Add test files
+- *(hcl)* Add hcl template
+- *(test)* Add hcl support tests
+
+### 🐛 Bug Fixes
+
+- *(crate)* Specify lib and bin target
+- *(cargo)* Lib name
+- *(cargo)* Update deps to latest
+- *(html)* Close tag
+- *(readme)* Set gif width in px
+- *(policy)* Circumvent github restrictions
+
+### 🚜 Refactor
+
+- *(crate)* Set available crate name for crate.io publication
+- *(cargo)* Entry point for bin target and lib
+- *(cargo)* Implicit targets
+- *(crate)* Rename entrypoints
+- *(crate)* Rename core crate
+- *(crate)* Rollback names
+- *(lib)* Add a specific lib entrypoint
+- *(exec crate)* Move exec crate into utils
+- *(utils)* Mv general file related func to utils crate
+
+## [0.7.22] - 2024-03-21
+
+### 🚀 Features
+
+- *(config)* Config overrides cli args
+
+### 🐛 Bug Fixes
+
+- *(watcher)* Do not kill parent process
+
+### 🚜 Refactor
+
+- *(options)* Read config before detaching Service.Run
+
+### Hotfix
+
+- Watcher refuse to launch
+
+### New
+
+- Pipelight watcher doesn't need an ignore file
+
+## [0.7.16] - 2023-12-12
+
+### 🚜 Refactor
+
+- Simpler readme
+
+## [0.7.15] - 2023-12-02
+
+### 🐛 Bug Fixes
+
+- Set `run -vvv` verbose command line argument  priority over config flag
+
+## [0.7.14] - 2023-12-01
+
+### 🐛 Bug Fixes
+
+- There was a mistake in the shell script
+
+## [0.7.8] - 2023-11-10
+
+### Add
+
+- Baked new error color theme
+
+## [0.7.4] - 2023-10-20
+
+### Lint
+
+- Cargo clippy
+
+## [0.7.0] - 2023-10-20
+
+### 🚀 Features
+
+- Add prebuild config template generation
+
+### 🐛 Bug Fixes
+
+- Better clap arguments
+
+### 🚜 Refactor
+
+- Clear top command groups
+- Splitted big crates in sub crates
+- Stability increase. static mut to lazy mutex
+- Move process management to exec crate
+- Drop watchexec comfy API usage for tokio
+
+### 📚 Documentation
+
+- Add functions description
+
+### 🧪 Testing
+
+- Add config global assertion test
+
+### Add
+
+- Sigkill every processes
+
+### Readd
+
+- Human readable duration
+
+## [0.6.15] - 2023-08-25
+
+### 🚜 Refactor
+
+- Syntax changes do yo cargo clippy
+
+## [0.6.12] - 2023-08-07
+
+### Change
+
+- Prinnt branch before action in pretty logs
+
+## [0.5.10] - 2023-07-04
+
+### 🚜 Refactor
+
+- New child process execution paradigm
+- Use readable re export pattern
+- Simpler module types and trait exports
+
+### Add
+
+- Log -vvvv, trace flag for log pretty stdout/stderr
+
+## [0.4.24] - 2023-03-21
+
+### 🚀 Features
+
+- Abort pipeline execution
+
+### Bug
+
+- Indent level
+
+### Update
+
+- Pipeline tree printing limited recursive model
+- Set logger to arc mutex
+
+<!-- generated by git-cliff -->

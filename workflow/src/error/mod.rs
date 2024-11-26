@@ -1,5 +1,5 @@
 // Error Handling
-use miette::{MietteDiagnostic,  Result};
+use miette::{MietteDiagnostic, Result};
 
 /**
 A json report type with hint, colors and code span for better pipeline debugging

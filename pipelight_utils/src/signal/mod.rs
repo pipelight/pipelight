@@ -30,7 +30,9 @@ if process is stopped in the middle of a dialogue with Ctrl^C
 */
 pub fn restore_term() -> Result<()> {
     thread::spawn(|| {
-        let mut signals = SignalsInfo::<WithOrigin>::new(&*TERM_SIGNALS).into_diagnostic().unwrap();
+        let mut signals = SignalsInfo::<WithOrigin>::new(&*TERM_SIGNALS)
+            .into_diagnostic()
+            .unwrap();
 
         for info in &mut signals {
             match info.signal {
