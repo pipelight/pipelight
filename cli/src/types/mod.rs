@@ -18,6 +18,7 @@ let args = Cli::from_arg_matches(&matches)
 
 */
 #[derive(Debug, Clone, Parser, PartialEq)]
+#[clap(version)]
 pub struct Cli {
     /**
     The set of subcommands.
@@ -25,10 +26,8 @@ pub struct Cli {
     #[command(subcommand)]
     pub commands: Commands,
 
-    /**
-    The folowing args are global arguments available
-    for every subcommands.
-    */
+    // The folowing args are global arguments available
+    // for every subcommands.
     /// Set a config file
     #[arg(long, global = true, hide = true, value_name="FILE" ,value_hint = ValueHint::FilePath)]
     pub config: Option<String>,
@@ -38,15 +37,15 @@ pub struct Cli {
     pub attach: Option<String>,
 
     /// Set verbosity level
-    #[clap(flatten)]
     // #[serde(flatten)]
+    #[clap(flatten)]
     pub verbose: Verbosity,
 
-    #[clap(flatten)]
     // #[serde(flatten)]
+    #[clap(flatten)]
     pub internal_verbose: InternalVerbosity,
 
-    /// Pass those arguments to deno
+    /// Pass the following arguments to deno
     #[arg(global = true, last = true, allow_hyphen_values = true)]
     pub raw: Option<Vec<String>>,
 }
@@ -114,9 +113,6 @@ pub enum PreCommands {
 
     #[command(arg_required_else_help = true)]
     Disable(Toggle),
-
-    // Get the executable version number
-    Version,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]
