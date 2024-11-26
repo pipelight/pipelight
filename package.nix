@@ -23,10 +23,7 @@ pkgs.rustPlatform.buildRustPackage rec {
   ];
 
   buildInputs = with pkgs;
-    [
-      openssl
-    ]
-    ++ lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
+    lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
       CoreFoundation
       CoreServices
       IOKit
