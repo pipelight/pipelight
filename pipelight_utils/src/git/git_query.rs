@@ -18,17 +18,18 @@ impl Git {
         // No edge case when head is a commit or else...
         let repo = self.repo.as_ref().unwrap();
         let head = repo.head_ref().into_diagnostic()?;
-        if let Some(head) = head {
-            let name = head.name().shorten().to_string();
-            Ok(name)
-        } else {
-            Err(Error::msg("Repo is in detached HEAD state"))
+        match head {
+            Some(x) => Ok(x.name().shorten().to_string()),
+            None => Err(Error::msg("Repo is in detached HEAD state")),
         }
     }
     /**
     Returns the tag if the head is a tag or if the latest commit is a tag
     */
     pub fn get_tag(&self) -> Result<String> {
+        // iterate over tags. peel latest to commit and see if it matches latest
+        // the
+        //
         // let repo = self.repo.as_ref().unwrap();
         // let head = repo
         //     .head_ref()
@@ -37,22 +38,29 @@ impl Git {
         //     .follow_to_object()
         //     .into_diagnostic()?
         //     .object()
-        //     .into_diagnostic()?
-        //     .to_tag_ref()
-        //     .name
-        //     .to_string();
-        // Ok(head)
+        //     .into_diagnostic()?;
+        // let tag = head.to_tag_ref();
+        // let tag = repo.find_tag(head).into_diagnostic()?;
+        // let name = tag.decode().unwrap().name.to_string();
+        // .object()
+        // .into_diagnostic()?
+        // .to_tag_ref()
+        // .name
+        // .to_string();
+        // let name = tag.name.to_string();
+        // Ok(name)
         // if let Some(mut head) = head {
         // match head.to_tag_ref() {
         //     Ok(x) => return Ok(x.decode().into_diagnostic()?.name.to_string()),
         //     Err(e) => {
-        //         return Err(Error::msg("The current HEAD is not a tag"));
+        // return Err(Error::msg("The current HEAD is not a tag"));
         //     }
         // };
         // } else {
-        //     Err(Error::msg("Repo is in detached HEAD state"))
+        // Err(Error::msg("Repo is in detached HEAD state"))
         // }
-        Ok("null".to_string())
+        // Ok("null".to_string())
+        Err(Error::msg("The current HEAD is not a tag"))
     }
     /**
     Returns the latest commit or the checkout commit
