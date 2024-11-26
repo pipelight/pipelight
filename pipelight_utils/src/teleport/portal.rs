@@ -88,7 +88,7 @@ impl Portal {
                     Git::new()
                         .repo
                         .unwrap()
-                        .workdir()
+                        .work_dir()
                         .unwrap()
                         .to_str()
                         .unwrap()

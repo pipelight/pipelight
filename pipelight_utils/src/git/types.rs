@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 // Trait - Enum iteration workaround
 use strum::EnumIter;
 // Git repository manipulation
-use git2::Repository;
+use gix::Repository;
 
 /**
 Encapsulate the git repository struct to set it as optional
@@ -71,7 +71,9 @@ An enumaration over the different types of special flags(sub-flags)
 that are external to git and involves other triggering methods
 and that can trigger a pipeline run.
 */
-#[derive(Default, Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord, EnumIter)]
+#[derive(
+    Default, Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd, Eq, Ord, EnumIter,
+)]
 #[serde(rename_all = "kebab-case")]
 pub enum Special {
     #[default]

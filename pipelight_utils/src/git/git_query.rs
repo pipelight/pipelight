@@ -18,7 +18,7 @@ impl Git {
         // No edge case when head is a commit or else...
         let repo = self.repo.as_ref().unwrap();
         let head = repo.head().into_diagnostic()?;
-        let name = head.shorthand().unwrap().to_owned();
+        let name = head.name().as_bstr().to_string();
         Ok(name)
     }
     /**
@@ -26,9 +26,14 @@ impl Git {
     */
     pub fn get_tag(&self) -> Result<String> {
         let repo = self.repo.as_ref().unwrap();
-        let head = repo.head().into_diagnostic()?;
-        if head.is_tag() {
-            let tag = head.name().unwrap().to_string();
+        let mut head = repo.head().into_diagnostic()?;
+        if head
+            .peel_to_object_in_place()
+            .into_diagnostic()?
+            .kind
+            .is_tag()
+        {
+            let tag = head.name().as_bstr().to_string();
             Ok(tag)
         } else {
             Err(Error::msg("The current HEAD is not a tag"))
@@ -39,8 +44,12 @@ impl Git {
     */
     pub fn get_commit(&self) -> Result<String> {
         let repo = self.repo.as_ref().unwrap();
-        let head = repo.head().into_diagnostic()?;
-        let commit_id = head.peel_to_commit().into_diagnostic()?.id().to_string();
+        let mut head = repo.head().into_diagnostic()?;
+        let commit_id = head
+            .peel_to_commit_in_place()
+            .into_diagnostic()?
+            .id()
+            .to_string();
         Ok(commit_id)
     }
 }

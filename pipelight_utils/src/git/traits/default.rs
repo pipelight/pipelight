@@ -1,5 +1,4 @@
 // Git
-use git2::Repository;
 // Environment manipulation
 use std::env;
 // Structs
@@ -15,7 +14,7 @@ impl Default for Git {
         let root = env::current_dir().unwrap();
         Git {
             // recursively browse through fs
-            repo: Repository::discover(root).ok(),
+            repo: gix::discover(root).ok(),
         }
     }
 }
