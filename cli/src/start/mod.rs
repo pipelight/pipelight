@@ -39,6 +39,9 @@ impl Commands {
 impl PreCommands {
     pub fn start(&self) -> Result<()> {
         match self {
+            PreCommands::Version => {
+                println!(clap::crate_version!())
+            }
             PreCommands::Completion(shell) => {
                 let shell = Shell::from_str(&shell.name, true);
                 if shell.is_ok() {

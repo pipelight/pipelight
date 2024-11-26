@@ -1,6 +1,6 @@
 [package]
 name = "cli"
-version = "0.4.0"
+version = "0.0.0"
 edition = "2021"
 build = "build.rs"
 
@@ -10,6 +10,7 @@ templates = { path = "../templates" }
 pipelight_utils = { path = "../pipelight_utils" }
 pipelight_exec = { path = "../pipelight_exec" }
 pipelight_watcher = { path = "../pipelight_watcher" }
+pipelight_error = { version = "0.2.10", path = "../pipelight_error" }
 cast = { path = "../cast" }
 chrono = { version = "0.4.38", features = ["serde"] }
 colored = "2.1.0"
@@ -38,6 +39,7 @@ watchexec-signals = "3.0.0"
 watchexec-filterer-ignore = "4.0.1"
 ignore-files = "3.0.1"
 watchexec-supervisor = "2.0.0"
+env_logger = "0.11.5"
 
 [build-dependencies]
 workflow = { path = "../workflow" }
@@ -45,6 +47,7 @@ templates = { path = "../templates" }
 pipelight_utils = { path = "../pipelight_utils" }
 pipelight_exec = { path = "../pipelight_exec" }
 pipelight_watcher = { path = "../pipelight_watcher" }
+pipelight_error = { version = "0.2.10", path = "../pipelight_error" }
 cast = { path = "../cast" }
 chrono = { version = "0.4.38", features = ["serde"] }
 colored = "2.1.0"
@@ -73,3 +76,4 @@ watchexec-signals = "3.0.0"
 watchexec-filterer-ignore = "4.0.1"
 ignore-files = "3.0.1"
 watchexec-supervisor = "2.0.0"
+env_logger = "0.11.5"

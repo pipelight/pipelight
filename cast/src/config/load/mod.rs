@@ -10,6 +10,8 @@ use pipelight_error::{CastError, HclError, JsonError, PipelightError, TomlError,
 use pipelight_utils::FileType;
 use std::path::Path;
 
+use config::{Config as ConfigRs, File, FileFormat};
+
 // Tests
 mod test;
 
@@ -28,6 +30,28 @@ impl Config {
     Languages coming next after v1.0.0:
       - Rust, Hcl, Kcl, Python...
     */
+    pub fn load_new(file_path: &str, args: Option<Vec<String>>) -> Result<()> {
+        let root = "";
+        let builder = ConfigRs::builder()
+            .set_default("pipelight", "1")
+            .into_diagnostic()?
+            .add_source(File::new("pipelight.toml", FileFormat::Toml))
+            .add_source(File::new("pipelight.tml", FileFormat::Toml))
+            .add_source(File::new("pipelight.yaml", FileFormat::Yaml))
+            .add_source(File::new("pipelight.yml", FileFormat::Yaml));
+
+        match builder.build() {
+            Ok(config) => {
+
+                // use your config
+            }
+            Err(e) => {
+                println!("{:#?}", e);
+                // something went wrong
+            }
+        };
+        Ok(())
+    }
     pub fn load(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
         let extension = &Path::new(file_path)
             .extension()
@@ -127,27 +151,7 @@ mod cast {
     use crate::{Config, Logs};
 
     #[test]
-    fn typescript() {
-        // Get file
-        let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        path.push("../examples/pipelight.ts");
-        let path = path.display().to_string();
-
-        let res = Config::load(&path, None);
-        assert!(res.is_ok());
-    }
-    #[test]
-    fn javascript() {
-        // Get file
-        let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        path.push("../examples/pipelight.js");
-        let path = path.display().to_string();
-
-        let res = Config::load(&path, None);
-        assert!(res.is_ok());
-    }
-    #[test]
-    fn toml() {
+    fn toml_configrs() -> Result<()> {
         // Get file
         let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         path.push("../examples/pipelight.toml");
@@ -155,9 +159,44 @@ mod cast {
 
         let res = Config::load(&path, None);
         assert!(res.is_ok());
+        Ok(())
+    }
+
+    #[test]
+    fn typescript() -> Result<()> {
+        // Get file
+        let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        path.push("../examples/pipelight.ts");
+        let path = path.display().to_string();
+
+        let res = Config::load(&path, None);
+        assert!(res.is_ok());
+        Ok(())
     }
     #[test]
-    fn hcl() {
+    fn javascript() -> Result<()> {
+        // Get file
+        let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        path.push("../examples/pipelight.js");
+        let path = path.display().to_string();
+
+        let res = Config::load(&path, None);
+        assert!(res.is_ok());
+        Ok(())
+    }
+    #[test]
+    fn toml() -> Result<()> {
+        // Get file
+        let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        path.push("../examples/pipelight.toml");
+        let path = path.display().to_string();
+
+        let res = Config::load(&path, None);
+        assert!(res.is_ok());
+        Ok(())
+    }
+    #[test]
+    fn hcl() -> Result<()> {
         // Get file
         let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         path.push("../examples/pipelight.hcl");
@@ -165,6 +204,7 @@ mod cast {
 
         let res = Config::load(&path, None);
         assert!(res.is_ok());
+        Ok(())
     }
     // #[test]
     // fn kdl() {
@@ -180,7 +220,7 @@ mod cast {
     //     assert!(res.is_ok());
     // }
     #[test]
-    fn yaml() {
+    fn yaml() -> Result<()> {
         // Get file
         let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         path.push("../examples/pipelight.yaml");
@@ -188,9 +228,10 @@ mod cast {
 
         let res = Config::load(&path, None);
         assert!(res.is_ok());
+        Ok(())
     }
     #[test]
-    fn logs() {
+    fn logs() -> Result<()> {
         // Get file
         let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
         path.push("./public");
@@ -198,5 +239,6 @@ mod cast {
 
         let res = Logs::read(&path);
         assert!(res.is_ok());
+        Ok(())
     }
 }

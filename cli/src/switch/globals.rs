@@ -9,15 +9,15 @@ use pipelight_utils::teleport::Portal;
 // Logs
 use workflow::{Config, Trigger};
 // Cli
-use cli::types::Cli;
-use cli::types::{Commands, DetachableCommands, PostCommands};
+use crate::types::Cli;
+use crate::types::{Commands, DetachableCommands, PostCommands};
 // Error Handling
 use env_logger::Builder;
 use log::{info, trace};
 use miette::Result;
 
 // Global vars
-use cli::globals::CLI;
+use crate::globals::CLI;
 use pipelight_utils::globals::LOGGER;
 use workflow::globals::CONFIG;
 

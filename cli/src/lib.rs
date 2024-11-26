@@ -7,6 +7,7 @@ pub mod actions;
 mod builder;
 pub mod globals;
 pub mod services;
+pub mod switch;
 
 pub mod types;
 pub use types::*;

@@ -7,9 +7,8 @@
 use std::{process::ExitCode, u8};
 
 // Structs
-use cli::EXIT_CODE;
+use cli::{switch::Switch, EXIT_CODE};
 use owo_colors::Style;
-use switch::Switch;
 // Error Handling
 use log::trace;
 use miette::{GraphicalTheme, MietteHandlerOpts, Result, RgbColors, ThemeStyles};

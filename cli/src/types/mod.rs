@@ -114,6 +114,9 @@ pub enum PreCommands {
 
     #[command(arg_required_else_help = true)]
     Disable(Toggle),
+
+    // Get the executable version number
+    Version,
 }
 
 #[derive(Debug, Clone, Eq, PartialEq, Parser)]

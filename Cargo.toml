@@ -22,8 +22,8 @@ members = [
   ## Core crates with interdependencies
   "workflow",
   "cli",
-  "switch",
 
   ## Bin package and Lib entrypoint
-  "pipelight", "man",
+  "pipelight",
+  "man",
 ]

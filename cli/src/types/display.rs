@@ -48,6 +48,7 @@ impl fmt::Display for Commands {
                 PreCommands::Completion(shell) => format!("completion{}", shell),
                 PreCommands::Enable(toggle) => format!("enable{}", toggle),
                 PreCommands::Disable(toggle) => format!("disable{}", toggle),
+                PreCommands::Version => "version".to_owned(),
             },
             Commands::PostCommands(post_commands) => match post_commands {
                 PostCommands::DetachableCommands(detachable_command) => match detachable_command {

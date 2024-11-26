@@ -1,10 +1,10 @@
 // Structs
-use cli::types::{Commands, PreCommands};
+use crate::types::{Commands, PreCommands};
 // Error Handling
 use miette::Result;
 // Global vars
-use crate::globals::{set_early_globals, set_globals};
-use cli::globals::CLI;
+use super::globals::{set_early_globals, set_globals};
+use crate::globals::CLI;
 
 pub struct Switch;
 impl Switch {
