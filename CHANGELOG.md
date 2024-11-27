@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.10.0]
+
+### Add
+
+- _(doc)_ Breaking changes warning
+
 ## [0.9.12] - 2024-11-27
 
 ### 🐛 Bug Fixes
@@ -18,11 +24,11 @@ All notable changes to this project will be documented in this file.
 
 ### 🚀 Features
 
-- *(doc)* Git-cliff usage for automated changelog
+- _(doc)_ Git-cliff usage for automated changelog
 
 ### 🐛 Bug Fixes
 
-- *(git)* Get branch name
+- _(git)_ Get branch name
 
 ### Hot-fix
 
@@ -69,121 +75,121 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes
 
-- *(flake)* Install autocompletion scripts
-- *(nix)* Import missing function
-- *(install)* Nix buildInputs for darwin (by EleHeHijEl)
-- *(kdl)* Silence kdl support
-- *(git)* Hide teleport behind git feature
-- *(deps)* Set static version
+- _(flake)_ Install autocompletion scripts
+- _(nix)_ Import missing function
+- _(install)_ Nix buildInputs for darwin (by EleHeHijEl)
+- _(kdl)_ Silence kdl support
+- _(git)_ Hide teleport behind git feature
+- _(deps)_ Set static version
 
 ### 🚜 Refactor
 
-- *(versioning)* Update version number to minor
-- *(watcher)* Simpler functions. remove self reconfiguration
-- *(proc management)* Filter by gid
-- *(exec)* Simple proc finder
-- *(kdl)* Silence kdl support
-- *(utils)* Hide git behind feature flag
-- *(files)* Move file parsing functions into its own crate
-- *(crate)* Add error specific crate
-- *(utils)* Add back small file manipulation func to utils
+- _(versioning)_ Update version number to minor
+- _(watcher)_ Simpler functions. remove self reconfiguration
+- _(proc management)_ Filter by gid
+- _(exec)_ Simple proc finder
+- _(kdl)_ Silence kdl support
+- _(utils)_ Hide git behind feature flag
+- _(files)_ Move file parsing functions into its own crate
+- _(crate)_ Add error specific crate
+- _(utils)_ Add back small file manipulation func to utils
 
 ### 📚 Documentation
 
-- *(exec)* Ashamed of this tmp fix
-- *(test)* Fix some doc test
+- _(exec)_ Ashamed of this tmp fix
+- _(test)_ Fix some doc test
 
 ### Hotfix
 
-- *(process_kill)* Watcher specific function
+- _(process_kill)_ Watcher specific function
 
 ## [0.8.0] - 2024-08-19
 
 ### 🐛 Bug Fixes
 
-- *(deps)* Pipelight_utils to fix version number
-- *(finder)* Split logic into readable functions
+- _(deps)_ Pipelight_utils to fix version number
+- _(finder)_ Split logic into readable functions
 
 ### 🚜 Refactor
 
-- *(lib)* Update exec crate to lib
+- _(lib)_ Update exec crate to lib
 
 ### 📚 Documentation
 
-- *(crate.io)* Update main page
+- _(crate.io)_ Update main page
 
 ## [0.7.27] - 2024-08-04
 
 ### 🚀 Features
 
-- *(md)* Add config lang examples to readme
-- *(exit_code)* Add exit code on attached pipeline
+- _(md)_ Add config lang examples to readme
+- _(exit_code)_ Add exit code on attached pipeline
 
 ### 🐛 Bug Fixes
 
-- *(print)* Remove print statement
+- _(print)_ Remove print statement
 
 ### 📚 Documentation
 
-- *(main)* Add top level doc
-- *(utils)* Add warnings about API not stable
+- _(main)_ Add top level doc
+- _(utils)_ Add warnings about API not stable
 
 ## [0.7.26] - 2024-07-28
 
 ### 🐛 Bug Fixes
 
-- *(template)* Hcl replace block with array
+- _(template)_ Hcl replace block with array
 
 ### Remove
 
-- *(nix)* Deprec nix funct
+- _(nix)_ Deprec nix funct
 
 ## [0.7.25] - 2024-07-28
 
 ### 🚀 Features
 
-- *(lib)* Add general error enum
-- *(error)* Add lib specific err enum
-- *(roadmap)* Add a roadmap to the README
-- *(parser)* Add hcl error wrapper
-- *(hcl)* Add test files
-- *(hcl)* Add hcl template
-- *(test)* Add hcl support tests
+- _(lib)_ Add general error enum
+- _(error)_ Add lib specific err enum
+- _(roadmap)_ Add a roadmap to the README
+- _(parser)_ Add hcl error wrapper
+- _(hcl)_ Add test files
+- _(hcl)_ Add hcl template
+- _(test)_ Add hcl support tests
 
 ### 🐛 Bug Fixes
 
-- *(crate)* Specify lib and bin target
-- *(cargo)* Lib name
-- *(cargo)* Update deps to latest
-- *(html)* Close tag
-- *(readme)* Set gif width in px
-- *(policy)* Circumvent github restrictions
+- _(crate)_ Specify lib and bin target
+- _(cargo)_ Lib name
+- _(cargo)_ Update deps to latest
+- _(html)_ Close tag
+- _(readme)_ Set gif width in px
+- _(policy)_ Circumvent github restrictions
 
 ### 🚜 Refactor
 
-- *(crate)* Set available crate name for crate.io publication
-- *(cargo)* Entry point for bin target and lib
-- *(cargo)* Implicit targets
-- *(crate)* Rename entrypoints
-- *(crate)* Rename core crate
-- *(crate)* Rollback names
-- *(lib)* Add a specific lib entrypoint
-- *(exec crate)* Move exec crate into utils
-- *(utils)* Mv general file related func to utils crate
+- _(crate)_ Set available crate name for crate.io publication
+- _(cargo)_ Entry point for bin target and lib
+- _(cargo)_ Implicit targets
+- _(crate)_ Rename entrypoints
+- _(crate)_ Rename core crate
+- _(crate)_ Rollback names
+- _(lib)_ Add a specific lib entrypoint
+- _(exec crate)_ Move exec crate into utils
+- _(utils)_ Mv general file related func to utils crate
 
 ## [0.7.22] - 2024-03-21
 
 ### 🚀 Features
 
-- *(config)* Config overrides cli args
+- _(config)_ Config overrides cli args
 
 ### 🐛 Bug Fixes
 
-- *(watcher)* Do not kill parent process
+- _(watcher)_ Do not kill parent process
 
 ### 🚜 Refactor
 
-- *(options)* Read config before detaching Service.Run
+- _(options)_ Read config before detaching Service.Run
 
 ### Hotfix
 
@@ -203,7 +209,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🐛 Bug Fixes
 
-- Set `run -vvv` verbose command line argument  priority over config flag
+- Set `run -vvv` verbose command line argument priority over config flag
 
 ## [0.7.14] - 2023-12-01
 
