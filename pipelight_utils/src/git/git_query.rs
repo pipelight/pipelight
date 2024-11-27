@@ -5,14 +5,14 @@ use miette::{Error, IntoDiagnostic, Result};
 
 impl Git {
     /**
-    Returns a boolean, whether a repository exists or not.
-    */
+     * Returns a boolean, whether a repository exists or not.
+     */
     pub fn exists(self) -> bool {
         self.repo.is_some()
     }
     /**
-    Returns the checkout branch
-    */
+     * Returns the checkout branch
+     */
     pub fn get_branch(&self) -> Result<String> {
         // Only tested on attached HEAD
         // No edge case when head is a commit or else...
@@ -24,47 +24,42 @@ impl Git {
         }
     }
     /**
-    Returns the tag if the head is a tag or if the latest commit is a tag
-    */
+     * Returns the tag if the head is a tag or if the latest commit is a tag
+     */
     pub fn get_tag(&self) -> Result<String> {
-        // iterate over tags. peel latest to commit and see if it matches latest
-        // the
-        //
-        // let repo = self.repo.as_ref().unwrap();
-        // let head = repo
-        //     .head_ref()
-        //     .into_diagnostic()?
-        //     .unwrap()
-        //     .follow_to_object()
-        //     .into_diagnostic()?
-        //     .object()
-        //     .into_diagnostic()?;
-        // let tag = head.to_tag_ref();
-        // let tag = repo.find_tag(head).into_diagnostic()?;
-        // let name = tag.decode().unwrap().name.to_string();
-        // .object()
-        // .into_diagnostic()?
-        // .to_tag_ref()
-        // .name
-        // .to_string();
-        // let name = tag.name.to_string();
-        // Ok(name)
-        // if let Some(mut head) = head {
-        // match head.to_tag_ref() {
-        //     Ok(x) => return Ok(x.decode().into_diagnostic()?.name.to_string()),
-        //     Err(e) => {
-        // return Err(Error::msg("The current HEAD is not a tag"));
-        //     }
-        // };
-        // } else {
-        // Err(Error::msg("Repo is in detached HEAD state"))
-        // }
-        // Ok("null".to_string())
+        let repo = self.repo.as_ref().unwrap();
+        let head = repo.head_ref().into_diagnostic()?;
+        if let Some(mut head) = head {
+            let head_commit_id = head.peel_to_commit().into_diagnostic()?.id();
+
+            // Get every tags
+            let refs = repo.references().into_diagnostic()?;
+            let tags = refs.tags().into_diagnostic()?;
+
+            // Get name of tags pointing to HEAD
+            let mut head_tags: Vec<String> = tags
+                // Safe unwrap Result<Reference>
+                .filter(|x| x.is_ok())
+                .map(|x| x.unwrap())
+                // Does tag point to HEAD
+                .filter(|x| x.clone().peel_to_commit().unwrap().id() == head_commit_id)
+                // Short name
+                .map(|x| x.name().shorten().to_string())
+                .collect();
+
+            head_tags.reverse();
+            if let Some(latest_tag) = head_tags.first() {
+                return Ok(latest_tag.to_owned());
+            }
+        } else {
+            return Err(Error::msg("Repo is in detached HEAD state"));
+        }
+
         Err(Error::msg("The current HEAD is not a tag"))
     }
     /**
-    Returns the latest commit or the checkout commit
-    */
+     * Returns the latest commit or the checkout commit
+     */
     pub fn get_commit(&self) -> Result<String> {
         let repo = self.repo.as_ref().unwrap();
         let mut head = repo.head().into_diagnostic()?;
@@ -89,48 +84,8 @@ mod test {
     }
     #[test]
     fn get_repo_tag() -> Result<()> {
-        let res = Git::new().get_tag();
-        println!("{:#?}", res);
+        let res = Git::new().get_tag()?;
+        println!("{}", res);
         Ok(())
     }
 }
-
-// /**
-// Returns a boolean, whether a repository exists or not.
-// */
-// pub fn exists(self) -> bool {
-//     self.repo.is_some()
-// }
-// /**
-// Returns the checkout branch
-// */
-// pub fn get_branch(&self) -> Result<String> {
-//     // Only tested on attached HEAD
-//     // No edge case when head is a commit or else...
-//     let repo = self.repo.as_ref().unwrap();
-//     let head = repo.head().into_diagnostic()?;
-//     let name = head.shorthand().unwrap().to_owned();
-//     Ok(name)
-// }
-// /**
-// Returns the tag if the head is a tag or if the latest commit is a tag
-// */
-// pub fn get_tag(&self) -> Result<String> {
-//     let repo = self.repo.as_ref().unwrap();
-//     let head = repo.head().into_diagnostic()?;
-//     if head.is_tag() {
-//         let tag = head.name().unwrap().to_string();
-//         Ok(tag)
-//     } else {
-//         Err(Error::msg("The current HEAD is not a tag"))
-//     }
-// }
-// /**
-// Returns the latest commit or the checkout commit
-// */
-// pub fn get_commit(&self) -> Result<String> {
-//     let repo = self.repo.as_ref().unwrap();
-//     let head = repo.head().into_diagnostic()?;
-//     let commit_id = head.peel_to_commit().into_diagnostic()?.id().to_string();
-//     Ok(commit_id)
-// }
