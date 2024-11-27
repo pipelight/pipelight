@@ -7,6 +7,12 @@
 
 Automate your most boring and repetitive tasks.
 
+## Breaking changes
+
+# v0.10.0
+
+Breaks log compatibility with anterior versions.
+
 ## 📦 A lightweight tool for CICD
 
 Pipelight is a [Rust](https://www.rust-lang.org/) based small(13Mb) cli tool to
@@ -203,11 +209,10 @@ but Rustacean made crates for it.
 
 Crate:
 
-- [ ] doc: add example for pipelight_utils crate
+- [x] doc: add example for pipelight_utils crate
 
 Javascript helpers:
 
-- [ ] feat: add helper for jucenit proxy
 - [ ] refactor: rewrite docker helpers in rust wasm
 
 Cli:

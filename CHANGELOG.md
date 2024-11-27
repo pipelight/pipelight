@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.12] - 2024-11-27
+
+### 🐛 Bug Fixes
+
+- Handle annotated tags and unannotated tags
+
+## [0.9.11-3] - 2024-11-26
+
+### Hot-fix
+
+- Branch detection
+
+## [0.9.11] - 2024-11-26
+
+### 🚀 Features
+
+- *(doc)* Git-cliff usage for automated changelog
+
+### 🐛 Bug Fixes
+
+- *(git)* Get branch name
+
+### Hot-fix
+
+- Silence git-tag function
+
 ## [0.9.10] - 2024-11-26
 
 ### 🚜 Refactor
