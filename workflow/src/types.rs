@@ -190,7 +190,7 @@ impl Command {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, Ord, PartialEq, PartialOrd)]
-#[serde(untagged)]
+#[serde(tag = "type")]
 pub enum Trigger {
     TriggerBranch(TriggerBranch),
     TriggerTag(TriggerTag),

@@ -74,24 +74,12 @@ const config: Config = {
 
     // Parallel
     pipeline("test_parallel_modes", () => [
-      parallel(() => [step("test", () => ["llls"]).set_mode("continue")]),
-      parallel(() => [step("test", () => ["ls"]).set_mode("continue")]),
+      parallel(() => [
+        step("mode_jump_next", () => ["llls", "pwd"]).set_mode("continue"),
+        step("mode_continue", () => ["llls", "pwd"]).set_mode("continue"),
+      ]),
+      parallel(() => [step("normal", () => ["ls"])]),
     ]),
-
-    // Set options
-    pipeline("test_parallel_modes", () => [step("test", () => ["pwd"])]),
-    {
-      name: "test_options",
-      steps: [step(`run harmless commands`, () => ["pwd", "sleep 2", "ls"])],
-      triggers: [
-        {
-          actions: ["pre-push"],
-        },
-      ],
-      options: {
-        log_level: "trace",
-      },
-    },
   ],
 };
 
