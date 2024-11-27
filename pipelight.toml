@@ -1,10 +1,14 @@
 # Command from:
 # https://stackoverflow.com/questions/52176130/how-to-tell-cargo-to-use-git-tags-to-determine-the-crate-version
 
-[[pipeline]]
-name = "update_crates_version"
-
-[[pipeline.step]]
+[[pipelines]]
+name = "update_crates version"
+[[pipelines.steps]]
 name = "gnarly_sed_command"
+commands = ["ls"]
 
+[[pipelines]]
+name = "test white space"
+[[pipelines.steps]]
+name = "gnarly_sed_command"
 commands = ["ls"]

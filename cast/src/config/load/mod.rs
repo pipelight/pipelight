@@ -3,14 +3,12 @@ use crate::Config;
 // Filesystem - read file
 use std::fs;
 // Error Handling
-use miette::{IntoDiagnostic, Result};
+use miette::{Error, IntoDiagnostic, Result};
 
 // Filesystem
 use pipelight_error::{CastError, HclError, JsonError, PipelightError, TomlError, YamlError};
 use pipelight_utils::FileType;
 use std::path::Path;
-
-use config::{Config as ConfigRs, File, FileFormat};
 
 // Tests
 mod test;
@@ -19,39 +17,20 @@ mod rules;
 mod typescript;
 
 impl Config {
-    /**
-    Choose the appropriated method to load the config file
-    according to the file extension(.ts, .toml, .yml...).
-
-    Arguments:
-      - file_path is the config file path
-      - args are only to be used with scripting language (typescript) to pass args to the underlying script.
-
-    Languages coming next after v1.0.0:
-      - Rust, Hcl, Kcl, Python...
-    */
-    pub fn load_new(file_path: &str, args: Option<Vec<String>>) -> Result<()> {
-        let root = "";
-        let builder = ConfigRs::builder()
-            .set_default("pipelight", "1")
-            .into_diagnostic()?
-            .add_source(File::new("pipelight.toml", FileFormat::Toml))
-            .add_source(File::new("pipelight.tml", FileFormat::Toml))
-            .add_source(File::new("pipelight.yaml", FileFormat::Yaml))
-            .add_source(File::new("pipelight.yml", FileFormat::Yaml));
-
-        match builder.build() {
-            Ok(config) => {
-
-                // use your config
-            }
-            Err(e) => {
-                println!("{:#?}", e);
-                // something went wrong
-            }
-        };
+    pub fn load_many(root_path: &str, args: Option<Vec<String>>) -> Result<()> {
         Ok(())
     }
+    /**
+     * Choose the appropriated method to load the config file
+     * according to the file extension(.ts, .toml, .yml...).
+     *
+     * Arguments:
+     * - file_path is the config file path
+     * - args are only to be used with scripting language (typescript) to pass args to the underlying script.
+     *
+     * Languages coming next after v1.0.0:
+     * - Rust, Hcl, Kcl, Python...
+     */
     pub fn load(file_path: &str, args: Option<Vec<String>>) -> Result<Config> {
         let extension = &Path::new(file_path)
             .extension()
@@ -71,7 +50,7 @@ impl Config {
             FileType::Hcl => Config::hcl(file_path)?,
             // FileType::Pkl => Config::pkl(file_path)?,
         };
-        config.strict_check()
+        Ok(config.strict_check()?)
     }
     /**
     Returns a Config struct from a provided json file path.
@@ -154,10 +133,10 @@ mod cast {
     fn toml_configrs() -> Result<()> {
         // Get file
         let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        path.push("../examples/pipelight.toml");
+        path.push("../examples");
         let path = path.display().to_string();
 
-        let res = Config::load(&path, None);
+        let res = Config::load_many(&path, None);
         assert!(res.is_ok());
         Ok(())
     }
