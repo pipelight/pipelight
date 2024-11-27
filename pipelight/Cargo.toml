@@ -1,6 +1,6 @@
 [package]
 name = "pipelight"
-version = "0.9.9"
+version = "0.10.0"
 edition = "2021"
 authors = ["areskul"]
 description = "A Rust/Typescript based absurd automation tool"
