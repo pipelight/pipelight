@@ -27,3 +27,6 @@ members = [
   "pipelight",
   "man",
 ]
+
+[profile.release]
+lto = true
