@@ -13,9 +13,9 @@ use pipelight_utils::file::{is_filename, FileType};
 
 impl Template {
     /**
-    Generate a base `pipelight.<extension>` configuration file
-    in the current directory
-    */
+     * Generate a base `pipelight.<extension>` configuration file
+     * in the current directory
+     */
     pub fn new(style: Option<String>, file: Option<String>) -> Result<Self> {
         let mut e = Template::default();
         let mut extension = "ts".to_owned();

@@ -11,6 +11,13 @@ use pipelight_utils::globals::LOGGER;
 // Error Handling
 use miette::{Error, Result};
 
+/*
+* Run strict
+* A pipeline can be run in 2 modes(srtict or loose).
+*
+* I forgot the difference between them. Fuck.
+*
+*/
 pub fn launch() -> Result<()> {
     let mut args = CLI.lock().unwrap().clone();
 

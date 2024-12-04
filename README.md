@@ -9,9 +9,7 @@ Automate your most boring and repetitive tasks.
 
 ## Breaking changes
 
-# v0.10.0
-
-Breaks log compatibility with anterior versions.
+v0.10.0 - Breaks log compatibility with anterior versions.
 
 ## 📦 A lightweight tool for CICD
 

@@ -8,7 +8,7 @@ use crate::globals::CLI;
 use crate::types::verbosity::{level_value, Verbosity};
 use log::LevelFilter;
 use pipelight_utils::globals::LOGGER;
-// Traits
+
 // Error Handling
 use super::EXIT_CODE;
 use miette::{Error, Result};
@@ -52,6 +52,7 @@ pub fn launch() -> Result<()> {
             }
         }
     }
+
     if args.attach.is_none() {
         // Retrieve global options
         if config.has_attach_option().unwrap() {

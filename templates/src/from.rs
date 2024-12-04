@@ -15,7 +15,7 @@ impl From<&Style> for String {
     fn from(e: &Style) -> Self {
         match serde_plain::to_string::<Style>(e) {
             Ok(res) => res,
-            Err(_) => "objects".to_owned(),
+            Err(_) => "toml".to_owned(),
         }
     }
 }
