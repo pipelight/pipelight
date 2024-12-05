@@ -8,13 +8,15 @@ use rust_embed::RustEmbed;
 #[serde(rename_all = "kebab-case")]
 pub enum Style {
     #[default]
-    Objects,
-    Helpers,
-    Javascript,
-    Json,
     Toml,
     Hcl,
     Yaml,
+    Json,
+
+    // Javascript syntaxes
+    Js,
+    Ts,
+    TsHelpers,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -27,7 +29,7 @@ impl Default for Template {
     fn default() -> Self {
         Template {
             file_path: format!(
-                "{}/pipelight.ts",
+                "{}/pipelight.toml",
                 &env::current_dir().unwrap().to_str().unwrap()
             ),
             style: Style::default(),

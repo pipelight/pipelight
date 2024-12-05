@@ -50,12 +50,13 @@ impl Cli {
             .mut_subcommand("init", |a| {
                 a.mut_arg("template", |e| {
                     e.value_parser([
-                        PossibleValue::new("objects"),
-                        PossibleValue::new("helpers"),
-                        PossibleValue::new("javascript"),
                         PossibleValue::new("toml"),
-                        PossibleValue::new("hcl"),
                         PossibleValue::new("yaml"),
+                        PossibleValue::new("hcl"),
+                        PossibleValue::new("js"),
+                        PossibleValue::new("ts"),
+                        PossibleValue::new("ts_helpers"),
+                        PossibleValue::new("json"),
                     ])
                 })
             });
