@@ -86,36 +86,36 @@ Fold your bash commands into an object `Pipeline{ Step{ Command }}`.
 As long as you know javascript,
 you are ready to go with your favorite syntax flavor.
 
-Use a verbose and declarative syntax.
+- Javascript. Use a verbose and declarative syntax.
 
-```ts
-const my_pipeline = {
-  name: "build_my_website",
-  steps: [
-    {
-      name: "clean directory",
-      commands: ["rm -rf ./dist"],
-    },
-    {
-      name: "build",
-      commands: ["pnpm install", "pnpm lint", "pnpm build"],
-    },
-  ],
-};
-```
+  ```js
+  const my_pipeline = {
+    name: "build_my_website",
+    steps: [
+      {
+        name: "clean directory",
+        commands: ["rm -rf ./dist"],
+      },
+      {
+        name: "build",
+        commands: ["pnpm install", "pnpm lint", "pnpm build"],
+      },
+    ],
+  };
+  ```
 
-Use the provided sweet shorthands(with Helpers).
+- Typescript(with Helpers). Use the provided sweet shorthands.
 
-```ts
-const my_pipeline = pipeline("build website", () => [
-  step("clean directory", () => [`rm -rf ${build_dir}`]),
-  step("build", () => ["pnpm install", "pnpm lint", "pnpm build"]),
-  step("send to host", () => [`scp -r ${build_dir}`]),
-  step("do stuffs on host", () => [
-    ssh("host", () => ["systemctl restart nginx"]),
-  ]),
-]);
-```
+  ```ts
+  const my_pipeline = pipeline("build website", () => [
+    step("clean directory", () => [`rm -rf ${build_dir}`]),
+    step("build", () => ["pnpm install", "pnpm lint", "pnpm build"]),
+    step("send to host", () => [`scp -r ${build_dir}`]),
+    step("do stuffs on host", () => [
+      ssh("host", () => ["systemctl restart nginx"]),
+    ]),
+  ]);
+  ```
 
 ## 🤖 Automatic triggers
 
@@ -133,13 +133,6 @@ pipelight enable watcher
 [[pipelines.triggers]]
 branches = ["master"]
 actions = ["pre-push"]
-```
-
-```ts
-pipeline.add_trigger({
-  branches: ["master"],
-  actions: ["pre-push"],
-});
 ```
 
 ## 🫦 Pretty and verbose logs
