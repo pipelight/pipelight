@@ -12,23 +12,81 @@ Automate your most boring and repetitive tasks.
 Pipelight is a [Rust](https://www.rust-lang.org/) based small(13Mb) cli tool to
 be used from inside a terminal.
 
-- Define pipelines using **typescript, toml, hcl and yaml**.
+- Define pipelines using **toml, hcl, yaml, typescript**.
 - Trigger on events: git hooks, file changes...
 
 Checkout the [Documentation](https://pipelight.dev) for a much friendly approach
 and a deeper understanding.
 
+## Usage example
+
 ![pipelight_demo](https://github.com/pipelight/doc.pipelight/blob/master/public/tapes/gifs/demo.gif)
+
+## Define pipelines with a configuration language
+
+Fold your bash commands into an object `Pipeline{ Step{ Command }}`.
+
+Use your preferred configuration languages for your most simple pipelines.
+
+- Toml
+
+  ```toml
+  [[pipelines]]
+  name = "test"
+
+  [[pipelines.steps]]
+  name = "build"
+  commands = ["pnpm install", "pnpm build"]
+
+  [[pipelines.triggers]]
+  branches = ["master","dev"]
+  actions= ["pre-push", "pre-commit"]
+  ```
+
+- Hcl
+
+  ```hcl
+  # A pipeline
+  pipelines = [{
+    name = "test"
+    steps = [{
+      name     = "build"
+      commands = ["pnpm install", "pnpm build"]
+    }]
+    triggers = [{
+      branches = ["master","dev"]
+      actions  = ["pre-push", "pre-commit"]
+    }]
+  }]
+  ```
+
+- Yaml
+
+  ```yml
+  pipelines:
+    - name: test
+      steps:
+        - name: build
+          commands:
+            - pnpm install
+            - pnpm build
+    - triggers:
+        - branches:
+            - master
+            - dev
+          actions:
+            - pre-push
+            - pre-commit
+  ```
 
 ## Define pipelines with a programming language.
 
-Fold your bash commands into an object `Pipeline{ Step{ Command }}` written in
-**Typescript**.
+Fold your bash commands into an object `Pipeline{ Step{ Command }}`.
 
 As long as you know javascript,
 you are ready to go with your favorite syntax flavor.
 
-Use a verbose and declarative syntax (Objects API).
+Use a verbose and declarative syntax.
 
 ```ts
 const my_pipeline = {
@@ -46,7 +104,7 @@ const my_pipeline = {
 };
 ```
 
-Use the provided sweet shorthands (Helpers API).
+Use the provided sweet shorthands(with Helpers).
 
 ```ts
 const my_pipeline = pipeline("build website", () => [
@@ -59,62 +117,7 @@ const my_pipeline = pipeline("build website", () => [
 ]);
 ```
 
-## Define pipelines with a configuration language
-
-For your most simple pipelines.
-
-Toml
-
-```toml
-[[pipelines]]
-name = "test"
-
-[[pipelines.steps]]
-name = "build"
-commands = ["pnpm install", "pnpm build"]
-
-[[pipelines.triggers]]
-branches = ["master","dev"]
-actions= ["pre-push", "pre-commit"]
-```
-
-Hcl
-
-```hcl
-# A pipeline
-pipelines = [{
-  name = "test"
-  steps = [{
-    name     = "build"
-    commands = ["pnpm install", "pnpm build"]
-  }]
-  triggers = [{
-    branches = ["master","dev"]
-    actions  = ["pre-push", "pre-commit"]
-  }]
-}]
-```
-
-Yaml
-
-```yml
-pipelines:
-  - name: test
-    steps:
-      - name: build
-        commands:
-          - pnpm install
-          - pnpm build
-  - triggers:
-      - branches:
-          - master
-          - dev
-        actions:
-          - pre-push
-          - pre-commit
-```
-
-## Automatic triggers
+## 🤖 Automatic triggers
 
 Add automatic triggers to your pipeline.
 
@@ -126,9 +129,15 @@ pipelight enable git-hooks
 pipelight enable watcher
 ```
 
+```toml
+[[pipelines.triggers]]
+branches = ["master"]
+actions = ["pre-push"]
+```
+
 ```ts
 pipeline.add_trigger({
-  branch: ["master"],
+  branches: ["master"],
   actions: ["pre-push"],
 });
 ```
@@ -155,9 +164,6 @@ pipelight logs -vvvv
 <img width="500px" alt="pretty logs" src="https://pipelight.dev/images/log_level_trace.png"/>
 
 ## 🛠️ Install
-
-> [!IMPORTANT]  
-> Pipelight can now be installed under MacOs and Windows WSL
 
 Checkout the
 [instruction guide](https://pipelight.dev/introduction/install.html) for your
