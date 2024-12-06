@@ -7,10 +7,6 @@
 
 Automate your most boring and repetitive tasks.
 
-## Breaking changes
-
-v0.10.0 - Breaks log compatibility with anterior versions.
-
 ## 📦 A lightweight tool for CICD
 
 Pipelight is a [Rust](https://www.rust-lang.org/) based small(13Mb) cli tool to
@@ -22,7 +18,7 @@ be used from inside a terminal.
 Checkout the [Documentation](https://pipelight.dev) for a much friendly approach
 and a deeper understanding.
 
-![pipelight_demo](https://github.com/pipelight/doc.pipelight/blob/master/public/images/showcase.gif)
+![pipelight_demo](https://github.com/pipelight/doc.pipelight/blob/master/public/tapes/gifs/demo.gif)
 
 ## Define pipelines with a programming language.
 
@@ -193,34 +189,5 @@ pipelight logs -vvvv
 Reach the community whenever you need support or software improvements. On
 [discord](https://discord.gg/swNRD3Xysz) or on telegram at
 [@Areskul](https://t.me/areskul) or send a mail at areskul@areskul.com.
-
-## Roadmap
-
-Support other configuration languages:
-
-Can't tell the difference between them,
-but Rustacean made crates for it.
-
-- [x] feat: add support for hashicorp hcl
-- [ ] feat: add support for apple pkl
-- [ ] feat: add support for CNCF kcl
-
-Crate:
-
-- [x] doc: add example for pipelight_utils crate
-
-Javascript helpers:
-
-- [ ] refactor: rewrite docker helpers in rust wasm
-
-Cli:
-
-- [ ] feat: add a tui interface with ratatui
-- [ ] feat: add a live view for processing pipelines
-
-Community:
-
-- [x] feat: add a news page on Documentation website
-- [ ] refactor: move out of discord
 
 Licensed under GNU GPLv2 Copyright (C) 2023 Areskul
