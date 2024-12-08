@@ -4,7 +4,7 @@ use crate::services::{FgBg, Service};
 use crate::types::{Commands, DetachableCommands, PostCommands, Trigger};
 
 use log::warn;
-use pipelight_utils::git::{Flag, Special};
+use pipelight_git::{Flag, Special};
 use pipelight_watcher::*;
 use std::env;
 use watchexec_filterer_ignore::IgnoreFilterer;

@@ -410,6 +410,8 @@ dependencies = [
  "once_cell",
  "pipelight_error 0.2.10",
  "pipelight_exec",
+ "pipelight_git 0.2.10",
+ "pipelight_teleport",
  "pipelight_utils",
  "pipelight_watcher",
  "rayon",
@@ -2465,7 +2467,6 @@ dependencies = [
  "rustix",
  "serde",
  "serde_plain",
- "signal-hook",
  "subprocess",
  "sysinfo",
  "thiserror 1.0.69",
@@ -2476,31 +2477,20 @@ dependencies = [
 name = "pipelight_git"
 version = "0.2.10"
 dependencies = [
- "colored",
- "console",
  "convert_case",
  "gix",
- "hcl-rs",
  "ignore-files",
- "iso8601-duration",
  "itertools",
  "log",
  "miette 7.2.0",
  "once_cell",
  "pipelight_error 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
- "project-origins",
  "rev_buf_reader",
- "rustix",
  "serde",
- "serde_json",
  "serde_plain",
- "serde_yaml",
- "signal-hook",
  "strum",
  "subprocess",
- "sysinfo",
  "thiserror 1.0.69",
- "toml",
 ]
 
 [[package]]
@@ -2540,12 +2530,7 @@ dependencies = [
 name = "pipelight_teleport"
 version = "0.2.9"
 dependencies = [
- "chrono",
- "colored",
- "console",
  "convert_case",
- "ignore-files",
- "iso8601-duration",
  "itertools",
  "log",
  "miette 7.2.0",
@@ -2553,15 +2538,11 @@ dependencies = [
  "pipelight_error 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "pipelight_git 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "pipelight_utils",
- "project-origins",
- "rev_buf_reader",
  "serde",
  "serde_json",
  "serde_plain",
- "signal-hook",
  "strum",
  "thiserror 1.0.69",
- "uuid",
 ]
 
 [[package]]
@@ -2580,7 +2561,6 @@ dependencies = [
  "miette 7.2.0",
  "once_cell",
  "pipelight_error 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
- "project-origins",
  "rev_buf_reader",
  "rustix",
  "serde",

@@ -19,7 +19,6 @@ serde_plain = "1.0.2"
 iso8601-duration = { version = "0.2.0", features = ["serde", "chrono"] }
 chrono = { version = "0.4.38", features = ["serde"] }
 ignore-files = "3.0.1"
-project-origins = "1.4.0"
 signal-hook = { version = "0.3.17", features = ["extended-siginfo"] }
 console = "0.15.8"
 thiserror = "1.0.63"

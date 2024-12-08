@@ -21,7 +21,6 @@ miette = "7.2.0"
 serde_plain = "1.0.2"
 iso8601-duration = { version = "0.2.0", features = ["serde", "chrono"] }
 chrono = { version = "0.4.38", features = ["serde"] }
-signal-hook = { version = "0.3.17", features = ["extended-siginfo"] }
 thiserror = "1.0.63"
 colored = "2.1.0"
 subprocess = "0.2.9"

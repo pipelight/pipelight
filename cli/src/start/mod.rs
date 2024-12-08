@@ -7,7 +7,7 @@ use crate::types::{Commands, DetachableCommands, PostCommands, PreCommands};
 use pipelight_watcher::Watcher;
 use workflow::{Getters, Pipeline};
 
-use pipelight_utils::git::Hook;
+use pipelight_git::Hook;
 // Clap
 use clap::ValueEnum;
 use clap_complete::shells::Shell;

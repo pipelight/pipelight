@@ -1,11 +1,11 @@
 // Struct
 use pipelight_error::{LibError, PipelightError, WrapError};
-use pipelight_utils::git::Flag;
+use pipelight_git::Flag;
 // Global vars
 use once_cell::sync::Lazy;
 use std::sync::{Arc, Mutex};
 // Teleport
-use pipelight_utils::teleport::Portal;
+use pipelight_teleport::Portal;
 // Logs
 use workflow::{Config, Trigger};
 // Cli
@@ -35,11 +35,6 @@ pub fn early_hydrate_logger() -> Result<()> {
     std::env::set_var("PIPELIGHT_LOG", verbosity.to_string().to_lowercase());
     Builder::from_env("PIPELIGHT_LOG").init();
 
-    Ok(())
-}
-// Hydrate logs
-pub fn full_hydrate_logger() -> Result<()> {
-    LOGGER.lock().unwrap().to_file();
     Ok(())
 }
 
@@ -131,7 +126,6 @@ pub fn set_globals() -> Result<()> {
         hydrate_portal()?;
         // hydrate the CONFIG global var
         (*PORTAL.lock().unwrap()).teleport()?;
-        full_hydrate_logger()?;
         hydrate_config()?;
     }
     Ok(())

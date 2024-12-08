@@ -11,6 +11,8 @@ pipelight_utils = { path = "../pipelight_utils" }
 pipelight_exec = { path = "../pipelight_exec" }
 pipelight_watcher = { path = "../pipelight_watcher" }
 pipelight_error = { version = "0.2.10", path = "../pipelight_error" }
+pipelight_teleport = { path = "../pipelight_teleport" }
+pipelight_git = { path = "../pipelight_git" }
 cast = { path = "../cast" }
 chrono = { version = "0.4.38", features = ["serde"] }
 colored = "2.1.0"
@@ -48,6 +50,8 @@ pipelight_utils = { path = "../pipelight_utils" }
 pipelight_exec = { path = "../pipelight_exec" }
 pipelight_watcher = { path = "../pipelight_watcher" }
 pipelight_error = { version = "0.2.10", path = "../pipelight_error" }
+pipelight_teleport = { path = "../pipelight_teleport" }
+pipelight_git = { path = "../pipelight_git" }
 cast = { path = "../cast" }
 chrono = { version = "0.4.38", features = ["serde"] }
 colored = "2.1.0"
