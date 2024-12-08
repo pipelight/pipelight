@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod from_trait {
-    use crate::git::{Flag, Hook, Special};
+    use crate::{Flag, Hook, Special};
     #[test]
     fn hook_to_string() {
         let hook = Hook::ApplypatchMsg;

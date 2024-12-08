@@ -1,6 +1,6 @@
 [package]
 name = "pipelight_git"
-version = "0.2.9"
+version = "0.2.10"
 edition = "2021"
 license = "GPL-2.0-only"
 description = "A small git compatibility layer"

@@ -2,7 +2,7 @@
 // Environment manipulation
 use std::env;
 // Structs
-use crate::git::{Flag, Git, Special};
+use crate::{Flag, Git, Special};
 
 impl Git {
     pub fn new() -> Self {

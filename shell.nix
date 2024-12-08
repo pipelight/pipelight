@@ -7,5 +7,6 @@ pkgs.mkShell {
     })
     pkgs.wasm-pack
     pkgs.wasm-bindgen-cli
+    pkgs.rust-analyzer
   ];
 }

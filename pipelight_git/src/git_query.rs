@@ -1,5 +1,5 @@
 // Structs
-use crate::git::Git;
+use crate::Git;
 // Error Handling
 use miette::{Error, IntoDiagnostic, Result};
 

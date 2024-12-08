@@ -6,7 +6,7 @@ use crate::file::FileType;
 // Trait
 use strum::IntoEnumIterator;
 // Git
-use crate::git::Git;
+use pipelight_git::Git;
 // Filesystem
 use std::path::Path;
 // Error Handling

@@ -23,8 +23,8 @@ members = [
   "man",
 ]
 
-[workspace.dependencies]
-getrandom = { version = "0.2.15", features = ["wasm-bindgen"] }
+# [workspace.dependencies]
+# getrandom = { version = "0.2.15", features = ["wasm-bindgen"] }
 
 [profile.release]
 lto = true

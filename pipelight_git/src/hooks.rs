@@ -1,5 +1,5 @@
 // Struct
-use crate::git::{Git, Hook};
+use crate::{Git, Hook};
 // Trait - Enum iteration workaround
 use strum::IntoEnumIterator;
 // Filesystem manipulation
