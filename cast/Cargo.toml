@@ -5,6 +5,9 @@ edition = "2021"
 license = "GPL-2.0-only"
 description = "Multiple file format to rust struct"
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [dependencies]
 pipelight_error = { path = "../pipelight_error" }
 pipelight_exec = { path = "../pipelight_exec" }
@@ -20,3 +23,5 @@ serde_yaml = "0.9.34"
 kdl = "4.6.0"
 serde_kdl = "0.1.0"
 shell-words = "1.1.0"
+wasm-bindgen = "0.2.99"
+tsify = "0.4.5"

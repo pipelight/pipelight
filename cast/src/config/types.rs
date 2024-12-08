@@ -1,8 +1,8 @@
 // Traits
-// Serde is the rust crate to that implements the logic
-// to parse structs from filepaths.
-
 use serde::{Deserialize, Serialize};
+// Typescript
+use tsify::Tsify;
+
 
 /**
 Options to tweak global pipelines behavior
@@ -49,8 +49,9 @@ pub struct PipelineOpts {
 /**
 Pipelines are a named list of steps and parallel steps.
 */
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Tsify)]
 #[serde(deny_unknown_fields)]
+#[tsify(into_wasm_abi)]
 pub struct Pipeline {
     pub name: String,
     pub triggers: Option<Vec<Trigger>>,

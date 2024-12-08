@@ -3,30 +3,28 @@ resolver = "2"
 members = [
   ## Read and parse files with fancy error with miette
   "pipelight_error",
-
   ## Small utils crate and error types
   "pipelight_utils",
-
   ## Process management
   "pipelight_exec",
-
+  "pipelight_git",
   ## Watchexec sane and reusable configuration.
   "pipelight_watcher",
-
-  ## Read multiple file formats and casts them to pipelight config
-  "cast",
-
   ## A templating crate for default pipelight configuration generation
   "templates",
 
+  ## Read multiple file formats and casts them to pipelight config
+  "cast",
   ## Core crates with interdependencies
   "workflow",
   "cli",
-
   ## Bin package and Lib entrypoint
   "pipelight",
   "man",
 ]
+
+[workspace.dependencies]
+getrandom = { version = "0.2.15", features = ["wasm-bindgen"] }
 
 [profile.release]
 lto = true
