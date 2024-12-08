@@ -7,7 +7,7 @@ use uuid::Uuid;
 // Structs
 use pipelight_exec::Process;
 pub use pipelight_exec::Status;
-use pipelight_utils::git::{Flag, Special};
+use pipelight_git::{Flag, Special};
 
 // Event - Process
 use chrono::Local;

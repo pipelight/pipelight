@@ -6,7 +6,7 @@ use miette::Result;
 use crate::pipeline::Filters;
 use crate::types::Config;
 use log::LevelFilter;
-use pipelight_utils::git::Flag;
+use pipelight_git::Flag;
 
 impl Config {
     pub fn get() -> Result<Self> {
@@ -100,7 +100,7 @@ impl Config {
 mod config {
     use crate::types::{Config, Pipeline};
     use crate::{Trigger, TriggerBranch, TriggerTag};
-    use pipelight_utils::git::{Flag, Special};
+    use pipelight_git::{Flag, Special};
     // Error Handling
     use miette::Result;
 

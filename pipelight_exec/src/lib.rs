@@ -165,12 +165,12 @@
 //! # Ok::<(), Report>(())
 //! ```
 //! It allows us to read a process outputs **during** and long **after** execution.
-//!
-// Rules
-// #![allow(unused_variables)]
-#![allow(unused_imports)]
-// #![allow(unused_must_use)]
 
+// Crate lint rules
+#[allow(unused_variables)]
+#[allow(unused_imports)]
+#[allow(unused_must_use)]
+//
 pub mod dates;
 mod globals;
 mod io;

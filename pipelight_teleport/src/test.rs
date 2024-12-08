@@ -1,11 +1,10 @@
 #[cfg(test)]
 mod try_teleport {
-    use crate::teleport::{Gate, Portal};
+    use crate::{Gate, Portal};
     use std::env;
-    use std::path::Path;
 
     // Error Handling
-    use miette::{IntoDiagnostic, Result};
+    use miette::Result;
 
     #[test]
     /// Search a pipelight.<extension> file in the filesystem

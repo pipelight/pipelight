@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod trigger_match_no_git {
     use crate::{Trigger, TriggerBranch, TriggerTag};
-    use pipelight_utils::git::{Flag, Hook, Special};
+    use pipelight_git::{Flag, Hook, Special};
 
     #[test]
     fn try_match_flag() {
@@ -20,8 +20,9 @@ mod trigger_match_no_git {
 }
 #[cfg(test)]
 mod trigger_match_git {
+    use super::*;
     use crate::{Trigger, TriggerBranch, TriggerTag};
-    use pipelight_utils::git::{Flag, Hook, Special};
+    use pipelight_git::{Flag, Hook, Special};
 
     /// match trigger with branch without action
     #[test]

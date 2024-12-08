@@ -110,12 +110,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "anyhow"
-version = "1.0.94"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1fd03a028ef38ba2276dce7e33fcd6369c158a1bca17946c4b1b701891c1ff7"
-
-[[package]]
 name = "arc-swap"
 version = "1.7.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -293,7 +287,6 @@ dependencies = [
  "serde_json",
  "serde_kdl",
  "serde_yaml",
- "shell-words",
  "thiserror 1.0.69",
  "toml",
  "tsify",
@@ -591,23 +584,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "derivative"
-version = "2.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fcc3dd5e9e9c0b295d6e1e4d811fb6f157d5ffd784b8d202fc62eac8035a770b"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 1.0.109",
-]
-
-[[package]]
-name = "destructure_traitobject"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c877555693c14d2f84191cfd3ad8582790fc52b5e2274b40b59cf5f5cea25c7"
-
-[[package]]
 name = "dialoguer"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -738,9 +714,9 @@ dependencies = [
 
 [[package]]
 name = "fastrand"
-version = "2.2.0"
+version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "486f806e73c5707928240ddc295403b1b93c96a02038563881c4a2fd84b81ac4"
+checksum = "37909eebbb50d72f9059c3b6d82c0463f2ff062c9e95845c43a6c9c0355411be"
 
 [[package]]
 name = "filetime"
@@ -1626,12 +1602,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
-name = "hex"
-version = "0.4.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
-
-[[package]]
 name = "home"
 version = "0.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2060,40 +2030,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "log-mdc"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a94d21414c1f4a51209ad204c1776a3d0765002c76c6abcb602a6f09f1e881c7"
-
-[[package]]
-name = "log4rs"
-version = "1.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0816135ae15bd0391cf284eab37e6e3ee0a6ee63d2ceeb659862bd8d0a984ca6"
-dependencies = [
- "anyhow",
- "arc-swap",
- "chrono",
- "derivative",
- "fnv",
- "humantime",
- "libc",
- "log",
- "log-mdc",
- "once_cell",
- "parking_lot",
- "rand 0.8.5",
- "serde",
- "serde-value",
- "serde_json",
- "serde_yaml",
- "thiserror 1.0.69",
- "thread-id",
- "typemap-ors",
- "winapi",
-]
-
-[[package]]
 name = "man"
 version = "0.1.0"
 dependencies = [
@@ -2312,15 +2248,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1261fe7e33c73b354eab43b1273a57c8f967d0391e80353e51f764ac02cf6775"
 
 [[package]]
-name = "ordered-float"
-version = "2.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "68f19d67e5a2795c94e73e0bb1cc1a7edeb2e28efd39e2e1c9b7a40c1108b11c"
-dependencies = [
- "num-traits",
-]
-
-[[package]]
 name = "owo-colors"
 version = "4.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2535,11 +2462,9 @@ dependencies = [
  "miette 7.2.0",
  "once_cell",
  "pipelight_error 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
- "procfs",
  "rustix",
  "serde",
  "serde_plain",
- "shell-words",
  "signal-hook",
  "subprocess",
  "sysinfo",
@@ -2549,7 +2474,7 @@ dependencies = [
 
 [[package]]
 name = "pipelight_git"
-version = "0.2.9"
+version = "0.2.10"
 dependencies = [
  "colored",
  "console",
@@ -2576,6 +2501,67 @@ dependencies = [
  "sysinfo",
  "thiserror 1.0.69",
  "toml",
+]
+
+[[package]]
+name = "pipelight_git"
+version = "0.2.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "052487a7d09c66f20c632c338bab6c661ba1059f5b62282b7a2f50c1a3fdf78a"
+dependencies = [
+ "colored",
+ "console",
+ "convert_case",
+ "gix",
+ "hcl-rs",
+ "ignore-files",
+ "iso8601-duration",
+ "itertools",
+ "log",
+ "miette 7.2.0",
+ "once_cell",
+ "pipelight_error 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
+ "project-origins",
+ "rev_buf_reader",
+ "rustix",
+ "serde",
+ "serde_json",
+ "serde_plain",
+ "serde_yaml",
+ "signal-hook",
+ "strum",
+ "subprocess",
+ "sysinfo",
+ "thiserror 1.0.69",
+ "toml",
+]
+
+[[package]]
+name = "pipelight_teleport"
+version = "0.2.9"
+dependencies = [
+ "chrono",
+ "colored",
+ "console",
+ "convert_case",
+ "ignore-files",
+ "iso8601-duration",
+ "itertools",
+ "log",
+ "miette 7.2.0",
+ "once_cell",
+ "pipelight_error 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pipelight_git 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pipelight_utils",
+ "project-origins",
+ "rev_buf_reader",
+ "serde",
+ "serde_json",
+ "serde_plain",
+ "signal-hook",
+ "strum",
+ "thiserror 1.0.69",
+ "uuid",
 ]
 
 [[package]]
@@ -2586,13 +2572,11 @@ dependencies = [
  "colored",
  "console",
  "convert_case",
- "gix",
  "hcl-rs",
  "ignore-files",
  "iso8601-duration",
  "itertools",
  "log",
- "log4rs",
  "miette 7.2.0",
  "once_cell",
  "pipelight_error 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -2609,7 +2593,6 @@ dependencies = [
  "sysinfo",
  "thiserror 1.0.69",
  "toml",
- "uuid",
 ]
 
 [[package]]
@@ -2630,7 +2613,7 @@ dependencies = [
  "miette 7.2.0",
  "once_cell",
  "pipelight_exec",
- "pipelight_utils",
+ "pipelight_teleport",
  "rayon",
  "serde",
  "serde_json",
@@ -2731,31 +2714,6 @@ dependencies = [
  "tokio",
  "tracing",
  "windows 0.56.0",
-]
-
-[[package]]
-name = "procfs"
-version = "0.17.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cc5b72d8145275d844d4b5f6d4e1eef00c8cd889edb6035c21675d1bb1f45c9f"
-dependencies = [
- "bitflags 2.6.0",
- "chrono",
- "flate2",
- "hex",
- "procfs-core",
- "rustix",
-]
-
-[[package]]
-name = "procfs-core"
-version = "0.17.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "239df02d8349b06fc07398a3a1697b06418223b1c7725085e801e7c0fc6a12ec"
-dependencies = [
- "bitflags 2.6.0",
- "chrono",
- "hex",
 ]
 
 [[package]]
@@ -3046,16 +3004,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6513c1ad0b11a9376da888e3e0baa0077f1aed55c17f50e7b2397136129fb88f"
 dependencies = [
  "serde_derive",
-]
-
-[[package]]
-name = "serde-value"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3a1a3341211875ef120e117ea7fd5228530ae7e7036a779fdc9117be6b3282c"
-dependencies = [
- "ordered-float",
- "serde",
 ]
 
 [[package]]
@@ -3461,16 +3409,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "thread-id"
-version = "4.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cfe8f25bbdd100db7e1d34acf7fd2dc59c4bf8f7483f505eaa7d4f12f76cc0ea"
-dependencies = [
- "libc",
- "winapi",
-]
-
-[[package]]
 name = "tinystr"
 version = "0.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3625,15 +3563,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "typemap-ors"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a68c24b707f02dd18f1e4ccceb9d49f2058c2fb86384ef9972592904d7a28867"
-dependencies = [
- "unsafe-any-ors",
-]
-
-[[package]]
 name = "typenum"
 version = "1.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3683,15 +3612,6 @@ name = "unicode-width"
 version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e51733f11c9c4f72aa0c160008246859e340b00807569a0da0e7a1079b27ba85"
-
-[[package]]
-name = "unsafe-any-ors"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e0a303d30665362d9680d7d91d78b23f5f899504d4f08b3c4cf08d055d87c0ad"
-dependencies = [
- "destructure_traitobject",
-]
 
 [[package]]
 name = "unsafe-libyaml"
@@ -4269,6 +4189,7 @@ dependencies = [
  "once_cell",
  "owo-colors",
  "pipelight_exec",
+ "pipelight_git 0.2.10",
  "pipelight_utils",
  "rayon",
  "regex",

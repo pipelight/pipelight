@@ -1,10 +1,10 @@
 // Structs
-use crate::teleport::types::{Gate, Portal};
+use crate::types::{Gate, Portal};
 use pipelight_error::PipelightError;
 // Environment
 use std::env;
 // Error Handling
-use miette::{Context, Result};
+use miette::Result;
 
 impl Portal {
     /**

@@ -4,7 +4,7 @@ use crate::{
 };
 use chrono::{DateTime, Local};
 use pipelight_exec::{Statuable, Status};
-use pipelight_utils::git::Flag;
+use pipelight_git::Flag;
 use serde::{Deserialize, Serialize};
 
 use owo_colors::OwoColorize;

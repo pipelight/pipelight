@@ -9,7 +9,7 @@ use pipelight_exec::Process;
 
 use convert_case::{Case, Casing};
 
-use pipelight_utils::git::Flag;
+use pipelight_git::Flag;
 use std::convert::From;
 use std::process::exit;
 use uuid::Uuid;

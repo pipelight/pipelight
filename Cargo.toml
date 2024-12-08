@@ -8,6 +8,7 @@ members = [
   ## Process management
   "pipelight_exec",
   "pipelight_git",
+  "pipelight_teleport",
   ## Watchexec sane and reusable configuration.
   "pipelight_watcher",
   ## A templating crate for default pipelight configuration generation

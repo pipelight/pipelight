@@ -1,7 +1,6 @@
-// #![allow(unused_imports)]
-// #![allow(unused_variables)]
-// #![allow(unused_must_use)]
-
+#[allow(unused_imports)]
+#[allow(unused_variables)]
+#[allow(unused_must_use)]
 // Error struct
 pub mod error;
 // Methods

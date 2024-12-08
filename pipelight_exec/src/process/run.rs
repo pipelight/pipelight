@@ -2,10 +2,9 @@ use crate::dates::Duration;
 use crate::{Io, Process, State, Status};
 
 // Globals
-use crate::globals::{get_shell, OUTDIR, SHELL};
+use crate::globals::{OUTDIR, SHELL};
 
 // Unix process manipulation
-use std::os::unix::process::CommandExt;
 use std::process::{Command, Stdio};
 
 // File manipulation
@@ -13,8 +12,8 @@ use std::fs::{create_dir_all, File};
 
 // Error Handling
 use log::info;
-use miette::{IntoDiagnostic, Result};
-use pipelight_error::{PipelightError, WrapError};
+use miette::Result;
+use pipelight_error::PipelightError;
 
 impl Process {
     pub fn run(&mut self) -> Result<Self, PipelightError> {
@@ -111,6 +110,8 @@ impl Process {
 mod test {
     use super::*;
     use std::{thread, time};
+    // Error Handling
+    use miette::IntoDiagnostic;
 
     #[test]
     fn default() -> Result<()> {

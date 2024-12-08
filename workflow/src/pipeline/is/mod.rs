@@ -4,7 +4,7 @@ mod test;
 use rustix::process::test_kill_process;
 // Structs
 use crate::types::{Logs, Pipeline, Trigger};
-use pipelight_utils::git::{Flag, Special};
+use pipelight_git::{Flag, Special};
 // Traits
 use pipelight_exec::Status;
 // Error Handling

@@ -7,7 +7,7 @@ the node pretty printable type.
 use crate::types::{Command, Event, Node, Parallel, Pipeline, Step, StepOrParallel, Trigger};
 use log::LevelFilter;
 use pipelight_exec::{Statuable, Status};
-use pipelight_utils::git::Flag;
+use pipelight_git::Flag;
 // Globals
 use pipelight_utils::globals::LOGGER;
 // Colorize

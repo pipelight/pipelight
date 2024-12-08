@@ -115,7 +115,7 @@ mod watcher {
 
     use crate::Watcher;
     use pipelight_exec::Process;
-    use pipelight_utils::teleport::Portal;
+    use pipelight_teleport::Portal;
     // Error handling
     use miette::{Diagnostic, IntoDiagnostic, Result};
     // Logger

@@ -2,7 +2,7 @@
 use std::env;
 // File
 use super::types::Portal;
-use crate::file::FileType;
+use pipelight_utils::file::FileType;
 // Trait
 use strum::IntoEnumIterator;
 // Git
@@ -11,7 +11,7 @@ use pipelight_git::Git;
 use std::path::Path;
 // Error Handling
 use log::{info, trace};
-use miette::{Context, Error, IntoDiagnostic, Result};
+use miette::{Error, IntoDiagnostic, Result};
 use pipelight_error::{LibError, PipelightError};
 
 impl Portal {

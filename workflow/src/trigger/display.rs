@@ -1,7 +1,6 @@
 // Struct
 use crate::types::Trigger;
 // Colors
-pub use colored::control::set_override;
 use colored::Colorize;
 // Traits
 use std::fmt;

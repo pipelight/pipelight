@@ -1,5 +1,5 @@
 // Structs
-use pipelight_utils::teleport::Portal;
+use pipelight_teleport::Portal;
 // Globals
 use std::sync::Arc;
 // Watchexec
