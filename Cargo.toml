@@ -22,6 +22,9 @@ members = [
   ## Bin package and Lib entrypoint
   "pipelight",
   "man",
+
+  # Wasm
+  "deno_lib",
 ]
 
 # [workspace.dependencies]

@@ -274,7 +274,7 @@ checksum = "325918d6fe32f23b19878fe4b34794ae41fc19ddbe53b10571a4874d44ffd39b"
 
 [[package]]
 name = "cast"
-version = "0.5.8"
+version = "0.5.9"
 dependencies = [
  "hcl-rs",
  "kdl 4.6.0",
@@ -289,8 +289,6 @@ dependencies = [
  "serde_yaml",
  "thiserror 1.0.69",
  "toml",
- "tsify",
- "wasm-bindgen",
 ]
 
 [[package]]
@@ -583,6 +581,18 @@ dependencies = [
  "darling_core",
  "quote",
  "syn 2.0.90",
+]
+
+[[package]]
+name = "deno_lib"
+version = "0.5.9"
+dependencies = [
+ "log",
+ "miette 7.2.0",
+ "serde",
+ "thiserror 1.0.69",
+ "tsify",
+ "wasm-bindgen",
 ]
 
 [[package]]
