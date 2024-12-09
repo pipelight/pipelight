@@ -9,8 +9,9 @@ use tsify::Tsify;
 /**
 Options to tweak global pipelines behavior
 */
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Tsify)]
 #[serde(deny_unknown_fields)]
+#[tsify(from_wasm_abi)]
 pub struct ConfigOpts {
     // Wheteher every pipelines should be attached or detached from the standard I/O
     // when triggered by a git hook.
@@ -29,8 +30,9 @@ It is as is to let room for top level configuration that will come after **v1.0.
 - eventually other optional things like credentials, daemon config...
 
 */
-#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default, Tsify)]
 #[serde(deny_unknown_fields)]
+#[tsify(from_wasm_abi)]
 pub struct Config {
     pub pipelines: Option<Vec<Pipeline>>,
     pub options: Option<ConfigOpts>,
@@ -39,8 +41,9 @@ pub struct Config {
 /**
 Options to tweak pipelines behavior
 */
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Tsify)]
 #[serde(deny_unknown_fields)]
+#[tsify(from_wasm_abi)]
 pub struct PipelineOpts {
     // Wheteher the pipeline should be attached or detached from the standard I/O
     // when triggered by a git hook.
@@ -66,7 +69,8 @@ pub struct Pipeline {
 /**
 Options to tweak step behavior and command execution
 */
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Tsify)]
+#[tsify(from_wasm_abi)]
 pub struct StepOpts {
     // The step's command execution behavior
     pub mode: Option<String>,
@@ -75,8 +79,9 @@ pub struct StepOpts {
 /**
 Steps are a named list of Commands.
 */
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Tsify)]
 #[serde(deny_unknown_fields)]
+#[tsify(from_wasm_abi)]
 pub struct Step {
     pub name: String,
     pub commands: Vec<String>,
@@ -88,8 +93,9 @@ pub struct Step {
 /**
 Parallel are unnamed list of steps.
 */
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Tsify)]
 #[serde(deny_unknown_fields)]
+#[tsify(from_wasm_abi)]
 pub struct Parallel {
     pub parallel: Vec<Step>,
     // pub options: Option<StepOpts>,
@@ -105,9 +111,9 @@ As a  developer, I find it a bit of an overhead to use.
 But it is the simplest way I have found to make
 a usable **Union** (Step must be This type OR This type).
 */
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
-#[serde(untagged)]
-#[serde(deny_unknown_fields)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Tsify)]
+#[serde(deny_unknown_fields, untagged)]
+#[tsify(from_wasm_abi)]
 pub enum StepOrParallel {
     Step(Step),
     Parallel(Parallel),
@@ -119,8 +125,9 @@ They are steps to be triggered on specific events.
 For example if a pipeline fails and if its on_failure fallback is defined
 the on_failure fallback is triggered.
 */
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Tsify)]
 #[serde(deny_unknown_fields)]
+#[tsify(from_wasm_abi)]
 pub struct Fallback {
     pub on_started: Option<Vec<StepOrParallel>>,
     pub on_failure: Option<Vec<StepOrParallel>>,
@@ -131,9 +138,9 @@ pub struct Fallback {
 /**
 Triggers are casted into multiple types.
 */
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
-#[serde(untagged)]
-#[serde(deny_unknown_fields)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Tsify)]
+#[serde(deny_unknown_fields, untagged)]
+#[tsify(from_wasm_abi)]
 pub enum Trigger {
     TriggerBranch(TriggerBranch),
     TriggerTag(TriggerTag),
@@ -142,8 +149,9 @@ pub enum Trigger {
 /**
 A trigger that is a combination of actions over a git branch.
 */
-#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Tsify)]
 #[serde(deny_unknown_fields)]
+#[tsify(from_wasm_abi)]
 pub struct TriggerBranch {
     pub branches: Option<Vec<String>>,
     pub actions: Option<Vec<String>>,

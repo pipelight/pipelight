@@ -3,7 +3,7 @@ name = "deno_lib"
 version = "0.5.9"
 edition = "2021"
 license = "GPL-2.0-only"
-description = "Multiple file format to rust struct"
+description = "Pipelight types and function to help writting pipelines."
 
 [lib]
 crate-type = ["cdylib", "rlib"]
