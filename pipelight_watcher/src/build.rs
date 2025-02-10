@@ -4,10 +4,11 @@ use pipelight_teleport::Portal;
 use std::sync::Arc;
 // Watchexec
 use ignore_files::{IgnoreFile, IgnoreFilter};
+use watchexec_filterer_ignore::IgnoreFilterer;
+
 use std::future::Future;
 use watchexec::{action::ActionHandler, filter::Filterer, Config, Watchexec};
 use watchexec_events::Event;
-use watchexec_filterer_ignore::IgnoreFilterer;
 use watchexec_signals::Signal;
 // Env
 use super::Watcher;
@@ -58,14 +59,23 @@ impl Watcher {
             applies_in: Some(applies_in.clone()),
             applies_to: None,
         };
-        let globs = [".pipelight/", ".git/", ".cargo/", "target", ".node_modules"];
+        let globs = [
+            ".pipelight/",
+            ".git/",
+            ".jj",
+            ".cargo/",
+            "target",
+            "result",
+            ".node_modules",
+        ];
+
         let mut filter: IgnoreFilter = IgnoreFilter::empty(applies_in.clone());
         filter
             .add_globs(&globs, Some(&applies_in))
             .into_diagnostic()?;
         filter.add_file(&file).await.into_diagnostic()?;
-
         let filterer = IgnoreFilterer(filter);
+
         Ok(filterer)
     }
 
@@ -78,7 +88,15 @@ impl Watcher {
         // Set Filter
         let applies_in = env::current_dir().into_diagnostic()?;
 
-        let globs = [".pipelight/", ".git/", ".cargo/", ".node_modules/"];
+        let globs = [
+            ".pipelight/",
+            ".git/",
+            ".jj",
+            ".cargo/",
+            "target",
+            "result",
+            ".node_modules",
+        ];
         let mut filter: IgnoreFilter = IgnoreFilter::empty(applies_in.clone());
         filter
             .add_globs(&globs, Some(&applies_in))
@@ -86,5 +104,23 @@ impl Watcher {
 
         let filterer = IgnoreFilterer(filter);
         Ok(filterer)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[tokio::test]
+    async fn test_get_ignore_path() -> Result<()> {
+        let res = Watcher::get_ignore_path()?;
+        println!("{:#?}", res);
+        Ok(())
+    }
+    #[tokio::test]
+    async fn ignore_file_detection() -> Result<()> {
+        let ignore_filterer = Watcher::make_filterer().await?;
+        // println!("{:#?}", ignore_filterer);
+        Ok(())
     }
 }

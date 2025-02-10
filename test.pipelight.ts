@@ -40,7 +40,7 @@ const config: Config = {
     // Watcher
     // Test watcher with a long running pipeline
     pipeline("test_watcher", () => [
-      step(`run harmless commands`, () => ["pwd", "sleep 30", "ls"]),
+      step(`run harmless commands`, () => ["pwd", "sleep 7", "ls"]),
     ]).add_trigger({
       actions: ["manual", "watch"],
     }),

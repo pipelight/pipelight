@@ -72,16 +72,7 @@ impl Watcher {
     }
     pub async fn set_filters(&self) -> Result<Self> {
         // Search for an ignore file to set a watch filter
-        match Self::get_ignore_path() {
-            Ok(res) => {
-                let filterer = Self::make_filter_configuration(&res).await?;
-                self.config.filterer(Arc::new(filterer));
-            }
-            Err(_) => {
-                let filterer = Self::make_default_filter_configuration()?;
-                self.config.filterer(Arc::new(filterer));
-            }
-        }
+        self.config.filterer(Arc::new(Self::make_filterer().await?));
         // Watch only the current directory
         self.config.pathset(vec![env::current_dir().unwrap()]);
         Ok(self.to_owned())
