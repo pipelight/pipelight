@@ -125,6 +125,13 @@ impl Process {
         self.config.term = true;
         self
     }
+    /*
+     * Will spawn the process and not wait for it to return (silent).
+     * However,if the parent is killed, child will be killed.
+     * background != detached
+     *
+     * Usually you want detach AND background.
+     */
     pub fn background(&mut self) -> &mut Self {
         self.config.background = true;
         self
@@ -143,7 +150,6 @@ impl Process {
     }
     /**
      * Detach child process from parent and remove from process group
-     *
      * Neither killing parent or parent group will kill the child.
      */
     pub fn hard_detach(&mut self) -> &mut Self {
