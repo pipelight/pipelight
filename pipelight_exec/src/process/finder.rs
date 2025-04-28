@@ -135,11 +135,12 @@ impl Finder {
         let mut s = System::new_all();
         s.refresh_processes_specifics(
             ProcessesToUpdate::All,
-            ProcessRefreshKind::new()
-                .without_cpu()
-                .without_memory()
-                .without_disk_usage()
-                .without_environ(),
+            true,
+            ProcessRefreshKind::nothing()
+                .with_cmd(sysinfo::UpdateKind::Always)
+                .with_cwd(sysinfo::UpdateKind::Always)
+                .with_root(sysinfo::UpdateKind::Always)
+                .with_exe(sysinfo::UpdateKind::Always),
         );
 
         // Loop through process list
@@ -190,11 +191,12 @@ impl Finder {
         let mut s = System::new_all();
         s.refresh_processes_specifics(
             ProcessesToUpdate::All,
-            ProcessRefreshKind::new()
-                .without_cpu()
-                .without_memory()
-                .without_disk_usage()
-                .without_environ(),
+            true,
+            ProcessRefreshKind::nothing()
+                .with_cmd(sysinfo::UpdateKind::Always)
+                .with_cwd(sysinfo::UpdateKind::Always)
+                .with_root(sysinfo::UpdateKind::Always)
+                .with_exe(sysinfo::UpdateKind::Always),
         );
 
         // Loop through process list
@@ -271,7 +273,7 @@ impl Finder {
             for process in matches {
                 let pid = rustix::process::Pid::from_raw(process.pid.unwrap());
                 if test_kill_process(pid.unwrap()).is_ok() {
-                    match kill_process(pid.unwrap(), Signal::Kill) {
+                    match kill_process(pid.unwrap(), Signal::KILL) {
                         Ok(_) => return Ok(()),
                         Err(e) => {
                             return Err(LibError {

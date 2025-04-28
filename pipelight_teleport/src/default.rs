@@ -8,9 +8,9 @@ use miette::Result;
 
 impl Portal {
     /**
-    Prefered way to instanciate a portal.
-    Hydrate a default portal with current env.
-    */
+     * Prefered way to instanciate a portal.
+     * Hydrate a default portal with current env.
+     */
     pub fn new() -> Result<Self, PipelightError> {
         Ok(Portal {
             target: Gate::default(),

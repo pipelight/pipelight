@@ -38,8 +38,9 @@ impl Portal {
         self.to_owned()
     }
     /*
-    Recursively search a file throught filesystem
-    */
+     * Recursively search a file throught filesystem.
+     * Returns an error if no file could be found.
+     */
     pub fn search(&mut self) -> Result<Self, PipelightError> {
         let seed = self.seed.clone();
         if let Some(seed) = seed {
@@ -66,6 +67,9 @@ impl Portal {
         }
         Ok(self.to_owned())
     }
+    /*
+     * Set portal searching directory to parent.
+     */
     fn parent(&mut self) -> Result<Self, PipelightError> {
         if !self.has_reached_root()? && self.current.directory_path.is_some() {
             let current = self.current.directory_path.clone().unwrap();

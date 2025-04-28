@@ -28,6 +28,7 @@ pub struct Runner {
     term: bool,
     background: bool,
     detach: bool,
+    orphan: bool,
     fs: bool,
 }
 impl Default for Runner {
@@ -37,6 +38,7 @@ impl Default for Runner {
             term: false,
             background: false,
             detach: false,
+            orphan: false,
             fs: false,
         }
     }
@@ -49,6 +51,7 @@ impl Runner {
             term: false,
             background: false,
             detach: false,
+            orphan: false,
             fs: false,
         }
     }
@@ -136,6 +139,7 @@ impl Process {
         self.config.background = true;
         self
     }
+
     pub fn detach(&mut self) -> &mut Self {
         self.config.detach = true;
         self
@@ -152,7 +156,7 @@ impl Process {
      * Detach child process from parent and remove from process group
      * Neither killing parent or parent group will kill the child.
      */
-    pub fn hard_detach(&mut self) -> &mut Self {
+    pub fn orphan(&mut self) -> &mut Self {
         self.config.detach = true;
         self
     }
@@ -168,7 +172,15 @@ impl Process {
      */
     pub fn get_from_pid(pid: &i32) -> Process {
         let mut s = System::new_all();
-        s.refresh_processes_specifics(ProcessesToUpdate::All, ProcessRefreshKind::new());
+        s.refresh_processes_specifics(
+            ProcessesToUpdate::All,
+            true,
+            ProcessRefreshKind::nothing()
+                .with_cmd(sysinfo::UpdateKind::Always)
+                .with_cwd(sysinfo::UpdateKind::Always)
+                .with_root(sysinfo::UpdateKind::Always)
+                .with_exe(sysinfo::UpdateKind::Always),
+        );
         let res = s
             .process(sysinfo::Pid::from_u32(
                 u32::try_from(pid.to_owned()).unwrap(),

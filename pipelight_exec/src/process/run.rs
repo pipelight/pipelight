@@ -5,6 +5,7 @@ use crate::{Io, Process, State, Status};
 use crate::globals::{OUTDIR, SHELL};
 
 // Unix process manipulation
+use std::os::unix::process::CommandExt;
 use std::process::{Command, Stdio};
 
 // File manipulation
@@ -46,7 +47,6 @@ impl Process {
 
         match self.config.detach {
             true => {
-                // Hard detach
                 // cmd.process_group(0);
 
                 // Soft detach
@@ -54,6 +54,11 @@ impl Process {
             }
             false => {}
         };
+
+        // Hard detach
+        if self.config.orphan {
+            cmd.process_group(0);
+        }
 
         // Process execution
         // and catch child pid

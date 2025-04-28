@@ -56,6 +56,9 @@ impl Node {
         } else {
             let mut value = self.value.clone().unwrap();
 
+            // Remove extra start/end spaces
+            value = value.trim_matches('\n').trim_matches('\r').to_owned();
+
             // Remove command output extra spaces and identation
             let big_spaces: Regex = Regex::new(r"\s\s+").unwrap();
             value = big_spaces.replace_all(&value, "\n").to_string();
