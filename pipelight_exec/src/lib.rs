@@ -64,8 +64,11 @@
 //! # Ok::<(), Report>(())
 //! ```
 //!
-//! Runs a disowned child process that won't be killed if parent is killed.
-//! Do not wait until process is over and return as soon as child is spawned.
+//! Runs a child process and wait for it to return,
+//! but do not print stdout and stderr to console.
+//!
+//! In other words it is detached from standards inputs and outputs.
+//!
 //! ```rust
 //! # use pipelight_exec::Process;
 //! # use miette::Report;
@@ -73,6 +76,21 @@
 //! let mut p = Process::new()
 //!     .stdin("echo test")
 //!     .detach()
+//!     .to_owned();
+//! p.run()?;
+//!
+//! # Ok::<(), Report>(())
+//! ```
+//!
+//! Runs a disowned child process that won't be killed if parent is killed.
+//!
+//! ```rust
+//! # use pipelight_exec::Process;
+//! # use miette::Report;
+//!
+//! let mut p = Process::new()
+//!     .stdin("echo test")
+//!     .orphan()
 //!     .to_owned();
 //! p.run()?;
 //!

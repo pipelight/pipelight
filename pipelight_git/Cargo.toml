@@ -1,12 +1,13 @@
 [package]
 name = "pipelight_git"
+publish = false
 version = "0.2.12"
 edition = "2021"
 license = "GPL-2.0-only"
 description = "A small git compatibility layer"
 
 [dependencies]
-pipelight_error = "0.2.10"
+pipelight_error = "0.2.12"
 gix = { version = "0.72.1", default-features = false }
 rev_buf_reader = "0.3.0"
 log = "0.4.22"

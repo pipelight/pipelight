@@ -1,5 +1,6 @@
 [package]
 name = "pipelight_error"
+publish = true
 version = "0.2.12"
 edition = "2021"
 license = "GPL-2.0-only"

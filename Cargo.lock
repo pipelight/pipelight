@@ -418,7 +418,7 @@ dependencies = [
  "clap",
  "clap_complete",
  "clap_mangen",
- "colored 3.0.0",
+ "colored",
  "convert_case",
  "dialoguer",
  "env_logger",
@@ -458,16 +458,6 @@ name = "colorchoice"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5b63caa9aa9397e2d9480a9b13673856c78d8ac123288526c37d7839f2a86990"
-
-[[package]]
-name = "colored"
-version = "2.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "117725a109d387c937a1533ce01b450cbde6b88abceea8473c4d7a85853cda3c"
-dependencies = [
- "lazy_static",
- "windows-sys 0.59.0",
-]
 
 [[package]]
 name = "colored"
@@ -1978,12 +1968,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "lazy_static"
-version = "1.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
-
-[[package]]
 name = "libc"
 version = "0.2.172"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2540,27 +2524,26 @@ dependencies = [
 
 [[package]]
 name = "pipelight_error"
-version = "0.2.11"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "525cf25bea4e7c9cbb0f945870942985b2e1b060207ee37e2cba5be81d44674d"
+version = "0.2.12"
 dependencies = [
- "colored 2.2.0",
+ "colored",
  "hcl-rs",
  "miette",
  "serde",
  "serde_json",
  "serde_plain",
  "serde_yaml",
- "strum 0.26.3",
- "thiserror 1.0.69",
+ "thiserror 2.0.12",
  "toml",
 ]
 
 [[package]]
 name = "pipelight_error"
 version = "0.2.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d78284bed7ff890e246836c65de1a54b5b6d38f73acc4269b7ca0843f2a6844f"
 dependencies = [
- "colored 3.0.0",
+ "colored",
  "hcl-rs",
  "miette",
  "serde",
@@ -2573,18 +2556,18 @@ dependencies = [
 
 [[package]]
 name = "pipelight_exec"
-version = "0.4.3"
+version = "0.4.4"
 dependencies = [
  "bon",
  "chrono",
- "colored 3.0.0",
+ "colored",
  "convert_case",
  "iso8601-duration",
  "itertools",
  "log",
  "miette",
  "once_cell",
- "pipelight_error 0.2.11",
+ "pipelight_error 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)",
  "rustix 1.0.7",
  "serde",
  "serde_plain",
@@ -2605,11 +2588,11 @@ dependencies = [
  "log",
  "miette",
  "once_cell",
- "pipelight_error 0.2.11",
+ "pipelight_error 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)",
  "rev_buf_reader",
  "serde",
  "serde_plain",
- "strum 0.27.1",
+ "strum",
  "subprocess",
 ]
 
@@ -2626,7 +2609,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_plain",
- "strum 0.27.1",
+ "strum",
 ]
 
 [[package]]
@@ -2650,7 +2633,7 @@ dependencies = [
  "serde_plain",
  "serde_yaml",
  "signal-hook",
- "strum 0.27.1",
+ "strum",
  "subprocess",
  "sysinfo",
  "toml",
@@ -2665,7 +2648,7 @@ dependencies = [
  "clap",
  "clap_complete",
  "clap_mangen",
- "colored 3.0.0",
+ "colored",
  "convert_case",
  "dialoguer",
  "glob",
@@ -3296,33 +3279,11 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "strum"
-version = "0.26.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8fec0f0aef304996cf250b31b5a10dee7980c85da9d759361292b8bca5a18f06"
-dependencies = [
- "strum_macros 0.26.4",
-]
-
-[[package]]
-name = "strum"
 version = "0.27.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f64def088c51c9510a8579e3c5d67c65349dcf755e5479ad3d010aa6454e2c32"
 dependencies = [
- "strum_macros 0.27.1",
-]
-
-[[package]]
-name = "strum_macros"
-version = "0.26.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4c6bee85a5a24955dc440386795aa378cd9cf82acd5f764469152d2270e581be"
-dependencies = [
- "heck",
- "proc-macro2",
- "quote",
- "rustversion",
- "syn 2.0.101",
+ "strum_macros",
 ]
 
 [[package]]
@@ -4367,7 +4328,7 @@ version = "0.4.2"
 dependencies = [
  "cast",
  "chrono",
- "colored 3.0.0",
+ "colored",
  "convert_case",
  "glob",
  "log",
@@ -4383,7 +4344,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_plain",
- "strum 0.27.1",
+ "strum",
  "tabled",
  "templates",
  "uuid",
