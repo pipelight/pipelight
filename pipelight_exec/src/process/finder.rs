@@ -3,8 +3,9 @@ use rustix::process::{getgid, getpid, kill_process, test_kill_process, Signal};
 use sysinfo::get_current_pid;
 use sysinfo::{Process, ProcessRefreshKind, ProcessesToUpdate, System};
 // Error handling
+use log::{trace, warn};
 use miette::{Context, IntoDiagnostic, Result};
-use pipelight_error::{LibError, PipelightError};
+use pipelight_error::{LibError, PipelightError, WrapError};
 // Env
 use itertools::Itertools;
 use std::ops::Deref;
@@ -60,8 +61,8 @@ impl Finder {
     }
 
     /**
-    Restrict search result by seed.
-    */
+     * Restrict search result by seed.
+     */
     pub fn seed(&mut self, cmd: &str) -> Self {
         if let Some(mut seeds) = self.seeds.clone() {
             seeds.push(cmd.to_owned());
@@ -136,6 +137,7 @@ impl Finder {
         s.refresh_processes_specifics(
             ProcessesToUpdate::All,
             true,
+            // ProcessRefreshKind::everything(),
             ProcessRefreshKind::nothing()
                 .with_cmd(sysinfo::UpdateKind::Always)
                 .with_cwd(sysinfo::UpdateKind::Always)
@@ -266,7 +268,15 @@ impl Finder {
     }
 
     /**
-     * Kill matches if any.
+     * Try to kill matches if any.
+     * And stop if one of the processes couldn't be killed.
+     *
+     * When you want to silently fail use:
+     *
+     * ```rs
+     * kill().ok()
+     *
+     * ```
      */
     pub fn kill(&self) -> Result<(), PipelightError> {
         if let Some(matches) = self.matches.clone() {
@@ -274,11 +284,14 @@ impl Finder {
                 let pid = rustix::process::Pid::from_raw(process.pid.unwrap());
                 if test_kill_process(pid.unwrap()).is_ok() {
                     match kill_process(pid.unwrap(), Signal::KILL) {
-                        Ok(_) => return Ok(()),
+                        Ok(_) => {
+                            trace!("killed process: {:#?}", pid.unwrap());
+                        }
                         Err(e) => {
+                            warn!("couldn't kill process: {:#?}", pid.unwrap());
                             return Err(LibError {
                                 message: "Couldn't kill process".to_owned(),
-                                help: "".to_owned(),
+                                help: e.to_string(),
                             }
                             .into());
                         }
@@ -292,19 +305,20 @@ impl Finder {
 
 #[cfg(test)]
 mod test {
+    use super::*;
     use crate::{Finder, Process};
     use std::env;
+
+    use serial_test::serial;
+
     use std::fs;
-    use std::fs::remove_dir_all;
     use std::{thread, time};
-    // Error handling
-    use miette::{IntoDiagnostic, Result};
-    use pipelight_error::PipelightError;
 
     /**
      * Run a simple process, detach it and find it back.
      */
-    // #[test]
+    #[test]
+    #[serial]
     fn short_seed() -> Result<(), PipelightError> {
         let mut process = Process::new()
             .stdin("sleep 14")
@@ -324,14 +338,14 @@ mod test {
             .seed("sleep 1")
             .search()?;
 
-        // println!("{:#?}", finder);
         finder.kill()?;
         assert_eq!(finder.clone().matches.unwrap().len(), 2);
 
         Ok(())
     }
 
-    // #[test]
+    #[test]
+    #[serial]
     fn long_seed() -> Result<(), PipelightError> {
         let mut process = Process::new()
             .stdin("sleep 22")
@@ -360,7 +374,8 @@ mod test {
         Ok(())
     }
 
-    // #[test]
+    #[test]
+    #[serial]
     fn same_root() -> Result<(), PipelightError> {
         let root = env::current_dir()?;
         let root = root.to_str().unwrap();
@@ -386,19 +401,21 @@ mod test {
         assert_eq!(finder.clone().matches.unwrap().len(), 2);
         Ok(())
     }
+
     #[test]
+    #[serial]
     fn different_cwd() -> Result<(), PipelightError> {
         let root = env::current_dir()?;
-        let root = root.to_str().unwrap();
+        let root = root.to_str().unwrap().to_owned();
 
-        let test_dir = "./test_dir_tmp/finder".to_owned();
+        let test_dir = root.clone() + "./test_dir_tmp/finder";
         let a = test_dir.clone() + "/a";
         let b = test_dir.clone() + "/b";
         for dir in vec![a.clone(), b] {
             fs::create_dir_all(&dir)?;
             env::set_current_dir(&dir)?;
             let mut process = Process::new()
-                .stdin("sleep 31")
+                .stdin("sleep 41")
                 .background()
                 .detach()
                 .to_owned();
@@ -410,7 +427,7 @@ mod test {
         thread::sleep(throttle);
 
         // let path = Path::from()
-        let finder = Finder::new().cwd(&a).seed("sleep 31").search()?;
+        let finder = Finder::new().cwd(&a).seed("sleep 41").search()?;
         finder.kill()?;
 
         println!("{:#?}", finder);
