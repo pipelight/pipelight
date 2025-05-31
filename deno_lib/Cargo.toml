@@ -11,8 +11,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 serde = { version = "1.0.208", features = ["derive"] }
 miette = { version = "7.2.0" }
-thiserror = "1.0.63"
 log = "0.4.22"
 wasm-bindgen = "0.2.99"
-tsify = "0.4.5"
+tsify = "0.5.5"
 # getrandom = { version = "0.2.15", features = ["wasm-bindgen"] }

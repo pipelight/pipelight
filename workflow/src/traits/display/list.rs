@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use owo_colors::OwoColorize;
 use std::fmt;
 use tabled::{
-    settings::{location::ByColumnName, object::Columns, Disable, Style},
+    settings::{disable::Remove, location::ByColumnName, object::Columns, Style},
     Table, Tabled,
 };
 //Logger
@@ -22,16 +22,16 @@ use miette::{IntoDiagnostic, Result};
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Tabled)]
 pub struct PipelineTable {
     pub name: String,
-    #[tabled(display_with = "display_status")]
+    #[tabled(display = "display_status")]
     pub status: Option<Status>,
     // Event
-    #[tabled(rename = "branch/tag", display_with = "display_string")]
+    #[tabled(rename = "branch/tag", display = "display_string")]
     pub git_ref: Option<String>,
-    #[tabled(display_with = "display_action")]
+    #[tabled(display = "display_action")]
     pub action: Option<Flag>,
-    #[tabled(display_with = "display_date")]
+    #[tabled(display = "display_date")]
     pub date: Option<String>,
-    #[tabled(display_with = "display_string")]
+    #[tabled(display = "display_string")]
     pub commit: Option<String>,
 }
 impl PipelineTable {
@@ -72,12 +72,12 @@ impl PipelineTable {
                 let mut res = Table::new(&items);
                 res
                     // disable unwanted column
-                    .with(Disable::column(ByColumnName::new("triggers")))
-                    .with(Disable::column(ByColumnName::new("commit")))
-                    .with(Disable::column(ByColumnName::new("date")))
-                    .with(Disable::column(ByColumnName::new("action")))
-                    .with(Disable::column(ByColumnName::new("branch/tag")))
-                    .with(Disable::column(ByColumnName::new("status")));
+                    .with(Remove::column(ByColumnName::new("triggers")))
+                    .with(Remove::column(ByColumnName::new("commit")))
+                    .with(Remove::column(ByColumnName::new("date")))
+                    .with(Remove::column(ByColumnName::new("action")))
+                    .with(Remove::column(ByColumnName::new("branch/tag")))
+                    .with(Remove::column(ByColumnName::new("status")));
 
                 res.with(Style::rounded());
                 print!("{}", res);
@@ -86,11 +86,11 @@ impl PipelineTable {
                 let mut res = Table::new(&items);
                 res
                     // disable unwanted column
-                    .with(Disable::column(ByColumnName::new("triggers")))
-                    .with(Disable::column(ByColumnName::new("commit")))
-                    .with(Disable::column(ByColumnName::new("date")))
-                    .with(Disable::column(ByColumnName::new("action")))
-                    .with(Disable::column(ByColumnName::new("branch/tag")));
+                    .with(Remove::column(ByColumnName::new("triggers")))
+                    .with(Remove::column(ByColumnName::new("commit")))
+                    .with(Remove::column(ByColumnName::new("date")))
+                    .with(Remove::column(ByColumnName::new("action")))
+                    .with(Remove::column(ByColumnName::new("branch/tag")));
 
                 res.with(Style::rounded());
                 print!("{}", res);
@@ -99,9 +99,9 @@ impl PipelineTable {
                 let mut res = Table::new(&items);
                 res
                     // disable unwanted column
-                    .with(Disable::column(ByColumnName::new("triggers")))
-                    .with(Disable::column(ByColumnName::new("commit")))
-                    .with(Disable::column(ByColumnName::new("date")));
+                    .with(Remove::column(ByColumnName::new("triggers")))
+                    .with(Remove::column(ByColumnName::new("commit")))
+                    .with(Remove::column(ByColumnName::new("date")));
 
                 res.with(Style::rounded());
                 print!("{}", res);
@@ -110,8 +110,8 @@ impl PipelineTable {
                 let mut res = Table::new(&items);
                 res
                     // disable unwanted column
-                    .with(Disable::column(ByColumnName::new("triggers")))
-                    .with(Disable::column(ByColumnName::new("commit")));
+                    .with(Remove::column(ByColumnName::new("triggers")))
+                    .with(Remove::column(ByColumnName::new("commit")));
 
                 res.with(Style::rounded());
                 print!("{}", res);
@@ -119,7 +119,7 @@ impl PipelineTable {
             LevelFilter::Trace => {
                 let mut res = Table::new(&items);
                 res.with(Style::rounded());
-                res.with(Disable::column(ByColumnName::new("triggers")));
+                res.with(Remove::column(ByColumnName::new("triggers")));
                 print!("{}", res);
             }
         };

@@ -1,17 +1,16 @@
 [package]
 name = "pipelight_error"
-version = "0.2.11"
+version = "0.2.12"
 edition = "2021"
 license = "GPL-2.0-only"
 description = "Pipeligh Error types"
 
 [dependencies]
-strum = { version = "0.26.3", features = ["derive"] }
 serde = { version = "1.0.208", features = ["derive"] }
 miette = "7.2.0"
 serde_plain = "1.0.2"
-thiserror = "1.0.63"
-colored = "2.1.0"
+thiserror = "2.0.12"
+colored = "3.0.0"
 serde_json = "1.0.125"
 toml = { version = "0.8.19", features = ["parse", "preserve_order"] }
 hcl-rs = "0.18.0"

@@ -1,18 +1,18 @@
 [package]
 name = "pipelight_utils"
-version = "0.2.9"
+version = "0.2.12"
 edition = "2021"
 license = "GPL-2.0-only"
 description = "A set of trivial utilities for command line tools"
 
 [dependencies]
-pipelight_error = "0.2.10"
-# pipelight_error = { path = "../pipelight_error" }
+# pipelight_error = "0.2.12"
+pipelight_error = { path = "../pipelight_error" }
 rev_buf_reader = "0.3.0"
 log = "0.4.22"
-strum = { version = "0.26.3", features = ["derive"] }
+strum = { version = "0.27.1", features = ["derive"] }
 serde = { version = "1.0.208", features = ["derive"] }
-convert_case = "0.6.0"
+convert_case = "0.8.0"
 once_cell = "1.19.0"
 miette = "7.2.0"
 serde_plain = "1.0.2"
@@ -21,12 +21,9 @@ chrono = { version = "0.4.38", features = ["serde"] }
 ignore-files = "3.0.1"
 signal-hook = { version = "0.3.17", features = ["extended-siginfo"] }
 console = "0.15.8"
-thiserror = "1.0.63"
-colored = "2.1.0"
 subprocess = "0.2.9"
-rustix = { version = "0.38.34", features = ["process"] }
-sysinfo = "0.31.2"
-itertools = "0.13.0"
+sysinfo = "0.35.1"
+itertools = "0.14.0"
 serde_json = "1.0.125"
 toml = { version = "0.8.19", features = ["parse"] }
 hcl-rs = "0.18.0"
