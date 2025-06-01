@@ -157,7 +157,7 @@ impl Process {
      * Neither killing parent or parent group will kill the child.
      */
     pub fn orphan(&mut self) -> &mut Self {
-        self.config.detach = true;
+        self.config.orphan = true;
         self
     }
     pub fn fs(&mut self) -> &mut Self {

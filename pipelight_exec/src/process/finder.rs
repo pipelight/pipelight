@@ -373,6 +373,34 @@ mod test {
 
         Ok(())
     }
+    #[test]
+    #[serial]
+    fn multi_seed() -> Result<(), PipelightError> {
+        let mut process = Process::new()
+            .stdin("sleep 5")
+            .background()
+            .detach()
+            .to_owned();
+        process.run()?;
+
+        let mut process = Process::new()
+            .stdin("sleep 54")
+            .background()
+            .detach()
+            .to_owned();
+        process.run()?;
+
+        let finder = Finder::new()
+            .root(env::current_dir()?.to_str().unwrap())
+            .seed("sleep")
+            .seed("5")
+            .search()?;
+
+        finder.kill()?;
+
+        assert_eq!(finder.clone().matches.unwrap().len(), 2);
+        Ok(())
+    }
 
     #[test]
     #[serial]
@@ -397,7 +425,7 @@ mod test {
 
         let finder = Finder::new().root(root).seed("sleep 31").search()?;
         finder.kill()?;
-        println!("{:#?}", finder);
+        // println!("{:#?}", finder);
         assert_eq!(finder.clone().matches.unwrap().len(), 2);
         Ok(())
     }
@@ -430,7 +458,7 @@ mod test {
         let finder = Finder::new().cwd(&a).seed("sleep 41").search()?;
         finder.kill()?;
 
-        println!("{:#?}", finder);
+        // println!("{:#?}", finder);
         assert_eq!(finder.clone().matches.unwrap().len(), 1);
         Ok(())
     }
