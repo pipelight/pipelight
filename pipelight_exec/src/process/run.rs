@@ -14,7 +14,7 @@ use std::fs::{create_dir_all, File};
 // Error Handling
 use log::info;
 use miette::Result;
-use pipelight_error::PipelightError;
+use pipelight_error::{LibError, PipelightError};
 
 impl Process {
     pub fn run(&mut self) -> Result<Self, PipelightError> {
@@ -55,22 +55,36 @@ impl Process {
             false => {}
         };
 
-        // Hard detach
+        // Hard detach child processes
         if self.config.orphan {
             cmd.process_group(0);
         }
 
         // Process execution
-        // and catch child pid
 
         // Read process output if available
         let mut duration = Duration::default();
 
         if self.config.background {
             duration.start();
-            cmd.spawn()?;
+            let child = cmd.spawn()?;
+            self.pid = Some(child.id().to_owned() as i32);
             duration.stop();
+
+            // After spawn process modifications
+            if self.config.orphan {
+                rustix::process::setpgid(
+                    Some(rustix::process::Pid::from_child(&child)),
+                    Some(rustix::process::Pid::from_raw(2824).unwrap()),
+                )
+                .map_err(|e| LibError {
+                    message: "Couldn't create orphan process.\n".to_owned() + &e.to_string(),
+                    help: "".to_string(),
+                })?;
+                cmd.process_group(0);
+            }
         } else {
+            // Catch child pid
             let child = cmd.spawn()?;
             self.pid = Some(child.id().to_owned() as i32);
 
@@ -91,6 +105,7 @@ impl Process {
                 // self.io.clean()?;
             }
         }
+
         Ok(self.to_owned())
     }
     fn to_command(&self) -> Command {
@@ -114,52 +129,80 @@ impl Process {
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::process::Finder;
+    use serial_test::serial;
+
+    use pretty_assertions::{assert_eq, assert_ne};
     use std::{thread, time};
     // Error Handling
     use miette::IntoDiagnostic;
 
     #[test]
-    fn default() -> Result<()> {
+    #[serial]
+    fn test_run_default() -> Result<()> {
         let proc = Process::new().stdin("echo test").run()?;
-        println!("{:#?}", proc);
         assert_eq!(proc.io.stdout, Some("test\n".to_owned()));
         Ok(())
     }
     #[test]
-    fn default_wait_for_output() -> Result<()> {
-        let proc = Process::new().stdin("sleep 3").run()?;
+    #[serial]
+    fn test_run_orphan() -> Result<()> {
+        let proc = Process::new()
+            .stdin("sleep 10")
+            .background()
+            .detach()
+            .orphan()
+            .run()?;
+
         println!("{:#?}", proc);
-        assert_eq!(proc.io.stdout, None);
-        assert_eq!(proc.state.status, Some(Status::Succeeded));
+
+        // Wait until process is executed
+        let throttle = time::Duration::from_millis(1000);
+        thread::sleep(throttle);
+
+        // let finder = Finder::new().seed("sleep 10").search()?;
+        // let matches = finder.matches.unwrap();
+        // let reproc = matches.first().unwrap();
+
+        let reproc = Process::get_from_pid(&proc.pid.unwrap());
+
+        assert_ne!(reproc.ppid, Some(std::process::id() as i32));
         Ok(())
     }
     #[test]
-    fn term_wait_for_output() -> Result<()> {
+    fn test_run_wait_for_output() -> Result<()> {
         let proc = Process::new().stdin("sleep 3").run()?;
         assert_eq!(proc.io.stdout, None);
         assert_eq!(proc.state.status, Some(Status::Succeeded));
         Ok(())
     }
     #[test]
-    fn fs() -> Result<()> {
+    fn test_run_term_wait_for_output() -> Result<()> {
+        let proc = Process::new().stdin("sleep 3").run()?;
+        assert_eq!(proc.io.stdout, None);
+        assert_eq!(proc.state.status, Some(Status::Succeeded));
+        Ok(())
+    }
+    #[test]
+    fn test_run_write_to_fs() -> Result<()> {
         let proc = Process::new().stdin("echo test").fs().run()?;
         assert_eq!(proc.io.stdout, Some("test\n".to_owned()));
         Ok(())
     }
     #[test]
-    fn background() -> Result<()> {
+    fn test_run_in_background() -> Result<()> {
         let proc = Process::new().stdin("sleep 3").background().run()?;
         assert_eq!(proc.io.stdout, None);
         Ok(())
     }
     #[test]
-    fn background_term() -> Result<()> {
+    fn test_run_term_in_background() -> Result<()> {
         let proc = Process::new().stdin("sleep 3").term().background().run()?;
         assert_eq!(proc.io.stdout, None);
         Ok(())
     }
     #[test]
-    fn background_detach() -> Result<()> {
+    fn test_run_in_background_and_detach() -> Result<()> {
         let proc = Process::new()
             .stdin("sleep 3")
             .background()
@@ -169,7 +212,7 @@ mod test {
         Ok(())
     }
     #[test]
-    fn background_fs() -> Result<()> {
+    fn test_run_in_background_write_to_fs() -> Result<()> {
         let mut proc = Process::new().stdin("echo test").background().fs().run()?;
         assert_eq!(proc.io.stdout, None);
 

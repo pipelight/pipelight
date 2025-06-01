@@ -1,7 +1,5 @@
 // Tests
 
-#[cfg(feature = "fd")]
-mod fd;
 mod finder;
 mod run;
 
@@ -101,6 +99,8 @@ impl Default for Process {
             config: Runner::new(uuid),
             pid: None,
             ppid: None,
+            // Add later
+            // pgid: None,
             gid: None,
             sid: None,
             cwd: None,
@@ -155,6 +155,9 @@ impl Process {
     /**
      * Detach child process from parent and remove from process group
      * Neither killing parent or parent group will kill the child.
+     *
+     * Must be root to create an orphan process.
+     *
      */
     pub fn orphan(&mut self) -> &mut Self {
         self.config.orphan = true;
