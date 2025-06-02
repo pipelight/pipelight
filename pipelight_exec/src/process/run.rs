@@ -26,7 +26,7 @@ impl Process {
         } else if self.config.orphan {
             let mut e = Command::new(&(*SHELL.lock().unwrap()));
             // Poor man bash trick, create a subchild and kill parent.
-            let subchild = format!("{{ {} & }} &", self.io.stdin.as_ref().unwrap());
+            let subchild = format!("{{ setsid {} & }} &", self.io.stdin.as_ref().unwrap());
             e.arg("-c").arg(subchild);
             e
         } else {
