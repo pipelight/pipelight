@@ -17,6 +17,9 @@ use miette::{Error, Result};
 *
 * I forgot the difference between them. Fuck.
 *
+* But one is used to be launced from the background watcher,
+* and the other from the command line
+*
 */
 pub fn launch() -> Result<()> {
     let mut args = CLI.lock().unwrap().clone();

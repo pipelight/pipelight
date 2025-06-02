@@ -2562,7 +2562,7 @@ dependencies = [
 
 [[package]]
 name = "pipelight_exec"
-version = "0.4.7"
+version = "0.4.8"
 dependencies = [
  "bon",
  "chrono",
