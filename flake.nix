@@ -18,6 +18,12 @@
     flake-parts.lib.mkFlake {
       inherit inputs;
     } {
+      flake = {
+        nixosModules = rec {
+          # default = pipelight-init;
+          pipelight-init = ./modules/default.nix;
+        };
+      };
       systems =
         flake-utils.lib.allSystems;
       perSystem = {
