@@ -13,7 +13,7 @@ in
       systemd.services.pipelight-init_clean_logs = {
         enable = true;
         description = "Clean pipelight-init old logs";
-        before = ["pipelight-init_net_pre"];
+        before = ["pipelight-init_net_pre.service"];
         # Starts only if mountpoint detected
         unitConfig = {
           ConditionPathExists = "/pipelight-init";
@@ -58,6 +58,7 @@ in
           StandardError = "journal+console";
         };
       };
+
       systemd.services.pipelight-init_net_post = {
         enable = true;
         description = "Run pipelight as a cloud-init replacement.";
