@@ -15,7 +15,7 @@ be used from inside a terminal.
 - Define pipelines using **toml, hcl, yaml, typescript**.
 - Trigger on events: git hooks, file changes...
 
-Checkout the [Documentation](https://pipelight.dev) for a much friendly approach
+Checkout the [Documentation](https://pipelight.dev) for a much friendlier approach
 and a deeper understanding.
 
 ## Usage example
