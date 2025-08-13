@@ -11,7 +11,7 @@ use pipelight_git::Flag;
 // Globals
 use pipelight_utils::globals::LOGGER;
 // Colorize
-use colored::Colorize;
+use owo_colors::OwoColorize;
 // Duration
 use chrono::{DateTime, Local};
 

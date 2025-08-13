@@ -1,7 +1,7 @@
 // Struct
 use crate::types::Trigger;
 // Colors
-use colored::Colorize;
+use owo_colors::OwoColorize;
 // Traits
 use std::fmt;
 

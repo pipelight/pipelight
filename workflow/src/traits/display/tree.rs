@@ -1,8 +1,7 @@
 // Caracteres
 use super::characters::Characters;
 // Colors
-pub use colored::control::set_override;
-use colored::{ColoredString, Colorize};
+use owo_colors::OwoColorize;
 // Structs
 use crate::types::Node;
 use log::LevelFilter;
@@ -30,7 +29,7 @@ fn add_level_phantom(prefix: String) -> String {
 }
 impl Node {
     /// Add a leaf to prefix T from inside a vec of T of nth element
-    pub fn leaf(&self, prefix: String, index: usize, length: usize) -> ColoredString {
+    pub fn leaf(&self, prefix: String, index: usize, length: usize) -> String {
         let leaf: String = if index == length {
             format!(
                 "{prefix:}{}\n{prefix:}{}{}",
@@ -46,7 +45,7 @@ impl Node {
                 Characters::unicode().hbar,
             )
         };
-        leaf.white()
+        leaf.white().to_string()
     }
     /// Display Node and color based on Node.status
     fn display(&self, prefix: String) {

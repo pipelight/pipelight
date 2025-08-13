@@ -14,7 +14,7 @@ use clap_complete::shells::Shell;
 // Template
 use templates::Template;
 // Colors
-use colored::control::set_override;
+use owo_colors::set_override;
 // Traits
 use crate::services::FgBg;
 // Error Handling

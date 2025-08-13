@@ -9,9 +9,11 @@ description = "Pipelight types and function to help writting pipelines."
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+log.workspace = true
+miette.workspace = true
+
 serde = { version = "1.0.208", features = ["derive"] }
-miette = { version = "7.2.0" }
-log = "0.4.22"
+
 wasm-bindgen = "0.2.99"
 tsify = "0.5.5"
 # getrandom = { version = "0.2.15", features = ["wasm-bindgen"] }

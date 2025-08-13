@@ -18,9 +18,11 @@ path = "src/main.rs"
 doc = false
 
 [dependencies]
+miette = { workspace = true, features = ["fancy", "backtrace"] }
+log = { workspace = true }
+
+owo-colors = "4.2.2"
+
 pipelight_utils = { path = "../pipelight_utils" }
 pipelight_error = { path = "../pipelight_error" }
-cli = { path = "../cli", version = "*" }
-log = "0.4.22"
-miette = { version = "7.2.0", features = ["fancy", "backtrace"] }
-owo-colors = "4.0.0"
+cli = { path = "../cli" }

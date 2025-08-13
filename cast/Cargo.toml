@@ -6,15 +6,15 @@ license = "GPL-2.0-only"
 description = "Multiple file format to rust struct"
 
 [dependencies]
+miette.workspace = true
+log.workspace = true
+
 pipelight_error = { path = "../pipelight_error" }
 pipelight_exec = { path = "../pipelight_exec" }
 pipelight_utils = { path = "../pipelight_utils" }
+
 serde = { version = "1.0.208", features = ["derive"] }
-miette = { version = "7.2.0" }
-log = "0.4.22"
 serde_json = "1.0.125"
 toml = { version = "0.9.5", features = ["parse"] }
-hcl-rs = "0.18.0"
 serde_yaml = "0.9.34"
-kdl = "6.3.4"
-serde_kdl = "0.1.0"
+hcl-rs = "0.18.0"

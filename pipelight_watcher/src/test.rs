@@ -112,7 +112,7 @@ mod watcher {
     // Logger
     use log::warn;
     // Fancy color
-    use colored::Colorize;
+    use owo_colors::OwoColorize;
     // Process finder
     use pipelight_exec::Finder;
 
