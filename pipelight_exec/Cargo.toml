@@ -32,7 +32,7 @@ iso8601-duration = { version = "0.2.0", features = ["serde", "chrono"] }
 chrono = { version = "0.4.38", features = ["serde"] }
 
 rustix = { version = "1.0.7", features = ["process"] }
-sysinfo = "0.35.1"
+sysinfo = "0.37.0"
 
 
 [dev-dependencies]

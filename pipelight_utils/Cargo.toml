@@ -20,4 +20,4 @@ rev_buf_reader = "0.3.0"
 strum = { version = "0.27.1", features = ["derive"] }
 
 signal-hook = { version = "0.3.17", features = ["extended-siginfo"] }
-console = "0.15.8"
+console = "0.16.0"

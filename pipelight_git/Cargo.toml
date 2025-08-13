@@ -16,4 +16,4 @@ serde = { version = "1.0.208", features = ["derive"] }
 serde_plain = "1.0.2"
 strum = { version = "0.27.1", features = ["derive"] }
 
-gix = { version = "0.72.1", default-features = false }
+gix = { version = "0.73.0", default-features = false }

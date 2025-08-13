@@ -36,7 +36,7 @@ log = "0.4.22"
 bon = "3.6.3"
 
 toml = { version = "0.9.5", features = ["parse", "preserve_order"] }
-hcl-rs = "0.18.0"
+hcl-rs = "0.19.2"
 serde_yaml = "0.9.34"
 
 pretty_assertions = "1.4.1"
