@@ -28,8 +28,14 @@ members = [
   "deno_lib",
 ]
 
-# [workspace.dependencies]
+[workspace.dependencies]
 # getrandom = { version = "0.2.15", features = ["wasm-bindgen"] }
+thiserror = "2.0.12"
+miette = "7.2.0"
+
+toml = { version = "0.9.5", features = ["parse", "preserve_order"] }
+hcl-rs = "0.18.0"
+serde_yaml = "0.9.34"
 
 [profile.release]
 lto = true
