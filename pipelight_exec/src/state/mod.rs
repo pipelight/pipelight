@@ -25,7 +25,7 @@ pub struct State {
 /**
 * An enum for the different possible process state.
 */
-#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Default, Debug, Serialize, Deserialize, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[serde(rename_all = "kebab-case")]
 pub enum Status {
     #[default]

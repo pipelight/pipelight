@@ -22,6 +22,7 @@ use crate::{Io, State};
 */
 #[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct Runner {
+    shell: Option<String>,
     uuid: Uuid,
     term: bool,
     background: bool,
@@ -32,6 +33,7 @@ pub struct Runner {
 impl Default for Runner {
     fn default() -> Self {
         Runner {
+            shell: None,
             uuid: Uuid::new_v4(),
             term: false,
             background: false,
@@ -45,6 +47,7 @@ impl Default for Runner {
 impl Runner {
     fn new(uuid: Uuid) -> Self {
         Runner {
+            shell: None,
             uuid,
             term: false,
             background: false,
@@ -97,6 +100,7 @@ impl Default for Process {
         Process {
             uuid,
             config: Runner::new(uuid),
+
             pid: None,
             ppid: None,
             // Add later
@@ -126,6 +130,11 @@ impl Process {
     }
     pub fn term(&mut self) -> &mut Self {
         self.config.term = true;
+        self
+    }
+
+    pub fn shell(&mut self, shell: &str) -> &mut Self {
+        self.config.shell = Some(shell.to_owned());
         self
     }
     /*

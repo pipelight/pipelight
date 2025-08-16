@@ -18,13 +18,18 @@ use pipelight_error::{LibError, PipelightError};
 
 impl Process {
     pub fn run(&mut self) -> Result<Self, PipelightError> {
+        let shell: String = if let Some(shell) = self.config.shell.clone() {
+            shell
+        } else {
+            (*SHELL.lock().unwrap().clone()).to_string()
+        };
         // Generate command
         let mut cmd = if self.config.term {
-            let mut e = Command::new(&(*SHELL.lock().unwrap()));
+            let mut e = Command::new(shell);
             e.arg("-c").arg(self.io.stdin.as_ref().unwrap());
             e
         } else if self.config.orphan {
-            let mut e = Command::new(&(*SHELL.lock().unwrap()));
+            let mut e = Command::new(shell);
             // Poor man bash trick, create a subchild and kill parent.
             let subchild = format!("{{ setsid {} & }} &", self.io.stdin.as_ref().unwrap());
             e.arg("-c").arg(subchild);
