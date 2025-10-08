@@ -50,7 +50,7 @@ impl Config {
         // debug!("Linting config file");
         let command = format!(
             "deno lint \
-            --rules-exclude=no-explicit-any,no-unused-vars \
+            --rules-exclude=no-explicit-any,no-unused-vars,no-import-prefix \
             --quiet {}",
             file
         );
