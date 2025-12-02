@@ -50,8 +50,9 @@ impl Config {
         // debug!("Linting config file");
         let command = format!(
             "deno lint \
-            --rules-exclude=no-explicit-any,no-unused-vars,no-import-prefix \
-            --quiet {}",
+                --rules-exclude=no-explicit-any,no-unused-vars,no-import-prefix,no-unversioned-import \
+                --quiet \
+                {}",
             file
         );
         let mut p = Process::new().stdin(&command).term().to_owned();
@@ -70,20 +71,26 @@ impl Config {
         // debug!("Linting config file");
         let mut command = format!(
             "deno run \
-            --allow-net \
-            --allow-read \
-            --allow-env \
-            --allow-run \
-            --check \
-            --quiet \
-            {}",
+                --no-npm \
+                --node-modules-dir=false \
+                --allow-net \
+                --allow-read \
+                --allow-env \
+                --allow-run \
+                --check \
+                --quiet \
+                {}",
             file,
         );
         if args.is_some() {
             command = format!("{} {}", command, args.unwrap().join(" "));
         }
 
-        let mut p = Process::new().stdin(&command).term().to_owned();
+        let mut p = Process::new()
+            .stdin(&command)
+            .env(vec!["DENO_NO_PACKAGE_JSON=1"])
+            .term()
+            .to_owned();
         p.run()?;
 
         if p.io.stderr.is_none() {

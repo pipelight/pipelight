@@ -83,6 +83,7 @@ pub struct Process {
     #[serde(skip_serializing, skip_deserializing)]
     pub config: Runner,
     pub pid: Option<i32>,
+    pub env_vars: Option<Vec<String>>,
     // process parent id
     pub ppid: Option<i32>,
     pub gid: Option<i32>,
@@ -113,6 +114,7 @@ impl Default for Process {
                 stdin: None,
                 ..Io::default()
             },
+            env_vars: None,
             state: State::default(),
         }
     }
@@ -135,6 +137,12 @@ impl Process {
 
     pub fn shell(&mut self, shell: &str) -> &mut Self {
         self.config.shell = Some(shell.to_owned());
+        self
+    }
+
+    pub fn env(&mut self, variables: Vec<&str>) -> &mut Self {
+        let env_vars: Vec<String> = variables.into_iter().map(|e| e.to_owned()).collect();
+        self.env_vars = Some(env_vars);
         self
     }
     /*

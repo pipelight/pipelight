@@ -38,6 +38,15 @@ impl Process {
             self.to_command()
         };
 
+        // Add environment variables
+        if let Some(env_vars) = self.env_vars.clone() {
+            for env in env_vars {
+                if let Some((key, val)) = env.split_once('=') {
+                    cmd.env(key, val);
+                }
+            }
+        }
+
         cmd.stdin(Stdio::null())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped());
