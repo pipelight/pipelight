@@ -2,7 +2,7 @@
 name = "pipelight_error"
 publish = true
 version = "0.2.15"
-edition = "2021"
+edition = "2024"
 license = "GPL-2.0-only"
 description = "Pipeligh Error types"
 

@@ -2,7 +2,7 @@
 name = "pipelight_utils"
 publish = true
 version = "0.2.12"
-edition = "2021"
+edition = "2024"
 license = "GPL-2.0-only"
 description = "A set of trivial utilities for command line tools"
 
@@ -17,7 +17,7 @@ once_cell.workspace = true
 
 rev_buf_reader = "0.3.0"
 
-strum = { version = "0.27.1", features = ["derive"] }
+strum = { version = "0.28.0", features = ["derive"] }
 
 signal-hook = { version = "0.3.17", features = ["extended-siginfo"] }
 console = "0.16.0"

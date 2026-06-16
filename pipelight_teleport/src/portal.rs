@@ -86,19 +86,15 @@ impl Portal {
     }
     fn has_reached_root(&mut self) -> Result<bool, PipelightError> {
         // If teleport (search method) has reached git repo root
-        if Git::new().exists() {
-            let boolean = self.current.directory_path
-                == Some(
-                    Git::new()
-                        .repo
-                        .unwrap()
-                        .work_dir()
-                        .unwrap()
-                        .to_str()
-                        .unwrap()
-                        .to_owned(),
-                );
-            Ok(boolean)
+        if Git::new().exists()
+            && let Some(repo) = Git::new().repo
+        {
+            return match repo.workdir() {
+                // If client side repo use existing workdir.
+                Some(wd) => Ok(wd.to_str() == self.current.directory_path.as_deref()),
+                // If server side repo, no workdir, use bare repo path.
+                None => Ok(repo.path().to_str() == self.current.directory_path.as_deref()),
+            };
         }
         // Else if teleport (search method) has reached filesystem root
         else {

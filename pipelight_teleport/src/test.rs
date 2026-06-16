@@ -1,6 +1,8 @@
 #[cfg(test)]
 mod try_teleport {
+    // Git
     use crate::{Gate, Portal};
+    use pipelight_git::Git;
     use std::env;
 
     // Error Handling

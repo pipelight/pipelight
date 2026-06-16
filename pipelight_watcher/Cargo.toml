@@ -2,7 +2,7 @@
 name = "pipelight_watcher"
 publish = false
 version = "0.1.3"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 miette.workspace = true

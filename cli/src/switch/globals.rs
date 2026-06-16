@@ -32,7 +32,9 @@ pub fn early_hydrate_logger() -> Result<()> {
     // Set internal verbosity level
     let verbosity = args.internal_verbose.log_level_filter();
     LOGGER.lock().unwrap().set_internal_level(&verbosity)?;
-    std::env::set_var("PIPELIGHT_LOG", verbosity.to_string().to_lowercase());
+    unsafe {
+        std::env::set_var("PIPELIGHT_LOG", verbosity.to_string().to_lowercase());
+    }
     Builder::from_env("PIPELIGHT_LOG").init();
 
     Ok(())
