@@ -17,4 +17,4 @@ pipelight_git = { path = "../pipelight_git" }
 # pipelight_utils = "0.2.12"
 pipelight_utils = { path = "../pipelight_utils" }
 
-strum = { version = "0.27.1", features = ["derive"] }
+strum.workspace = true

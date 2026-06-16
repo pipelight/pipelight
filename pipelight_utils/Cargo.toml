@@ -17,7 +17,7 @@ once_cell.workspace = true
 
 rev_buf_reader = "0.3.0"
 
-strum = { version = "0.28.0", features = ["derive"] }
+strum.workspace = true
 
 signal-hook = { version = "0.3.17", features = ["extended-siginfo"] }
 console = "0.16.0"
