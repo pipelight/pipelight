@@ -16,5 +16,12 @@ pipelight_error = { path = "../pipelight_error" }
 pipelight_git = { path = "../pipelight_git" }
 # pipelight_utils = "0.2.12"
 pipelight_utils = { path = "../pipelight_utils" }
+pipelight_exec = { path = "../pipelight_exec" }
 
 strum.workspace = true
+gix.workspace = true
+
+tracing.workspace = true
+tracing-subscriber.workspace = true
+tracing-log.workspace = true
+tracing-test.workspace = true

@@ -29,16 +29,28 @@ members = [
 ]
 
 [workspace.dependencies]
+
 # getrandom = { version = "0.2.15", features = ["wasm-bindgen"] }
 thiserror = "2.0.12"
 miette = "7.2.0"
-log = "0.4.22"
 bon = "3.6.3"
+
+# Log/Tracing
+log = "0.4.22"
+env_logger = "0.11.5"
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.19", features = ["ansi", "env-filter"] }
+tracing-log = "0.2.0"
+tracing-test = "0.2.6"
+derivative = "2.2.0"
+
+gix = { version = "0.85.0" }
 
 toml = { version = "0.9.5", features = ["parse", "preserve_order"] }
 hcl-rs = "0.19.2"
 serde_yaml = "0.9.34"
 serde_json = "1.0.125"
+serde = { version = "1.0.210", features = ["derive"] }
 
 pretty_assertions = "1.4.1"
 serial_test = "3.2.0"

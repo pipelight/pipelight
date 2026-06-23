@@ -8,7 +8,7 @@ use crate::build::*;
 use crate::*;
 
 use std::future::Future;
-use watchexec::{action::ActionHandler, Config, Watchexec};
+use watchexec::{Config, Watchexec, action::ActionHandler};
 use watchexec_signals::Signal;
 
 /**
@@ -63,9 +63,9 @@ impl Watcher {
     pub async fn set_action(
         &self,
         handler: impl (Fn(ActionHandler) -> Box<dyn Future<Output = ActionHandler> + Send + Sync>)
-            + Send
-            + Sync
-            + 'static,
+        + Send
+        + Sync
+        + 'static,
     ) -> Result<Arc<Config>> {
         self.config.on_action_async(handler);
         Ok(self.config.clone())

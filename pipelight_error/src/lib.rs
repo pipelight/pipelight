@@ -1,23 +1,28 @@
 use bon::bon;
 use miette::{Diagnostic, Report, SourceOffset, SourceSpan};
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
-#[derive(Debug, Error, Diagnostic)]
+#[derive(Debug, Error, Diagnostic, Deserialize)]
 pub enum PipelightError {
     #[error(transparent)]
     #[diagnostic(code(pipelight::io::error))]
+    #[serde(skip)]
     IoError(#[from] std::io::Error),
 
     #[error(transparent)]
     #[diagnostic(transparent)]
+    #[serde(skip)]
     WrapError(#[from] WrapError),
 
     #[error(transparent)]
     #[diagnostic(transparent)]
+    #[serde(skip)]
     LibError(#[from] LibError),
 
     #[error(transparent)]
     #[diagnostic(transparent)]
+    #[serde(skip)]
     CastError(#[from] CastError),
 }
 

@@ -1,3 +1,4 @@
+mod bare_repo;
 mod default;
 mod gate;
 mod portal;

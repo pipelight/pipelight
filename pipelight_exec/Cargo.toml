@@ -22,7 +22,7 @@ uuid = { workspace = true, features = [
   "macro-diagnostics",
 ] }
 
-pipelight_error = "0.2.12"
+pipelight_error = { path = "../pipelight_error" }
 
 serde = { version = "1.0.208", features = ["derive"] }
 

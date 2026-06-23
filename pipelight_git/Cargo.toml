@@ -16,4 +16,4 @@ serde = { version = "1.0.208", features = ["derive"] }
 serde_plain = "1.0.2"
 strum = { version = "0.27.1", features = ["derive"] }
 
-gix = { version = "0.84.0" }
+gix.workspace = true
