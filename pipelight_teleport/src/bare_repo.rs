@@ -70,7 +70,7 @@ mod test {
         // Expose config /tmp config to pipelight
 
         // Remove testing dir
-        // fs::remove_dir_all("./bare_repo_test_dir").into_diagnostic()?;
+        fs::remove_dir_all("./bare_repo_test_dir").into_diagnostic()?;
         Ok(())
     }
 }
