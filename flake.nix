@@ -20,8 +20,8 @@
     } {
       flake = {
         nixosModules = rec {
-          # default = pipelight-init;
-          pipelight-init = ./modules/default.nix;
+          default = pipelight-init;
+          pipelight-init = flake-parts.lib.importApply ./modules/default.nix {inherit self;};
         };
       };
       systems =
