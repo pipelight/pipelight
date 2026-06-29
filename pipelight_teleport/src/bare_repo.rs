@@ -54,7 +54,6 @@ impl Portal {
         let git = Git::new();
         let repo = git.repo.unwrap();
         let remote_names: Vec<String> = repo.branch_names().iter().map(|e| e.to_string()).collect();
-        // println!("Available branches: {:#?}", remote_names);
 
         let master_branch: String = if remote_names.contains(&"main".to_owned()) {
             String::from("main")
@@ -81,15 +80,15 @@ impl Portal {
             };
             if let Some(content) = content {
                 let git_dir_path = repo.path().to_str().unwrap().to_owned();
-                let tmpdir = format!("{git_dir_path}/.pipelight");
+                let tmpdir = format!("{git_dir_path}/.pipelight/config/");
                 fs::create_dir_all(&tmpdir)?;
 
                 // TODO: checkout to the appropriate revision when pipelines triggered via git-hook.
                 // default to main or master.
-                //
-                let sha256 = digest(git_dir_path);
 
-                let file_path = format!("{tmpdir}/config/default.{extension}");
+                // let sha256 = digest(git_dir_path);
+
+                let file_path = format!("{tmpdir}/default.{extension}");
                 let file_path = Path::new(&file_path);
                 let mut file = fs::File::create(file_path)?;
                 file.write_all(content.as_bytes())?;
