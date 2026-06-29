@@ -1,13 +1,14 @@
 # Pipelight internal api folder
 .pipelight
 
-!/**/templates/
-!/**/template/
+!**/templates/
+!**/template/
 
 # Test artifacts
 test/*pipelight*
-/**/test_*/
-/**/*_test/
+tests/*pipelight*
+**/test_*/
+**/*_test/
 
 ## Build directories
 /packages
