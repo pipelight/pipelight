@@ -1,6 +1,8 @@
 # Pipelight internal api folder
 .pipelight
 
+!templates/
+
 # Test artifacts
 test/*pipelight*
 test_*
