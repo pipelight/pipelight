@@ -1,9 +1,21 @@
+// Filesystem manipulation
 use std::fs;
+use std::io::Write;
 
 // File
 use super::types::Portal;
-use pipelight_exec::Process;
+
 use pipelight_utils::file::FileType;
+use std::path::Path;
+use strum::IntoEnumIterator;
+use uuid::Uuid;
+
+use gix::{self, remote::Direction, validate::reference::branch_name};
+use std::{fs::create_dir_all, sync::atomic::AtomicBool};
+use tempfile::NamedTempFile;
+
+use pipelight_exec::{Process, Status};
+use std::env;
 
 // Error Handling
 use miette::{Error, IntoDiagnostic, Result};
@@ -32,16 +44,57 @@ impl Delegate for Count {
         std::ops::ControlFlow::Continue(())
     }
 }
+impl Portal {
+    /// Get config form inside a bare repository.
+    pub fn search_bare_repo(&mut self) -> Result<Self, PipelightError> {
+        // Find a branch to take the <pipelight_config> file from.
+        // Default to "master".
+        let git = Git::new();
+        let repo = git.repo.unwrap();
+        let remote_names: Vec<String> = repo.branch_names().iter().map(|e| e.to_string()).collect();
+        println!("Available branches: {:#?}", remote_names);
+        let master_branch: String = if remote_names.contains(&"main".to_owned()) {
+            String::from("main")
+        } else if remote_names.contains(&"master".to_owned()) {
+            String::from("master")
+        } else {
+            String::from("master")
+        };
+
+        // Search config file with git.
+        // Expose config /tmp config to pipelight
+        for file_type in FileType::iter() {
+            let extension = String::from(&file_type);
+            let mut content = None;
+
+            let cmd = format!("git show {master_branch}:pipelight.{extension}");
+            let mut proc = Process::new();
+            proc.term().stdin(&cmd).run()?;
+            match proc.state.status {
+                Some(Status::Succeeded) => {
+                    content = proc.io.stdout.clone();
+                }
+                Some(Status::Failed) | _ => {}
+            };
+            if let Some(content) = content {
+                let tmpdir = "/tmp/pipelight";
+                fs::create_dir_all(tmpdir)?;
+                let uuid = Uuid::new_v4();
+                let file_path = format!("{tmpdir}/pipelight-{uuid}.{extension}");
+                let file_path = Path::new(&file_path);
+                let mut file = fs::File::create(file_path)?;
+                file.write_all(content.as_bytes())?;
+                self.target.file(file_path.to_str().unwrap().to_owned())?;
+                break;
+            }
+        }
+        Ok(self.to_owned())
+    }
+}
 
 #[cfg(test)]
 mod test {
     use super::*;
-
-    use gix::{self, remote::Direction, validate::reference::branch_name};
-    use std::sync::atomic::AtomicBool;
-
-    use pipelight_exec::{Process, Status};
-    use std::env;
 
     pub fn exec(cmd: &str) -> Result<String, PipelightError> {
         println!("\n");
@@ -57,12 +110,16 @@ mod test {
             "Command Status: {:#?}\n I/O: {:#?}\n",
             proc.state.status, proc.io
         );
+        println!(
+            "Command Status: {:#?}\n I/O: {:#?}\n",
+            proc.state.status, proc.io
+        );
         Ok(res.unwrap_or("null".to_owned()))
     }
 
     #[test]
     /// Get config form inside a bare repository.
-    fn get_config_from_bare_repo() -> Result<()> {
+    fn get_config_from_bare_repo() -> Result<(), PipelightError> {
         // Get info of current git dir for further cloning.
         let root = env::current_dir().unwrap();
         let repo = gix::discover(&root).unwrap();
@@ -73,7 +130,7 @@ mod test {
 
         // Create a testing directory
         let testdir = "./bare_repo_test_dir";
-        fs::create_dir_all(testdir).into_diagnostic()?;
+        fs::create_dir_all(testdir)?;
 
         // Bare clone current repo.
         // TODO: Move to gitoxide instead of relying on external tool.
@@ -89,18 +146,6 @@ mod test {
         let testing_remote = testing_repo.find_remote("origin").unwrap();
         let url = testing_remote.url(Direction::Fetch).unwrap();
         println!("Working repo url: {url}");
-
-        // Find a branch to take the <pipelight_config> file from.
-        // Default to "master".
-        let remote_names: Vec<String> = repo.branch_names().iter().map(|e| e.to_string()).collect();
-        println!("Available branches: {:#?}", remote_names);
-        let master_branch: String = if remote_names.contains(&"main".to_owned()) {
-            String::from("main")
-        } else if remote_names.contains(&"master".to_owned()) {
-            String::from("master")
-        } else {
-            String::from("master")
-        };
 
         // TODO: Move to gitoxide instead of relying on external tool.
         //
@@ -125,20 +170,28 @@ mod test {
         //     .into_diagnostic()?;
         // println!("{:#?}", delegate);
 
-        let file = exec(&format!("git show {master_branch}:pipelight.ts"))?;
-        let file = exec(&format!("git show {master_branch}:pipelight.js"))?;
-        println!("{}", file);
-        let file = exec(&format!("git show {master_branch}:pipelight.toml"))?;
-        println!("{}", file);
-        let file = exec(&format!("git show {master_branch}:pipelight.yaml"))?;
-        println!("{}", file);
+        // ATTEMPT #1: Use tempfiles
+        // if let Some(file) = file {
+        //     println!("{:#?}", file);
+        //     println!("{}", file);
+        //     let tempfile =
+        //         NamedTempFile::with_suffix(format!(".{}", extension)).into_diagnostic()?;
+        //     &tempfile.keep().into_diagnostic()?;
+        //     let path: String = tempfile
+        //         .into_temp_path()
+        //         .to_path_buf()
+        //         .to_str()
+        //         .unwrap()
+        //         .to_owned();
+        //     println!("{}", path);
+        // }
 
         // Search config file with git.
         // Expose config /tmp config to pipelight
 
         // Remove testing dir
-        // env::set_current_dir(&root).unwrap();
-        // fs::remove_dir_all("./bare_repo_test_dir").into_diagnostic()?;
+        // env::set_current_dir(&root)?;
+        // fs::remove_dir_all("./bare_repo_test_dir")?;
         Ok(())
     }
 }

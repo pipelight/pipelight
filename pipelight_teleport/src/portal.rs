@@ -42,30 +42,42 @@ impl Portal {
      * Returns an error if no file could be found.
      */
     pub fn search(&mut self) -> Result<Self, PipelightError> {
-        let seed = self.seed.clone();
-        if let Some(seed) = seed {
-            // Sub portals
-            let mut path_portal = self.clone();
-            let mut file_portal = self.clone();
-            let mut prefix_portal = self.clone();
+        // If the repo is a bare repo.
+        let git = Git::new();
+        if let Some(repo) = git.repo
+            && repo.is_bare()
+        {
+            self.search_bare_repo()
+        } else {
+            // If the repo is a normal repo.
+            let seed = self.seed.clone();
+            if let Some(seed) = seed {
+                // Sub portals
+                let mut path_portal = self.clone();
+                let mut file_portal = self.clone();
+                let mut prefix_portal = self.clone();
 
-            if path_portal.search_path().is_ok() {
-                *self = path_portal;
-                return Ok(self.to_owned());
-            } else if file_portal.search_file().is_ok() {
-                *self = file_portal;
-                return Ok(self.to_owned());
-            } else if prefix_portal.search_prefix().is_ok() {
-                *self = prefix_portal;
-                return Ok(self.to_owned());
-            } else {
-                return Err(PipelightError::LibError(LibError {
-                    message: format!("Couldn't find a file with the provided seed: {:#?}", seed),
-                    help: format!("Try creating a file that begins by {:#?}", seed),
-                }));
+                if path_portal.search_path().is_ok() {
+                    *self = path_portal;
+                    return Ok(self.to_owned());
+                } else if file_portal.search_file().is_ok() {
+                    *self = file_portal;
+                    return Ok(self.to_owned());
+                } else if prefix_portal.search_prefix().is_ok() {
+                    *self = prefix_portal;
+                    return Ok(self.to_owned());
+                } else {
+                    return Err(PipelightError::LibError(LibError {
+                        message: format!(
+                            "Couldn't find a file with the provided seed: {:#?}",
+                            seed
+                        ),
+                        help: format!("Try creating a file that begins by {:#?}", seed),
+                    }));
+                }
             }
+            Ok(self.to_owned())
         }
-        Ok(self.to_owned())
     }
     /*
      * Set portal searching directory to parent.

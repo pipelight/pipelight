@@ -3033,10 +3033,12 @@ dependencies = [
  "pipelight_git",
  "pipelight_utils",
  "strum 0.28.0",
+ "tempfile",
  "tracing",
  "tracing-log",
  "tracing-subscriber",
  "tracing-test",
+ "uuid",
 ]
 
 [[package]]

@@ -21,6 +21,8 @@ pipelight_exec = { path = "../pipelight_exec" }
 strum.workspace = true
 gix.workspace = true
 gix-dir.workspace = true
+tempfile.workspace = true
+uuid.workspace = true
 
 tracing.workspace = true
 tracing-subscriber.workspace = true
