@@ -1,6 +1,7 @@
 // Structs
 use crate::pipeline::Filters;
 use crate::types::{Logs, Pipeline};
+use pipelight_git::Git;
 // Trait
 use crate::traits::Getters;
 // Global vars

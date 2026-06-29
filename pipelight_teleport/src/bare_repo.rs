@@ -8,6 +8,8 @@ use super::types::Portal;
 use pipelight_utils::file::FileType;
 use std::path::Path;
 use strum::IntoEnumIterator;
+
+use sha256::{digest, try_digest};
 use uuid::Uuid;
 
 use gix::{self, remote::Direction, validate::reference::branch_name};
@@ -52,7 +54,8 @@ impl Portal {
         let git = Git::new();
         let repo = git.repo.unwrap();
         let remote_names: Vec<String> = repo.branch_names().iter().map(|e| e.to_string()).collect();
-        println!("Available branches: {:#?}", remote_names);
+        // println!("Available branches: {:#?}", remote_names);
+
         let master_branch: String = if remote_names.contains(&"main".to_owned()) {
             String::from("main")
         } else if remote_names.contains(&"master".to_owned()) {
@@ -77,10 +80,16 @@ impl Portal {
                 Some(Status::Failed) | _ => {}
             };
             if let Some(content) = content {
-                let tmpdir = "/tmp/pipelight";
-                fs::create_dir_all(tmpdir)?;
-                let uuid = Uuid::new_v4();
-                let file_path = format!("{tmpdir}/pipelight-{uuid}.{extension}");
+                let git_dir_path = repo.path().to_str().unwrap().to_owned();
+                let tmpdir = format!("{git_dir_path}/.pipelight");
+                fs::create_dir_all(&tmpdir)?;
+
+                // TODO: checkout to the appropriate revision when pipelines triggered via git-hook.
+                // default to main or master.
+                //
+                let sha256 = digest(git_dir_path);
+
+                let file_path = format!("{tmpdir}/config/default.{extension}");
                 let file_path = Path::new(&file_path);
                 let mut file = fs::File::create(file_path)?;
                 file.write_all(content.as_bytes())?;
@@ -126,7 +135,8 @@ mod test {
         let remote = repo.find_remote("origin").unwrap();
         let url = remote.url(Direction::Fetch).unwrap();
 
-        let url = "https://github.com/crocuda/pipelight.git";
+        // let url = "https://github.com/crocuda/pipelight.git";
+        let url = "https://github.com/crocuda/virshle.git";
 
         // Create a testing directory
         let testdir = "./bare_repo_test_dir";

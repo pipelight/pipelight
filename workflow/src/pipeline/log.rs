@@ -8,7 +8,7 @@ use std::io::Write;
 use std::sync::{Arc, Mutex};
 // Fylesystem manipulation
 use std::fs;
-use std::fs::{create_dir_all, File};
+use std::fs::{File, create_dir_all};
 use std::path::Path;
 // Error Handling
 use log::error;
@@ -21,9 +21,7 @@ pub static OUTDIR: Lazy<Arc<Mutex<String>>> =
     Lazy::new(|| Arc::new(Mutex::new(".pipelight/logs".to_owned())));
 
 impl Pipeline {
-    /**
-    Delete the pipeline log file.
-    */
+    /// Delete the pipeline log file.
     pub fn clean(&self) -> Result<()> {
         //Ensure dir
         let dir = OUTDIR.lock().unwrap();
@@ -42,9 +40,7 @@ impl Pipeline {
         }
         Ok(())
     }
-    /**
-    Print the pipeline status as JSON inside a log file.
-    */
+    /// Print the pipeline status as JSON inside a log file.
     pub fn log(&self) -> Result<()> {
         //Ensure dir
         let dir = OUTDIR.lock().unwrap();
