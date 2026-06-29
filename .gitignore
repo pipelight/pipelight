@@ -1,7 +1,8 @@
 # Pipelight internal api folder
 .pipelight
 
-!templates/
+!/**/templates/
+!/**/template/
 
 # Test artifacts
 test/*pipelight*
@@ -12,6 +13,7 @@ test_*
 /packages
 /autocompletion
 /target
+
 # Nixos
 /result
 gifs/
