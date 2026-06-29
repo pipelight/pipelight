@@ -3025,6 +3025,7 @@ name = "pipelight_teleport"
 version = "0.2.12"
 dependencies = [
  "gix",
+ "gix-dir",
  "log",
  "miette",
  "pipelight_error",

@@ -44,7 +44,8 @@ tracing-log = "0.2.0"
 tracing-test = "0.2.6"
 derivative = "2.2.0"
 
-gix = { version = "0.85.0" }
+gix = { version = "0.85.0", features = ["dirwalk"] }
+gix-dir = "0.27.0"
 
 toml = { version = "0.9.5", features = ["parse", "preserve_order"] }
 hcl-rs = "0.19.2"
