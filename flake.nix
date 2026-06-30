@@ -1,46 +1,16 @@
+# DO-NOT-EDIT. This file was auto-generated using github:vic/flake-file.
+# Use `nix run .#write-flake` to regenerate it.
 {
-  description = "Pipelight - Tiny automation pipelines";
+  outputs = inputs: inputs.flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules);
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    rust-overlay.url = "github:oxalica/rust-overlay";
-    flake-utils.url = "github:numtide/flake-utils";
-    flake-parts.url = "github:hercules-ci/flake-parts";
-  };
-
-  outputs = {
-    self,
-    nixpkgs,
-    rust-overlay,
-    flake-utils,
-    flake-parts,
-  } @ inputs:
-    flake-parts.lib.mkFlake {
-      inherit inputs;
-    } {
-      flake = {
-        nixosModules = rec {
-          default = pipelight-init;
-          pipelight-init = flake-parts.lib.importApply ./modules/default.nix {inherit self;};
-        };
-      };
-      systems =
-        flake-utils.lib.allSystems;
-      perSystem = {
-        config,
-        self,
-        inputs,
-        pkgs,
-        system,
-        ...
-      }: let
-        overlays = [(import rust-overlay)];
-        pkgs = import nixpkgs {
-          inherit system overlays;
-        };
-      in {
-        packages.default = pkgs.callPackage ./package.nix {};
-        devShells.default = pkgs.callPackage ./shell.nix {};
-      };
+    flake-file.url = "github:vic/flake-file";
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
     };
+    import-tree.url = "github:denful/import-tree";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
+    rust-overlay.url = "github:oxalica/rust-overlay";
+  };
 }

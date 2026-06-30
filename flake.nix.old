@@ -1,0 +1,40 @@
+{
+  description = "Pipelight - Tiny automation pipelines";
+
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    rust-overlay.url = "github:oxalica/rust-overlay";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+  };
+
+  outputs = {
+    nixpkgs,
+    rust-overlay,
+    flake-parts,
+  } @ inputs:
+    flake-parts.lib.mkFlake {
+      inherit inputs;
+    } {
+      flake = {
+        nixosModules = rec {
+          pipelight-init = ./modules/default.nix;
+        };
+      };
+      perSystem = {
+        self',
+        config,
+        inputs,
+        pkgs,
+        system,
+        ...
+      }: let
+        overlays = [(import rust-overlay)];
+        pkgs = import nixpkgs {
+          inherit system overlays;
+        };
+      in {
+        packages.default = pkgs.callPackage ./package.nix {};
+        devShells.default = pkgs.callPackage ./shell.nix {};
+      };
+    };
+}
