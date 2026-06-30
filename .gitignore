@@ -1,24 +1,17 @@
 # Pipelight internal api folder
-.pipelight
-
-!**/templates/
-!**/template/
+.pipelight/
+## Nixos direnv cache
+.direnv
+# Nixos
+/result
 
 # Test artifacts
 test/*pipelight*
 tests/*pipelight*
 **/test_*/
-**/*_test/
 
 ## Build directories
 /packages
 /autocompletion
 /target
-
-# Nixos
-/result
-gifs/
-
-## Nixos direnv cache
-.direnv
 

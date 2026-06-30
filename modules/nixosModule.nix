@@ -1,14 +1,15 @@
-{...}: {
+{self, ...}: {
   flake.nixosModules."pipelight-init" = {
     config,
     lib,
-    self,
     pkgs,
+    # self',
     ...
   }:
     with lib; let
       system = pkgs.stdenv.hostPlatform.system;
       package = self.packages.${system}.default;
+      # package = self'.packages.default;
     in {
       ## Options
       options.services."pipelight-init" = {
