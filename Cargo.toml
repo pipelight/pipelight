@@ -13,7 +13,7 @@ members = [
   ## Watchexec sane and reusable configuration.
   "pipelight_watcher",
   ## A templating crate for default pipelight configuration generation
-  "templates",
+  "pipelight_templates",
 
   ## Read multiple file formats and casts them to pipelight config
   "cast",

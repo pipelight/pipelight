@@ -8,7 +8,7 @@ build = "build.rs"
 miette.workspace = true
 
 workflow = { path = "../workflow" }
-templates = { path = "../templates" }
+pipelight_templates = { path = "../pipelight_templates" }
 pipelight_utils = { path = "../pipelight_utils" }
 pipelight_exec = { path = "../pipelight_exec" }
 pipelight_watcher = { path = "../pipelight_watcher" }
@@ -44,7 +44,7 @@ env_logger = "0.11.5"
 miette.workspace = true
 
 workflow = { path = "../workflow" }
-templates = { path = "../templates" }
+pipelight_templates = { path = "../pipelight_templates" }
 pipelight_utils = { path = "../pipelight_utils" }
 pipelight_exec = { path = "../pipelight_exec" }
 pipelight_watcher = { path = "../pipelight_watcher" }

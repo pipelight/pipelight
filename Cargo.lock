@@ -438,13 +438,13 @@ dependencies = [
  "pipelight_exec",
  "pipelight_git",
  "pipelight_teleport",
+ "pipelight_templates",
  "pipelight_utils",
  "pipelight_watcher",
  "rayon",
  "serde",
  "serde_json",
  "serde_plain",
- "templates",
  "tokio",
  "watchexec",
  "watchexec-events",
@@ -3060,6 +3060,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "pipelight_templates"
+version = "0.0.2"
+dependencies = [
+ "convert_case 0.11.0",
+ "handlebars",
+ "miette",
+ "pipelight_utils",
+ "rust-embed",
+ "serde",
+ "serde_plain",
+]
+
+[[package]]
 name = "pipelight_utils"
 version = "0.2.12"
 dependencies = [
@@ -3827,19 +3840,6 @@ dependencies = [
  "once_cell",
  "rustix 1.1.4",
  "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "templates"
-version = "0.0.2"
-dependencies = [
- "convert_case 0.11.0",
- "handlebars",
- "miette",
- "pipelight_utils",
- "rust-embed",
- "serde",
- "serde_plain",
 ]
 
 [[package]]

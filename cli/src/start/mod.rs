@@ -12,7 +12,7 @@ use pipelight_git::Hook;
 use clap::ValueEnum;
 use clap_complete::shells::Shell;
 // Template
-use templates::Template;
+use pipelight_templates::Template;
 // Colors
 use owo_colors::set_override;
 // Traits
