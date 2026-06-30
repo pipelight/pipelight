@@ -43,9 +43,10 @@
         ]);
 
       postInstall = ''
-        installShellCompletion --bash ./autocompletion/${pname}.bash
-        installShellCompletion --fish ./autocompletion/${pname}.fish
-        installShellCompletion --zsh ./autocompletion/_${pname}
+        installShellCompletion --cmd ${pname} \
+          --bash ./autocompletion/${pname}.bash \
+          --fish ./autocompletion/${pname}.fish \
+          --zsh  ./autocompletion/_${pname}
       '';
     };
   };
